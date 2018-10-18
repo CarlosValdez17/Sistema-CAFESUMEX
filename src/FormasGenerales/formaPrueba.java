@@ -3,11 +3,25 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Formas;
+package FormasGenerales;
 
 import Conexion.Conexion;
 import FormasInternas.internalPrueba;
+import FormasInternas.panelPrueba;
+import Formas_Configuraciones.jpColoniaEjido;
+import Formas_Configuraciones.jpEstado;
+import Formas_Configuraciones.jpFondo;
+import Formas_Configuraciones.jpGiroEmpresa;
+import Formas_Configuraciones.jpLocalidad;
+import Formas_Configuraciones.jpMunicipio;
+import Formas_Configuraciones.jpPais;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Toolkit;
 import java.sql.Connection;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
@@ -20,18 +34,87 @@ public class formaPrueba extends javax.swing.JFrame {
     /**
      * Creates new form formaPrueba
      */
-    
     Connection cn;
-    
+    panelPrueba pP;
+
     public formaPrueba() {
         initComponents();
         setLocationRelativeTo(null);
         cn = (new Conexion()).conectar();
-    }      
-  
-    
- 
-    
+         this.setExtendedState(MAXIMIZED_BOTH);
+    }
+
+    public void pintarPanel(String tipo) {
+        Dimension size = panelPrincipal.getSize();
+        //Tamaño Manual = 830, 570
+        switch (tipo) {
+            case "Pais":
+                jpPais jpP = new jpPais(cn);
+                jpP.setSize(size);
+                jpP.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpP);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                
+                break;
+            case "Estado":
+                jpEstado jpE = new jpEstado(cn);
+                jpE.setSize(size);
+                jpE.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpE);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+            case "Municipio":
+                jpMunicipio jpM = new jpMunicipio();
+                jpM.setSize(size);
+                jpM.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpM);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+            case "Localidad":
+                jpLocalidad jpL = new jpLocalidad();
+                jpL.setSize(size);
+                jpL.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpL);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+            case "Colonia/Ejido":
+                jpColoniaEjido jpCE = new jpColoniaEjido();
+                jpCE.setSize(size);
+                jpCE.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpCE);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+            case "Giro de Empresa":
+                jpGiroEmpresa jpGE = new jpGiroEmpresa();
+                jpGE.setSize(size);
+                jpGE.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpGE);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+            default:
+                jpFondo jpF = new jpFondo();
+                jpF.setSize(size);
+                jpF.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpF);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+        }
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -53,9 +136,7 @@ public class formaPrueba extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         jTree1 = new javax.swing.JTree();
         jLabel2 = new javax.swing.JLabel();
-        jPanel3 = new javax.swing.JPanel();
-        escritorio = new javax.swing.JDesktopPane();
-        jLabel1 = new javax.swing.JLabel();
+        panelPrincipal = new javax.swing.JPanel();
 
         jMenu1.setText("jMenu1");
 
@@ -114,7 +195,6 @@ public class formaPrueba extends javax.swing.JFrame {
         );
 
         panelArbol.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        panelArbol.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jScrollPane2.setOpaque(false);
 
@@ -242,28 +322,47 @@ public class formaPrueba extends javax.swing.JFrame {
         });
         jScrollPane2.setViewportView(jTree1);
 
-        panelArbol.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 190, 567));
-        panelArbol.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 190, 590));
+        panelPrincipal.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        jPanel3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/fondoGranos.jpg"))); // NOI18N
-
-        escritorio.setLayer(jLabel1, javax.swing.JLayeredPane.DEFAULT_LAYER);
-
-        javax.swing.GroupLayout escritorioLayout = new javax.swing.GroupLayout(escritorio);
-        escritorio.setLayout(escritorioLayout);
-        escritorioLayout.setHorizontalGroup(
-            escritorioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        javax.swing.GroupLayout panelPrincipalLayout = new javax.swing.GroupLayout(panelPrincipal);
+        panelPrincipal.setLayout(panelPrincipalLayout);
+        panelPrincipalLayout.setHorizontalGroup(
+            panelPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
-        escritorioLayout.setVerticalGroup(
-            escritorioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        panelPrincipalLayout.setVerticalGroup(
+            panelPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
 
-        jPanel3.add(escritorio, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 2, 844, 589));
+        javax.swing.GroupLayout panelArbolLayout = new javax.swing.GroupLayout(panelArbol);
+        panelArbol.setLayout(panelArbolLayout);
+        panelArbolLayout.setHorizontalGroup(
+            panelArbolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelArbolLayout.createSequentialGroup()
+                .addGroup(panelArbolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(panelArbolLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(10, 10, 10)
+                .addComponent(panelPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        panelArbolLayout.setVerticalGroup(
+            panelArbolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelArbolLayout.createSequentialGroup()
+                .addGap(10, 10, 10)
+                .addComponent(panelPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+            .addGroup(panelArbolLayout.createSequentialGroup()
+                .addGroup(panelArbolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 590, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(panelArbolLayout.createSequentialGroup()
+                        .addGap(17, 17, 17)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 550, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -275,8 +374,7 @@ public class formaPrueba extends javax.swing.JFrame {
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(panelArbol, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(10, 10, 10)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -285,9 +383,7 @@ public class formaPrueba extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(panelArbol, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(panelArbol, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -296,37 +392,44 @@ public class formaPrueba extends javax.swing.JFrame {
 
     private void jTree1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTree1MouseClicked
         // TODO add your handling code here:
-    TreePath tp; //jTree1.getPathForLocation(evt.getX(), evt.getY());
-    tp = jTree1.getSelectionPath();
-    int c = jTree1.getSelectionCount();
-    jTree1.getLastSelectedPathComponent();
-   
-    String compara = jTree1.getLastSelectedPathComponent()+"";
-    
-    if (tp != null){
-      System.out.println(jTree1.getLastSelectedPathComponent());//tp.toString()+ "COUNT: "+c);
-      if(compara.equals("Pais")){
+        TreePath tp; //jTree1.getPathForLocation(evt.getX(), evt.getY());
+        tp = jTree1.getSelectionPath();
+        int c = jTree1.getSelectionCount();
+        jTree1.getLastSelectedPathComponent();
+
+        String tipoPanel = jTree1.getLastSelectedPathComponent() + "";
+
+        if (tp != null) {
+            System.out.println(jTree1.getLastSelectedPathComponent());//tp.toString()+ "COUNT: "+c);
+            pintarPanel(tipoPanel);
+            }
+
+            /* if(compara.equals("Pais")){
           internalPrueba ip = new internalPrueba();
           escritorio.add(ip);
           ip.show();
-      }
-    }
-    else{
-      System.out.println("");}
-
+      }*/
+ /*JPanel panelPrueba = new JPanel();
+        JFrame f = new JFrame();
+        f.getContentPane().add(panelPrueba);
+             */
+            //  JPanel pP = new JPanel(panelPrueba);
+            //  panelPrincipal.add(panelPrueba,BorderLayout.CENTER);
         
+
+
     }//GEN-LAST:event_jTree1MouseClicked
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
         panelArbol.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        
+
         DefaultMutableTreeNode n1 = new DefaultMutableTreeNode("Hola");
-         DefaultMutableTreeNode n2 = new DefaultMutableTreeNode("Hola");
-        
+        DefaultMutableTreeNode n2 = new DefaultMutableTreeNode("Hola");
+
         n2 = new javax.swing.tree.DefaultMutableTreeNode("Calificación Cereza");
         n1.add(n2);
-        
+
         /*javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Configuracion 2");
         javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Datos Basicos 2");
         javax.swing.tree.DefaultMutableTreeNode treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Ubicación Geográfica 2");
@@ -455,6 +558,7 @@ public class formaPrueba extends javax.swing.JFrame {
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
         try {
+
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
@@ -481,20 +585,18 @@ public class formaPrueba extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JDesktopPane escritorio;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTree jTree1;
     private javax.swing.JPanel panelArbol;
+    public javax.swing.JPanel panelPrincipal;
     // End of variables declaration//GEN-END:variables
 }

@@ -24,6 +24,8 @@ public class jdPais extends javax.swing.JDialog {
     String pais, OIC, UE, ISO;
     Connection cn;
     jpPais jp;
+    jdEstado jdE;
+
     metodosDatosBasicos mdb;
 
     public jdPais(java.awt.Frame parent, boolean modal, String tipo, String paisC, Connection c) {
@@ -34,14 +36,13 @@ public class jdPais extends javax.swing.JDialog {
         this.tipo = tipo;
         this.paisC = paisC;
         cn = c;
-        
+
         rellenarCampos();
     }
 
     String idPais;
 
     public void rellenarCampos() {
-        JOptionPane.showMessageDialog(null,"TIPO: "+paisC);
         if (tipo.equals("2")) {
             mdb = new metodosDatosBasicos(cn);
             String[] campos = mdb.cargarDatosEditar(paisC).split(",");
@@ -55,29 +56,32 @@ public class jdPais extends javax.swing.JDialog {
     }
 
     public void tipoProceso() {
-        String sql = "";
+        try {
+            String sql = "";
 
-        mdb = new metodosDatosBasicos(cn);
+            mdb = new metodosDatosBasicos(cn);
 
-        pais = txtPais.getText();
-        OIC = txtOIC.getText();
-        UE = txtUE.getText();
-        ISO = txtISO.getText();
+            pais = txtPais.getText();
+            OIC = txtOIC.getText();
+            UE = txtUE.getText();
+            ISO = txtISO.getText();
 
-        if (tipo.equals("1")) {
-            //nuevoPais();
-            sql = "INSERT INTO pais VALUES(null,'" + pais + "', 1, 1,current_date()"
-                    + ", current_time(), 1, 1, 1, 1, '" + ISO + "', '" + UE + "', '" + OIC + "')";
-            mdb.insertarBasicos(sql);
-            jp.llenaTablaPais();
-            this.dispose();
-        } else {
-            //editarPais();
-            sql = "UPDATE pais SET  descripcion ='" + pais + "', ISO='" + ISO + "', UE='" + UE + "', OIC='" + OIC + "' where descripcion='" + pais + "' ";
-            mdb.actualizarBasicos(sql);
-            jp.llenaTablaPais();
-            this.dispose();
+            if (tipo.equals("1")) {
+                //nuevoPais();
+                sql = "INSERT INTO pais VALUES(null,'" + pais + "', 1, 1,current_date()"
+                        + ", current_time(), 1, 1, 1, 1, '" + ISO + "', '" + UE + "', '" + OIC + "')";
+                mdb.insertarBasicos(sql);
+                jp.llenaTablaPais();
+                this.dispose();
+            } else {
+                //editarPais();
+                sql = "UPDATE pais SET  descripcion ='" + pais + "', ISO='" + ISO + "', UE='" + UE + "', OIC='" + OIC + "' where descripcion='" + pais + "' ";
+                mdb.actualizarBasicos(sql);
+                jp.llenaTablaPais();
+                this.dispose();
 
+            }
+        } catch (Exception e) {
         }
     }
 

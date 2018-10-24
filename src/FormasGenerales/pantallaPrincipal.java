@@ -19,8 +19,10 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
@@ -29,19 +31,20 @@ import javax.swing.tree.TreePath;
  *
  * @author Carlos Valdez
  */
-public class formaPrueba extends javax.swing.JFrame {
+public class pantallaPrincipal extends javax.swing.JFrame {
 
     /**
-     * Creates new form formaPrueba
+     * Creates new form pantallaPrincipal
      */
     Connection cn;
     panelPrueba pP;
 
-    public formaPrueba() {
+    public pantallaPrincipal() {
         initComponents();
         setLocationRelativeTo(null);
         cn = (new Conexion()).conectar();
-         this.setExtendedState(MAXIMIZED_BOTH);
+        this.setExtendedState(MAXIMIZED_BOTH);
+        pintarPanel("fondo");
     }
 
     public void pintarPanel(String tipo) {
@@ -56,7 +59,8 @@ public class formaPrueba extends javax.swing.JFrame {
                 panelPrincipal.add(jpP);
                 panelPrincipal.revalidate();
                 panelPrincipal.repaint();
-                
+
+                //jpP.fprin=this;
                 break;
             case "Estado":
                 jpEstado jpE = new jpEstado(cn);
@@ -68,7 +72,7 @@ public class formaPrueba extends javax.swing.JFrame {
                 panelPrincipal.repaint();
                 break;
             case "Municipio":
-                jpMunicipio jpM = new jpMunicipio();
+                jpMunicipio jpM = new jpMunicipio(cn);
                 jpM.setSize(size);
                 jpM.setLocation(0, 0);
                 panelPrincipal.removeAll();
@@ -135,7 +139,6 @@ public class formaPrueba extends javax.swing.JFrame {
         panelArbol = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTree1 = new javax.swing.JTree();
-        jLabel2 = new javax.swing.JLabel();
         panelPrincipal = new javax.swing.JPanel();
 
         jMenu1.setText("jMenu1");
@@ -178,7 +181,7 @@ public class formaPrueba extends javax.swing.JFrame {
                 .addComponent(jButton6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton7)
-                .addContainerGap(566, Short.MAX_VALUE))
+                .addContainerGap(576, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -186,11 +189,11 @@ public class formaPrueba extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 52, Short.MAX_VALUE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, 52, Short.MAX_VALUE)
-                    .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, 52, Short.MAX_VALUE)
-                    .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, 52, Short.MAX_VALUE)
-                    .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, 52, Short.MAX_VALUE)
-                    .addComponent(jButton7, javax.swing.GroupLayout.DEFAULT_SIZE, 52, Short.MAX_VALUE))
+                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -320,6 +323,11 @@ public class formaPrueba extends javax.swing.JFrame {
                 jTree1MouseClicked(evt);
             }
         });
+        jTree1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTree1KeyReleased(evt);
+            }
+        });
         jScrollPane2.setViewportView(jTree1);
 
         panelPrincipal.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -332,7 +340,7 @@ public class formaPrueba extends javax.swing.JFrame {
         );
         panelPrincipalLayout.setVerticalGroup(
             panelPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 587, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout panelArbolLayout = new javax.swing.GroupLayout(panelArbol);
@@ -340,28 +348,19 @@ public class formaPrueba extends javax.swing.JFrame {
         panelArbolLayout.setHorizontalGroup(
             panelArbolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelArbolLayout.createSequentialGroup()
-                .addGroup(panelArbolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(panelArbolLayout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(10, 10, 10)
-                .addComponent(panelPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(10, 10, 10)
+                .addComponent(panelPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panelArbolLayout.setVerticalGroup(
             panelArbolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelArbolLayout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addComponent(panelPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGap(17, 17, 17)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 550, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(panelArbolLayout.createSequentialGroup()
-                .addGroup(panelArbolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 590, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(panelArbolLayout.createSequentialGroup()
-                        .addGap(17, 17, 17)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 550, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(10, 10, 10)
+                .addComponent(panelPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -369,22 +368,18 @@ public class formaPrueba extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(10, 10, 10)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(panelArbol, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(10, 10, 10)))
-                .addContainerGap())
+                    .addComponent(panelArbol, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(11, 11, 11)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(panelArbol, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGap(11, 11, 11)
+                .addComponent(panelArbol, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -394,17 +389,15 @@ public class formaPrueba extends javax.swing.JFrame {
         // TODO add your handling code here:
         TreePath tp; //jTree1.getPathForLocation(evt.getX(), evt.getY());
         tp = jTree1.getSelectionPath();
-        int c = jTree1.getSelectionCount();
-        jTree1.getLastSelectedPathComponent();
 
         String tipoPanel = jTree1.getLastSelectedPathComponent() + "";
 
         if (tp != null) {
             System.out.println(jTree1.getLastSelectedPathComponent());//tp.toString()+ "COUNT: "+c);
             pintarPanel(tipoPanel);
-            }
+        }
 
-            /* if(compara.equals("Pais")){
+        /* if(compara.equals("Pais")){
           internalPrueba ip = new internalPrueba();
           escritorio.add(ip);
           ip.show();
@@ -412,11 +405,9 @@ public class formaPrueba extends javax.swing.JFrame {
  /*JPanel panelPrueba = new JPanel();
         JFrame f = new JFrame();
         f.getContentPane().add(panelPrueba);
-             */
-            //  JPanel pP = new JPanel(panelPrueba);
-            //  panelPrincipal.add(panelPrueba,BorderLayout.CENTER);
-        
-
+         */
+        //  JPanel pP = new JPanel(panelPrueba);
+        //  panelPrincipal.add(panelPrueba,BorderLayout.CENTER);
 
     }//GEN-LAST:event_jTree1MouseClicked
 
@@ -548,6 +539,22 @@ public class formaPrueba extends javax.swing.JFrame {
         jTree1.setModel(new javax.swing.tree.DefaultTreeModel(n1));
     }//GEN-LAST:event_jButton3ActionPerformed
 
+    private void jTree1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTree1KeyReleased
+        // TODO add your handling code here:
+        TreePath tp; //jTree1.getPathForLocation(evt.getX(), evt.getY());
+        tp = jTree1.getSelectionPath();
+
+        String tipoPanel = jTree1.getLastSelectedPathComponent() + "";
+
+        if (tp != null) {
+           char car = (char) evt.getKeyCode();
+            if (car == evt.VK_ENTER) {
+                pintarPanel(tipoPanel);
+                //this.botonIngresarActionPerformed(null);
+            }
+        }
+    }//GEN-LAST:event_jTree1KeyReleased
+
     /**
      * @param args the command line arguments
      */
@@ -566,20 +573,21 @@ public class formaPrueba extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(formaPrueba.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(pantallaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(formaPrueba.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(pantallaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(formaPrueba.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(pantallaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(formaPrueba.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(pantallaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new formaPrueba().setVisible(true);
+                new pantallaPrincipal().setVisible(true);
             }
         });
     }
@@ -591,7 +599,6 @@ public class formaPrueba extends javax.swing.JFrame {
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane2;

@@ -5,6 +5,7 @@
  */
 package Formas_Configuraciones;
 
+import FormasGenerales.pantallaPrincipal;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -23,6 +24,7 @@ public class jpPais extends javax.swing.JPanel {
     /**
      * Creates new form jpPais
      */
+    pantallaPrincipal fprin;
     jdPais jdP;
     metodosDatosBasicos mdb;
     DefaultTableModel modelo;
@@ -31,9 +33,10 @@ public class jpPais extends javax.swing.JPanel {
     public jpPais(Connection c) {
         initComponents();
         cn = c;
+
         modelo = (DefaultTableModel) tablaPais.getModel();
         tablaPais.setRowSorter(new TableRowSorter(modelo));
-        
+
         llenaTablaPais();
     }
 
@@ -42,19 +45,18 @@ public class jpPais extends javax.swing.JPanel {
         mdb = new metodosDatosBasicos(cn);
         mdb.cargarInformacion(modelo);
     }
-    
+
     public void busquedaPais() {
         String tipoP = "";
         String tipoOIC = "";
         String tipoUE = "";
         String tipoISO = "";
         String situacion = "1";
+        String where = "";
 
         situacion = comboSituacionPais.getSelectedItem() + "";
-        if(situacion.equals("Inactivo")){
-            situacion="2";
-        }else if(situacion.equals("Todos")){
-            situacion="3";
+        if (situacion.equals("Inactivo")) {
+            situacion = "2";
         }
 
         if (txtBusquedaP.getText().length() > 0) {
@@ -69,8 +71,13 @@ public class jpPais extends javax.swing.JPanel {
         if (txtBusquedaISO.getText().length() > 0) {
             tipoISO = "AND ISO like '" + txtBusquedaISO.getText() + "%'";
         }
-
-        String sql = "SELECT descripcion, OIC, UE, ISO from pais where ID_Situacion = "+situacion+" " + tipoP + " " + tipoOIC + " " + tipoUE + " " + tipoISO;
+        String sql;
+        System.out.println("SITUACION: " + situacion);
+        if (situacion.equals("Todos")) {
+            sql = "SELECT descripcion, OIC, UE, ISO from pais " + tipoP + " " + tipoOIC + " " + tipoUE + " " + tipoISO;
+        } else {
+            sql = "SELECT descripcion, OIC, UE, ISO from pais WHERE ID_SItuacion=" + situacion + " " + tipoP + " " + tipoOIC + " " + tipoUE + " " + tipoISO;
+        }
         //System.out.println(sql);
         limpiar(tablaPais);
         mdb.busquedaBasicos(modelo, sql);
@@ -242,8 +249,18 @@ public class jpPais extends javax.swing.JPanel {
         });
 
         jButton4.setText("Desactivar");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         jButton5.setText("Cerrar");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
@@ -293,7 +310,7 @@ public class jpPais extends javax.swing.JPanel {
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 113, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -336,7 +353,7 @@ public class jpPais extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE)
+                .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, 285, Short.MAX_VALUE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -368,7 +385,6 @@ public class jpPais extends javax.swing.JPanel {
             jdP.jp = this;
             jdP.setVisible(true);
         }
-
     }//GEN-LAST:event_tablaPaisMouseClicked
 
     private void txtBusquedaPKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBusquedaPKeyReleased
@@ -396,27 +412,44 @@ public class jpPais extends javax.swing.JPanel {
         busquedaPais();
     }//GEN-LAST:event_comboSituacionPaisItemStateChanged
 
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        // TODO add your handling code here:
+        this.removeAll();
+        this.revalidate();
+        this.repaint();
+        /*fprin.panelPrincipal.removeAll();
+        fprin.panelPrincipal.revalidate();
+        fprin.panelPrincipal.repaint();*/
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+        String sql = "UPDATE pais SET ID_Situacion=2 where descripcion='" + pais + "'";
+        mdb.actualizarBasicos(sql);
+        llenaTablaPais();
+    }//GEN-LAST:event_jButton4ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> comboSituacionPais;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
-    private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel6;
-    private javax.swing.JPanel jPanel7;
-    private javax.swing.JPanel jPanel8;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable tablaPais;
-    private javax.swing.JTextField txtBusquedaISO;
-    private javax.swing.JTextField txtBusquedaOIC;
-    private javax.swing.JTextField txtBusquedaP;
-    private javax.swing.JTextField txtBusquedaUE;
+    public javax.swing.JButton jButton2;
+    public javax.swing.JButton jButton3;
+    public javax.swing.JButton jButton4;
+    public javax.swing.JButton jButton5;
+    public javax.swing.JLabel jLabel10;
+    public javax.swing.JLabel jLabel6;
+    public javax.swing.JLabel jLabel7;
+    public javax.swing.JLabel jLabel8;
+    public javax.swing.JLabel jLabel9;
+    public javax.swing.JPanel jPanel5;
+    public javax.swing.JPanel jPanel6;
+    public javax.swing.JPanel jPanel7;
+    public javax.swing.JPanel jPanel8;
+    public javax.swing.JScrollPane jScrollPane2;
+    public javax.swing.JTable tablaPais;
+    public javax.swing.JTextField txtBusquedaISO;
+    public javax.swing.JTextField txtBusquedaOIC;
+    public javax.swing.JTextField txtBusquedaP;
+    public javax.swing.JTextField txtBusquedaUE;
     // End of variables declaration//GEN-END:variables
 }

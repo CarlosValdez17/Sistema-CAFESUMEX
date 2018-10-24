@@ -5,7 +5,10 @@
  */
 package Formas_Configuraciones;
 
+import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.Connection;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -18,10 +21,61 @@ public class jpEstado extends javax.swing.JPanel {
      */
     jdEstado jdE;
     Connection cn;
-    
+    metodosDatosBasicos mdb;
+    DefaultTableModel modelo;
+
     public jpEstado(Connection c) {
         initComponents();
-        cn=c;
+
+        cn = c;
+        mdb = new metodosDatosBasicos(cn);
+        modelo = (DefaultTableModel) tablaEstado.getModel();
+
+        llenaTablaEstado();
+    }
+
+    public void llenaTablaEstado() {
+        limpiar(tablaEstado);
+        String sql = "select e.descripcion, p.descripcion from estado e inner join pais p on (e.ID_Pais=p.ID) where e.ID_Situacion=1";
+        mdb.cargarInformacion2(modelo, 2, sql);
+    }
+
+    public void busquedaEstado() {
+        String tipoP = "";
+        String tipoE = "";
+        String situacion;
+
+        situacion = comboSituacion.getSelectedItem() + "";
+        if (situacion.equals("Inactivo")) {
+            situacion = "2";
+        } else if (situacion.equals("Activo")) {
+            situacion = "1";
+        }
+
+        if (txtEstado.getText().length() > 0) {
+            tipoE = " AND e.descripcion like '" + txtEstado.getText() + "%'";
+        }
+        if (txtPais.getText().length() > 0) {
+            tipoP = " AND p.descripcion like '" + txtPais.getText() + "%'";
+        }
+
+        String sql;
+        System.out.println("SITUACION: " + situacion);
+        if (situacion.equals("Todos")) {
+            sql = "select e.descripcion, p.descripcion from estado e inner join pais p on (e.ID_Pais=p.ID)";
+        } else {
+            sql = "select e.descripcion, p.descripcion from estado e inner join pais p on (e.ID_Pais=p.ID) where e.ID_Situacion=" + situacion + tipoE + tipoP;
+        }
+        System.out.println(sql);
+        limpiar(tablaEstado);
+        mdb.cargarInformacion2(modelo, 2, sql);
+
+    }
+
+    private void limpiar(JTable tabla) {
+        while (tabla.getRowCount() > 0) {
+            ((DefaultTableModel) tabla.getModel()).removeRow(0);
+        }
     }
 
     /**
@@ -36,15 +90,15 @@ public class jpEstado extends javax.swing.JPanel {
         jPanel5 = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
-        jTextField5 = new javax.swing.JTextField();
-        jTextField6 = new javax.swing.JTextField();
+        txtEstado = new javax.swing.JTextField();
+        txtPais = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
         jPanel7 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
+        tablaEstado = new javax.swing.JTable();
         jPanel8 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
-        jComboBox2 = new javax.swing.JComboBox<>();
+        comboSituacion = new javax.swing.JComboBox<>();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
@@ -57,6 +111,18 @@ public class jpEstado extends javax.swing.JPanel {
 
         jLabel6.setText("Estado");
 
+        txtEstado.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtEstadoKeyReleased(evt);
+            }
+        });
+
+        txtPais.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtPaisKeyReleased(evt);
+            }
+        });
+
         jLabel7.setText("Pais");
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
@@ -67,11 +133,11 @@ public class jpEstado extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel6)
-                    .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel7)
-                    .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtPais, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
@@ -82,15 +148,15 @@ public class jpEstado extends javax.swing.JPanel {
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addComponent(jLabel7)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(txtPais, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addComponent(jLabel6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(txtEstado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        tablaEstado.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -106,15 +172,25 @@ public class jpEstado extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane2.setViewportView(jTable2);
-        if (jTable2.getColumnModel().getColumnCount() > 0) {
-            jTable2.getColumnModel().getColumn(0).setResizable(false);
-            jTable2.getColumnModel().getColumn(1).setResizable(false);
+        tablaEstado.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tablaEstadoMouseClicked(evt);
+            }
+        });
+        jScrollPane2.setViewportView(tablaEstado);
+        if (tablaEstado.getColumnModel().getColumnCount() > 0) {
+            tablaEstado.getColumnModel().getColumn(0).setResizable(false);
+            tablaEstado.getColumnModel().getColumn(1).setResizable(false);
         }
 
         jLabel10.setText("Situacion");
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        comboSituacion.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Activo", "Inactivo", "Todos" }));
+        comboSituacion.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                comboSituacionItemStateChanged(evt);
+            }
+        });
 
         jButton2.setText("Nuevo");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -124,8 +200,18 @@ public class jpEstado extends javax.swing.JPanel {
         });
 
         jButton3.setText("Editar");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jButton4.setText("Desactivar");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         jButton1.setText("Cerrar");
 
@@ -137,7 +223,7 @@ public class jpEstado extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jLabel10)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(comboSituacion, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 491, Short.MAX_VALUE)
                 .addComponent(jButton2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -156,7 +242,7 @@ public class jpEstado extends javax.swing.JPanel {
                     .addComponent(jButton2)
                     .addComponent(jButton3)
                     .addComponent(jButton4)
-                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(comboSituacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel10)
                     .addComponent(jButton1))
                 .addContainerGap())
@@ -227,18 +313,61 @@ public class jpEstado extends javax.swing.JPanel {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        jdE = new jdEstado(null, true, "1", cn);
+        jdE = new jdEstado(null, true, "1", estado, cn);
         jdE.jpE = this;
         jdE.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
+    String estado;
+    private void tablaEstadoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaEstadoMouseClicked
+        // TODO add your handling code here:
+        estado = modelo.getValueAt(tablaEstado.getSelectedRow(), 0) + "";  //Estado String
+
+        if (evt.getClickCount() == 1) {
+            System.out.println("1 Clic");
+        }
+        if (evt.getClickCount() == 2) {
+            jdE = new jdEstado(null, true, "2", estado, cn);
+            jdE.jpE = this;
+            jdE.setVisible(true);
+        }
+    }//GEN-LAST:event_tablaEstadoMouseClicked
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        jdE = new jdEstado(null, true, "2", estado, cn);
+        jdE.jpE = this;
+        jdE.setVisible(true);
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void txtEstadoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEstadoKeyReleased
+        // TODO add your handling code here:
+        busquedaEstado();
+    }//GEN-LAST:event_txtEstadoKeyReleased
+
+    private void txtPaisKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPaisKeyReleased
+        // TODO add your handling code here:
+        busquedaEstado();
+    }//GEN-LAST:event_txtPaisKeyReleased
+
+    private void comboSituacionItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionItemStateChanged
+        // TODO add your handling code here:
+        busquedaEstado();
+    }//GEN-LAST:event_comboSituacionItemStateChanged
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+        String sql = "UPDATE estado SET ID_Situacion=2 where descripcion='" + estado + "'";
+        mdb.actualizarBasicos(sql);
+        llenaTablaEstado();
+    }//GEN-LAST:event_jButton4ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> comboSituacion;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
-    private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
@@ -247,8 +376,8 @@ public class jpEstado extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable2;
-    private javax.swing.JTextField jTextField5;
-    private javax.swing.JTextField jTextField6;
+    private javax.swing.JTable tablaEstado;
+    private javax.swing.JTextField txtEstado;
+    private javax.swing.JTextField txtPais;
     // End of variables declaration//GEN-END:variables
 }

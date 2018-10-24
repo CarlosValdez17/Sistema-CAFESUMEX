@@ -26,7 +26,7 @@ public class Conexion{
            Class.forName("com.mysql.jdbc.Driver");
            String url = "jdbc:mysql://localhost/fl_fincalab?autoReconnect=true&useSSL=false";
            con = DriverManager.getConnection(url, "root", "");
-           JOptionPane.showMessageDialog(null,"Conexión establecida");
+           //JOptionPane.showMessageDialog(null,"Conexión establecida");
         }
        
         catch(Exception ex){

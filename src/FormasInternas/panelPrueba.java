@@ -5,7 +5,7 @@
  */
 package FormasInternas;
 
-import FormasGenerales.formaPrueba;
+import FormasGenerales.pantallaPrincipal;
 import java.awt.LayoutManager;
 import javax.swing.JPanel;
 
@@ -18,7 +18,7 @@ public class panelPrueba extends javax.swing.JPanel {
     /**
      * Creates new form panelPrueba
      */
-    formaPrueba fp;
+    pantallaPrincipal fp;
     public JPanel panel1;
     public panelPrueba() {
         this.panel1 = new JPanel((LayoutManager) jPanel1);

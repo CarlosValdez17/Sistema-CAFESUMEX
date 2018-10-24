@@ -26,14 +26,13 @@ public class metodosDatosBasicos {
 
     public void insertarBasicos(String sql) {
         try {
-            PreparedStatement cmd = cn.prepareCall(sql);
             System.out.println(sql);
+            PreparedStatement cmd = cn.prepareCall(sql);
             cmd.execute();
-
             cmd.close();
             JOptionPane.showMessageDialog(null, "Inserción Exitosa");
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Error al Insertar");
+            JOptionPane.showMessageDialog(null, "Error al Insertar\n" + ex);
         }
     }
 
@@ -42,6 +41,7 @@ public class metodosDatosBasicos {
             PreparedStatement cmd = cn.prepareCall(sql);
             cmd.execute();
             cmd.close();
+            JOptionPane.showMessageDialog(null, "Dato Actualizado");
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Error al Actualizar");
         }
@@ -50,8 +50,7 @@ public class metodosDatosBasicos {
     public void cargarInformacion(DefaultTableModel modelo) {
 
         try {
-            String sql = "SELECT descripcion, OIC, UE, ISO FROM pais";
-            System.out.println(sql);
+            String sql = "SELECT descripcion, OIC, UE, ISO FROM pais where ID_Situacion=1";
             CallableStatement cmd = cn.prepareCall(sql);
             ResultSet rs = cmd.executeQuery();
 
@@ -65,6 +64,27 @@ public class metodosDatosBasicos {
             cmd.close();
         } catch (Exception ex) {
             //JOptionPane.showMessageDialog(null,"Excepcion - "+ ex);
+        }
+
+    }
+
+    public void cargarInformacion2(DefaultTableModel modelo, int tamaño, String sql) {
+        try {
+            //System.out.println(sql);
+            CallableStatement cmd = cn.prepareCall(sql);
+            ResultSet rs = cmd.executeQuery();
+
+            while (rs.next()) {
+                Object[] datos = new Object[10];
+                for (int i = 0; i < tamaño; i++) {
+                    datos[i] = rs.getString(i + 1);
+                    System.out.println(datos[i]);
+                }
+                modelo.addRow(datos);
+            }
+            cmd.close();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Excepcion - Error Cargar Info 2" + ex);
         }
 
     }
@@ -89,18 +109,18 @@ public class metodosDatosBasicos {
         return null;
     }
 
-    public String cargarCombos(String tipo) {
+    public String cargarCombos(String tipo, String where) {
         try {
-            String sql = "SELECT id,descripcion from " + tipo;
+            String sql = "SELECT descripcion from " + tipo + where;
             CallableStatement cmd = cn.prepareCall(sql);
             ResultSet rs = cmd.executeQuery();
             String a = "";
             while (rs.next()) {
-                Object[] datos = new Object[3];
-                for (int i = 0; i < 2; i++) {
+                Object[] datos = new Object[2];
+                for (int i = 0; i < 1; i++) {
                     datos[i] = rs.getString(i + 1);
                 }
-                a += datos[0] + " " + datos[1] + ",";
+                a += datos[0] + ",";
             }
             cmd.close();
             return a;
@@ -110,16 +130,31 @@ public class metodosDatosBasicos {
         return null;
     }
 
+    public String devuelveIdPais(String pais, String tipo) {
+        try {
+            String sql = "SELECT id from " + tipo + " where descripcion= '" + pais + "' ";
+            CallableStatement cmd = cn.prepareCall(sql);
+            ResultSet rs = cmd.executeQuery();
+            String id = "";
+            if (rs.next()) {
+                id = rs.getString("ID");
+            }
+            cmd.close();
+            return id;
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Error - Devolver Id Pais \n" + ex);
+        }
+        return null;
+    }
+
     public void busquedaBasicos(DefaultTableModel modelo, String sql) {
         try {
-            System.out.println(sql);
             CallableStatement cmd = cn.prepareCall(sql);
             ResultSet rs = cmd.executeQuery();
             while (rs.next()) {
                 Object[] datos = new Object[4];
                 for (int i = 0; i <= 3; i++) {
                     datos[i] = rs.getString(i + 1);
-                    System.out.println(i + " " + datos[i]);
                 }
                 modelo.addRow(datos);
             }

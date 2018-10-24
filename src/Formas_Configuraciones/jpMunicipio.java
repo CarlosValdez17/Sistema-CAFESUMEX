@@ -5,6 +5,11 @@
  */
 package Formas_Configuraciones;
 
+import Metodos_Configuraciones.metodosDatosBasicos;
+import java.sql.Connection;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author Carlos Valdez
@@ -14,8 +19,36 @@ public class jpMunicipio extends javax.swing.JPanel {
     /**
      * Creates new form jpMunicipio
      */
-    public jpMunicipio() {
+    metodosDatosBasicos mdb;
+    Connection cn;
+    DefaultTableModel modelo;
+    jdMunicipio jdM;
+
+    public jpMunicipio(Connection c) {
         initComponents();
+
+        cn = c;
+        mdb = new metodosDatosBasicos(cn);
+        modelo = (DefaultTableModel) tablaMunicipios.getModel();
+
+        llenaTablaMunicipios();
+
+    }
+
+    public void llenaTablaMunicipios() {
+        limpiar(tablaMunicipios);
+        String sql = "select m.Descripcion,e.descripcion, p.descripcion \n"
+                + "from municipio m \n"
+                + "inner join estado e  on (m.ID_Estado=e.ID) \n"
+                + "inner join pais p on (e.ID_Pais=p.ID) \n"
+                + "where e.ID_Situacion=1  ";
+        mdb.cargarInformacion2(modelo, 3, sql);
+    }
+
+    private void limpiar(JTable tabla) {
+        while (tabla.getRowCount() > 0) {
+            ((DefaultTableModel) tabla.getModel()).removeRow(0);
+        }
     }
 
     /**
@@ -37,7 +70,7 @@ public class jpMunicipio extends javax.swing.JPanel {
         jLabel8 = new javax.swing.JLabel();
         jPanel7 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
+        tablaMunicipios = new javax.swing.JTable();
         jPanel8 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
         jComboBox2 = new javax.swing.JComboBox<>();
@@ -94,7 +127,7 @@ public class jpMunicipio extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        tablaMunicipios.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -110,11 +143,16 @@ public class jpMunicipio extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane2.setViewportView(jTable2);
-        if (jTable2.getColumnModel().getColumnCount() > 0) {
-            jTable2.getColumnModel().getColumn(0).setResizable(false);
-            jTable2.getColumnModel().getColumn(1).setResizable(false);
-            jTable2.getColumnModel().getColumn(2).setResizable(false);
+        tablaMunicipios.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tablaMunicipiosMouseClicked(evt);
+            }
+        });
+        jScrollPane2.setViewportView(tablaMunicipios);
+        if (tablaMunicipios.getColumnModel().getColumnCount() > 0) {
+            tablaMunicipios.getColumnModel().getColumn(0).setResizable(false);
+            tablaMunicipios.getColumnModel().getColumn(1).setResizable(false);
+            tablaMunicipios.getColumnModel().getColumn(2).setResizable(false);
         }
 
         jLabel10.setText("Situacion");
@@ -129,6 +167,11 @@ public class jpMunicipio extends javax.swing.JPanel {
         });
 
         jButton3.setText("Editar");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jButton4.setText("Desactivar");
 
@@ -232,9 +275,32 @@ public class jpMunicipio extends javax.swing.JPanel {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        //        nuevoPais np = new nuevoPais(null,true);
-        //        np.setVisible(true);
+        jdM = new jdMunicipio(null, true, "1", municipio, pais, cn);
+        jdM.jpM = this;
+        jdM.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        jdM = new jdMunicipio(null, true, "2", municipio, pais, cn);
+        jdM.jpM = this;
+        jdM.setVisible(true);
+    }//GEN-LAST:event_jButton3ActionPerformed
+    String municipio, pais;
+    private void tablaMunicipiosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaMunicipiosMouseClicked
+        // TODO add your handling code here:
+        municipio = modelo.getValueAt(tablaMunicipios.getSelectedRow(), 0) + "";  //Estado String
+        pais = modelo.getValueAt(tablaMunicipios.getSelectedRow(), 2) + "";
+
+        if (evt.getClickCount() == 1) {
+            System.out.println("1 Clic");
+        }
+        if (evt.getClickCount() == 2) {
+            jdM = new jdMunicipio(null, true, "2", municipio, pais, cn);
+            jdM.jpM = this;
+            jdM.setVisible(true);
+        }
+    }//GEN-LAST:event_tablaMunicipiosMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -252,9 +318,9 @@ public class jpMunicipio extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable2;
     private javax.swing.JTextField jTextField5;
     private javax.swing.JTextField jTextField6;
     private javax.swing.JTextField jTextField7;
+    private javax.swing.JTable tablaMunicipios;
     // End of variables declaration//GEN-END:variables
 }

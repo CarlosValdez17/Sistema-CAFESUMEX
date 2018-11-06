@@ -8,13 +8,54 @@ package FormasGenerales;
 import Conexion.Conexion;
 import FormasInternas.internalPrueba;
 import FormasInternas.panelPrueba;
-import Formas_Configuraciones.jpColoniaEjido;
-import Formas_Configuraciones.jpEstado;
-import Formas_Configuraciones.jpFondo;
-import Formas_Configuraciones.jpGiroEmpresa;
-import Formas_Configuraciones.jpLocalidad;
-import Formas_Configuraciones.jpMunicipio;
-import Formas_Configuraciones.jpPais;
+import Formas_Configuraciones_BeneficioHumedo.jpActividadesBH;
+import Formas_Configuraciones_BeneficioHumedo.jpAreaAlmacen;
+import Formas_Configuraciones_BeneficioHumedo.jpClima;
+import Formas_Configuraciones_BeneficioHumedo.jpSobrante;
+import Formas_Configuraciones_BeneficioHumedo.jpVehiculo;
+import Formas_Configuraciones_DatosBasicos.jpColoniaEjido;
+import Formas_Configuraciones_DatosBasicos.jpEstado;
+import Formas_Configuraciones_DatosBasicos.jpFondo;
+import Formas_Configuraciones_DatosBasicos.jpGiroEmpresa;
+import Formas_Configuraciones_DatosBasicos.jpLocalidad;
+import Formas_Configuraciones_DatosBasicos.jpMunicipio;
+import Formas_Configuraciones_DatosBasicos.jpPais;
+import Formas_Configuraciones_FincaCert.Certificados.jpCertificado;
+import Formas_Configuraciones_FincaCert.Certificados.jpCertificador;
+import Formas_Configuraciones_FincaCert.jpActividadesParcela;
+import Formas_Configuraciones_FincaCert.jpCalidadSombra;
+import Formas_Configuraciones_FincaCert.jpCultivos;
+import Formas_Configuraciones_FincaCert.jpDiseñoPlantacion;
+import Formas_Configuraciones_FincaCert.jpEnfermedadPlaga;
+import Formas_Configuraciones_FincaCert.jpFauna;
+import Formas_Configuraciones_FincaCert.jpFertilizante;
+import Formas_Configuraciones_FincaCert.jpFlora;
+import Formas_Configuraciones_FincaCert.jpHerbicida;
+import Formas_Configuraciones_FincaCert.jpSistemaProduccion;
+import Formas_Configuraciones_FincaCert.jpSuelos;
+import Formas_Configuraciones_FincaCert.Certificados.jpTipoCertificacion;
+import Formas_Configuraciones_FincaCert.jpCategoriaDeArchivos;
+import Formas_Configuraciones_FincaCert.jpControlMaleza;
+import Formas_Configuraciones_FincaCert.jpMaquinariaHerramienta;
+import Formas_Configuraciones_FincaCert.jpMotivoPlantacion;
+import Formas_Configuraciones_FincaCert.jpTipoAccion;
+import Formas_Configuraciones_FincaCert.jpTipoPoda;
+import Formas_Configuraciones_FincaCert.jpTipoSombra;
+import Formas_Configuraciones_FincaCert.jpVariedadCafe;
+import Formas_Configuraciones_Idiomas.jpIdioma;
+import Formas_Configuraciones_Recepcion.jpCalificacionCereza;
+import Formas_Configuraciones_Recepcion.jpCalificacionSeco;
+import Formas_Configuraciones_Recepcion.jpEvaluaciones;
+import Formas_Configuraciones_Recepcion.jpFactorForma;
+import Formas_Configuraciones_Recepcion.jpFormaCafe;
+import Formas_Configuraciones_Recepcion.jpMaximoTamañoPromedio;
+import Formas_Configuraciones_Recepcion.jpProcesoCafe;
+import Formas_Configuraciones_Recepcion.jpReglasEvaluacion;
+import Formas_Configuraciones_Recepcion.jpTipoEvaluacion;
+import Formas_Configuraciones_Seguridad.jpPerfiles;
+import Formas_Configuraciones_Sociedades.jpPuestos;
+import Formas_Configuraciones_Sociedades.jpRetenciones;
+import Formas_Personas.jpPersonas;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -38,13 +79,16 @@ public class pantallaPrincipal extends javax.swing.JFrame {
      */
     Connection cn;
     panelPrueba pP;
+    jpTipoSombra jpTS;
 
     public pantallaPrincipal() {
         initComponents();
         setLocationRelativeTo(null);
+        //cn=c;
         cn = (new Conexion()).conectar();
         this.setExtendedState(MAXIMIZED_BOTH);
         pintarPanel("fondo");
+
     }
 
     public void pintarPanel(String tipo) {
@@ -81,7 +125,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 panelPrincipal.repaint();
                 break;
             case "Localidad":
-                jpLocalidad jpL = new jpLocalidad();
+                jpLocalidad jpL = new jpLocalidad(cn);
                 jpL.setSize(size);
                 jpL.setLocation(0, 0);
                 panelPrincipal.removeAll();
@@ -90,7 +134,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 panelPrincipal.repaint();
                 break;
             case "Colonia/Ejido":
-                jpColoniaEjido jpCE = new jpColoniaEjido();
+                jpColoniaEjido jpCE = new jpColoniaEjido(cn);
                 jpCE.setSize(size);
                 jpCE.setLocation(0, 0);
                 panelPrincipal.removeAll();
@@ -99,7 +143,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 panelPrincipal.repaint();
                 break;
             case "Giro de Empresa":
-                jpGiroEmpresa jpGE = new jpGiroEmpresa();
+                jpGiroEmpresa jpGE = new jpGiroEmpresa(cn);
                 jpGE.setSize(size);
                 jpGE.setLocation(0, 0);
                 panelPrincipal.removeAll();
@@ -107,7 +151,378 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 panelPrincipal.revalidate();
                 panelPrincipal.repaint();
                 break;
-            default:
+            case "Tipo de Sombra":
+                jpTipoSombra jpTS = new jpTipoSombra(cn);
+                jpTS.setSize(size);
+                jpTS.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpTS);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+            case "Calidad de Sombra":
+                jpCalidadSombra jpCS = new jpCalidadSombra(cn);
+                jpCS.setSize(size);
+                jpCS.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpCS);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+            case "Variedad de Café":
+                jpVariedadCafe jpV = new jpVariedadCafe(cn);
+                jpV.setSize(size);
+                jpV.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpV);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+            case "Cultivos":
+                jpCultivos jpC = new jpCultivos(cn);
+                jpC.setSize(size);
+                jpC.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpC);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+            case "Diseño Plantación":
+                jpDiseñoPlantacion jpDP = new jpDiseñoPlantacion(cn);
+                jpDP.setSize(size);
+                jpDP.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpDP);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+            case "Herbicida":
+                jpHerbicida jpH = new jpHerbicida(cn);
+                jpH.setSize(size);
+                jpH.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpH);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+            case "Enfermedad/Plaga":
+                jpEnfermedadPlaga jpEP = new jpEnfermedadPlaga(cn);
+                jpEP.setSize(size);
+                jpEP.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpEP);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+            case "Fertilizante":
+                jpFertilizante jpFe = new jpFertilizante(cn);
+                jpFe.setSize(size);
+                jpFe.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpFe);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+            case "Sistemas de Producción":
+                jpSistemaProduccion jpSP = new jpSistemaProduccion(cn);
+                jpSP.setSize(size);
+                jpSP.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpSP);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+            case "Tipos de Evaluación":
+                jpTipoEvaluacion jpTE = new jpTipoEvaluacion(cn);
+                jpTE.setSize(size);
+                jpTE.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpTE);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+            case "Actividades de Parcela":
+                jpActividadesParcela jpAP = new jpActividadesParcela(cn);
+                jpAP.setSize(size);
+                jpAP.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpAP);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+            case "Forma de Café":
+                jpFormaCafe jpFC = new jpFormaCafe(cn);
+                jpFC.setSize(size);
+                jpFC.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpFC);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+            case "Tipo de Certificaciones":
+                jpTipoCertificacion jpTC = new jpTipoCertificacion(cn);
+                jpTC.setSize(size);
+                jpTC.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpTC);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+            case "Actividades de BH":
+                jpActividadesBH jpABH = new jpActividadesBH(cn);
+                jpABH.setSize(size);
+                jpABH.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpABH);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+            case "Sobrantes":
+                jpSobrante jpS = new jpSobrante(cn);
+                jpS.setSize(size);
+                jpS.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpS);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+            case "Reglas de Evaluación":
+                jpReglasEvaluacion jpR = new jpReglasEvaluacion(cn);
+                jpR.setSize(size);
+                jpR.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpR);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+
+            case "Calificación Seco":
+                jpCalificacionSeco jpCalS = new jpCalificacionSeco(cn);
+                jpCalS.setSize(size);
+                jpCalS.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpCalS);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+            case "Calificación Cereza":
+                jpCalificacionCereza jpCC = new jpCalificacionCereza(cn);
+                jpCC.setSize(size);
+                jpCC.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpCC);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+            case "Evaluaciones":
+                jpEvaluaciones jpEva = new jpEvaluaciones(cn);
+                jpEva.setSize(size);
+                jpEva.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpEva);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+            case "Personas":
+                jpPersonas jpPer = new jpPersonas(cn);
+                jpPer.setSize(size);
+                jpPer.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpPer);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+            case "Perfiles":
+                jpPerfiles jpPerf = new jpPerfiles(cn);
+                jpPerf.setSize(size);
+                jpPerf.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpPerf);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+            case "Retenciones":
+                jpRetenciones jpRet = new jpRetenciones(cn);
+                jpRet.setSize(size);
+                jpRet.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpRet);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+          case "Puestos":
+                jpPuestos jpPues = new jpPuestos(cn);
+                jpPues.setSize(size);
+                jpPues.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpPues);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+          case "Tipos de Suelo":
+                jpSuelos jpTSuelo = new jpSuelos(cn);
+                jpTSuelo.setSize(size);
+                jpTSuelo.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpTSuelo);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+          case "Nativo Fauna":
+                jpFauna jpNF = new jpFauna(cn);
+                jpNF.setSize(size);
+                jpNF.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpNF);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+          case "Nativo Flora":
+                jpFlora jpNFlora = new jpFlora(cn);
+                jpNFlora.setSize(size);
+                jpNFlora.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpNFlora);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+          case "Certificado":
+                jpCertificado jpCertificado = new jpCertificado(cn);
+                jpCertificado.setSize(size);
+                jpCertificado.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpCertificado);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+          case "Certificador":
+                jpCertificador jpCertificador = new jpCertificador(cn);
+                jpCertificador.setSize(size);
+                jpCertificador.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpCertificador);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+          case "Tipo de Acción":
+                jpTipoAccion jpTipoA = new jpTipoAccion(cn);
+                jpTipoA.setSize(size);
+                jpTipoA.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpTipoA);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+          case "Motivo Plantación":
+                jpMotivoPlantacion jpMPlan = new jpMotivoPlantacion(cn);
+                jpMPlan.setSize(size);
+                jpMPlan.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpMPlan);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+          case "Maquinaria/Herramienta":
+                jpMaquinariaHerramienta jpMH = new jpMaquinariaHerramienta(cn);
+                jpMH.setSize(size);
+                jpMH.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpMH);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+          case "Control Maleza":
+                jpControlMaleza jpCMaleza = new jpControlMaleza(cn);
+                jpCMaleza.setSize(size);
+                jpCMaleza.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpCMaleza);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+          case "Tipo de Poda":
+                jpTipoPoda jpTPoda = new jpTipoPoda(cn);
+                jpTPoda.setSize(size);
+                jpTPoda.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpTPoda);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+          case "Categoria de Archivo":
+                jpCategoriaDeArchivos jpCArch = new jpCategoriaDeArchivos(cn);
+                jpCArch.setSize(size);
+                jpCArch.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpCArch);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+          case "Proceso de Café":
+                jpProcesoCafe jpProcC = new jpProcesoCafe(cn);
+                jpProcC.setSize(size);
+                jpProcC.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpProcC);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+          case "Factor por Forma de Café":
+                jpFactorForma jpFFC = new jpFactorForma(cn);
+                jpFFC.setSize(size);
+                jpFFC.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpFFC);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+          case "Máximo Tamaño Promedio":
+                jpMaximoTamañoPromedio jpMTP = new jpMaximoTamañoPromedio(cn);
+                jpMTP.setSize(size);
+                jpMTP.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpMTP);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+          case "Vehículos":
+                jpVehiculo jpVh = new jpVehiculo(cn);
+                jpVh.setSize(size);
+                jpVh.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpVh);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+          case "Área de Almacén":
+                jpAreaAlmacen jpAAl = new jpAreaAlmacen(cn);
+                jpAAl.setSize(size);
+                jpAAl.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpAAl);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+          case "Climas":
+                jpClima jpClima = new jpClima(cn);
+                jpClima.setSize(size);
+                jpClima.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpClima);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+          case "Idiomas":
+                jpIdioma jpIdi = new jpIdioma(cn);
+                jpIdi.setSize(size);
+                jpIdi.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpIdi);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+          
+          default:
                 jpFondo jpF = new jpFondo();
                 jpF.setSize(size);
                 jpF.setLocation(0, 0);
@@ -147,22 +562,27 @@ public class pantallaPrincipal extends javax.swing.JFrame {
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        jButton2.setText("jButton1");
+        jButton2.setText("Configuraciones");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
-        jButton3.setText("jButton1");
+        jButton3.setText("Personas");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
             }
         });
 
-        jButton4.setText("jButton1");
+        jButton4.setText("FincaCert");
 
-        jButton5.setText("jButton1");
+        jButton5.setText("Recepción");
 
-        jButton6.setText("jButton1");
+        jButton6.setText("Beneficio Humedo");
 
-        jButton7.setText("jButton1");
+        jButton7.setText("Laboratorio");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -175,20 +595,20 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 .addComponent(jButton3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButton5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButton6)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButton7)
-                .addContainerGap(576, Short.MAX_VALUE))
+                .addContainerGap(452, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 52, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -285,6 +705,8 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         treeNode2.add(treeNode3);
         treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Tipos de Evaluación");
         treeNode2.add(treeNode3);
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Evaluaciones");
+        treeNode2.add(treeNode3);
         treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Factor por Forma de Café");
         treeNode2.add(treeNode3);
         treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Calificación Seco");
@@ -336,11 +758,11 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         panelPrincipal.setLayout(panelPrincipalLayout);
         panelPrincipalLayout.setHorizontalGroup(
             panelPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 850, Short.MAX_VALUE)
         );
         panelPrincipalLayout.setVerticalGroup(
             panelPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 587, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout panelArbolLayout = new javax.swing.GroupLayout(panelArbol);
@@ -348,19 +770,18 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         panelArbolLayout.setHorizontalGroup(
             panelArbolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelArbolLayout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(10, 10, 10)
+                .addGap(2, 2, 2)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panelPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panelArbolLayout.setVerticalGroup(
             panelArbolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(panelPrincipal, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(panelArbolLayout.createSequentialGroup()
-                .addGap(17, 17, 17)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 550, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(panelArbolLayout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addComponent(panelPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 579, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -415,24 +836,59 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         // TODO add your handling code here:
         panelArbol.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        DefaultMutableTreeNode n1 = new DefaultMutableTreeNode("Hola");
-        DefaultMutableTreeNode n2 = new DefaultMutableTreeNode("Hola");
+        jScrollPane2.setOpaque(false);
 
-        n2 = new javax.swing.tree.DefaultMutableTreeNode("Calificación Cereza");
-        n1.add(n2);
+        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Modulo Personas");
+        javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Personas");
+        javax.swing.tree.DefaultMutableTreeNode treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Nueva Persona");
+        treeNode2.add(treeNode3);
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Editar Persona");
+        treeNode2.add(treeNode3);
+        treeNode1.add(treeNode2);
+        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Submodulo");
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Prueba1");
+        treeNode2.add(treeNode3);
+        treeNode1.add(treeNode2);
+        jTree1.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+   
+        pintarPanel("fondo");
 
-        /*javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Configuracion 2");
-        javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Datos Basicos 2");
-        javax.swing.tree.DefaultMutableTreeNode treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Ubicación Geográfica 2");
-        javax.swing.tree.DefaultMutableTreeNode treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("Pai ");
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jTree1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTree1KeyReleased
+        // TODO add your handling code here:
+        TreePath tp; //jTree1.getPathForLocation(evt.getX(), evt.getY());
+        tp = jTree1.getSelectionPath();
+
+        String tipoPanel = jTree1.getLastSelectedPathComponent() + "";
+
+        if (tp != null) {
+            char car = (char) evt.getKeyCode();
+            if (car == evt.VK_ENTER) {
+                pintarPanel(tipoPanel);
+                //this.botonIngresarActionPerformed(null);
+            }
+        }
+    }//GEN-LAST:event_jTree1KeyReleased
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        panelArbol.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jScrollPane2.setOpaque(false);
+
+        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Configuracion");
+        javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Datos Basicos");
+        javax.swing.tree.DefaultMutableTreeNode treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Ubicación Geográfica");
+        javax.swing.tree.DefaultMutableTreeNode treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("Pais");
         treeNode3.add(treeNode4);
-        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("Estsfdsfado");
+        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("Estado");
         treeNode3.add(treeNode4);
-        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("Municisfdsdfpio");
+        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("Municipio");
         treeNode3.add(treeNode4);
-        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("Locasfdfsdlidad");
+        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("Localidad");
         treeNode3.add(treeNode4);
-        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("Colonsfdfia/Ejido");
+        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("Colonia/Ejido");
         treeNode3.add(treeNode4);
         treeNode2.add(treeNode3);
         treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Personas");
@@ -505,6 +961,8 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         treeNode2.add(treeNode3);
         treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Tipos de Evaluación");
         treeNode2.add(treeNode3);
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Evaluaciones");
+        treeNode2.add(treeNode3);
         treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Factor por Forma de Café");
         treeNode2.add(treeNode3);
         treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Calificación Seco");
@@ -535,25 +993,10 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Idioma");
         treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Idiomas");
         treeNode2.add(treeNode3);
-        treeNode1.add(treeNode2);*/
-        jTree1.setModel(new javax.swing.tree.DefaultTreeModel(n1));
-    }//GEN-LAST:event_jButton3ActionPerformed
+        treeNode1.add(treeNode2);
+        jTree1.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
 
-    private void jTree1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTree1KeyReleased
-        // TODO add your handling code here:
-        TreePath tp; //jTree1.getPathForLocation(evt.getX(), evt.getY());
-        tp = jTree1.getSelectionPath();
-
-        String tipoPanel = jTree1.getLastSelectedPathComponent() + "";
-
-        if (tp != null) {
-           char car = (char) evt.getKeyCode();
-            if (car == evt.VK_ENTER) {
-                pintarPanel(tipoPanel);
-                //this.botonIngresarActionPerformed(null);
-            }
-        }
-    }//GEN-LAST:event_jTree1KeyReleased
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments

@@ -9,6 +9,7 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -26,7 +27,6 @@ public class metodosDatosBasicos {
 
     public void insertarBasicos(String sql) {
         try {
-            System.out.println(sql);
             PreparedStatement cmd = cn.prepareCall(sql);
             cmd.execute();
             cmd.close();
@@ -38,6 +38,7 @@ public class metodosDatosBasicos {
 
     public void actualizarBasicos(String sql) {
         try {
+            System.out.println(sql);
             PreparedStatement cmd = cn.prepareCall(sql);
             cmd.execute();
             cmd.close();
@@ -78,13 +79,33 @@ public class metodosDatosBasicos {
                 Object[] datos = new Object[10];
                 for (int i = 0; i < tamaño; i++) {
                     datos[i] = rs.getString(i + 1);
-                    System.out.println(datos[i]);
                 }
                 modelo.addRow(datos);
             }
             cmd.close();
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Excepcion - Error Cargar Info 2" + ex);
+        }
+
+    }
+
+    public void cargarInformacionPruebaArray(DefaultTableModel modelo, int tamaño, String sql, ArrayList<String> array) {
+        try {
+            //System.out.println(sql);
+            CallableStatement cmd = cn.prepareCall(sql);
+            ResultSet rs = cmd.executeQuery();
+
+            while (rs.next()) {
+                Object[] datos = new Object[tamaño];
+                for (int i = 0; i < tamaño; i++) {
+                    datos[i] = rs.getString(i + 1);
+                }
+                array.add(datos[tamaño - 1] + "");
+                modelo.addRow(datos);
+            }
+            cmd.close();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Excepcion - Error Cargar Prueba Array" + ex);
         }
 
     }
@@ -109,9 +130,29 @@ public class metodosDatosBasicos {
         return null;
     }
 
-    public String cargarCombos(String tipo, String where) {
+    public String comprobarExistencia(String sql) {
         try {
-            String sql = "SELECT descripcion from " + tipo + where;
+            System.out.println();
+            CallableStatement cmd = cn.prepareCall(sql);
+            ResultSet rs = cmd.executeQuery();
+            while (rs.next()) {
+                Object[] datos = new Object[1];
+                for (int i = 0; i < 1; i++) {
+                    datos[i] = rs.getString(i + 1);
+                }
+                String a = datos[0] + "";
+                return a;
+            }
+            cmd.close();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Error - Comprobar Existencia \n" + ex);
+        }
+        return null;
+    }
+
+    public String cargarCombos(String sql) {
+        try {
+            //System.out.println(sql+"\n"+"\n");
             CallableStatement cmd = cn.prepareCall(sql);
             ResultSet rs = cmd.executeQuery();
             String a = "";
@@ -130,9 +171,10 @@ public class metodosDatosBasicos {
         return null;
     }
 
-    public String devuelveIdPais(String pais, String tipo) {
+    public String devuelveIdPais(String valor, String tabla) {
         try {
-            String sql = "SELECT id from " + tipo + " where descripcion= '" + pais + "' ";
+
+            String sql = "SELECT id from " + tabla + " where descripcion= '" + valor + "' ";
             CallableStatement cmd = cn.prepareCall(sql);
             ResultSet rs = cmd.executeQuery();
             String id = "";
@@ -147,13 +189,13 @@ public class metodosDatosBasicos {
         return null;
     }
 
-    public void busquedaBasicos(DefaultTableModel modelo, String sql) {
+    public void busquedaBasicos(DefaultTableModel modelo, String sql, int tamaño) {
         try {
             CallableStatement cmd = cn.prepareCall(sql);
             ResultSet rs = cmd.executeQuery();
             while (rs.next()) {
-                Object[] datos = new Object[4];
-                for (int i = 0; i <= 3; i++) {
+                Object[] datos = new Object[tamaño];
+                for (int i = 0; i <= tamaño; i++) {
                     datos[i] = rs.getString(i + 1);
                 }
                 modelo.addRow(datos);
@@ -162,6 +204,42 @@ public class metodosDatosBasicos {
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Error en Busqueda Basicos - " + ex);
         }
+    }
+
+        public void cargarInformacion3(DefaultTableModel modelo, int tamaño, String sql) {
+        try {
+            //System.out.println(sql);
+            CallableStatement cmd = cn.prepareCall(sql);
+            ResultSet rs = cmd.executeQuery();
+
+            while (rs.next()) {
+                Object[] datos = new Object[10];
+                for (int i = 0; i < tamaño; i++) {
+
+                    datos[i] = rs.getString(i + 1);
+                    if (i == 1) {
+
+                        if (datos[1].equals("1")) {
+                            datos[1] = true;
+                        } else {
+                            datos[1] = false;
+                        }
+                        System.out.println(datos[i]);
+                    } else if (i == 2) {
+                        if (datos[2].equals("1")) {
+                            datos[2] = true;
+                        } else {
+                            datos[2] = false;
+                        }
+                    }
+                }
+                modelo.addRow(datos);
+            }
+            cmd.close();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Excepcion - Error Cargar Info 2" + ex);
+        }
+
     }
 
 }

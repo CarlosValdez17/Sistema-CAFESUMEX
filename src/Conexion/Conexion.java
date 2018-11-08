@@ -24,8 +24,8 @@ public class Conexion{
         Connection con;
         try{
            Class.forName("com.mysql.jdbc.Driver");
-           String url = "jdbc:mysql://192.168.0.22/fl_fincalab?autoReconnect=true&useSSL=false";
-           con = DriverManager.getConnection(url, "megapub", "sistemas");
+           String url = "jdbc:mysql://127.0.0.1:3306/fincalab?autoReconnect=true&useSSL=false";
+           con = DriverManager.getConnection(url, "root", "root");
            //JOptionPane.showMessageDialog(null,"Conexión establecida");
         }
        

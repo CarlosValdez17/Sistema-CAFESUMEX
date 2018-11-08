@@ -6,6 +6,7 @@
 package Formas_Configuraciones_FincaCert.Certificados;
 
 import Metodos_Configuraciones.metodosDatosBasicos;
+import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
@@ -24,7 +25,8 @@ public class jdCertificador extends javax.swing.JDialog {
     String Clave,TxTvar;
     Connection cn;
     jpCertificador jp;
-   
+   validaConfi valiConf;
+
 
     metodosDatosBasicos mdb;
 
@@ -32,7 +34,7 @@ public class jdCertificador extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
-
+valiConf = new validaConfi();
         this.tipo = tipo;
         this.ClaveC = ClaveC;
         cn = c;
@@ -104,6 +106,12 @@ public class jdCertificador extends javax.swing.JDialog {
 
         jLabel1.setText("Clave");
 
+        txtRetenciones.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtRetencionesKeyTyped(evt);
+            }
+        });
+
         jButton1.setText("Aceptar");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -119,6 +127,12 @@ public class jdCertificador extends javax.swing.JDialog {
         });
 
         jLabel2.setText("Certificador");
+
+        Centavos.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                CentavosKeyReleased(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -181,6 +195,22 @@ public class jdCertificador extends javax.swing.JDialog {
         // TODO add your handling code here:
         tipoProceso();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void txtRetencionesKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtRetencionesKeyTyped
+char c = evt.getKeyChar();
+        if (Character.isDigit(c)) {//if (Character.isLetter(c)){
+            getToolkit().beep();
+            evt.consume();}        // TODO add your handling code here:
+    }//GEN-LAST:event_txtRetencionesKeyTyped
+
+    private void CentavosKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_CentavosKeyReleased
+if (Centavos.getText().length() != 0) {
+            Centavos.setText(valiConf.primerLetraMayuscula(Centavos.getText()).replace("S/n", "S/N"));
+            Centavos.setText(valiConf.primerLetraMayuscula(Centavos.getText()).replace("S/d", "S/D"));
+            Centavos.setText(valiConf.primerLetraMayuscula(Centavos.getText()).replace("S/o", "S/O"));
+        }
+        // TODO add your handling code here:
+    }//GEN-LAST:event_CentavosKeyReleased
 
     /**
      * @param args the command line arguments

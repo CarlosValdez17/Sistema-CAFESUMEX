@@ -7,7 +7,7 @@ package Formas_Personas;
 
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.Connection;
-import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
+//import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 /**
  *
@@ -29,7 +29,7 @@ public class jpPersonas extends javax.swing.JPanel {
         mdb = new metodosDatosBasicos(cn);
 
         combo();
-        AutoCompleteDecorator.decorate(comboPersona);
+      //  AutoCompleteDecorator.decorate(comboPersona);
     }
 
     public void combo() {

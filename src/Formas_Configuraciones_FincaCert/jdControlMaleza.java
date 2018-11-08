@@ -6,6 +6,7 @@
 package Formas_Configuraciones_FincaCert;
 
 import Metodos_Configuraciones.metodosDatosBasicos;
+import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
@@ -24,7 +25,7 @@ public class jdControlMaleza extends javax.swing.JDialog {
     String VarTxT;
     Connection cn;
     jpControlMaleza jp;
-   
+   validaConfi valiConf;
 
     metodosDatosBasicos mdb;
 
@@ -35,6 +36,7 @@ public class jdControlMaleza extends javax.swing.JDialog {
 
         this.tipo = tipo;
         this.VarTxTC = VarTxTC;
+        valiConf = new validaConfi();
         cn = c;
         if (tipo.equals("1")) {
             setTitle("nuevo tipo de control");
@@ -101,6 +103,12 @@ public class jdControlMaleza extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel1.setText("Control Maleza");
+
+        txtPuestos.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtPuestosKeyReleased(evt);
+            }
+        });
 
         jButton1.setText("Aceptar");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -170,6 +178,15 @@ public class jdControlMaleza extends javax.swing.JDialog {
         // TODO add your handling code here:
         tipoProceso();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void txtPuestosKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPuestosKeyReleased
+       if (txtPuestos.getText().length() != 0) {
+            txtPuestos.setText(valiConf.primerLetraMayuscula(txtPuestos.getText()).replace("S/n", "S/N"));
+            txtPuestos.setText(valiConf.primerLetraMayuscula(txtPuestos.getText()).replace("S/d", "S/D"));
+            txtPuestos.setText(valiConf.primerLetraMayuscula(txtPuestos.getText()).replace("S/o", "S/O"));
+        }
+ // TODO add your handling code here:
+    }//GEN-LAST:event_txtPuestosKeyReleased
 
     /**
      * @param args the command line arguments

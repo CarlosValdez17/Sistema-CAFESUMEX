@@ -9,6 +9,7 @@ import Formas_Configuraciones_FincaCert.Certificados.jpTipoCertificacion;
 import Formas_Configuraciones_Recepcion.*;
 import Formas_Configuraciones_DatosBasicos.*;
 import Metodos_Configuraciones.metodosDatosBasicos;
+import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
@@ -26,13 +27,14 @@ public class jdTipoCertificacion extends javax.swing.JDialog {
     String clave, tipo, desc;
     metodosDatosBasicos mdb;
     Connection cn;
+ validaConfi valiConf;
 
     public jdTipoCertificacion(java.awt.Frame parent, boolean modal, String tipo, String dato1,String dato2, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
 
-        
+        valiConf = new validaConfi();
         cn = c;
         this.tipo = tipo;
         clave=dato1;
@@ -96,6 +98,12 @@ public class jdTipoCertificacion extends javax.swing.JDialog {
 
         jLabel2.setText("Descripcion");
 
+        txtClave.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtClaveKeyTyped(evt);
+            }
+        });
+
         jButton2.setText("Aceptar");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -107,6 +115,12 @@ public class jdTipoCertificacion extends javax.swing.JDialog {
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
+            }
+        });
+
+        txtDesc.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtDescKeyReleased(evt);
             }
         });
 
@@ -170,6 +184,23 @@ public class jdTipoCertificacion extends javax.swing.JDialog {
         // TODO add your handling code here:
         this.dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void txtClaveKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtClaveKeyTyped
+  char c = evt.getKeyChar();
+        if (Character.isDigit(c)) {//if (Character.isLetter(c)){
+            getToolkit().beep();
+            evt.consume();
+        }      // TODO add your handling code here:
+    }//GEN-LAST:event_txtClaveKeyTyped
+
+    private void txtDescKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDescKeyReleased
+     if (txtDesc.getText().length() != 0) {
+            txtDesc.setText(valiConf.primerLetraMayuscula(txtDesc.getText()).replace("S/n", "S/N"));
+            txtDesc.setText(valiConf.primerLetraMayuscula(txtDesc.getText()).replace("S/d", "S/D"));
+            txtDesc.setText(valiConf.primerLetraMayuscula(txtDesc.getText()).replace("S/o", "S/O"));
+        }
+   // TODO add your handling code here:
+    }//GEN-LAST:event_txtDescKeyReleased
 
     /**
      * @param args the command line arguments

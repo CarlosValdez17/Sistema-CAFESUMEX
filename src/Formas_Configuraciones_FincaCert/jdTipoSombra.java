@@ -6,6 +6,7 @@
 package Formas_Configuraciones_FincaCert;
 
 import Metodos_Configuraciones.metodosDatosBasicos;
+import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
 
 /**
@@ -21,12 +22,13 @@ public class jdTipoSombra extends javax.swing.JDialog {
     Connection cn;
     metodosDatosBasicos mdb;
     String sombra,tipo;
-    
+    validaConfi valiConf;
+
     public jdTipoSombra(java.awt.Frame parent, boolean modal, String tipo, String sombra, Connection c) {
         super(parent, modal);
         initComponents();
          setLocationRelativeTo(null);
-        
+        valiConf = new validaConfi();
         cn = c;
         this.tipo = tipo;
         this.sombra = sombra;
@@ -82,6 +84,12 @@ public class jdTipoSombra extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel1.setText("Tipo de Sombra");
+
+        txtSombra.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtSombraKeyReleased(evt);
+            }
+        });
 
         jButton1.setText("Aceptar");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -151,6 +159,15 @@ public class jdTipoSombra extends javax.swing.JDialog {
         // TODO add your handling code here:
         this.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void txtSombraKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSombraKeyReleased
+     if (txtSombra.getText().length() != 0) {
+            txtSombra.setText(valiConf.primerLetraMayuscula(txtSombra.getText()).replace("S/n", "S/N"));
+            txtSombra.setText(valiConf.primerLetraMayuscula(txtSombra.getText()).replace("S/d", "S/D"));
+            txtSombra.setText(valiConf.primerLetraMayuscula(txtSombra.getText()).replace("S/o", "S/O"));
+        }
+   // TODO add your handling code here:
+    }//GEN-LAST:event_txtSombraKeyReleased
 
     /**
      * @param args the command line arguments

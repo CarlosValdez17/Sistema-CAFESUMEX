@@ -104,6 +104,12 @@ public class jdCertificado extends javax.swing.JDialog {
 
         jLabel1.setText("Clave");
 
+        txtRetenciones.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtRetencionesKeyTyped(evt);
+            }
+        });
+
         jButton1.setText("Aceptar");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -119,6 +125,12 @@ public class jdCertificado extends javax.swing.JDialog {
         });
 
         jLabel2.setText("Certificado");
+
+        Centavos.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                CentavosKeyTyped(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -181,6 +193,20 @@ public class jdCertificado extends javax.swing.JDialog {
         // TODO add your handling code here:
         tipoProceso();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void txtRetencionesKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtRetencionesKeyTyped
+       char c = evt.getKeyChar();
+        if (Character.isDigit(c)) {//if (Character.isLetter(c)){
+            getToolkit().beep();
+            evt.consume();} // TODO add your handling code here:
+    }//GEN-LAST:event_txtRetencionesKeyTyped
+
+    private void CentavosKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_CentavosKeyTyped
+char c = evt.getKeyChar();
+        if (Character.isDigit(c)) {//if (Character.isLetter(c)){
+            getToolkit().beep();
+            evt.consume();}        // TODO add your handling code here:
+    }//GEN-LAST:event_CentavosKeyTyped
 
     /**
      * @param args the command line arguments

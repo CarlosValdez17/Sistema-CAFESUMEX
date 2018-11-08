@@ -6,6 +6,7 @@
 package Formas_Configuraciones_FincaCert;
 
 import Metodos_Configuraciones.metodosDatosBasicos;
+import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
@@ -25,14 +26,14 @@ public class jdFlora extends javax.swing.JDialog {
     Connection cn;
     jpFlora jp;
    
-
+validaConfi valiConf;
     metodosDatosBasicos mdb;
 
     public jdFlora(java.awt.Frame parent, boolean modal, String tipo, String VarTxTC, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
-
+valiConf = new validaConfi();
         this.tipo = tipo;
         this.VarTxTC = VarTxTC;
         cn = c;
@@ -102,6 +103,17 @@ public class jdFlora extends javax.swing.JDialog {
 
         jLabel1.setText("Nativo Flora");
 
+        txtPuestos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtPuestosActionPerformed(evt);
+            }
+        });
+        txtPuestos.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtPuestosKeyReleased(evt);
+            }
+        });
+
         jButton1.setText("Aceptar");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -170,6 +182,18 @@ public class jdFlora extends javax.swing.JDialog {
         // TODO add your handling code here:
         tipoProceso();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void txtPuestosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPuestosActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtPuestosActionPerformed
+
+    private void txtPuestosKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPuestosKeyReleased
+       if (txtPuestos.getText().length() != 0) {
+            txtPuestos.setText(valiConf.primerLetraMayuscula(txtPuestos.getText()).replace("S/n", "S/N"));
+            txtPuestos.setText(valiConf.primerLetraMayuscula(txtPuestos.getText()).replace("S/d", "S/D"));
+            txtPuestos.setText(valiConf.primerLetraMayuscula(txtPuestos.getText()).replace("S/o", "S/O"));
+        } // TODO add your handling code here:
+    }//GEN-LAST:event_txtPuestosKeyReleased
 
     /**
      * @param args the command line arguments

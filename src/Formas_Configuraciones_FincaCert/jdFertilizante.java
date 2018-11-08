@@ -6,6 +6,7 @@
 package Formas_Configuraciones_FincaCert;
 
 import Metodos_Configuraciones.metodosDatosBasicos;
+import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
 
 /**
@@ -21,12 +22,13 @@ public class jdFertilizante extends javax.swing.JDialog {
     Connection cn;
     metodosDatosBasicos mdb;
     String tipo, dato;
+ validaConfi valiConf;
 
     public jdFertilizante(java.awt.Frame parent, boolean modal, String tipo, String dato, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
-
+valiConf = new validaConfi();
         cn = c;
         this.dato = dato;
         this.tipo = tipo;
@@ -82,6 +84,12 @@ public class jdFertilizante extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel1.setText("Fertilizante");
+
+        txtEnfermedad.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtEnfermedadKeyReleased(evt);
+            }
+        });
 
         jButton1.setText("Aceptar");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -151,6 +159,15 @@ public class jdFertilizante extends javax.swing.JDialog {
         // TODO add your handling code here:
         this.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void txtEnfermedadKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEnfermedadKeyReleased
+if (txtEnfermedad.getText().length() != 0) {
+            txtEnfermedad.setText(valiConf.primerLetraMayuscula(txtEnfermedad.getText()).replace("S/n", "S/N"));
+            txtEnfermedad.setText(valiConf.primerLetraMayuscula(txtEnfermedad.getText()).replace("S/d", "S/D"));
+            txtEnfermedad.setText(valiConf.primerLetraMayuscula(txtEnfermedad.getText()).replace("S/o", "S/O"));
+        }
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtEnfermedadKeyReleased
 
     /**
      * @param args the command line arguments

@@ -6,6 +6,7 @@
 package Formas_Configuraciones_FincaCert;
 
 import Metodos_Configuraciones.metodosDatosBasicos;
+import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
@@ -25,6 +26,7 @@ public class jdCategoriaDeArchivos extends javax.swing.JDialog {
     boolean Productor, Parcela;
     Connection cn;
     jpCategoriaDeArchivos jp;
+    validaConfi valiConf;
 
     metodosDatosBasicos mdb;
 
@@ -32,7 +34,7 @@ public class jdCategoriaDeArchivos extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
-
+valiConf = new validaConfi();
         this.tipo = tipo;
         this.TxTvarC = TxTvarC;
         cn = c;
@@ -125,6 +127,12 @@ public class jdCategoriaDeArchivos extends javax.swing.JDialog {
 
         jLabel1.setText("Categoria De Archivo");
 
+        txtCategoria.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtCategoriaKeyReleased(evt);
+            }
+        });
+
         jButton1.setText("Aceptar");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -214,6 +222,15 @@ public class jdCategoriaDeArchivos extends javax.swing.JDialog {
         // TODO add your handling code here:
         tipoProceso();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void txtCategoriaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCategoriaKeyReleased
+       if (txtCategoria.getText().length() != 0) {
+            txtCategoria.setText(valiConf.primerLetraMayuscula(txtCategoria.getText()).replace("S/n", "S/N"));
+            txtCategoria.setText(valiConf.primerLetraMayuscula(txtCategoria.getText()).replace("S/d", "S/D"));
+            txtCategoria.setText(valiConf.primerLetraMayuscula(txtCategoria.getText()).replace("S/o", "S/O"));
+        }
+ // TODO add your handling code here:
+    }//GEN-LAST:event_txtCategoriaKeyReleased
 
     /**
      * @param args the command line arguments

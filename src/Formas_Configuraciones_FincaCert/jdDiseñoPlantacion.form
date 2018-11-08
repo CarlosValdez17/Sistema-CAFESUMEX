@@ -80,6 +80,9 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="txtDise&#xf1;o">
+          <Events>
+            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtDise&#xf1;oKeyReleased"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="jButton1">
           <Properties>

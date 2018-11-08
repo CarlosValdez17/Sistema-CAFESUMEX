@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 package Formas_Configuraciones_FincaCert;
-
+import Metodos_Configuraciones.validaConfi;
 import Formas_Configuraciones_Recepcion.*;
 import Formas_Configuraciones_DatosBasicos.*;
 import Metodos_Configuraciones.metodosDatosBasicos;
@@ -25,7 +25,7 @@ public class jdActividadesParcela extends javax.swing.JDialog {
     String actividad, tipo, desc;
     metodosDatosBasicos mdb;
     Connection cn;
-
+ validaConfi valiConf;
     public jdActividadesParcela(java.awt.Frame parent, boolean modal, String tipo, String dato1,String dato2, Connection c) {
         super(parent, modal);
         initComponents();
@@ -36,7 +36,7 @@ public class jdActividadesParcela extends javax.swing.JDialog {
         this.tipo = tipo;
         actividad=dato1;
         desc=dato2;
-        
+        valiConf = new validaConfi();
         if (tipo.equals("1")) {
             setTitle("Nueva Actividad");
         } else {
@@ -95,6 +95,20 @@ public class jdActividadesParcela extends javax.swing.JDialog {
 
         jLabel2.setText("Descripcion");
 
+        txtActividad.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtActividadActionPerformed(evt);
+            }
+        });
+        txtActividad.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtActividadKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtActividadKeyTyped(evt);
+            }
+        });
+
         jButton2.setText("Aceptar");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -106,6 +120,12 @@ public class jdActividadesParcela extends javax.swing.JDialog {
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
+            }
+        });
+
+        txtDesc.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtDescKeyReleased(evt);
             }
         });
 
@@ -169,6 +189,32 @@ public class jdActividadesParcela extends javax.swing.JDialog {
         // TODO add your handling code here:
         this.dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void txtActividadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtActividadActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtActividadActionPerformed
+
+    private void txtActividadKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtActividadKeyTyped
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtActividadKeyTyped
+
+    private void txtActividadKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtActividadKeyReleased
+if (txtActividad.getText().length() != 0) {
+            txtActividad.setText(valiConf.primerLetraMayuscula(txtActividad.getText()).replace("S/n", "S/N"));
+            txtActividad.setText(valiConf.primerLetraMayuscula(txtActividad.getText()).replace("S/d", "S/D"));
+            txtActividad.setText(valiConf.primerLetraMayuscula(txtActividad.getText()).replace("S/o", "S/O"));
+        }
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtActividadKeyReleased
+
+    private void txtDescKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDescKeyReleased
+  if (txtDesc.getText().length() != 0) {
+            txtDesc.setText(valiConf.primerLetraMayuscula(txtDesc.getText()).replace("S/n", "S/N"));
+            txtDesc.setText(valiConf.primerLetraMayuscula(txtDesc.getText()).replace("S/d", "S/D"));
+            txtDesc.setText(valiConf.primerLetraMayuscula(txtDesc.getText()).replace("S/o", "S/O"));
+        }
+      // TODO add your handling code here:
+    }//GEN-LAST:event_txtDescKeyReleased
 
     /**
      * @param args the command line arguments
@@ -263,4 +309,5 @@ public class jdActividadesParcela extends javax.swing.JDialog {
     private javax.swing.JTextField txtActividad;
     private javax.swing.JTextField txtDesc;
     // End of variables declaration//GEN-END:variables
+
 }

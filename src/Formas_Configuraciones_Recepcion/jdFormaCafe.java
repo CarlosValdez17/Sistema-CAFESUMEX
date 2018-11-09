@@ -7,6 +7,7 @@ package Formas_Configuraciones_Recepcion;
 
 import Formas_Configuraciones_DatosBasicos.*;
 import Metodos_Configuraciones.metodosDatosBasicos;
+import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
@@ -23,19 +24,20 @@ public class jdFormaCafe extends javax.swing.JDialog {
     jpFormaCafe jpFC;
     String clave, tipo, desc;
     metodosDatosBasicos mdb;
+    validaConfi valiConf;
     Connection cn;
 
-    public jdFormaCafe(java.awt.Frame parent, boolean modal, String tipo, String dato1,String dato2, Connection c) {
+    public jdFormaCafe(java.awt.Frame parent, boolean modal, String tipo, String dato1, String dato2, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
 
-        
         cn = c;
         this.tipo = tipo;
-        clave=dato1;
-        desc=dato2;
-        
+        clave = dato1;
+        desc = dato2;
+        valiConf = new validaConfi();
+
         if (tipo.equals("1")) {
             setTitle("Nueva Forma");
         } else {
@@ -43,11 +45,10 @@ public class jdFormaCafe extends javax.swing.JDialog {
             txtClav.setText(dato1);
             txtForma.setText(dato2);
         }
-        
-        mdb = new metodosDatosBasicos(cn);
- }
 
-   
+        mdb = new metodosDatosBasicos(cn);
+    }
+
     public void tipoProceso() {
         String sql = "";
 
@@ -62,7 +63,7 @@ public class jdFormaCafe extends javax.swing.JDialog {
             this.dispose();
         } else {
             //editarPais();
-            sql = "UPDATE formacafe SET clave='" + txtClav.getText() + "', descripcion='" +txtForma.getText()+ "' where clave='" + clave + "' ";
+            sql = "UPDATE formacafe SET clave='" + txtClav.getText() + "', descripcion='" + txtForma.getText() + "' where clave='" + clave + "' ";
             mdb.actualizarBasicos(sql);
             jpFC.llenaTabla();
             this.dispose();
@@ -92,6 +93,15 @@ public class jdFormaCafe extends javax.swing.JDialog {
 
         jLabel2.setText("Forma Cafe");
 
+        txtClav.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtClavKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtClavKeyTyped(evt);
+            }
+        });
+
         jButton2.setText("Aceptar");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -103,6 +113,15 @@ public class jdFormaCafe extends javax.swing.JDialog {
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
+            }
+        });
+
+        txtForma.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtFormaKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtFormaKeyTyped(evt);
             }
         });
 
@@ -166,6 +185,44 @@ public class jdFormaCafe extends javax.swing.JDialog {
         // TODO add your handling code here:
         this.dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void txtClavKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtClavKeyReleased
+        // TODO add your handling code here:
+        if (txtClav.getText().length() != 0) {
+            txtClav.setText(valiConf.primerLetraMayuscula(txtClav.getText()).replace("S/n", "S/N"));
+            txtClav.setText(valiConf.primerLetraMayuscula(txtClav.getText()).replace("S/d", "S/D"));
+            txtClav.setText(valiConf.primerLetraMayuscula(txtClav.getText()).replace("S/o", "S/O"));
+        }
+
+    }//GEN-LAST:event_txtClavKeyReleased
+
+    private void txtFormaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtFormaKeyReleased
+        // TODO add your handling code here:
+        if (txtForma.getText().length() != 0) {
+            txtForma.setText(valiConf.primerLetraMayuscula(txtForma.getText()).replace("S/n", "S/N"));
+            txtForma.setText(valiConf.primerLetraMayuscula(txtForma.getText()).replace("S/d", "S/D"));
+            txtForma.setText(valiConf.primerLetraMayuscula(txtForma.getText()).replace("S/o", "S/O"));
+        }
+
+    }//GEN-LAST:event_txtFormaKeyReleased
+
+    private void txtClavKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtClavKeyTyped
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+        if (Character.isDigit(c)) {
+            getToolkit().beep();
+            evt.consume();
+        }
+    }//GEN-LAST:event_txtClavKeyTyped
+
+    private void txtFormaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtFormaKeyTyped
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+        if (Character.isDigit(c)) {
+            getToolkit().beep();
+            evt.consume();
+        }
+    }//GEN-LAST:event_txtFormaKeyTyped
 
     /**
      * @param args the command line arguments

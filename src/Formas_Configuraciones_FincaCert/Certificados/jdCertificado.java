@@ -21,14 +21,13 @@ public class jdCertificado extends javax.swing.JDialog {
      * Creates new form jdPais
      */
     String tipo, ClaveC;
-    String Clave,TxTvar;
+    String Clave, TxTvar;
     Connection cn;
     jpCertificado jp;
-   
 
     metodosDatosBasicos mdb;
 
-    public jdCertificado(java.awt.Frame parent, boolean modal, String tipo, String ClaveC,String TxTvarC, Connection c) {
+    public jdCertificado(java.awt.Frame parent, boolean modal, String tipo, String ClaveC, String TxTvarC, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
@@ -38,37 +37,34 @@ public class jdCertificado extends javax.swing.JDialog {
         cn = c;
         if (tipo.equals("1")) {
             setTitle("nuevo Certificado");
-        }else{
-              setTitle("editar");
-              Centavos.setText(TxTvarC);
-              txtRetenciones.setText(ClaveC);
-        }  
- 
+        } else {
+            setTitle("editar");
+            txtCertificado.setText(TxTvarC);
+            txtClave.setText(ClaveC);
+        }
+
     }
 
     String idPais;
-
- 
 
     public void tipoProceso() {
         try {
             String sql = "";
 
             mdb = new metodosDatosBasicos(cn);
-           TxTvar=Centavos.getText();
-         Clave = txtRetenciones.getText();
-        
+            TxTvar = txtCertificado.getText();
+            Clave = txtClave.getText();
 
             if (tipo.equals("1")) {
                 //nuevoPais();
-                sql = "INSERT INTO Certificado VALUES(null,'" +Clave+ "','"+TxTvar+"', 1, 1,current_date()"
+                sql = "INSERT INTO Certificado VALUES(null,'" + Clave + "','" + TxTvar + "', 1, 1,current_date()"
                         + ", current_time(),1,1,1,1)";
                 mdb.insertarBasicos(sql);
                 jp.llenaTabla();
                 this.dispose();
             } else {
                 //editarPais();
-                sql = "UPDATE Certificado SET  Clave='" +Clave+ "', Descripcion='"+TxTvar+"' where Clave='" + ClaveC + "' ";
+                sql = "UPDATE Certificado SET  Clave='" + Clave + "', Descripcion='" + TxTvar + "' where Clave='" + ClaveC + "' ";
                 mdb.actualizarBasicos(sql);
                 jp.llenaTabla();
                 this.dispose();
@@ -94,19 +90,19 @@ public class jdCertificado extends javax.swing.JDialog {
 
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        txtRetenciones = new javax.swing.JTextField();
+        txtClave = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
-        Centavos = new javax.swing.JTextField();
+        txtCertificado = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel1.setText("Clave");
 
-        txtRetenciones.addKeyListener(new java.awt.event.KeyAdapter() {
+        txtClave.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
-                txtRetencionesKeyTyped(evt);
+                txtClaveKeyTyped(evt);
             }
         });
 
@@ -126,9 +122,9 @@ public class jdCertificado extends javax.swing.JDialog {
 
         jLabel2.setText("Certificado");
 
-        Centavos.addKeyListener(new java.awt.event.KeyAdapter() {
+        txtCertificado.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
-                CentavosKeyTyped(evt);
+                txtCertificadoKeyTyped(evt);
             }
         });
 
@@ -139,7 +135,7 @@ public class jdCertificado extends javax.swing.JDialog {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtRetenciones)
+                    .addComponent(txtClave)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -149,7 +145,7 @@ public class jdCertificado extends javax.swing.JDialog {
                             .addComponent(jLabel1)
                             .addComponent(jLabel2))
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(Centavos))
+                    .addComponent(txtCertificado))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -158,11 +154,11 @@ public class jdCertificado extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtRetenciones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtClave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(Centavos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtCertificado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(91, 91, 91)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
@@ -194,19 +190,21 @@ public class jdCertificado extends javax.swing.JDialog {
         tipoProceso();
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void txtRetencionesKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtRetencionesKeyTyped
-       char c = evt.getKeyChar();
+    private void txtClaveKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtClaveKeyTyped
+        char c = evt.getKeyChar();
         if (Character.isDigit(c)) {//if (Character.isLetter(c)){
             getToolkit().beep();
-            evt.consume();} // TODO add your handling code here:
-    }//GEN-LAST:event_txtRetencionesKeyTyped
+            evt.consume();
+        } // TODO add your handling code here:
+    }//GEN-LAST:event_txtClaveKeyTyped
 
-    private void CentavosKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_CentavosKeyTyped
-char c = evt.getKeyChar();
+    private void txtCertificadoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCertificadoKeyTyped
+        char c = evt.getKeyChar();
         if (Character.isDigit(c)) {//if (Character.isLetter(c)){
             getToolkit().beep();
-            evt.consume();}        // TODO add your handling code here:
-    }//GEN-LAST:event_CentavosKeyTyped
+            evt.consume();
+        }        // TODO add your handling code here:
+    }//GEN-LAST:event_txtCertificadoKeyTyped
 
     /**
      * @param args the command line arguments
@@ -249,12 +247,12 @@ char c = evt.getKeyChar();
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField Centavos;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField txtRetenciones;
+    private javax.swing.JTextField txtCertificado;
+    private javax.swing.JTextField txtClave;
     // End of variables declaration//GEN-END:variables
 }

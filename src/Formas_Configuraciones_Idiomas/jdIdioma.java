@@ -6,6 +6,7 @@
 package Formas_Configuraciones_Idiomas;
 
 import Metodos_Configuraciones.metodosDatosBasicos;
+import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
@@ -20,12 +21,11 @@ public class jdIdioma extends javax.swing.JDialog {
     /**
      * Creates new form jdPais
      */
-    String tipo,VarTxTC;
+    String tipo, VarTxTC;
     String VarTxT;
     Connection cn;
     jpIdioma jp;
-   
-
+    validaConfi valiConf;
     metodosDatosBasicos mdb;
 
     public jdIdioma(java.awt.Frame parent, boolean modal, String tipo, String VarTxTC, Connection c) {
@@ -36,39 +36,38 @@ public class jdIdioma extends javax.swing.JDialog {
         this.tipo = tipo;
         this.VarTxTC = VarTxTC;
         cn = c;
+        valiConf = new validaConfi();
+        
         if (tipo.equals("1")) {
             setTitle("nueva variedad");
-        }else{
-              setTitle("editar");
-            
-              txtPuestos.setText(VarTxTC);
-        }  
- 
+        } else {
+            setTitle("editar");
+
+            txtPuestos.setText(VarTxTC);
+        }
+
     }
 
     String idPais;
-
- 
 
     public void tipoProceso() {
         try {
             String sql = "";
 
             mdb = new metodosDatosBasicos(cn);
-          
-         VarTxT = txtPuestos.getText();
-        
+
+            VarTxT = txtPuestos.getText();
 
             if (tipo.equals("1")) {
                 //nuevoPais();
-                sql = "INSERT INTO Idioma VALUES(null,'" +VarTxT+ "', 1, 1,current_date()"
+                sql = "INSERT INTO Idioma VALUES(null,'" + VarTxT + "', 1, 1,current_date()"
                         + ", current_time(),1,1,1,1)";
                 mdb.insertarBasicos(sql);
                 jp.llenaTabla();
                 this.dispose();
             } else {
                 //editarPais();
-                sql = "UPDATE Idioma SET  Descripcion ='" +VarTxT+ "' where Descripcion='" + VarTxTC + "' ";
+                sql = "UPDATE Idioma SET  Descripcion ='" + VarTxT + "' where Descripcion='" + VarTxTC + "' ";
                 mdb.actualizarBasicos(sql);
                 jp.llenaTabla();
                 this.dispose();
@@ -101,6 +100,15 @@ public class jdIdioma extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel1.setText("Idioma");
+
+        txtPuestos.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtPuestosKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtPuestosKeyTyped(evt);
+            }
+        });
 
         jButton1.setText("Aceptar");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -170,6 +178,25 @@ public class jdIdioma extends javax.swing.JDialog {
         // TODO add your handling code here:
         tipoProceso();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void txtPuestosKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPuestosKeyReleased
+        // TODO add your handling code here:
+        if (txtPuestos.getText().length() != 0) {
+            txtPuestos.setText(valiConf.primerLetraMayuscula(txtPuestos.getText()).replace("S/n", "S/N"));
+            txtPuestos.setText(valiConf.primerLetraMayuscula(txtPuestos.getText()).replace("S/d", "S/D"));
+            txtPuestos.setText(valiConf.primerLetraMayuscula(txtPuestos.getText()).replace("S/o", "S/O"));
+        }
+
+    }//GEN-LAST:event_txtPuestosKeyReleased
+
+    private void txtPuestosKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPuestosKeyTyped
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+        if (Character.isDigit(c)) {
+            getToolkit().beep();
+            evt.consume();
+        }
+    }//GEN-LAST:event_txtPuestosKeyTyped
 
     /**
      * @param args the command line arguments

@@ -122,6 +122,9 @@ public class jdActividadesBH extends javax.swing.JDialog {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtDescKeyReleased(evt);
             }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtDescKeyTyped(evt);
+            }
         });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -176,7 +179,7 @@ public class jdActividadesBH extends javax.swing.JDialog {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
         if (txtActividad.getText().length() == 0 || txtDesc.getText().length() == 0) {
-            JOptionPane.showMessageDialog(null,"Rellene todos los campos");
+            JOptionPane.showMessageDialog(null, "Rellene todos los campos");
         } else {
             tipoProceso();
         }
@@ -198,13 +201,30 @@ public class jdActividadesBH extends javax.swing.JDialog {
 
     private void txtActividadKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtActividadKeyReleased
         // TODO add your handling code here:
-        txtActividad.setText(valConf.primerLetraMayuscula(txtActividad.getText()));
+        if (txtActividad.getText().length() != 0) {
+            txtActividad.setText(valConf.primerLetraMayuscula(txtActividad.getText()).replace("S/n", "S/N"));
+            txtActividad.setText(valConf.primerLetraMayuscula(txtActividad.getText()).replace("S/d", "S/D"));
+            txtActividad.setText(valConf.primerLetraMayuscula(txtActividad.getText()).replace("S/o", "S/O"));
+        }
     }//GEN-LAST:event_txtActividadKeyReleased
 
     private void txtDescKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDescKeyReleased
         // TODO add your handling code here:
-        txtDesc.setText(valConf.primerLetraMayuscula(txtDesc.getText()));
+        if (txtDesc.getText().length() != 0) {
+            txtDesc.setText(valConf.primerLetraMayuscula(txtDesc.getText()).replace("S/n", "S/N"));
+            txtDesc.setText(valConf.primerLetraMayuscula(txtDesc.getText()).replace("S/d", "S/D"));
+            txtDesc.setText(valConf.primerLetraMayuscula(txtDesc.getText()).replace("S/o", "S/O"));
+        }
     }//GEN-LAST:event_txtDescKeyReleased
+
+    private void txtDescKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDescKeyTyped
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+        if (Character.isDigit(c)) {
+            getToolkit().beep();
+            evt.consume();
+        }
+    }//GEN-LAST:event_txtDescKeyTyped
 
     /**
      * @param args the command line arguments

@@ -6,6 +6,7 @@
 package Formas_Configuraciones_Sociedades;
 
 import Metodos_Configuraciones.metodosDatosBasicos;
+import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
@@ -20,12 +21,11 @@ public class jdPuestos extends javax.swing.JDialog {
     /**
      * Creates new form jdPais
      */
-    String tipo,PuestosC;
-    String Puestos,importe;
+    String tipo, PuestosC;
+    String Puestos, importe;
     Connection cn;
     jpPuestos jp;
-   
-
+    validaConfi valiConf;
     metodosDatosBasicos mdb;
 
     public jdPuestos(java.awt.Frame parent, boolean modal, String tipo, String PuestosC, Connection c) {
@@ -36,39 +36,38 @@ public class jdPuestos extends javax.swing.JDialog {
         this.tipo = tipo;
         this.PuestosC = PuestosC;
         cn = c;
+        valiConf = new validaConfi();
+
         if (tipo.equals("1")) {
             setTitle("nueva retencion");
-        }else{
-              setTitle("editar");
-            
-              txtPuestos.setText(PuestosC);
-        }  
- 
+        } else {
+            setTitle("editar");
+
+            txtPuestos.setText(PuestosC);
+        }
+
     }
 
     String idPais;
-
- 
 
     public void tipoProceso() {
         try {
             String sql = "";
 
             mdb = new metodosDatosBasicos(cn);
-          
-         Puestos = txtPuestos.getText();
-        
+
+            Puestos = txtPuestos.getText();
 
             if (tipo.equals("1")) {
                 //nuevoPais();
-                sql = "INSERT INTO Puestos VALUES(null,'" +Puestos+ "', 1, 1,current_date()"
+                sql = "INSERT INTO Puestos VALUES(null,'" + Puestos + "', 1, 1,current_date()"
                         + ", current_time(),1,1,1,1)";
                 mdb.insertarBasicos(sql);
                 jp.llenaTablaPuestos();
                 this.dispose();
             } else {
                 //editarPais();
-                sql = "UPDATE Puestos SET  Descripcion ='" +Puestos+ "' where Descripcion='" + PuestosC + "' ";
+                sql = "UPDATE Puestos SET  Descripcion ='" + Puestos + "' where Descripcion='" + PuestosC + "' ";
                 mdb.actualizarBasicos(sql);
                 jp.llenaTablaPuestos();
                 this.dispose();
@@ -101,6 +100,15 @@ public class jdPuestos extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel1.setText("Puesto");
+
+        txtPuestos.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtPuestosKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtPuestosKeyTyped(evt);
+            }
+        });
 
         jButton1.setText("Aceptar");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -140,7 +148,7 @@ public class jdPuestos extends javax.swing.JDialog {
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtPuestos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(149, 149, 149)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jButton2))
@@ -170,6 +178,24 @@ public class jdPuestos extends javax.swing.JDialog {
         // TODO add your handling code here:
         tipoProceso();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void txtPuestosKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPuestosKeyReleased
+        // TODO add your handling code here:
+        if (txtPuestos.getText().length() != 0) {
+            txtPuestos.setText(valiConf.primerLetraMayuscula(txtPuestos.getText()).replace("S/n", "S/N"));
+            txtPuestos.setText(valiConf.primerLetraMayuscula(txtPuestos.getText()).replace("S/d", "S/D"));
+            txtPuestos.setText(valiConf.primerLetraMayuscula(txtPuestos.getText()).replace("S/o", "S/O"));
+        }
+    }//GEN-LAST:event_txtPuestosKeyReleased
+
+    private void txtPuestosKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPuestosKeyTyped
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+        if (Character.isDigit(c)) {
+            getToolkit().beep();
+            evt.consume();
+        }
+    }//GEN-LAST:event_txtPuestosKeyTyped
 
     /**
      * @param args the command line arguments

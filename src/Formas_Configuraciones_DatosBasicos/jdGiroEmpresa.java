@@ -175,7 +175,11 @@ public class jdGiroEmpresa extends javax.swing.JDialog {
 
     private void txtGiroKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtGiroKeyReleased
         // TODO add your handling code here:
-        txtGiro.setText(valConf.primerLetraMayuscula(txtGiro.getText()));
+        if (txtGiro.getText().length() != 0) {
+        txtGiro.setText(valConf.primerLetraMayuscula(txtGiro.getText()).replace("S/n", "S/N"));
+        txtGiro.setText(valConf.primerLetraMayuscula(txtGiro.getText()).replace("S/d", "S/D"));
+        txtGiro.setText(valConf.primerLetraMayuscula(txtGiro.getText()).replace("S/o", "S/O"));
+        }
     }//GEN-LAST:event_txtGiroKeyReleased
 
     private void txtGiroKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtGiroKeyTyped

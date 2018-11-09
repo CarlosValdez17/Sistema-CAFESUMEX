@@ -6,6 +6,7 @@
 package Formas_Configuraciones_Seguridad;
 
 import Metodos_Configuraciones.metodosDatosBasicos;
+import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
@@ -24,7 +25,7 @@ public class jdPerfiles extends javax.swing.JDialog {
     String Perfiles;
     Connection cn;
     jpPerfiles jp;
-
+    validaConfi valiConf;
     metodosDatosBasicos mdb;
 
     public jdPerfiles(java.awt.Frame parent, boolean modal, String tipo, String PerfilesC, Connection c) {
@@ -35,18 +36,18 @@ public class jdPerfiles extends javax.swing.JDialog {
         this.tipo = tipo;
         this.PerfilesC = PerfilesC;
         cn = c;
+        valiConf = new validaConfi();
+        
         if (tipo.equals("1")) {
             setTitle("nuevo perfil");
-        }else{
-              setTitle("editar");
-              txtPerfiles.setText(PerfilesC);
-        }  
- 
+        } else {
+            setTitle("editar");
+            txtPerfiles.setText(PerfilesC);
+        }
+
     }
 
     String idPais;
-
- 
 
     public void tipoProceso() {
         try {
@@ -54,19 +55,18 @@ public class jdPerfiles extends javax.swing.JDialog {
 
             mdb = new metodosDatosBasicos(cn);
 
-          Perfiles = txtPerfiles.getText();
-        
+            Perfiles = txtPerfiles.getText();
 
             if (tipo.equals("1")) {
                 //nuevoPais();
-                sql = "INSERT INTO Perfiles VALUES(null,'" +Perfiles+ "', 1, 1,current_date()"
+                sql = "INSERT INTO Perfiles VALUES(null,'" + Perfiles + "', 1, 1,current_date()"
                         + ", current_time(),1,1,1,1)";
                 mdb.insertarBasicos(sql);
                 jp.llenaTablaPerfiles();
                 this.dispose();
             } else {
                 //editarPais();
-                sql = "UPDATE Perfiles SET  descripcion ='" +Perfiles+ "' where descripcion='" + PerfilesC + "' ";
+                sql = "UPDATE Perfiles SET  descripcion ='" + Perfiles + "' where descripcion='" + PerfilesC + "' ";
                 mdb.actualizarBasicos(sql);
                 jp.llenaTablaPerfiles();
                 this.dispose();
@@ -99,6 +99,15 @@ public class jdPerfiles extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel1.setText("Perfiles");
+
+        txtPerfiles.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtPerfilesKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtPerfilesKeyTyped(evt);
+            }
+        });
 
         jButton1.setText("Aceptar");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -138,7 +147,7 @@ public class jdPerfiles extends javax.swing.JDialog {
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtPerfiles, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(149, 149, 149)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jButton2))
@@ -169,6 +178,24 @@ public class jdPerfiles extends javax.swing.JDialog {
         tipoProceso();
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void txtPerfilesKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPerfilesKeyReleased
+        // TODO add your handling code here:
+        if (txtPerfiles.getText().length() != 0) {
+            txtPerfiles.setText(valiConf.primerLetraMayuscula(txtPerfiles.getText()).replace("S/n", "S/N"));
+            txtPerfiles.setText(valiConf.primerLetraMayuscula(txtPerfiles.getText()).replace("S/d", "S/D"));
+            txtPerfiles.setText(valiConf.primerLetraMayuscula(txtPerfiles.getText()).replace("S/o", "S/O"));
+        }
+    }//GEN-LAST:event_txtPerfilesKeyReleased
+
+    private void txtPerfilesKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPerfilesKeyTyped
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+        if (Character.isDigit(c)) {
+            getToolkit().beep();
+            evt.consume();
+        }
+    }//GEN-LAST:event_txtPerfilesKeyTyped
+
     /**
      * @param args the command line arguments
      */
@@ -178,7 +205,7 @@ public class jdPerfiles extends javax.swing.JDialog {
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
-/*        try {
+ /*        try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());

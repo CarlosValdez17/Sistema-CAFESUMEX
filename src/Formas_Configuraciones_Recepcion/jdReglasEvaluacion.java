@@ -9,6 +9,7 @@ import Formas_Configuraciones_BeneficioHumedo.*;
 import Formas_Configuraciones_Recepcion.*;
 import Formas_Configuraciones_DatosBasicos.*;
 import Metodos_Configuraciones.metodosDatosBasicos;
+import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
@@ -23,22 +24,24 @@ public class jdReglasEvaluacion extends javax.swing.JDialog {
      * Creates new form jdEstado
      */
     jpReglasEvaluacion jpE;
-    String clave, tipo, defectos, nombre,desc;
+    String clave, tipo, defectos, nombre, desc;
     metodosDatosBasicos mdb;
+    validaConfi valiConf;
     Connection cn;
 
-    public jdReglasEvaluacion(java.awt.Frame parent, boolean modal, String tipo, String dato1,String dato2,String dato3, Connection c) {
+    public jdReglasEvaluacion(java.awt.Frame parent, boolean modal, String tipo, String dato1, String dato2, String dato3, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
 
-        
         cn = c;
         this.tipo = tipo;
-        clave=dato1;
-        defectos=dato2;
-        desc=dato3;
+        clave = dato1;
+        defectos = dato2;
+        desc = dato3;
+        valiConf = new validaConfi();
         
+
         if (tipo.equals("1")) {
             setTitle("Nueva Regla");
         } else {
@@ -47,11 +50,10 @@ public class jdReglasEvaluacion extends javax.swing.JDialog {
             txtDefectos.setText(dato2);
             txtDesc.setText(dato3);
         }
-        
-        mdb = new metodosDatosBasicos(cn);
- }
 
-   
+        mdb = new metodosDatosBasicos(cn);
+    }
+
     public void tipoProceso() {
         String sql = "";
 
@@ -66,8 +68,8 @@ public class jdReglasEvaluacion extends javax.swing.JDialog {
             this.dispose();
         } else {
             //editarPais();
-            sql = "UPDATE reglasevaluacion SET descripcion'" + txtDesc.getText() + "', grado='" +txtClave.getText()+"', defectos='" +txtDefectos.getText()+ 
-                    "' where grado='" + clave + "' ";
+            sql = "UPDATE reglasevaluacion SET descripcion'" + txtDesc.getText() + "', grado='" + txtClave.getText() + "', defectos='" + txtDefectos.getText()
+                    + "' where grado='" + clave + "' ";
             mdb.actualizarBasicos(sql);
             jpE.llenaTabla();
             this.dispose();
@@ -95,9 +97,15 @@ public class jdReglasEvaluacion extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        jLabel1.setText("Clave");
+        jLabel1.setText("Grado");
 
         jLabel2.setText("Defectos");
+
+        txtClave.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtClaveKeyTyped(evt);
+            }
+        });
 
         jButton2.setText("Aceptar");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -113,7 +121,22 @@ public class jdReglasEvaluacion extends javax.swing.JDialog {
             }
         });
 
+        txtDefectos.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtDefectosKeyTyped(evt);
+            }
+        });
+
         jLabel4.setText("Descripcion");
+
+        txtDesc.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtDescKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtDescKeyTyped(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -182,6 +205,42 @@ public class jdReglasEvaluacion extends javax.swing.JDialog {
         // TODO add your handling code here:
         this.dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void txtClaveKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtClaveKeyTyped
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+        if (Character.isLetter(c)) {
+            getToolkit().beep();
+            evt.consume();
+        }
+    }//GEN-LAST:event_txtClaveKeyTyped
+
+    private void txtDefectosKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDefectosKeyTyped
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+        if (Character.isLetter(c)) {
+            getToolkit().beep();
+            evt.consume();
+        }
+    }//GEN-LAST:event_txtDefectosKeyTyped
+
+    private void txtDescKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDescKeyTyped
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+        if (Character.isDigit(c)) {
+            getToolkit().beep();
+            evt.consume();
+        }
+    }//GEN-LAST:event_txtDescKeyTyped
+
+    private void txtDescKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDescKeyReleased
+        // TODO add your handling code here:
+        if (txtDesc.getText().length() != 0) {
+            txtDesc.setText(valiConf.primerLetraMayuscula(txtDesc.getText()).replace("S/n", "S/N"));
+            txtDesc.setText(valiConf.primerLetraMayuscula(txtDesc.getText()).replace("S/d", "S/D"));
+            txtDesc.setText(valiConf.primerLetraMayuscula(txtDesc.getText()).replace("S/o", "S/O"));
+        }
+    }//GEN-LAST:event_txtDescKeyReleased
 
     /**
      * @param args the command line arguments

@@ -88,6 +88,10 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="txtClav">
+          <Events>
+            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtClavKeyReleased"/>
+            <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtClavKeyTyped"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="jButton2">
           <Properties>
@@ -106,6 +110,10 @@
           </Events>
         </Component>
         <Component class="javax.swing.JTextField" name="txtForma">
+          <Events>
+            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtFormaKeyReleased"/>
+            <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtFormaKeyTyped"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>

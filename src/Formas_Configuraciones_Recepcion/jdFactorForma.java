@@ -6,6 +6,7 @@
 package Formas_Configuraciones_Recepcion;
 
 import Metodos_Configuraciones.metodosDatosBasicos;
+import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
@@ -20,64 +21,60 @@ public class jdFactorForma extends javax.swing.JDialog {
     /**
      * Creates new form jdPais
      */
-    String tipo, ID_Forma1C,ID_Forma2C;
-    String ID_Forma2,Formula,ID_Forma1,Factor,Porcentaje;
+    String tipo, ID_Forma1C, ID_Forma2C;
+    String ID_Forma2, Formula, ID_Forma1, Factor, Porcentaje;
     Connection cn;
     jpFactorForma jp;
-   
-
+    validaConfi valiConf;
     metodosDatosBasicos mdb;
 
-    public jdFactorForma(java.awt.Frame parent, boolean modal, String tipo,String ID_Forma1C, String ID_Forma2C,String FormulaC,String FactorC,String PorcentajeC, Connection c) {
+    public jdFactorForma(java.awt.Frame parent, boolean modal, String tipo, String ID_Forma1C, String ID_Forma2C, String FormulaC, String FactorC, String PorcentajeC, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
 
         this.tipo = tipo;
         this.ID_Forma1C = ID_Forma1C;
-           this.ID_Forma2C = ID_Forma2C;
+        this.ID_Forma2C = ID_Forma2C;
         cn = c;
+        valiConf = new validaConfi();
+
         if (tipo.equals("1")) {
-            setTitle("nuevo Factor Forma");
-        }else{
-              setTitle("editar");
-              txtForm.setText(FormulaC);
-              txtF2.setText(ID_Forma2C);
-              txtF1.setText(ID_Forma1C);
-              txtFactor.setText(FactorC);
-              txtPorcentaje.setText(PorcentajeC);
-              
-        }  
- 
+            setTitle("Nuevo Factor Forma");
+        } else {
+            setTitle("Editar Factor Forma");
+            txtForm.setText(FormulaC);
+            txtF2.setText(ID_Forma2C);
+            txtF1.setText(ID_Forma1C);
+            txtFactor.setText(FactorC);
+            txtPorcentaje.setText(PorcentajeC);
+
+        }
+
     }
-
-
-
- 
 
     public void tipoProceso() {
         try {
             String sql = "";
 
             mdb = new metodosDatosBasicos(cn);
-           Formula=txtForm.getText();
-         ID_Forma2 = txtF2.getText();
-        ID_Forma1=txtF1.getText();
-        Factor=txtFactor.getText();
-        Porcentaje=txtPorcentaje.getText();
-        
+            Formula = txtForm.getText();
+            ID_Forma2 = txtF2.getText();
+            ID_Forma1 = txtF1.getText();
+            Factor = txtFactor.getText();
+            Porcentaje = txtPorcentaje.getText();
 
             if (tipo.equals("1")) {
                 //nuevoPais();
-                sql = "INSERT INTO FactorForma VALUES(null,'" +ID_Forma1+ "','" +ID_Forma2+ "','"+Formula+"','" +Factor+ "','" +Porcentaje+ "', 1, 1,current_date()"
+                sql = "INSERT INTO FactorForma VALUES(null,'" + ID_Forma1 + "','" + ID_Forma2 + "','" + Formula + "','" + Factor + "','" + Porcentaje + "', 1, 1,current_date()"
                         + ", current_time(),1,1,1,1)";
                 mdb.insertarBasicos(sql);
                 jp.llenaTabla();
                 this.dispose();
             } else {
                 //editarPais();
-                sql = "UPDATE FactorForma SET  ID_Forma2='" +ID_Forma2+ "',Formula='"+Formula+"',ID_Forma1='"+ID_Forma1+"',Factor='"+Factor+"' ,Porcentaje='"+Porcentaje+"'where ID_Forma1='"+ ID_Forma1C +"' AND ID_Forma2='"+ ID_Forma2C +"' ";
-               System.out.print(sql);
+                sql = "UPDATE FactorForma SET  ID_Forma2='" + ID_Forma2 + "',Formula='" + Formula + "',ID_Forma1='" + ID_Forma1 + "',Factor='" + Factor + "' ,Porcentaje='" + Porcentaje + "'where ID_Forma1='" + ID_Forma1C + "' AND ID_Forma2='" + ID_Forma2C + "' ";
+                System.out.print(sql);
                 mdb.actualizarBasicos(sql);
                 jp.llenaTabla();
                 this.dispose();
@@ -119,6 +116,12 @@ public class jdFactorForma extends javax.swing.JDialog {
 
         jLabel1.setText("Forma de Cafe 2");
 
+        txtF2.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtF2KeyReleased(evt);
+            }
+        });
+
         jButton1.setText("Aceptar");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -135,15 +138,49 @@ public class jdFactorForma extends javax.swing.JDialog {
 
         jLabel2.setText("Formula");
 
+        txtForm.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtFormKeyReleased(evt);
+            }
+        });
+
         txtF1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtF1ActionPerformed(evt);
             }
         });
+        txtF1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtF1KeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtF1KeyTyped(evt);
+            }
+        });
 
         jLabel3.setText("Forma de Cafe 1");
 
+        txtFactor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtFactorActionPerformed(evt);
+            }
+        });
+        txtFactor.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtFactorKeyReleased(evt);
+            }
+        });
+
         jLabel4.setText("Factor");
+
+        txtPorcentaje.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtPorcentajeKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtPorcentajeKeyTyped(evt);
+            }
+        });
 
         jLabel5.setText("Porcentaje");
 
@@ -196,10 +233,11 @@ public class jdFactorForma extends javax.swing.JDialog {
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtPorcentaje, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
-                    .addComponent(jButton2)))
+                    .addComponent(jButton2))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -229,6 +267,78 @@ public class jdFactorForma extends javax.swing.JDialog {
     private void txtF1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtF1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtF1ActionPerformed
+
+    private void txtF1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtF1KeyReleased
+        // TODO add your handling code here:
+        if (txtF1.getText().length() != 0) {
+            txtF1.setText(valiConf.primerLetraMayuscula(txtF1.getText()).replace("S/n", "S/N"));
+            txtF1.setText(valiConf.primerLetraMayuscula(txtF1.getText()).replace("S/d", "S/D"));
+            txtF1.setText(valiConf.primerLetraMayuscula(txtF1.getText()).replace("S/o", "S/O"));
+        }
+
+    }//GEN-LAST:event_txtF1KeyReleased
+
+    private void txtF2KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtF2KeyReleased
+        // TODO add your handling code here:
+        if (txtF2.getText().length() != 0) {
+            txtF2.setText(valiConf.primerLetraMayuscula(txtF2.getText()).replace("S/n", "S/N"));
+            txtF2.setText(valiConf.primerLetraMayuscula(txtF2.getText()).replace("S/d", "S/D"));
+            txtF2.setText(valiConf.primerLetraMayuscula(txtF2.getText()).replace("S/o", "S/O"));
+        }
+
+    }//GEN-LAST:event_txtF2KeyReleased
+
+    private void txtFormKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtFormKeyReleased
+        // TODO add your handling code here:
+        if (txtForm.getText().length() != 0) {
+            txtForm.setText(valiConf.primerLetraMayuscula(txtForm.getText()).replace("S/n", "S/N"));
+            txtForm.setText(valiConf.primerLetraMayuscula(txtForm.getText()).replace("S/d", "S/D"));
+            txtForm.setText(valiConf.primerLetraMayuscula(txtForm.getText()).replace("S/o", "S/O"));
+        }
+
+    }//GEN-LAST:event_txtFormKeyReleased
+
+    private void txtFactorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFactorActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtFactorActionPerformed
+
+    private void txtFactorKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtFactorKeyReleased
+        // TODO add your handling code here:
+        if (txtFactor.getText().length() != 0) {
+            txtFactor.setText(valiConf.primerLetraMayuscula(txtFactor.getText()).replace("S/n", "S/N"));
+            txtFactor.setText(valiConf.primerLetraMayuscula(txtFactor.getText()).replace("S/d", "S/D"));
+            txtFactor.setText(valiConf.primerLetraMayuscula(txtFactor.getText()).replace("S/o", "S/O"));
+        }
+
+    }//GEN-LAST:event_txtFactorKeyReleased
+
+    private void txtPorcentajeKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPorcentajeKeyReleased
+        // TODO add your handling code here:
+        if (txtPorcentaje.getText().length() != 0) {
+            txtPorcentaje.setText(valiConf.primerLetraMayuscula(txtPorcentaje.getText()).replace("S/n", "S/N"));
+            txtPorcentaje.setText(valiConf.primerLetraMayuscula(txtPorcentaje.getText()).replace("S/d", "S/D"));
+            txtPorcentaje.setText(valiConf.primerLetraMayuscula(txtPorcentaje.getText()).replace("S/o", "S/O"));
+        }
+
+    }//GEN-LAST:event_txtPorcentajeKeyReleased
+
+    private void txtF1KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtF1KeyTyped
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+        if (Character.isDigit(c)) {
+            getToolkit().beep();
+            evt.consume();
+        }
+    }//GEN-LAST:event_txtF1KeyTyped
+
+    private void txtPorcentajeKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPorcentajeKeyTyped
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+        if (Character.isLetter(c)) {
+            getToolkit().beep();
+            evt.consume();
+        }
+    }//GEN-LAST:event_txtPorcentajeKeyTyped
 
     /**
      * @param args the command line arguments

@@ -75,9 +75,9 @@ public class jdCalificacionSeco extends javax.swing.JDialog {
             }
         } else {
             //editar
-            sql = "UPDATE calidadseco SET clave ='" + txtClave.getText() + "', descripcion='" + txtDesc.getText()+ "',"
-                    + " maxima=" + txtMax.getText()+ ", minima=" + txtMin.getText()+ " "
-                    + " where clave='" +cla+ "' ";
+            sql = "UPDATE calidadseco SET clave ='" + txtClave.getText() + "', descripcion='" + txtDesc.getText() + "',"
+                    + " maxima=" + txtMax.getText() + ", minima=" + txtMin.getText() + " "
+                    + " where clave='" + cla + "' ";
             System.out.println(sql);
             mdb.actualizarBasicos(sql);
             jpCS.llenaTabla();
@@ -129,6 +129,36 @@ public class jdCalificacionSeco extends javax.swing.JDialog {
         jLabel1.setText("Clave");
 
         jLabel4.setText("Minima");
+
+        txtClave.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtClaveKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtClaveKeyTyped(evt);
+            }
+        });
+
+        txtDesc.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtDescKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtDescKeyTyped(evt);
+            }
+        });
+
+        txtMin.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtMinKeyTyped(evt);
+            }
+        });
+
+        txtMax.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtMaxKeyTyped(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -209,6 +239,60 @@ public class jdCalificacionSeco extends javax.swing.JDialog {
         // TODO add your handling code here:
         this.dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void txtClaveKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtClaveKeyReleased
+        // TODO add your handling code here:
+        if (txtClave.getText().length() != 0) {
+            txtClave.setText(valiConf.primerLetraMayuscula(txtClave.getText()).replace("S/n", "S/N"));
+            txtClave.setText(valiConf.primerLetraMayuscula(txtClave.getText()).replace("S/d", "S/D"));
+            txtClave.setText(valiConf.primerLetraMayuscula(txtClave.getText()).replace("S/o", "S/O"));
+        }
+    }//GEN-LAST:event_txtClaveKeyReleased
+
+    private void txtDescKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDescKeyReleased
+        // TODO add your handling code here:
+        if (txtDesc.getText().length() != 0) {
+            txtDesc.setText(valiConf.primerLetraMayuscula(txtDesc.getText()).replace("S/n", "S/N"));
+            txtDesc.setText(valiConf.primerLetraMayuscula(txtDesc.getText()).replace("S/d", "S/D"));
+            txtDesc.setText(valiConf.primerLetraMayuscula(txtDesc.getText()).replace("S/o", "S/O"));
+        }
+    }//GEN-LAST:event_txtDescKeyReleased
+
+    private void txtClaveKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtClaveKeyTyped
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+        if (Character.isDigit(c)) {
+            getToolkit().beep();
+            evt.consume();
+        }
+    }//GEN-LAST:event_txtClaveKeyTyped
+
+    private void txtDescKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDescKeyTyped
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+        if (Character.isDigit(c)) {
+            getToolkit().beep();
+            evt.consume();
+        }
+    }//GEN-LAST:event_txtDescKeyTyped
+
+    private void txtMinKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtMinKeyTyped
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+        if (Character.isLetter(c)) {
+            getToolkit().beep();
+            evt.consume();
+        }
+    }//GEN-LAST:event_txtMinKeyTyped
+
+    private void txtMaxKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtMaxKeyTyped
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+        if (Character.isLetter(c)) {
+            getToolkit().beep();
+            evt.consume();
+        }
+    }//GEN-LAST:event_txtMaxKeyTyped
 
     /**
      * @param args the command line arguments

@@ -47,7 +47,7 @@
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="jButton2" pref="180" max="32767" attributes="0"/>
                       </Group>
-                      <Component id="txtAlmacen" alignment="0" max="32767" attributes="0"/>
+                      <Component id="txtNombre" alignment="0" max="32767" attributes="0"/>
                       <Component id="txtPlacas" alignment="0" max="32767" attributes="0"/>
                       <Component id="txtNomRes" alignment="0" max="32767" attributes="0"/>
                       <Group type="102" attributes="0">
@@ -70,7 +70,7 @@
                   <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
                   <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="txtAlmacen" min="-2" max="-2" attributes="0"/>
+                  <Component id="txtNombre" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
@@ -100,6 +100,9 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="txtcapacidad">
+          <Events>
+            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtcapacidadKeyReleased"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="jButton1">
           <Properties>
@@ -123,8 +126,14 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="txtPlacas">
+          <Events>
+            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtPlacasKeyReleased"/>
+          </Events>
         </Component>
-        <Component class="javax.swing.JTextField" name="txtAlmacen">
+        <Component class="javax.swing.JTextField" name="txtNombre">
+          <Events>
+            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtNombreKeyReleased"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel3">
           <Properties>
@@ -132,6 +141,9 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="txtNomRes">
+          <Events>
+            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtNomResKeyReleased"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel4">
           <Properties>

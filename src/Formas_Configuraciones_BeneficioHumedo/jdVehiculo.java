@@ -6,6 +6,7 @@
 package Formas_Configuraciones_BeneficioHumedo;
 
 import Metodos_Configuraciones.metodosDatosBasicos;
+import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
@@ -21,14 +22,13 @@ public class jdVehiculo extends javax.swing.JDialog {
      * Creates new form jdPais
      */
     String tipo, NombreC;
-    String Capacidad,Placas,Nombre,NomRes;
+    String Capacidad, Placas, Nombre, NomRes;
     Connection cn;
     jpVehiculo jp;
-   
-
+    validaConfi valiConf;
     metodosDatosBasicos mdb;
 
-    public jdVehiculo(java.awt.Frame parent, boolean modal, String tipo,String NombreC, String CapacidadC,String PlacasC,String NomResC, Connection c) {
+    public jdVehiculo(java.awt.Frame parent, boolean modal, String tipo, String NombreC, String CapacidadC, String PlacasC, String NomResC, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
@@ -36,45 +36,42 @@ public class jdVehiculo extends javax.swing.JDialog {
         this.tipo = tipo;
         this.NombreC = NombreC;
         cn = c;
+        valiConf = new validaConfi();
+        
         if (tipo.equals("1")) {
             setTitle("nuevo Vehiculo");
-        }else{
-              setTitle("editar");
-              txtPlacas.setText(PlacasC);
-              txtcapacidad.setText(CapacidadC);
-              txtAlmacen.setText(NombreC);
-              txtNomRes.setText(NomResC);
-              
-        }  
- 
+        } else {
+            setTitle("editar");
+            txtPlacas.setText(PlacasC);
+            txtcapacidad.setText(CapacidadC);
+            txtNombre.setText(NombreC);
+            txtNomRes.setText(NomResC);
+
+        }
+
     }
-
-
-
- 
 
     public void tipoProceso() {
         try {
             String sql = "";
 
             mdb = new metodosDatosBasicos(cn);
-           Placas=txtPlacas.getText();
-         Capacidad = txtcapacidad.getText();
-        Nombre=txtAlmacen.getText();
-        NomRes=txtNomRes.getText();
-        
+            Placas = txtPlacas.getText();
+            Capacidad = txtcapacidad.getText();
+            Nombre = txtNombre.getText();
+            NomRes = txtNomRes.getText();
 
             if (tipo.equals("1")) {
                 //nuevoPais();
-                sql = "INSERT INTO Vehiculo VALUES(null,'" +Nombre+ "','" +Capacidad+ "','"+Placas+"','" +NomRes+ "', 1, 1,current_date()"
+                sql = "INSERT INTO Vehiculo VALUES(null,'" + Nombre + "','" + Capacidad + "','" + Placas + "','" + NomRes + "', 1, 1,current_date()"
                         + ", current_time(),1,1,1,1)";
                 mdb.insertarBasicos(sql);
                 jp.llenaTabla();
                 this.dispose();
             } else {
                 //editarPais();
-                sql = "UPDATE Vehiculo SET  Capacidad='" +Capacidad+ "',Placas='"+Placas+"',Nombre='"+Nombre+"',Responsable='"+NomRes+"' where Nombre='"+ NombreC +"' ";
-               System.out.print(sql);
+                sql = "UPDATE Vehiculo SET  Capacidad='" + Capacidad + "',Placas='" + Placas + "',Nombre='" + Nombre + "',Responsable='" + NomRes + "' where Nombre='" + NombreC + "' ";
+                System.out.print(sql);
                 mdb.actualizarBasicos(sql);
                 jp.llenaTabla();
                 this.dispose();
@@ -105,7 +102,7 @@ public class jdVehiculo extends javax.swing.JDialog {
         jButton2 = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         txtPlacas = new javax.swing.JTextField();
-        txtAlmacen = new javax.swing.JTextField();
+        txtNombre = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         txtNomRes = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
@@ -113,6 +110,12 @@ public class jdVehiculo extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel1.setText("Capacidad (ton)");
+
+        txtcapacidad.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtcapacidadKeyReleased(evt);
+            }
+        });
 
         jButton1.setText("Aceptar");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -130,7 +133,25 @@ public class jdVehiculo extends javax.swing.JDialog {
 
         jLabel2.setText("Placas");
 
+        txtPlacas.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtPlacasKeyReleased(evt);
+            }
+        });
+
+        txtNombre.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtNombreKeyReleased(evt);
+            }
+        });
+
         jLabel3.setText("Nombre Del Vehiculo");
+
+        txtNomRes.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtNomResKeyReleased(evt);
+            }
+        });
 
         jLabel4.setText("Nombre Del Responsable");
 
@@ -146,7 +167,7 @@ public class jdVehiculo extends javax.swing.JDialog {
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE))
-                    .addComponent(txtAlmacen)
+                    .addComponent(txtNombre)
                     .addComponent(txtPlacas)
                     .addComponent(txtNomRes)
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -164,7 +185,7 @@ public class jdVehiculo extends javax.swing.JDialog {
                 .addGap(7, 7, 7)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtAlmacen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -207,6 +228,43 @@ public class jdVehiculo extends javax.swing.JDialog {
         // TODO add your handling code here:
         tipoProceso();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void txtNombreKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNombreKeyReleased
+        // TODO add your handling code here:
+        if (txtNombre.getText().length() != 0) {
+            txtNombre.setText(valiConf.primerLetraMayuscula(txtNombre.getText()).replace("S/n", "S/N"));
+            txtNombre.setText(valiConf.primerLetraMayuscula(txtNombre.getText()).replace("S/d", "S/D"));
+            txtNombre.setText(valiConf.primerLetraMayuscula(txtNombre.getText()).replace("S/o", "S/O"));
+        }
+    }//GEN-LAST:event_txtNombreKeyReleased
+
+    private void txtcapacidadKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtcapacidadKeyReleased
+        // TODO add your handling code here:
+        if (txtcapacidad.getText().length() != 0) {
+            txtcapacidad.setText(valiConf.primerLetraMayuscula(txtcapacidad.getText()).replace("S/n", "S/N"));
+            txtcapacidad.setText(valiConf.primerLetraMayuscula(txtcapacidad.getText()).replace("S/d", "S/D"));
+            txtcapacidad.setText(valiConf.primerLetraMayuscula(txtcapacidad.getText()).replace("S/o", "S/O"));
+        }
+    }//GEN-LAST:event_txtcapacidadKeyReleased
+
+    private void txtPlacasKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPlacasKeyReleased
+        // TODO add your handling code here:
+        if (txtPlacas.getText().length() != 0) {
+            txtPlacas.setText(valiConf.primerLetraMayuscula(txtPlacas.getText()).replace("S/n", "S/N"));
+            txtPlacas.setText(valiConf.primerLetraMayuscula(txtPlacas.getText()).replace("S/d", "S/D"));
+            txtPlacas.setText(valiConf.primerLetraMayuscula(txtPlacas.getText()).replace("S/o", "S/O"));
+        }
+    }//GEN-LAST:event_txtPlacasKeyReleased
+
+    private void txtNomResKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNomResKeyReleased
+        // TODO add your handling code here:
+        if (txtNomRes.getText().length() != 0) {
+            txtNomRes.setText(valiConf.primerLetraMayuscula(txtNomRes.getText()).replace("S/n", "S/N"));
+            txtNomRes.setText(valiConf.primerLetraMayuscula(txtNomRes.getText()).replace("S/d", "S/D"));
+            txtNomRes.setText(valiConf.primerLetraMayuscula(txtNomRes.getText()).replace("S/o", "S/O"));
+        }
+
+    }//GEN-LAST:event_txtNomResKeyReleased
 
     /**
      * @param args the command line arguments
@@ -256,8 +314,8 @@ public class jdVehiculo extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField txtAlmacen;
     private javax.swing.JTextField txtNomRes;
+    private javax.swing.JTextField txtNombre;
     private javax.swing.JTextField txtPlacas;
     private javax.swing.JTextField txtcapacidad;
     // End of variables declaration//GEN-END:variables

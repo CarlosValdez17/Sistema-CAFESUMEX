@@ -25,7 +25,7 @@ public class jdSobrante extends javax.swing.JDialog {
     jpSobrante jpR;
     String clave, tipo, factor, nombre, desc;
     metodosDatosBasicos mdb;
-    validaConfi valConf;
+    validaConfi valiConf;
     Connection cn;
 
     public jdSobrante(java.awt.Frame parent, boolean modal, String tipo, String dato1, String dato2, String dato3, String dato4, Connection c) {
@@ -41,7 +41,7 @@ public class jdSobrante extends javax.swing.JDialog {
         desc = dato4;
 
         mdb = new metodosDatosBasicos(cn);
-        valConf = new validaConfi();
+        valiConf = new validaConfi();
 
         if (tipo.equals("1")) {
             setTitle("Nuevo Sobrante");
@@ -224,7 +224,7 @@ public class jdSobrante extends javax.swing.JDialog {
         // TODO add your handling code here:
         if (txtClave.getText().length() == 0 || txtFactor.getText().length() == 0
                 || txtNombre.getText().length() == 0 || txtDesc.getText().length() == 0) {
-            JOptionPane.showMessageDialog(null,"Rellene todos los campos");
+            JOptionPane.showMessageDialog(null, "Rellene todos los campos");
         } else {
             tipoProceso();
         }
@@ -237,22 +237,39 @@ public class jdSobrante extends javax.swing.JDialog {
 
     private void txtClaveKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtClaveKeyReleased
         // TODO add your handling code here:
-        txtClave.setText(valConf.primerLetraMayuscula(txtClave.getText()));
+        if (txtClave.getText().length() != 0) {
+            txtClave.setText(valiConf.primerLetraMayuscula(txtClave.getText()).replace("S/n", "S/N"));
+            txtClave.setText(valiConf.primerLetraMayuscula(txtClave.getText()).replace("S/d", "S/D"));
+            txtClave.setText(valiConf.primerLetraMayuscula(txtClave.getText()).replace("S/o", "S/O"));
+        }
+
     }//GEN-LAST:event_txtClaveKeyReleased
 
     private void txtFactorKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtFactorKeyReleased
         // TODO add your handling code here:
-        txtFactor.setText(valConf.primerLetraMayuscula(txtFactor.getText()));
+        if (txtFactor.getText().length() != 0) {
+            txtFactor.setText(valiConf.primerLetraMayuscula(txtFactor.getText()).replace("S/n", "S/N"));
+            txtFactor.setText(valiConf.primerLetraMayuscula(txtFactor.getText()).replace("S/d", "S/D"));
+            txtFactor.setText(valiConf.primerLetraMayuscula(txtFactor.getText()).replace("S/o", "S/O"));
+        }
     }//GEN-LAST:event_txtFactorKeyReleased
 
     private void txtNombreKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNombreKeyReleased
         // TODO add your handling code here:
-        txtNombre.setText(valConf.primerLetraMayuscula(txtNombre.getText()));
+        if (txtNombre.getText().length() != 0) {
+            txtNombre.setText(valiConf.primerLetraMayuscula(txtNombre.getText()).replace("S/n", "S/N"));
+            txtNombre.setText(valiConf.primerLetraMayuscula(txtNombre.getText()).replace("S/d", "S/D"));
+            txtNombre.setText(valiConf.primerLetraMayuscula(txtNombre.getText()).replace("S/o", "S/O"));
+        }
     }//GEN-LAST:event_txtNombreKeyReleased
 
     private void txtDescKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDescKeyReleased
         // TODO add your handling code here:
-        txtDesc.setText(valConf.primerLetraMayuscula(txtDesc.getText()));
+        if (txtDesc.getText().length() != 0) {
+            txtDesc.setText(valiConf.primerLetraMayuscula(txtDesc.getText()).replace("S/n", "S/N"));
+            txtDesc.setText(valiConf.primerLetraMayuscula(txtDesc.getText()).replace("S/d", "S/D"));
+            txtDesc.setText(valiConf.primerLetraMayuscula(txtDesc.getText()).replace("S/o", "S/O"));
+        }
     }//GEN-LAST:event_txtDescKeyReleased
 
     private void txtClaveKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtClaveKeyTyped

@@ -6,6 +6,7 @@
 package Formas_Configuraciones_Recepcion;
 
 import Metodos_Configuraciones.metodosDatosBasicos;
+import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
@@ -21,14 +22,13 @@ public class jdMaximoTamañoPromedio extends javax.swing.JDialog {
      * Creates new form jdPais
      */
     String tipo, MaximoTamañoC;
-    String MaximoTamaño,TxTvar;
+    String MaximoTamaño, TxTvar;
     Connection cn;
     jpMaximoTamañoPromedio jp;
-   
-
+    validaConfi valiConf;
     metodosDatosBasicos mdb;
 
-    public jdMaximoTamañoPromedio(java.awt.Frame parent, boolean modal, String tipo, String MaximoTamañoC,String TxTvarC, Connection c) {
+    public jdMaximoTamañoPromedio(java.awt.Frame parent, boolean modal, String tipo, String MaximoTamañoC, String TxTvarC, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
@@ -36,39 +36,38 @@ public class jdMaximoTamañoPromedio extends javax.swing.JDialog {
         this.tipo = tipo;
         this.MaximoTamañoC = MaximoTamañoC;
         cn = c;
+        valiConf = new validaConfi();
+
         if (tipo.equals("1")) {
-            setTitle("nuevo Maximo Tamaño Promedio");
-        }else{
-              setTitle("editar");
-              Centavos.setText(TxTvarC);
-              txtRetenciones.setText(MaximoTamañoC);
-        }  
- 
+            setTitle("Nuevo Maximo Tamaño Promedio");
+        } else {
+            setTitle("Editar Maximo Tamaño Promedio");
+            txtTipo.setText(TxTvarC);
+            txtMaximoTamaño.setText(MaximoTamañoC);
+        }
+
     }
 
     String idPais;
-
- 
 
     public void tipoProceso() {
         try {
             String sql = "";
 
             mdb = new metodosDatosBasicos(cn);
-           TxTvar=Centavos.getText();
-         MaximoTamaño = txtRetenciones.getText();
-        
+            TxTvar = txtTipo.getText();
+            MaximoTamaño = txtMaximoTamaño.getText();
 
             if (tipo.equals("1")) {
                 //nuevoPais();
-                sql = "INSERT INTO MaximoTamañoPromedio VALUES(null,'" +MaximoTamaño+ "','"+TxTvar+"', 1, 1,current_date()"
+                sql = "INSERT INTO MaximoTamañoPromedio VALUES(null,'" + MaximoTamaño + "','" + TxTvar + "', 1, 1,current_date()"
                         + ", current_time(),1,1,1,1)";
                 mdb.insertarBasicos(sql);
                 jp.llenaTabla();
                 this.dispose();
             } else {
                 //editarPais();
-                sql = "UPDATE MaximoTamañoPromedio SET  MaximoTamaño='" +MaximoTamaño+ "', Tipo='"+TxTvar+"' where MaximoTamaño='" + MaximoTamañoC + "' ";
+                sql = "UPDATE MaximoTamañoPromedio SET  MaximoTamaño='" + MaximoTamaño + "', Tipo='" + TxTvar + "' where MaximoTamaño='" + MaximoTamañoC + "' ";
                 mdb.actualizarBasicos(sql);
                 jp.llenaTabla();
                 this.dispose();
@@ -94,15 +93,21 @@ public class jdMaximoTamañoPromedio extends javax.swing.JDialog {
 
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        txtRetenciones = new javax.swing.JTextField();
+        txtMaximoTamaño = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
-        Centavos = new javax.swing.JTextField();
+        txtTipo = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel1.setText("Maximo Tamaño Promedio");
+
+        txtMaximoTamaño.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtMaximoTamañoKeyTyped(evt);
+            }
+        });
 
         jButton1.setText("Aceptar");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -120,6 +125,15 @@ public class jdMaximoTamañoPromedio extends javax.swing.JDialog {
 
         jLabel2.setText("Tipo");
 
+        txtTipo.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtTipoKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtTipoKeyTyped(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -127,17 +141,17 @@ public class jdMaximoTamañoPromedio extends javax.swing.JDialog {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtRetenciones)
+                    .addComponent(txtMaximoTamaño)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE))
+                    .addComponent(txtTipo)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
                             .addComponent(jLabel2))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(Centavos))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -146,12 +160,12 @@ public class jdMaximoTamañoPromedio extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtRetenciones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addComponent(txtMaximoTamaño, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(Centavos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(91, 91, 91)
+                .addComponent(txtTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jButton2))
@@ -181,6 +195,34 @@ public class jdMaximoTamañoPromedio extends javax.swing.JDialog {
         // TODO add your handling code here:
         tipoProceso();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void txtMaximoTamañoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtMaximoTamañoKeyTyped
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+        if (Character.isLetter(c)) {
+            getToolkit().beep();
+            evt.consume();
+        }
+    }//GEN-LAST:event_txtMaximoTamañoKeyTyped
+
+    private void txtTipoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtTipoKeyTyped
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+        if (Character.isDigit(c)) {
+            getToolkit().beep();
+            evt.consume();
+        }
+    }//GEN-LAST:event_txtTipoKeyTyped
+
+    private void txtTipoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtTipoKeyReleased
+        // TODO add your handling code here:
+        if (txtTipo.getText().length() != 0) {
+            txtTipo.setText(valiConf.primerLetraMayuscula(txtTipo.getText()).replace("S/n", "S/N"));
+            txtTipo.setText(valiConf.primerLetraMayuscula(txtTipo.getText()).replace("S/d", "S/D"));
+            txtTipo.setText(valiConf.primerLetraMayuscula(txtTipo.getText()).replace("S/o", "S/O"));
+        }
+
+    }//GEN-LAST:event_txtTipoKeyReleased
 
     /**
      * @param args the command line arguments
@@ -223,12 +265,12 @@ public class jdMaximoTamañoPromedio extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField Centavos;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField txtRetenciones;
+    private javax.swing.JTextField txtMaximoTamaño;
+    private javax.swing.JTextField txtTipo;
     // End of variables declaration//GEN-END:variables
 }

@@ -33,8 +33,8 @@ public class jpEvaluaciones extends javax.swing.JPanel {
         mdb = new metodosDatosBasicos(cn);
         modelo = (DefaultTableModel) tablaFormaCafe.getModel();
 
-        construirTabla();
-        //llenaTabla();
+        //construirTabla();
+        llenaTabla();
     }
 
     public void construirTabla() {

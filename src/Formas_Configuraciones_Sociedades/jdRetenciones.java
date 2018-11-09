@@ -6,6 +6,7 @@
 package Formas_Configuraciones_Sociedades;
 
 import Metodos_Configuraciones.metodosDatosBasicos;
+import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
@@ -21,14 +22,13 @@ public class jdRetenciones extends javax.swing.JDialog {
      * Creates new form jdPais
      */
     String tipo, RetencionesC;
-    String Retenciones,importe;
+    String Retenciones, importe;
     Connection cn;
     jpRetenciones jp;
-   
-
+    validaConfi valiConf;
     metodosDatosBasicos mdb;
 
-    public jdRetenciones(java.awt.Frame parent, boolean modal, String tipo, String RetencionesC,String importeC, Connection c) {
+    public jdRetenciones(java.awt.Frame parent, boolean modal, String tipo, String RetencionesC, String importeC, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
@@ -36,39 +36,38 @@ public class jdRetenciones extends javax.swing.JDialog {
         this.tipo = tipo;
         this.RetencionesC = RetencionesC;
         cn = c;
+        valiConf = new validaConfi();
+
         if (tipo.equals("1")) {
             setTitle("nueva retencion");
-        }else{
-              setTitle("editar");
-              Centavos.setText(importeC);
-              txtRetenciones.setText(RetencionesC);
-        }  
- 
+        } else {
+            setTitle("editar");
+            Centavos.setText(importeC);
+            txtRetenciones.setText(RetencionesC);
+        }
+
     }
 
     String idPais;
-
- 
 
     public void tipoProceso() {
         try {
             String sql = "";
 
             mdb = new metodosDatosBasicos(cn);
-           importe=Centavos.getText();
-         Retenciones = txtRetenciones.getText();
-        
+            importe = Centavos.getText();
+            Retenciones = txtRetenciones.getText();
 
             if (tipo.equals("1")) {
                 //nuevoPais();
-                sql = "INSERT INTO Retenciones VALUES(null,'" +Retenciones+ "','"+importe+"', 1, 1,current_date()"
+                sql = "INSERT INTO Retenciones VALUES(null,'" + Retenciones + "','" + importe + "', 1, 1,current_date()"
                         + ", current_time(),1,1,1,1)";
                 mdb.insertarBasicos(sql);
                 jp.llenaTablaRetenciones();
                 this.dispose();
             } else {
                 //editarPais();
-                sql = "UPDATE Retenciones SET  Descripcion ='" +Retenciones+ "', Importe='"+importe+"' where Descripcion='" + RetencionesC + "' ";
+                sql = "UPDATE Retenciones SET  Descripcion ='" + Retenciones + "', Importe='" + importe + "' where Descripcion='" + RetencionesC + "' ";
                 mdb.actualizarBasicos(sql);
                 jp.llenaTablaRetenciones();
                 this.dispose();
@@ -104,6 +103,12 @@ public class jdRetenciones extends javax.swing.JDialog {
 
         jLabel1.setText("Nombre de la retencion");
 
+        txtRetenciones.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtRetencionesKeyReleased(evt);
+            }
+        });
+
         jButton1.setText("Aceptar");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -120,6 +125,12 @@ public class jdRetenciones extends javax.swing.JDialog {
 
         jLabel2.setText("Centavos por Kg");
 
+        Centavos.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                CentavosKeyTyped(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -132,12 +143,12 @@ public class jdRetenciones extends javax.swing.JDialog {
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE))
+                    .addComponent(Centavos)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
                             .addComponent(jLabel2))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(Centavos))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -147,11 +158,11 @@ public class jdRetenciones extends javax.swing.JDialog {
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtRetenciones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(Centavos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(91, 91, 91)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jButton2))
@@ -181,6 +192,24 @@ public class jdRetenciones extends javax.swing.JDialog {
         // TODO add your handling code here:
         tipoProceso();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void txtRetencionesKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtRetencionesKeyReleased
+        // TODO add your handling code here:
+        if (txtRetenciones.getText().length() != 0) {
+            txtRetenciones.setText(valiConf.primerLetraMayuscula(txtRetenciones.getText()).replace("S/n", "S/N"));
+            txtRetenciones.setText(valiConf.primerLetraMayuscula(txtRetenciones.getText()).replace("S/d", "S/D"));
+            txtRetenciones.setText(valiConf.primerLetraMayuscula(txtRetenciones.getText()).replace("S/o", "S/O"));
+        }
+    }//GEN-LAST:event_txtRetencionesKeyReleased
+
+    private void CentavosKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_CentavosKeyTyped
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+        if (Character.isLetter(c)) {
+            getToolkit().beep();
+            evt.consume();
+        }
+    }//GEN-LAST:event_CentavosKeyTyped
 
     /**
      * @param args the command line arguments

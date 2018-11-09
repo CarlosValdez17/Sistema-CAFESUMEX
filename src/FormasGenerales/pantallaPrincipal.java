@@ -56,12 +56,19 @@ import Formas_Configuraciones_Seguridad.jpPerfiles;
 import Formas_Configuraciones_Sociedades.jpPuestos;
 import Formas_Configuraciones_Sociedades.jpRetenciones;
 import Formas_Personas.jpPersonas;
+import MetodosGenerales.JComboCheckBox;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.sql.Connection;
+import java.util.Vector;
+import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -87,8 +94,26 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         //cn=c;
         cn = (new Conexion()).conectar();
         this.setExtendedState(MAXIMIZED_BOTH);
-        pintarPanel("fondo");
+        //pintarPanel("fondo");
+        /*  ImageFondo image=new ImageFondo();
+        image.setImage("/Imagenes/FondoPantalla.png");
+        setContentPane(image);*/
+    }
 
+    public void paintComponent(Graphics g) {
+        Dimension tamanio = getSize();
+        ImageIcon fondo = new ImageIcon(getClass().getResource("Imagenes/FondoPantalla.png"));
+        g.drawImage(fondo.getImage(), 0, 0, tamanio.width, tamanio.height, null);
+        //panelPrincipal.setOpaque(false);
+        panelPrincipal.paintComponents(g);// paint(g);
+    }
+
+    @Override
+    public Image getIconImage() {
+        Image retValue = Toolkit.getDefaultToolkit().
+                getImage(ClassLoader.getSystemResource("Imagenes/frmLogin.jpg"));
+
+        return retValue;
     }
 
     public void pintarPanel(String tipo) {
@@ -331,6 +356,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 panelPrincipal.add(jpPer);
                 panelPrincipal.revalidate();
                 panelPrincipal.repaint();
+
                 break;
             case "Perfiles":
                 jpPerfiles jpPerf = new jpPerfiles(cn);
@@ -350,7 +376,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 panelPrincipal.revalidate();
                 panelPrincipal.repaint();
                 break;
-          case "Puestos":
+            case "Puestos":
                 jpPuestos jpPues = new jpPuestos(cn);
                 jpPues.setSize(size);
                 jpPues.setLocation(0, 0);
@@ -359,7 +385,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 panelPrincipal.revalidate();
                 panelPrincipal.repaint();
                 break;
-          case "Tipos de Suelo":
+            case "Tipos de Suelo":
                 jpSuelos jpTSuelo = new jpSuelos(cn);
                 jpTSuelo.setSize(size);
                 jpTSuelo.setLocation(0, 0);
@@ -368,7 +394,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 panelPrincipal.revalidate();
                 panelPrincipal.repaint();
                 break;
-          case "Nativo Fauna":
+            case "Nativo Fauna":
                 jpFauna jpNF = new jpFauna(cn);
                 jpNF.setSize(size);
                 jpNF.setLocation(0, 0);
@@ -377,7 +403,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 panelPrincipal.revalidate();
                 panelPrincipal.repaint();
                 break;
-          case "Nativo Flora":
+            case "Nativo Flora":
                 jpFlora jpNFlora = new jpFlora(cn);
                 jpNFlora.setSize(size);
                 jpNFlora.setLocation(0, 0);
@@ -386,7 +412,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 panelPrincipal.revalidate();
                 panelPrincipal.repaint();
                 break;
-          case "Certificado":
+            case "Certificado":
                 jpCertificado jpCertificado = new jpCertificado(cn);
                 jpCertificado.setSize(size);
                 jpCertificado.setLocation(0, 0);
@@ -395,7 +421,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 panelPrincipal.revalidate();
                 panelPrincipal.repaint();
                 break;
-          case "Certificador":
+            case "Certificador":
                 jpCertificador jpCertificador = new jpCertificador(cn);
                 jpCertificador.setSize(size);
                 jpCertificador.setLocation(0, 0);
@@ -404,7 +430,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 panelPrincipal.revalidate();
                 panelPrincipal.repaint();
                 break;
-          case "Tipo de Acción":
+            case "Tipo de Acción":
                 jpTipoAccion jpTipoA = new jpTipoAccion(cn);
                 jpTipoA.setSize(size);
                 jpTipoA.setLocation(0, 0);
@@ -413,7 +439,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 panelPrincipal.revalidate();
                 panelPrincipal.repaint();
                 break;
-          case "Motivo Plantación":
+            case "Motivo Plantación":
                 jpMotivoPlantacion jpMPlan = new jpMotivoPlantacion(cn);
                 jpMPlan.setSize(size);
                 jpMPlan.setLocation(0, 0);
@@ -422,7 +448,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 panelPrincipal.revalidate();
                 panelPrincipal.repaint();
                 break;
-          case "Maquinaria/Herramienta":
+            case "Maquinaria/Herramienta":
                 jpMaquinariaHerramienta jpMH = new jpMaquinariaHerramienta(cn);
                 jpMH.setSize(size);
                 jpMH.setLocation(0, 0);
@@ -431,7 +457,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 panelPrincipal.revalidate();
                 panelPrincipal.repaint();
                 break;
-          case "Control Maleza":
+            case "Control Maleza":
                 jpControlMaleza jpCMaleza = new jpControlMaleza(cn);
                 jpCMaleza.setSize(size);
                 jpCMaleza.setLocation(0, 0);
@@ -440,7 +466,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 panelPrincipal.revalidate();
                 panelPrincipal.repaint();
                 break;
-          case "Tipo de Poda":
+            case "Tipo de Poda":
                 jpTipoPoda jpTPoda = new jpTipoPoda(cn);
                 jpTPoda.setSize(size);
                 jpTPoda.setLocation(0, 0);
@@ -449,7 +475,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 panelPrincipal.revalidate();
                 panelPrincipal.repaint();
                 break;
-          case "Categoria de Archivo":
+            case "Categoria de Archivo":
                 jpCategoriaDeArchivos jpCArch = new jpCategoriaDeArchivos(cn);
                 jpCArch.setSize(size);
                 jpCArch.setLocation(0, 0);
@@ -458,7 +484,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 panelPrincipal.revalidate();
                 panelPrincipal.repaint();
                 break;
-          case "Proceso de Café":
+            case "Proceso de Café":
                 jpProcesoCafe jpProcC = new jpProcesoCafe(cn);
                 jpProcC.setSize(size);
                 jpProcC.setLocation(0, 0);
@@ -467,7 +493,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 panelPrincipal.revalidate();
                 panelPrincipal.repaint();
                 break;
-          case "Factor por Forma de Café":
+            case "Factor por Forma de Café":
                 jpFactorForma jpFFC = new jpFactorForma(cn);
                 jpFFC.setSize(size);
                 jpFFC.setLocation(0, 0);
@@ -476,7 +502,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 panelPrincipal.revalidate();
                 panelPrincipal.repaint();
                 break;
-          case "Máximo Tamaño Promedio":
+            case "Máximo Tamaño Promedio":
                 jpMaximoTamañoPromedio jpMTP = new jpMaximoTamañoPromedio(cn);
                 jpMTP.setSize(size);
                 jpMTP.setLocation(0, 0);
@@ -485,7 +511,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 panelPrincipal.revalidate();
                 panelPrincipal.repaint();
                 break;
-          case "Vehículos":
+            case "Vehículos":
                 jpVehiculo jpVh = new jpVehiculo(cn);
                 jpVh.setSize(size);
                 jpVh.setLocation(0, 0);
@@ -494,7 +520,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 panelPrincipal.revalidate();
                 panelPrincipal.repaint();
                 break;
-          case "Área de Almacén":
+            case "Área de Almacén":
                 jpAreaAlmacen jpAAl = new jpAreaAlmacen(cn);
                 jpAAl.setSize(size);
                 jpAAl.setLocation(0, 0);
@@ -503,7 +529,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 panelPrincipal.revalidate();
                 panelPrincipal.repaint();
                 break;
-          case "Climas":
+            case "Climas":
                 jpClima jpClima = new jpClima(cn);
                 jpClima.setSize(size);
                 jpClima.setLocation(0, 0);
@@ -512,7 +538,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 panelPrincipal.revalidate();
                 panelPrincipal.repaint();
                 break;
-          case "Idiomas":
+            case "Idiomas":
                 jpIdioma jpIdi = new jpIdioma(cn);
                 jpIdi.setSize(size);
                 jpIdi.setLocation(0, 0);
@@ -521,11 +547,12 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 panelPrincipal.revalidate();
                 panelPrincipal.repaint();
                 break;
-          
-          default:
+
+            default:
+
                 jpFondo jpF = new jpFondo();
                 jpF.setSize(size);
-                jpF.setLocation(0, 0);
+                jpF.setLocation(-5, -35);
                 panelPrincipal.removeAll();
                 panelPrincipal.add(jpF);
                 panelPrincipal.revalidate();
@@ -533,6 +560,18 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 break;
         }
     }
+
+    /*
+    public void paint(Graphics grafico) {
+        Dimension height = getSize();
+//Se selecciona la imagen que tenemos en el paquete de la //ruta del programa
+        ImageIcon Img = new ImageIcon(getClass().getResource("/Imagenes/FondoPantalla.png"));
+//se dibuja la imagen que tenemos en el paquete Images //dentro de un panel
+        grafico.drawImage(Img.getImage(), 0, 0, height.width, height.height, null);
+        panelPrincipal.setOpaque(false);
+        panelPrincipal.paint(grafico);
+
+    }*/
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -559,30 +598,78 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         jMenu1.setText("jMenu1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("FincaLab - Pantalla Principal");
+        setFocusTraversalPolicyProvider(true);
+        setIconImage(getIconImage());
+        setResizable(false);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        jButton2.setText("Configuraciones");
+        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/database(2).png"))); // NOI18N
+        jButton2.setText("Configurador");
+        jButton2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButton2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton2.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
             }
         });
 
+        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/group(1).png"))); // NOI18N
         jButton3.setText("Personas");
+        jButton3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButton3.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton3.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
             }
         });
 
+        jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/avatar.png"))); // NOI18N
         jButton4.setText("FincaCert");
+        jButton4.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButton4.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton4.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
-        jButton5.setText("Recepción");
+        jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/cash.png"))); // NOI18N
+        jButton5.setText("Recepcion");
+        jButton5.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButton5.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton5.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
 
-        jButton6.setText("Beneficio Humedo");
+        jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/machinery.png"))); // NOI18N
+        jButton6.setText("B Humedo");
+        jButton6.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButton6.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton6.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
+        });
 
+        jButton7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/breakfast.png"))); // NOI18N
         jButton7.setText("Laboratorio");
+        jButton7.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButton7.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton7.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton7ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -591,9 +678,9 @@ public class pantallaPrincipal extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jButton2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButton3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButton4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButton5)
@@ -601,20 +688,20 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 .addComponent(jButton6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButton7)
-                .addContainerGap(452, Short.MAX_VALUE))
+                .addContainerGap(484, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jButton7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         panelArbol.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -758,7 +845,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         panelPrincipal.setLayout(panelPrincipalLayout);
         panelPrincipalLayout.setHorizontalGroup(
             panelPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 850, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
         panelPrincipalLayout.setVerticalGroup(
             panelPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -780,7 +867,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
             .addComponent(panelPrincipal, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(panelArbolLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 579, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 572, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -788,18 +875,19 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(10, 10, 10)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(panelArbol, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(panelArbol, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(11, 11, 11)
+                .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(11, 11, 11)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(panelArbol, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -850,9 +938,17 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         treeNode2.add(treeNode3);
         treeNode1.add(treeNode2);
         jTree1.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
-   
+
         pintarPanel("fondo");
 
+        //CAMBIAR COLORES BOTOTES
+        jButton3.setBackground(Color.getHSBColor(0.56f, 1.0f, 0.8f));
+        //QUITAR COLOR
+        jButton2.setBackground(Color.getColor("FFFFFF"));
+        jButton4.setBackground(Color.getColor("FFFFFF"));
+        jButton5.setBackground(Color.getColor("FFFFFF"));
+        jButton6.setBackground(Color.getColor("FFFFFF"));
+        jButton7.setBackground(Color.getColor("FFFFFF"));
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jTree1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTree1KeyReleased
@@ -996,7 +1092,65 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         treeNode1.add(treeNode2);
         jTree1.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
 
+        //CAMBIAR COLORES BOTOTES
+        jButton2.setBackground(Color.getHSBColor(0.56f, 1.0f, 0.8f));
+        //QUITAR COLOR
+        jButton3.setBackground(Color.getColor("FFFFFF"));
+        jButton4.setBackground(Color.getColor("FFFFFF"));
+        jButton5.setBackground(Color.getColor("FFFFFF"));
+        jButton6.setBackground(Color.getColor("FFFFFF"));
+        jButton7.setBackground(Color.getColor("FFFFFF"));
+
+
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+        //CAMBIAR COLORES BOTOTES
+        jButton4.setBackground(Color.getHSBColor(0.56f, 1.0f, 0.8f));
+        //QUITAR COLOR
+        jButton3.setBackground(Color.getColor("FFFFFF"));
+        jButton2.setBackground(Color.getColor("FFFFFF"));
+        jButton5.setBackground(Color.getColor("FFFFFF"));
+        jButton6.setBackground(Color.getColor("FFFFFF"));
+        jButton7.setBackground(Color.getColor("FFFFFF"));
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        // TODO add your handling code here:
+        //CAMBIAR COLORES BOTOTES
+        jButton5.setBackground(Color.getHSBColor(0.56f, 1.0f, 0.8f));
+        //QUITAR COLOR
+        jButton3.setBackground(Color.getColor("FFFFFF"));
+        jButton4.setBackground(Color.getColor("FFFFFF"));
+        jButton2.setBackground(Color.getColor("FFFFFF"));
+        jButton6.setBackground(Color.getColor("FFFFFF"));
+        jButton7.setBackground(Color.getColor("FFFFFF"));
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        // TODO add your handling code here:
+        //CAMBIAR COLORES BOTOTES
+        jButton6.setBackground(Color.getHSBColor(0.56f, 1.0f, 0.8f));
+        //QUITAR COLOR
+        jButton3.setBackground(Color.getColor("FFFFFF"));
+        jButton4.setBackground(Color.getColor("FFFFFF"));
+        jButton5.setBackground(Color.getColor("FFFFFF"));
+        jButton2.setBackground(Color.getColor("FFFFFF"));
+        jButton7.setBackground(Color.getColor("FFFFFF"));
+    }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        // TODO add your handling code here:
+        //CAMBIAR COLORES BOTOTES
+        jButton7.setBackground(Color.getHSBColor(0.56f, 1.0f, 0.8f));
+        //QUITAR COLOR
+        jButton3.setBackground(Color.getColor("FFFFFF"));
+        jButton4.setBackground(Color.getColor("FFFFFF"));
+        jButton5.setBackground(Color.getColor("FFFFFF"));
+        jButton6.setBackground(Color.getColor("FFFFFF"));
+        jButton2.setBackground(Color.getColor("FFFFFF"));
+    }//GEN-LAST:event_jButton7ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1013,16 +1167,24 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
+
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(pantallaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(pantallaPrincipal.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(pantallaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(pantallaPrincipal.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(pantallaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(pantallaPrincipal.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(pantallaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(pantallaPrincipal.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
         //</editor-fold>

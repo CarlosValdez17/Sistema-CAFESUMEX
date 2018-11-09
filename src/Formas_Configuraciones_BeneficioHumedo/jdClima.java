@@ -6,6 +6,7 @@
 package Formas_Configuraciones_BeneficioHumedo;
 
 import Metodos_Configuraciones.metodosDatosBasicos;
+import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
@@ -24,7 +25,7 @@ public class jdClima extends javax.swing.JDialog {
     String Clave, TxTvar;
     Connection cn;
     jpClima jp;
-
+    validaConfi valiConf;
     metodosDatosBasicos mdb;
 
     public jdClima(java.awt.Frame parent, boolean modal, String tipo, String ClaveC, String TxTvarC, Connection c) {
@@ -35,12 +36,14 @@ public class jdClima extends javax.swing.JDialog {
         this.tipo = tipo;
         this.ClaveC = ClaveC;
         cn = c;
+        valiConf = new validaConfi();
+
         if (tipo.equals("1")) {
             setTitle("nuevo Clima");
         } else {
             setTitle("editar");
-            Centavos.setText(TxTvarC);
-            txtRetenciones.setText(ClaveC);
+            txtClima.setText(TxTvarC);
+            txtClave.setText(ClaveC);
         }
 
     }
@@ -52,8 +55,8 @@ public class jdClima extends javax.swing.JDialog {
             String sql = "";
 
             mdb = new metodosDatosBasicos(cn);
-            TxTvar = Centavos.getText();
-            Clave = txtRetenciones.getText();
+            TxTvar = txtClima.getText();
+            Clave = txtClave.getText();
 
             if (tipo.equals("1")) {
                 //nuevoPais();
@@ -90,15 +93,24 @@ public class jdClima extends javax.swing.JDialog {
 
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        txtRetenciones = new javax.swing.JTextField();
+        txtClave = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
-        Centavos = new javax.swing.JTextField();
+        txtClima = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel1.setText("Clave");
+
+        txtClave.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtClaveKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtClaveKeyTyped(evt);
+            }
+        });
 
         jButton1.setText("Aceptar");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -116,6 +128,15 @@ public class jdClima extends javax.swing.JDialog {
 
         jLabel2.setText("Clima");
 
+        txtClima.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtClimaKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtClimaKeyTyped(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -123,7 +144,7 @@ public class jdClima extends javax.swing.JDialog {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtRetenciones)
+                    .addComponent(txtClave)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -133,7 +154,7 @@ public class jdClima extends javax.swing.JDialog {
                             .addComponent(jLabel1)
                             .addComponent(jLabel2))
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(Centavos))
+                    .addComponent(txtClima))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -142,12 +163,12 @@ public class jdClima extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtRetenciones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtClave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(Centavos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(91, 91, 91)
+                .addComponent(txtClima, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jButton2))
@@ -177,6 +198,42 @@ public class jdClima extends javax.swing.JDialog {
         // TODO add your handling code here:
         tipoProceso();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void txtClaveKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtClaveKeyTyped
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+        if (Character.isDigit(c)) {
+            getToolkit().beep();
+            evt.consume();
+        }
+    }//GEN-LAST:event_txtClaveKeyTyped
+
+    private void txtClimaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtClimaKeyTyped
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+        if (Character.isDigit(c)) {
+            getToolkit().beep();
+            evt.consume();
+        }
+    }//GEN-LAST:event_txtClimaKeyTyped
+
+    private void txtClaveKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtClaveKeyReleased
+        // TODO add your handling code here:
+        if (txtClave.getText().length() != 0) {
+            txtClave.setText(valiConf.primerLetraMayuscula(txtClave.getText()).replace("S/n", "S/N"));
+            txtClave.setText(valiConf.primerLetraMayuscula(txtClave.getText()).replace("S/d", "S/D"));
+            txtClave.setText(valiConf.primerLetraMayuscula(txtClave.getText()).replace("S/o", "S/O"));
+        }
+    }//GEN-LAST:event_txtClaveKeyReleased
+
+    private void txtClimaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtClimaKeyReleased
+        // TODO add your handling code here:
+        if (txtClima.getText().length() != 0) {
+            txtClima.setText(valiConf.primerLetraMayuscula(txtClima.getText()).replace("S/n", "S/N"));
+            txtClima.setText(valiConf.primerLetraMayuscula(txtClima.getText()).replace("S/d", "S/D"));
+            txtClima.setText(valiConf.primerLetraMayuscula(txtClima.getText()).replace("S/o", "S/O"));
+        }
+    }//GEN-LAST:event_txtClimaKeyReleased
 
     /**
      * @param args the command line arguments
@@ -219,12 +276,12 @@ public class jdClima extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField Centavos;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField txtRetenciones;
+    private javax.swing.JTextField txtClave;
+    private javax.swing.JTextField txtClima;
     // End of variables declaration//GEN-END:variables
 }

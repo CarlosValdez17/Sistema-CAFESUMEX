@@ -7,6 +7,7 @@ package Formas_Configuraciones_Recepcion;
 
 import Formas_Configuraciones_DatosBasicos.*;
 import Metodos_Configuraciones.metodosDatosBasicos;
+import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
@@ -23,19 +24,20 @@ public class jdTiposEvaluacion extends javax.swing.JDialog {
     jpTipoEvaluacion jpTE;
     String tipoevaluacion, tipo, formula;
     metodosDatosBasicos mdb;
+    validaConfi valiConf;
     Connection cn;
 
-    public jdTiposEvaluacion(java.awt.Frame parent, boolean modal, String tipo, String dato1,String dato2, Connection c) {
+    public jdTiposEvaluacion(java.awt.Frame parent, boolean modal, String tipo, String dato1, String dato2, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
 
-        
         cn = c;
         this.tipo = tipo;
-        tipoevaluacion=dato1;
-        formula=dato2;
-        
+        tipoevaluacion = dato1;
+        formula = dato2;
+        valiConf = new validaConfi();
+
         if (tipo.equals("1")) {
             setTitle("Nueva Evaluacion");
         } else {
@@ -43,11 +45,10 @@ public class jdTiposEvaluacion extends javax.swing.JDialog {
             txtEvaluacion.setText(dato1);
             txtFormula.setText(dato2);
         }
-        
-        mdb = new metodosDatosBasicos(cn);
- }
 
-   
+        mdb = new metodosDatosBasicos(cn);
+    }
+
     public void tipoProceso() {
         String sql = "";
 
@@ -62,7 +63,7 @@ public class jdTiposEvaluacion extends javax.swing.JDialog {
             this.dispose();
         } else {
             //editarPais();
-            sql = "UPDATE tipoevaluacion SET descripcion='" + txtEvaluacion.getText() + "', formula='" +txtFormula.getText()+ "' where descripcion='" + tipoevaluacion + "' ";
+            sql = "UPDATE tipoevaluacion SET descripcion='" + txtEvaluacion.getText() + "', formula='" + txtFormula.getText() + "' where descripcion='" + tipoevaluacion + "' ";
             System.out.println(sql);
             mdb.actualizarBasicos(sql);
             jpTE.llenaTabla();
@@ -93,6 +94,15 @@ public class jdTiposEvaluacion extends javax.swing.JDialog {
 
         jLabel2.setText("Formula");
 
+        txtEvaluacion.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtEvaluacionKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtEvaluacionKeyTyped(evt);
+            }
+        });
+
         jButton2.setText("Aceptar");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -104,6 +114,17 @@ public class jdTiposEvaluacion extends javax.swing.JDialog {
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
+            }
+        });
+
+        txtFormula.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtFormulaActionPerformed(evt);
+            }
+        });
+        txtFormula.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtFormulaKeyReleased(evt);
             }
         });
 
@@ -167,6 +188,37 @@ public class jdTiposEvaluacion extends javax.swing.JDialog {
         // TODO add your handling code here:
         this.dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void txtEvaluacionKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEvaluacionKeyTyped
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+        if (Character.isDigit(c)) {
+            getToolkit().beep();
+            evt.consume();
+        }
+    }//GEN-LAST:event_txtEvaluacionKeyTyped
+
+    private void txtFormulaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFormulaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtFormulaActionPerformed
+
+    private void txtFormulaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtFormulaKeyReleased
+        // TODO add your handling code here:
+        if (txtFormula.getText().length() != 0) {
+            txtFormula.setText(valiConf.primerLetraMayuscula(txtFormula.getText()).replace("S/n", "S/N"));
+            txtFormula.setText(valiConf.primerLetraMayuscula(txtFormula.getText()).replace("S/d", "S/D"));
+            txtFormula.setText(valiConf.primerLetraMayuscula(txtFormula.getText()).replace("S/o", "S/O"));
+        }
+    }//GEN-LAST:event_txtFormulaKeyReleased
+
+    private void txtEvaluacionKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEvaluacionKeyReleased
+        // TODO add your handling code here:
+        if (txtEvaluacion.getText().length() != 0) {
+            txtEvaluacion.setText(valiConf.primerLetraMayuscula(txtEvaluacion.getText()).replace("S/n", "S/N"));
+            txtEvaluacion.setText(valiConf.primerLetraMayuscula(txtEvaluacion.getText()).replace("S/d", "S/D"));
+            txtEvaluacion.setText(valiConf.primerLetraMayuscula(txtEvaluacion.getText()).replace("S/o", "S/O"));
+        }
+    }//GEN-LAST:event_txtEvaluacionKeyReleased
 
     /**
      * @param args the command line arguments

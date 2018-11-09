@@ -21,7 +21,7 @@ public class jdCalidadSombra extends javax.swing.JDialog {
      */
     jpCalidadSombra jpCS;
     Connection cn;
-    String tipo, calidad,altura,tSombra,cobertura,id;
+    String tipo, calidad, altura, tSombra, cobertura, id;
     metodosDatosBasicos mdb;
 
     public jdCalidadSombra(java.awt.Frame parent, boolean modal, String tipo, String calidad,
@@ -33,17 +33,17 @@ public class jdCalidadSombra extends javax.swing.JDialog {
         cn = c;
         mdb = new metodosDatosBasicos(cn);
         this.tipo = tipo;
-        this.calidad=calidad;
-        this.tSombra=tSombra;
-        this.cobertura=cobertura;
-        this.altura=altura;
-        this.id=id;
+        this.calidad = calidad;
+        this.tSombra = tSombra;
+        this.cobertura = cobertura;
+        this.altura = altura;
+        this.id = id;
 
         rellenarCombos();
         comparaciones();
     }
 
-        public void comparaciones() {
+    public void comparaciones() {
         if (tipo.equals("1")) {
             setTitle("Nuevo Tipo de Sombra");
 
@@ -52,14 +52,13 @@ public class jdCalidadSombra extends javax.swing.JDialog {
 
             comboTipo.addItem(tSombra);
             comboTipo.setSelectedItem(tSombra);
-            
+
             txtCalidad.setText(calidad);
             txtAltura.setText(altura);
             txtCobertura.setText(cobertura);
         }
     }
 
-    
     String[] datos;
 
     public void rellenarCombos() {
@@ -74,8 +73,8 @@ public class jdCalidadSombra extends javax.swing.JDialog {
 
         if (tipo.equals("1")) {
             //nuevo
-            sql = "INSERT INTO calidadsombra VALUES(null,"+mdb.devuelveIdPais(tipoS, "tiposombra")+","+ txtCalidad.getText()+","
-                    + txtAltura.getText()+"," + txtCobertura.getText() + ", 1, 1,current_date()"
+            sql = "INSERT INTO calidadsombra VALUES(null," + mdb.devuelveIdPais(tipoS, "tiposombra") + "," + txtCalidad.getText() + ","
+                    + txtAltura.getText() + "," + txtCobertura.getText() + ", 1, 1,current_date()"
                     + ", current_time(), 1, 1, 1, 1  )";
             System.out.println(sql);
             mdb.insertarBasicos(sql);
@@ -83,9 +82,9 @@ public class jdCalidadSombra extends javax.swing.JDialog {
             this.dispose();
         } else {
             //editar
-            sql = "UPDATE calidadsombra SET id_tiposombra="+mdb.devuelveIdPais(tipoS, "tiposombra")+","+
-                  " estrellas="+txtCalidad.getText()+",alturasombrametros="+txtAltura.getText()+",cobertura="+
-                    txtCobertura.getText()+" where id="+id;
+            sql = "UPDATE calidadsombra SET id_tiposombra=" + mdb.devuelveIdPais(tipoS, "tiposombra") + ","
+                    + " estrellas=" + txtCalidad.getText() + ",alturasombrametros=" + txtAltura.getText() + ",cobertura="
+                    + txtCobertura.getText() + " where id=" + id;
             mdb.actualizarBasicos(sql);
             jpCS.llenaTablaCalidad();
             this.dispose();
@@ -227,15 +226,15 @@ public class jdCalidadSombra extends javax.swing.JDialog {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void txtCalidadKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCalidadKeyTyped
-char c = evt.getKeyChar();
-        if (Character.isDigit(c)) {//if (Character.isLetter(c)){
+        char c = evt.getKeyChar();
+        if (Character.isLetter(c)) {//if (Character.isLetter(c)){
             getToolkit().beep();
             evt.consume();
         }        // TODO add your handling code here:
     }//GEN-LAST:event_txtCalidadKeyTyped
 
     private void txtAlturaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAlturaKeyTyped
-char c = evt.getKeyChar();
+        char c = evt.getKeyChar();
         if (Character.isDigit(c)) {//if (Character.isLetter(c)){
             getToolkit().beep();
             evt.consume();
@@ -243,7 +242,7 @@ char c = evt.getKeyChar();
     }//GEN-LAST:event_txtAlturaKeyTyped
 
     private void txtCoberturaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCoberturaKeyTyped
-char c = evt.getKeyChar();
+        char c = evt.getKeyChar();
         if (Character.isDigit(c)) {//if (Character.isLetter(c)){
             getToolkit().beep();
             evt.consume();

@@ -89,6 +89,9 @@ public class jdTipoSombra extends javax.swing.JDialog {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtSombraKeyReleased(evt);
             }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtSombraKeyTyped(evt);
+            }
         });
 
         jButton1.setText("Aceptar");
@@ -168,6 +171,14 @@ public class jdTipoSombra extends javax.swing.JDialog {
         }
    // TODO add your handling code here:
     }//GEN-LAST:event_txtSombraKeyReleased
+
+    private void txtSombraKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSombraKeyTyped
+char c = evt.getKeyChar();
+        if (Character.isDigit(c)) {//if (Character.isLetter(c)){
+            getToolkit().beep();
+            evt.consume();
+        }        // TODO add your handling code here:
+    }//GEN-LAST:event_txtSombraKeyTyped
 
     /**
      * @param args the command line arguments

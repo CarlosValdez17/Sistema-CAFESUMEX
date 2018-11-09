@@ -90,6 +90,9 @@ valiConf = new validaConfi();
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtEnfermedadKeyReleased(evt);
             }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtEnfermedadKeyTyped(evt);
+            }
         });
 
         jButton1.setText("Aceptar");
@@ -169,6 +172,14 @@ valiConf = new validaConfi();
         }
     // TODO add your handling code here:
     }//GEN-LAST:event_txtEnfermedadKeyReleased
+
+    private void txtEnfermedadKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEnfermedadKeyTyped
+ char c = evt.getKeyChar();
+        if (Character.isDigit(c)) {//if (Character.isLetter(c)){
+            getToolkit().beep();
+            evt.consume();
+        }       // TODO add your handling code here:
+    }//GEN-LAST:event_txtEnfermedadKeyTyped
 
     /**
      * @param args the command line arguments

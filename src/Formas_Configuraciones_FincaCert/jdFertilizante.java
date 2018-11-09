@@ -39,7 +39,7 @@ valiConf = new validaConfi();
             setTitle("Nuevo Fertilizante");
         } else {
             setTitle("Editar Fertilizante");
-            txtEnfermedad.setText(dato);
+            txtFertilizante.setText(dato);
         }
     }
 
@@ -49,14 +49,14 @@ valiConf = new validaConfi();
 
             if (tipo.equals("1")) {
                 //nuevoPais();
-                sql = "INSERT INTO fertilizante VALUES(null,'" + txtEnfermedad.getText() + "', 1, 1,current_date()"
+                sql = "INSERT INTO fertilizante VALUES(null,'" + txtFertilizante.getText() + "', 1, 1,current_date()"
                         + ", current_time(), 1, 1, 1, 1 )";
                 mdb.insertarBasicos(sql);
                 jpF.llenaTabla();
                 this.dispose();
             } else {
                 //editarPais();
-                sql = "UPDATE fertilizante SET  descripcion ='" + txtEnfermedad.getText() + "' where descripcion='" + dato + "' ";
+                sql = "UPDATE fertilizante SET  descripcion ='" + txtFertilizante.getText() + "' where descripcion='" + dato + "' ";
                 mdb.actualizarBasicos(sql);
                 jpF.llenaTabla();
                 this.dispose();
@@ -77,7 +77,7 @@ valiConf = new validaConfi();
 
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        txtEnfermedad = new javax.swing.JTextField();
+        txtFertilizante = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
 
@@ -85,9 +85,12 @@ valiConf = new validaConfi();
 
         jLabel1.setText("Fertilizante");
 
-        txtEnfermedad.addKeyListener(new java.awt.event.KeyAdapter() {
+        txtFertilizante.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtEnfermedadKeyReleased(evt);
+                txtFertilizanteKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtFertilizanteKeyTyped(evt);
             }
         });
 
@@ -112,7 +115,7 @@ valiConf = new validaConfi();
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtEnfermedad)
+                    .addComponent(txtFertilizante)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(0, 0, Short.MAX_VALUE))
@@ -128,7 +131,7 @@ valiConf = new validaConfi();
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtEnfermedad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtFertilizante, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
@@ -160,14 +163,22 @@ valiConf = new validaConfi();
         this.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
 
-    private void txtEnfermedadKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEnfermedadKeyReleased
-if (txtEnfermedad.getText().length() != 0) {
-            txtEnfermedad.setText(valiConf.primerLetraMayuscula(txtEnfermedad.getText()).replace("S/n", "S/N"));
-            txtEnfermedad.setText(valiConf.primerLetraMayuscula(txtEnfermedad.getText()).replace("S/d", "S/D"));
-            txtEnfermedad.setText(valiConf.primerLetraMayuscula(txtEnfermedad.getText()).replace("S/o", "S/O"));
+    private void txtFertilizanteKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtFertilizanteKeyReleased
+if (txtFertilizante.getText().length() != 0) {
+            txtFertilizante.setText(valiConf.primerLetraMayuscula(txtFertilizante.getText()).replace("S/n", "S/N"));
+            txtFertilizante.setText(valiConf.primerLetraMayuscula(txtFertilizante.getText()).replace("S/d", "S/D"));
+            txtFertilizante.setText(valiConf.primerLetraMayuscula(txtFertilizante.getText()).replace("S/o", "S/O"));
         }
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtEnfermedadKeyReleased
+    }//GEN-LAST:event_txtFertilizanteKeyReleased
+
+    private void txtFertilizanteKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtFertilizanteKeyTyped
+char c = evt.getKeyChar();
+        if (Character.isDigit(c)) {//if (Character.isLetter(c)){
+            getToolkit().beep();
+            evt.consume();
+        }        // TODO add your handling code here:
+    }//GEN-LAST:event_txtFertilizanteKeyTyped
 
     /**
      * @param args the command line arguments
@@ -650,6 +661,6 @@ if (txtEnfermedad.getText().length() != 0) {
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField txtEnfermedad;
+    private javax.swing.JTextField txtFertilizante;
     // End of variables declaration//GEN-END:variables
 }

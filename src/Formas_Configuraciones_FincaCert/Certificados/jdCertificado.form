@@ -89,6 +89,7 @@
         </Component>
         <Component class="javax.swing.JTextField" name="txtClave">
           <Events>
+            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtClaveKeyReleased"/>
             <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtClaveKeyTyped"/>
           </Events>
         </Component>
@@ -115,6 +116,7 @@
         </Component>
         <Component class="javax.swing.JTextField" name="txtCertificado">
           <Events>
+            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtCertificadoKeyReleased"/>
             <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtCertificadoKeyTyped"/>
           </Events>
         </Component>

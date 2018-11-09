@@ -42,8 +42,8 @@ valiConf = new validaConfi();
             setTitle("nuevo Certificador");
         }else{
               setTitle("editar");
-              Centavos.setText(TxTvarC);
-              txtRetenciones.setText(ClaveC);
+              Certificador.setText(TxTvarC);
+              txtClave.setText(ClaveC);
         }  
  
     }
@@ -57,8 +57,8 @@ valiConf = new validaConfi();
             String sql = "";
 
             mdb = new metodosDatosBasicos(cn);
-           TxTvar=Centavos.getText();
-         Clave = txtRetenciones.getText();
+           TxTvar=Certificador.getText();
+         Clave = txtClave.getText();
         
 
             if (tipo.equals("1")) {
@@ -96,19 +96,22 @@ valiConf = new validaConfi();
 
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        txtRetenciones = new javax.swing.JTextField();
+        txtClave = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
-        Centavos = new javax.swing.JTextField();
+        Certificador = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel1.setText("Clave");
 
-        txtRetenciones.addKeyListener(new java.awt.event.KeyAdapter() {
+        txtClave.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtClaveKeyReleased(evt);
+            }
             public void keyTyped(java.awt.event.KeyEvent evt) {
-                txtRetencionesKeyTyped(evt);
+                txtClaveKeyTyped(evt);
             }
         });
 
@@ -128,9 +131,12 @@ valiConf = new validaConfi();
 
         jLabel2.setText("Certificador");
 
-        Centavos.addKeyListener(new java.awt.event.KeyAdapter() {
+        Certificador.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                CentavosKeyReleased(evt);
+                CertificadorKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                CertificadorKeyTyped(evt);
             }
         });
 
@@ -141,7 +147,7 @@ valiConf = new validaConfi();
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtRetenciones)
+                    .addComponent(txtClave)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -151,7 +157,7 @@ valiConf = new validaConfi();
                             .addComponent(jLabel1)
                             .addComponent(jLabel2))
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(Centavos))
+                    .addComponent(Certificador))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -160,11 +166,11 @@ valiConf = new validaConfi();
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtRetenciones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtClave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(Centavos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(Certificador, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(91, 91, 91)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
@@ -196,21 +202,37 @@ valiConf = new validaConfi();
         tipoProceso();
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void txtRetencionesKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtRetencionesKeyTyped
+    private void txtClaveKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtClaveKeyTyped
 char c = evt.getKeyChar();
         if (Character.isDigit(c)) {//if (Character.isLetter(c)){
             getToolkit().beep();
             evt.consume();}        // TODO add your handling code here:
-    }//GEN-LAST:event_txtRetencionesKeyTyped
+    }//GEN-LAST:event_txtClaveKeyTyped
 
-    private void CentavosKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_CentavosKeyReleased
-if (Centavos.getText().length() != 0) {
-            Centavos.setText(valiConf.primerLetraMayuscula(Centavos.getText()).replace("S/n", "S/N"));
-            Centavos.setText(valiConf.primerLetraMayuscula(Centavos.getText()).replace("S/d", "S/D"));
-            Centavos.setText(valiConf.primerLetraMayuscula(Centavos.getText()).replace("S/o", "S/O"));
+    private void CertificadorKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_CertificadorKeyReleased
+if (Certificador.getText().length() != 0) {
+            Certificador.setText(valiConf.primerLetraMayuscula(Certificador.getText()).replace("S/n", "S/N"));
+            Certificador.setText(valiConf.primerLetraMayuscula(Certificador.getText()).replace("S/d", "S/D"));
+            Certificador.setText(valiConf.primerLetraMayuscula(Certificador.getText()).replace("S/o", "S/O"));
         }
         // TODO add your handling code here:
-    }//GEN-LAST:event_CentavosKeyReleased
+    }//GEN-LAST:event_CertificadorKeyReleased
+
+    private void txtClaveKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtClaveKeyReleased
+   if (txtClave.getText().length() != 0) {
+            txtClave.setText(valiConf.primerLetraMayuscula(txtClave.getText()).replace("S/n", "S/N"));
+            txtClave.setText(valiConf.primerLetraMayuscula(txtClave.getText()).replace("S/d", "S/D"));
+            txtClave.setText(valiConf.primerLetraMayuscula(txtClave.getText()).replace("S/o", "S/O"));
+        }     // TODO add your handling code here:
+    }//GEN-LAST:event_txtClaveKeyReleased
+
+    private void CertificadorKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_CertificadorKeyTyped
+char c = evt.getKeyChar();
+        if (Character.isDigit(c)) {//if (Character.isLetter(c)){
+            getToolkit().beep();
+            evt.consume();
+        }        // TODO add your handling code here:
+    }//GEN-LAST:event_CertificadorKeyTyped
 
     /**
      * @param args the command line arguments
@@ -253,12 +275,12 @@ if (Centavos.getText().length() != 0) {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField Centavos;
+    private javax.swing.JTextField Certificador;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField txtRetenciones;
+    private javax.swing.JTextField txtClave;
     // End of variables declaration//GEN-END:variables
 }

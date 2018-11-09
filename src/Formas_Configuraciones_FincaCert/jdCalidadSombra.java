@@ -235,7 +235,7 @@ public class jdCalidadSombra extends javax.swing.JDialog {
 
     private void txtAlturaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAlturaKeyTyped
         char c = evt.getKeyChar();
-        if (Character.isDigit(c)) {//if (Character.isLetter(c)){
+        if (Character.isLetter(c)){//if (Character.isLetter(c)){
             getToolkit().beep();
             evt.consume();
         }        // TODO add your handling code here:

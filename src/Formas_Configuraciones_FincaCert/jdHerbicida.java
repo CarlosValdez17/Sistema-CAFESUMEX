@@ -39,7 +39,7 @@ valiConf = new validaConfi();
             setTitle("Nuevo Herbicida");
         } else {
             setTitle("Editar Herbicidas");
-            txtHerbicida.setText(dato);
+            txtPlantacion.setText(dato);
         }
     }
 
@@ -49,14 +49,14 @@ valiConf = new validaConfi();
 
             if (tipo.equals("1")) {
                 //nuevoPais();
-                sql = "INSERT INTO herbicidas VALUES(null,'" + txtHerbicida.getText() + "', 1, 1,current_date()"
+                sql = "INSERT INTO herbicidas VALUES(null,'" + txtPlantacion.getText() + "', 1, 1,current_date()"
                         + ", current_time(), 1, 1, 1, 1 )";
                 mdb.insertarBasicos(sql);
                 jpH.llenaTabla();
                 this.dispose();
             } else {
                 //editarPais();
-                sql = "UPDATE herbicidas SET  descripcion ='" + txtHerbicida.getText() + "' where descripcion='" + dato + "' ";
+                sql = "UPDATE herbicidas SET  descripcion ='" + txtPlantacion.getText() + "' where descripcion='" + dato + "' ";
                 mdb.actualizarBasicos(sql);
                 jpH.llenaTabla();
                 this.dispose();
@@ -77,7 +77,7 @@ valiConf = new validaConfi();
 
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        txtHerbicida = new javax.swing.JTextField();
+        txtPlantacion = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
 
@@ -85,9 +85,12 @@ valiConf = new validaConfi();
 
         jLabel1.setText("Diseñp Plantacion");
 
-        txtHerbicida.addKeyListener(new java.awt.event.KeyAdapter() {
+        txtPlantacion.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtHerbicidaKeyReleased(evt);
+                txtPlantacionKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtPlantacionKeyTyped(evt);
             }
         });
 
@@ -112,7 +115,7 @@ valiConf = new validaConfi();
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtHerbicida)
+                    .addComponent(txtPlantacion)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(0, 0, Short.MAX_VALUE))
@@ -128,7 +131,7 @@ valiConf = new validaConfi();
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtHerbicida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtPlantacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
@@ -160,13 +163,21 @@ valiConf = new validaConfi();
         this.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
 
-    private void txtHerbicidaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtHerbicidaKeyReleased
-     if (txtHerbicida.getText().length() != 0) {
-            txtHerbicida.setText(valiConf.primerLetraMayuscula(txtHerbicida.getText()).replace("S/n", "S/N"));
-            txtHerbicida.setText(valiConf.primerLetraMayuscula(txtHerbicida.getText()).replace("S/d", "S/D"));
-            txtHerbicida.setText(valiConf.primerLetraMayuscula(txtHerbicida.getText()).replace("S/o", "S/O"));
+    private void txtPlantacionKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPlantacionKeyReleased
+     if (txtPlantacion.getText().length() != 0) {
+            txtPlantacion.setText(valiConf.primerLetraMayuscula(txtPlantacion.getText()).replace("S/n", "S/N"));
+            txtPlantacion.setText(valiConf.primerLetraMayuscula(txtPlantacion.getText()).replace("S/d", "S/D"));
+            txtPlantacion.setText(valiConf.primerLetraMayuscula(txtPlantacion.getText()).replace("S/o", "S/O"));
         }   // TODO add your handling code here:
-    }//GEN-LAST:event_txtHerbicidaKeyReleased
+    }//GEN-LAST:event_txtPlantacionKeyReleased
+
+    private void txtPlantacionKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPlantacionKeyTyped
+char c = evt.getKeyChar();
+        if (Character.isDigit(c)) {//if (Character.isLetter(c)){
+            getToolkit().beep();
+            evt.consume();
+        }        // TODO add your handling code here:
+    }//GEN-LAST:event_txtPlantacionKeyTyped
 
     /**
      * @param args the command line arguments
@@ -313,6 +324,6 @@ valiConf = new validaConfi();
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField txtHerbicida;
+    private javax.swing.JTextField txtPlantacion;
     // End of variables declaration//GEN-END:variables
 }

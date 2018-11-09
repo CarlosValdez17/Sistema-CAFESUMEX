@@ -43,7 +43,7 @@ public class jdControlMaleza extends javax.swing.JDialog {
         }else{
               setTitle("editar");
             
-              txtPuestos.setText(VarTxTC);
+              txtControl.setText(VarTxTC);
         }  
  
     }
@@ -58,7 +58,7 @@ public class jdControlMaleza extends javax.swing.JDialog {
 
             mdb = new metodosDatosBasicos(cn);
           
-         VarTxT = txtPuestos.getText();
+         VarTxT = txtControl.getText();
         
 
             if (tipo.equals("1")) {
@@ -96,7 +96,7 @@ public class jdControlMaleza extends javax.swing.JDialog {
 
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        txtPuestos = new javax.swing.JTextField();
+        txtControl = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
 
@@ -104,9 +104,12 @@ public class jdControlMaleza extends javax.swing.JDialog {
 
         jLabel1.setText("Control Maleza");
 
-        txtPuestos.addKeyListener(new java.awt.event.KeyAdapter() {
+        txtControl.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtPuestosKeyReleased(evt);
+                txtControlKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtControlKeyTyped(evt);
             }
         });
 
@@ -131,7 +134,7 @@ public class jdControlMaleza extends javax.swing.JDialog {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtPuestos)
+                    .addComponent(txtControl)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -147,7 +150,7 @@ public class jdControlMaleza extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtPuestos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtControl, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(149, 149, 149)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
@@ -179,14 +182,22 @@ public class jdControlMaleza extends javax.swing.JDialog {
         tipoProceso();
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void txtPuestosKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPuestosKeyReleased
-       if (txtPuestos.getText().length() != 0) {
-            txtPuestos.setText(valiConf.primerLetraMayuscula(txtPuestos.getText()).replace("S/n", "S/N"));
-            txtPuestos.setText(valiConf.primerLetraMayuscula(txtPuestos.getText()).replace("S/d", "S/D"));
-            txtPuestos.setText(valiConf.primerLetraMayuscula(txtPuestos.getText()).replace("S/o", "S/O"));
+    private void txtControlKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtControlKeyReleased
+       if (txtControl.getText().length() != 0) {
+            txtControl.setText(valiConf.primerLetraMayuscula(txtControl.getText()).replace("S/n", "S/N"));
+            txtControl.setText(valiConf.primerLetraMayuscula(txtControl.getText()).replace("S/d", "S/D"));
+            txtControl.setText(valiConf.primerLetraMayuscula(txtControl.getText()).replace("S/o", "S/O"));
         }
  // TODO add your handling code here:
-    }//GEN-LAST:event_txtPuestosKeyReleased
+    }//GEN-LAST:event_txtControlKeyReleased
+
+    private void txtControlKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtControlKeyTyped
+   char c = evt.getKeyChar();
+        if (Character.isDigit(c)) {//if (Character.isLetter(c)){
+            getToolkit().beep();
+            evt.consume();
+        }     // TODO add your handling code here:
+    }//GEN-LAST:event_txtControlKeyTyped
 
     /**
      * @param args the command line arguments
@@ -233,6 +244,6 @@ public class jdControlMaleza extends javax.swing.JDialog {
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField txtPuestos;
+    private javax.swing.JTextField txtControl;
     // End of variables declaration//GEN-END:variables
 }

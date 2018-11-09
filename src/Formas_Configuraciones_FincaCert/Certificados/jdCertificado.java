@@ -6,6 +6,7 @@
 package Formas_Configuraciones_FincaCert.Certificados;
 
 import Metodos_Configuraciones.metodosDatosBasicos;
+import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
@@ -24,6 +25,7 @@ public class jdCertificado extends javax.swing.JDialog {
     String Clave, TxTvar;
     Connection cn;
     jpCertificado jp;
+validaConfi valiConf;
 
     metodosDatosBasicos mdb;
 
@@ -31,7 +33,7 @@ public class jdCertificado extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
-
+valiConf = new validaConfi();
         this.tipo = tipo;
         this.ClaveC = ClaveC;
         cn = c;
@@ -101,6 +103,9 @@ public class jdCertificado extends javax.swing.JDialog {
         jLabel1.setText("Clave");
 
         txtClave.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtClaveKeyReleased(evt);
+            }
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txtClaveKeyTyped(evt);
             }
@@ -123,6 +128,9 @@ public class jdCertificado extends javax.swing.JDialog {
         jLabel2.setText("Certificado");
 
         txtCertificado.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtCertificadoKeyReleased(evt);
+            }
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txtCertificadoKeyTyped(evt);
             }
@@ -205,6 +213,24 @@ public class jdCertificado extends javax.swing.JDialog {
             evt.consume();
         }        // TODO add your handling code here:
     }//GEN-LAST:event_txtCertificadoKeyTyped
+
+    private void txtClaveKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtClaveKeyReleased
+ 
+if (txtClave.getText().length() != 0) {
+            txtClave.setText(valiConf.primerLetraMayuscula(txtClave.getText()).replace("S/n", "S/N"));
+            txtClave.setText(valiConf.primerLetraMayuscula(txtClave.getText()).replace("S/d", "S/D"));
+            txtClave.setText(valiConf.primerLetraMayuscula(txtClave.getText()).replace("S/o", "S/O"));
+        }        // TODO add your handling code here:
+    }//GEN-LAST:event_txtClaveKeyReleased
+
+    private void txtCertificadoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCertificadoKeyReleased
+    
+if (txtCertificado.getText().length() != 0) {
+            txtCertificado.setText(valiConf.primerLetraMayuscula(txtCertificado.getText()).replace("S/n", "S/N"));
+            txtCertificado.setText(valiConf.primerLetraMayuscula(txtCertificado.getText()).replace("S/d", "S/D"));
+            txtCertificado.setText(valiConf.primerLetraMayuscula(txtCertificado.getText()).replace("S/o", "S/O"));
+        }     // TODO add your handling code here:
+    }//GEN-LAST:event_txtCertificadoKeyReleased
 
     /**
      * @param args the command line arguments

@@ -43,7 +43,7 @@ valiConf = new validaConfi();
         }else{
               setTitle("editar");
             
-              txtPuestos.setText(VarTxTC);
+              txtAccion.setText(VarTxTC);
         }  
  
     }
@@ -58,7 +58,7 @@ valiConf = new validaConfi();
 
             mdb = new metodosDatosBasicos(cn);
           
-         VarTxT = txtPuestos.getText();
+         VarTxT = txtAccion.getText();
         
 
             if (tipo.equals("1")) {
@@ -96,7 +96,7 @@ valiConf = new validaConfi();
 
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        txtPuestos = new javax.swing.JTextField();
+        txtAccion = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
 
@@ -104,9 +104,12 @@ valiConf = new validaConfi();
 
         jLabel1.setText("Tipo De Acciòn");
 
-        txtPuestos.addKeyListener(new java.awt.event.KeyAdapter() {
+        txtAccion.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtPuestosKeyReleased(evt);
+                txtAccionKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtAccionKeyTyped(evt);
             }
         });
 
@@ -131,7 +134,7 @@ valiConf = new validaConfi();
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtPuestos)
+                    .addComponent(txtAccion)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -147,7 +150,7 @@ valiConf = new validaConfi();
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtPuestos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtAccion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(149, 149, 149)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
@@ -179,14 +182,22 @@ valiConf = new validaConfi();
         tipoProceso();
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void txtPuestosKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPuestosKeyReleased
-  if (txtPuestos.getText().length() != 0) {
-            txtPuestos.setText(valiConf.primerLetraMayuscula(txtPuestos.getText()).replace("S/n", "S/N"));
-            txtPuestos.setText(valiConf.primerLetraMayuscula(txtPuestos.getText()).replace("S/d", "S/D"));
-            txtPuestos.setText(valiConf.primerLetraMayuscula(txtPuestos.getText()).replace("S/o", "S/O"));
+    private void txtAccionKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAccionKeyReleased
+  if (txtAccion.getText().length() != 0) {
+            txtAccion.setText(valiConf.primerLetraMayuscula(txtAccion.getText()).replace("S/n", "S/N"));
+            txtAccion.setText(valiConf.primerLetraMayuscula(txtAccion.getText()).replace("S/d", "S/D"));
+            txtAccion.setText(valiConf.primerLetraMayuscula(txtAccion.getText()).replace("S/o", "S/O"));
         }
       // TODO add your handling code here:
-    }//GEN-LAST:event_txtPuestosKeyReleased
+    }//GEN-LAST:event_txtAccionKeyReleased
+
+    private void txtAccionKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAccionKeyTyped
+char c = evt.getKeyChar();
+        if (Character.isDigit(c)) {//if (Character.isLetter(c)){
+            getToolkit().beep();
+            evt.consume();
+        }        // TODO add your handling code here:
+    }//GEN-LAST:event_txtAccionKeyTyped
 
     /**
      * @param args the command line arguments
@@ -233,6 +244,6 @@ valiConf = new validaConfi();
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField txtPuestos;
+    private javax.swing.JTextField txtAccion;
     // End of variables declaration//GEN-END:variables
 }

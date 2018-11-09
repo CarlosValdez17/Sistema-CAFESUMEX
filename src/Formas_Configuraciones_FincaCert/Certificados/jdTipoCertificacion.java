@@ -99,6 +99,9 @@ public class jdTipoCertificacion extends javax.swing.JDialog {
         jLabel2.setText("Descripcion");
 
         txtClave.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtClaveKeyReleased(evt);
+            }
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txtClaveKeyTyped(evt);
             }
@@ -121,6 +124,9 @@ public class jdTipoCertificacion extends javax.swing.JDialog {
         txtDesc.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtDescKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtDescKeyTyped(evt);
             }
         });
 
@@ -201,6 +207,24 @@ public class jdTipoCertificacion extends javax.swing.JDialog {
         }
    // TODO add your handling code here:
     }//GEN-LAST:event_txtDescKeyReleased
+
+    private void txtClaveKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtClaveKeyReleased
+      
+if (txtClave.getText().length() != 0) {
+            txtClave.setText(valiConf.primerLetraMayuscula(txtClave.getText()).replace("S/n", "S/N"));
+            txtClave.setText(valiConf.primerLetraMayuscula(txtClave.getText()).replace("S/d", "S/D"));
+            txtClave.setText(valiConf.primerLetraMayuscula(txtClave.getText()).replace("S/o", "S/O"));
+        }   // TODO add your handling code here:
+    }//GEN-LAST:event_txtClaveKeyReleased
+
+    private void txtDescKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDescKeyTyped
+
+char c = evt.getKeyChar();
+        if (Character.isDigit(c)) {//if (Character.isLetter(c)){
+            getToolkit().beep();
+            evt.consume();
+        }        // TODO add your handling code here:
+    }//GEN-LAST:event_txtDescKeyTyped
 
     /**
      * @param args the command line arguments

@@ -42,7 +42,7 @@ valiConf = new validaConfi();
         }else{
               setTitle("editar");
             
-              txtPuestos.setText(VarTxTC);
+              txtFlora.setText(VarTxTC);
         }  
  
     }
@@ -57,7 +57,7 @@ valiConf = new validaConfi();
 
             mdb = new metodosDatosBasicos(cn);
           
-         VarTxT = txtPuestos.getText();
+         VarTxT = txtFlora.getText();
         
 
             if (tipo.equals("1")) {
@@ -95,7 +95,7 @@ valiConf = new validaConfi();
 
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        txtPuestos = new javax.swing.JTextField();
+        txtFlora = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
 
@@ -103,14 +103,17 @@ valiConf = new validaConfi();
 
         jLabel1.setText("Nativo Flora");
 
-        txtPuestos.addActionListener(new java.awt.event.ActionListener() {
+        txtFlora.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtPuestosActionPerformed(evt);
+                txtFloraActionPerformed(evt);
             }
         });
-        txtPuestos.addKeyListener(new java.awt.event.KeyAdapter() {
+        txtFlora.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtPuestosKeyReleased(evt);
+                txtFloraKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtFloraKeyTyped(evt);
             }
         });
 
@@ -135,7 +138,7 @@ valiConf = new validaConfi();
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtPuestos)
+                    .addComponent(txtFlora)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -151,7 +154,7 @@ valiConf = new validaConfi();
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtPuestos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtFlora, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(149, 149, 149)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
@@ -183,17 +186,25 @@ valiConf = new validaConfi();
         tipoProceso();
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void txtPuestosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPuestosActionPerformed
+    private void txtFloraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFloraActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtPuestosActionPerformed
+    }//GEN-LAST:event_txtFloraActionPerformed
 
-    private void txtPuestosKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPuestosKeyReleased
-       if (txtPuestos.getText().length() != 0) {
-            txtPuestos.setText(valiConf.primerLetraMayuscula(txtPuestos.getText()).replace("S/n", "S/N"));
-            txtPuestos.setText(valiConf.primerLetraMayuscula(txtPuestos.getText()).replace("S/d", "S/D"));
-            txtPuestos.setText(valiConf.primerLetraMayuscula(txtPuestos.getText()).replace("S/o", "S/O"));
+    private void txtFloraKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtFloraKeyReleased
+       if (txtFlora.getText().length() != 0) {
+            txtFlora.setText(valiConf.primerLetraMayuscula(txtFlora.getText()).replace("S/n", "S/N"));
+            txtFlora.setText(valiConf.primerLetraMayuscula(txtFlora.getText()).replace("S/d", "S/D"));
+            txtFlora.setText(valiConf.primerLetraMayuscula(txtFlora.getText()).replace("S/o", "S/O"));
         } // TODO add your handling code here:
-    }//GEN-LAST:event_txtPuestosKeyReleased
+    }//GEN-LAST:event_txtFloraKeyReleased
+
+    private void txtFloraKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtFloraKeyTyped
+char c = evt.getKeyChar();
+        if (Character.isDigit(c)) {//if (Character.isLetter(c)){
+            getToolkit().beep();
+            evt.consume();
+        }        // TODO add your handling code here:
+    }//GEN-LAST:event_txtFloraKeyTyped
 
     /**
      * @param args the command line arguments
@@ -240,6 +251,6 @@ valiConf = new validaConfi();
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField txtPuestos;
+    private javax.swing.JTextField txtFlora;
     // End of variables declaration//GEN-END:variables
 }

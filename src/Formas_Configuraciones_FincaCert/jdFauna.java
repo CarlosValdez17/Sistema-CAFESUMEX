@@ -43,7 +43,7 @@ valiConf = new validaConfi();
         }else{
               setTitle("editar");
             
-              txtPuestos.setText(FaunaC);
+              txtFauna.setText(FaunaC);
         }  
  
     }
@@ -58,7 +58,7 @@ valiConf = new validaConfi();
 
             mdb = new metodosDatosBasicos(cn);
           
-         Fauna = txtPuestos.getText();
+         Fauna = txtFauna.getText();
         
 
             if (tipo.equals("1")) {
@@ -96,7 +96,7 @@ valiConf = new validaConfi();
 
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        txtPuestos = new javax.swing.JTextField();
+        txtFauna = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
 
@@ -104,9 +104,12 @@ valiConf = new validaConfi();
 
         jLabel1.setText("Nativo Fauna");
 
-        txtPuestos.addKeyListener(new java.awt.event.KeyAdapter() {
+        txtFauna.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtPuestosKeyReleased(evt);
+                txtFaunaKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtFaunaKeyTyped(evt);
             }
         });
 
@@ -131,7 +134,7 @@ valiConf = new validaConfi();
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtPuestos)
+                    .addComponent(txtFauna)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -147,7 +150,7 @@ valiConf = new validaConfi();
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtPuestos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtFauna, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(149, 149, 149)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
@@ -179,14 +182,22 @@ valiConf = new validaConfi();
         tipoProceso();
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void txtPuestosKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPuestosKeyReleased
-if (txtPuestos.getText().length() != 0) {
-            txtPuestos.setText(valiConf.primerLetraMayuscula(txtPuestos.getText()).replace("S/n", "S/N"));
-            txtPuestos.setText(valiConf.primerLetraMayuscula(txtPuestos.getText()).replace("S/d", "S/D"));
-            txtPuestos.setText(valiConf.primerLetraMayuscula(txtPuestos.getText()).replace("S/o", "S/O"));
+    private void txtFaunaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtFaunaKeyReleased
+if (txtFauna.getText().length() != 0) {
+            txtFauna.setText(valiConf.primerLetraMayuscula(txtFauna.getText()).replace("S/n", "S/N"));
+            txtFauna.setText(valiConf.primerLetraMayuscula(txtFauna.getText()).replace("S/d", "S/D"));
+            txtFauna.setText(valiConf.primerLetraMayuscula(txtFauna.getText()).replace("S/o", "S/O"));
         }
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtPuestosKeyReleased
+    }//GEN-LAST:event_txtFaunaKeyReleased
+
+    private void txtFaunaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtFaunaKeyTyped
+char c = evt.getKeyChar();
+        if (Character.isDigit(c)) {//if (Character.isLetter(c)){
+            getToolkit().beep();
+            evt.consume();
+        }        // TODO add your handling code here:
+    }//GEN-LAST:event_txtFaunaKeyTyped
 
     /**
      * @param args the command line arguments
@@ -233,6 +244,6 @@ if (txtPuestos.getText().length() != 0) {
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField txtPuestos;
+    private javax.swing.JTextField txtFauna;
     // End of variables declaration//GEN-END:variables
 }

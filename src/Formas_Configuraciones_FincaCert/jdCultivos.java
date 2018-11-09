@@ -88,6 +88,9 @@ public class jdCultivos extends javax.swing.JDialog {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtCultivosKeyReleased(evt);
             }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtCultivosKeyTyped(evt);
+            }
         });
 
         jButton1.setText("Aceptar");
@@ -167,6 +170,14 @@ public class jdCultivos extends javax.swing.JDialog {
         }
        // TODO add your handling code here:
     }//GEN-LAST:event_txtCultivosKeyReleased
+
+    private void txtCultivosKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCultivosKeyTyped
+char c = evt.getKeyChar();
+        if (Character.isDigit(c)) {//if (Character.isLetter(c)){
+            getToolkit().beep();
+            evt.consume();
+        }        // TODO add your handling code here:
+    }//GEN-LAST:event_txtCultivosKeyTyped
 
     /**
      * @param args the command line arguments

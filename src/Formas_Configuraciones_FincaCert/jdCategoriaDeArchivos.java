@@ -131,6 +131,9 @@ valiConf = new validaConfi();
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtCategoriaKeyReleased(evt);
             }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtCategoriaKeyTyped(evt);
+            }
         });
 
         jButton1.setText("Aceptar");
@@ -231,6 +234,14 @@ valiConf = new validaConfi();
         }
  // TODO add your handling code here:
     }//GEN-LAST:event_txtCategoriaKeyReleased
+
+    private void txtCategoriaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCategoriaKeyTyped
+     char c = evt.getKeyChar();
+        if (Character.isDigit(c)) {//if (Character.isLetter(c)){
+            getToolkit().beep();
+            evt.consume();
+        }   // TODO add your handling code here:
+    }//GEN-LAST:event_txtCategoriaKeyTyped
 
     /**
      * @param args the command line arguments

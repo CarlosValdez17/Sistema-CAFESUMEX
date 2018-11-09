@@ -89,6 +89,9 @@ valiConf = new validaConfi();
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtSistemaKeyReleased(evt);
             }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtSistemaKeyTyped(evt);
+            }
         });
 
         jButton1.setText("Aceptar");
@@ -168,6 +171,14 @@ if ( txtSistema.getText().length() != 0) {
         }
         // TODO add your handling code here:
     }//GEN-LAST:event_txtSistemaKeyReleased
+
+    private void txtSistemaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSistemaKeyTyped
+char c = evt.getKeyChar();
+        if (Character.isDigit(c)) {//if (Character.isLetter(c)){
+            getToolkit().beep();
+            evt.consume();
+        }        // TODO add your handling code here:
+    }//GEN-LAST:event_txtSistemaKeyTyped
 
     /**
      * @param args the command line arguments

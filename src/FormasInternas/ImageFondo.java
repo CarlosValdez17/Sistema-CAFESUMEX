@@ -27,5 +27,17 @@ public class ImageFondo extends JPanel{
             fondo=new ImageIcon(getClass().getResource(image)).getImage();
         }
     }
+   
     
 }
+
+
+
+
+
+
+
+
+
+
+

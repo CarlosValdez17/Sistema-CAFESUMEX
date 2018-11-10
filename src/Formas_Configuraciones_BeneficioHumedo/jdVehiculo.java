@@ -37,7 +37,7 @@ public class jdVehiculo extends javax.swing.JDialog {
         this.NombreC = NombreC;
         cn = c;
         valiConf = new validaConfi();
-        
+
         if (tipo.equals("1")) {
             setTitle("nuevo Vehiculo");
         } else {
@@ -115,6 +115,9 @@ public class jdVehiculo extends javax.swing.JDialog {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtcapacidadKeyReleased(evt);
             }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtcapacidadKeyTyped(evt);
+            }
         });
 
         jButton1.setText("Aceptar");
@@ -150,6 +153,9 @@ public class jdVehiculo extends javax.swing.JDialog {
         txtNomRes.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtNomResKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtNomResKeyTyped(evt);
             }
         });
 
@@ -265,6 +271,24 @@ public class jdVehiculo extends javax.swing.JDialog {
         }
 
     }//GEN-LAST:event_txtNomResKeyReleased
+
+    private void txtcapacidadKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtcapacidadKeyTyped
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+        if (Character.isLetter(c)) {
+            getToolkit().beep();
+            evt.consume();
+        }
+    }//GEN-LAST:event_txtcapacidadKeyTyped
+
+    private void txtNomResKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNomResKeyTyped
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+        if (Character.isDigit(c)) {
+            getToolkit().beep();
+            evt.consume();
+        }
+    }//GEN-LAST:event_txtNomResKeyTyped
 
     /**
      * @param args the command line arguments

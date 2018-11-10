@@ -75,7 +75,7 @@ public class jdEstado extends javax.swing.JDialog {
             //nuevoPais();
             if (mdb.comprobarExistencia("select descripcion from estado where descripcion='" + txtEstado.getText() + "'") == null) {
                 sql = "INSERT INTO estado VALUES(null,'" + txtEstado.getText() + "', 1, 1,current_date()"
-                        + ", current_time(), 1, 1, 1, 1, " + mdb.devuelveIdPais(pais, "pais") + " )";
+                        + ", current_time(), 1, 1, 1, 1, " + mdb.devuelveId("select id from pais where descripcion='"+pais+"'") + " )";
                 mdb.insertarBasicos(sql);
                 jpE.llenaTablaEstado();
                 this.dispose();
@@ -85,7 +85,7 @@ public class jdEstado extends javax.swing.JDialog {
 
         } else {
             //editarPais();
-            sql = "UPDATE estado SET  descripcion ='" + txtEstado.getText() + "', ID_Pais='" + mdb.devuelveIdPais(pais, "pais") + "' where descripcion='" + estado + "' ";
+            sql = "UPDATE estado SET  descripcion ='" + txtEstado.getText() + "', ID_Pais='" + mdb.devuelveId("select id from pais where descripcion='"+pais+"'") + "' where descripcion='" + estado + "' ";
             mdb.actualizarBasicos(sql);
             jpE.llenaTablaEstado();
             this.dispose();

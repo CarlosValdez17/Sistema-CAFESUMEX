@@ -105,7 +105,7 @@ public class jdLocalidad extends javax.swing.JDialog {
             //nuevo
             if (mdb.comprobarExistencia("select descripcion from localidad where descripcion='" + txtLocalidad.getText() + "'") == null) {
                 sql = "INSERT INTO localidad VALUES(null,'" + txtLocalidad.getText() + "', 1, 1,current_date()"
-                        + ", current_time(), 1, 1, 1, 1, " + mdb.devuelveIdPais(municipio, "municipio") + " )";
+                        + ", current_time(), 1, 1, 1, 1, " + mdb.devuelveId("select id from municipio where descripcion='"+municipio+"'") + " )";
                 mdb.insertarBasicos(sql);
                 jpL.llenaTablaLocalidad();
                 this.dispose();
@@ -114,7 +114,7 @@ public class jdLocalidad extends javax.swing.JDialog {
             }
         } else {
             //editar
-            sql = "UPDATE localidad SET descripcion ='" + txtLocalidad.getText() + "', ID_municipio='" + mdb.devuelveIdPais(municipio, "municipio") + "' where descripcion='" + l + "' ";
+            sql = "UPDATE localidad SET descripcion ='" + txtLocalidad.getText() + "', ID_municipio='" + mdb.devuelveId("select id from municipio where descripcion='"+municipio+"'") + "' where descripcion='" + l + "' ";
             System.out.println(sql);
             mdb.actualizarBasicos(sql);
             jpL.llenaTablaLocalidad();

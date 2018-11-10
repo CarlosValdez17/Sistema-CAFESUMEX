@@ -6,13 +6,19 @@
 package Formas_Configuraciones_DatosBasicos;
 
 import FormasGenerales.pantallaPrincipal;
+import MetodosGenerales.ClaseTable;
 import Metodos_Configuraciones.metodosDatosBasicos;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.RowSorter;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 /**
@@ -27,16 +33,26 @@ public class jpPais extends javax.swing.JPanel {
     pantallaPrincipal fprin;
     jdPais jdP;
     metodosDatosBasicos mdb;
-    DefaultTableModel modelo;
+    DefaultTableModel modelo, modelo2;
+    //TableRowSorter<TableModel> modeloOrdenado;
     Connection cn;
 
     public jpPais(Connection c) {
         initComponents();
         cn = c;
 
-        modelo = (DefaultTableModel) tablaPais.getModel();
-        tablaPais.setRowSorter(new TableRowSorter(modelo));
-        
+        //modelo = (DefaultTableModel) tablaPais.getModel();
+        //tablaPais.setRowSorter(new TableRowSorter(modeloOrdenado));
+        //modelo2 = (DefaultTableModel) tablaPais.getModel();
+        //tablaPais.setFillsViewportHeight(true);
+        //tablaPais.setAutoCreateRowSorter(true);
+        //modeloOrdenado = new TableRowSorter<TableModel>(modelo);
+        //tablaPais.setRowSorter(modeloOrdenado);
+
+        /*      DefaultTableModel tablaPedidos = (DefaultTableModel) tablaPais.getModel();
+        RowSorter<TableModel> sorter = new TableRowSorter<TableModel>(tablaPedidos);
+        tablaPais.setRowSorter(sorter);
+         */
         txtBusquedaUE.setVisible(false);
         txtBusquedaISO.setVisible(false);
         txtBusquedaOIC.setVisible(false);
@@ -44,11 +60,27 @@ public class jpPais extends javax.swing.JPanel {
         jLabel8.setVisible(false);
         jLabel9.setVisible(false);
 
+        ClaseTable.ordernar(tablaPais);
         llenaTablaPais();
+
+     /*   tablaPais.getTableHeader().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int col = tablaPais.columnAtPoint(e.getPoint());
+                String name = tablaPais.getColumnName(col);
+                System.out.println("Column index selected " + col + " " + name);
+                ordena();
+            }
+        });*/
+    }
+
+    public void ordena() {
+        ClaseTable.ordernar(tablaPais);
     }
 
     public void llenaTablaPais() {
         limpiar(tablaPais);
+        modelo = (DefaultTableModel) tablaPais.getModel();
         mdb = new metodosDatosBasicos(cn);
         mdb.cargarInformacion2(modelo, 1, "select descripcion from pais");
     }
@@ -387,8 +419,18 @@ public class jpPais extends javax.swing.JPanel {
     String pais = "";
     private void tablaPaisMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaPaisMouseClicked
         // TODO add your handling code here:
-        pais = modelo.getValueAt(tablaPais.getSelectedRow(), 0) + "";  //pais
+        modelo2 = (DefaultTableModel) tablaPais.getModel();
+        pais = modelo2.getValueAt(tablaPais.getSelectedRow(), 0) + "";  //pais
 
+        /*   System.out.println("---------------MODELO NUMERO 1---------------------");
+        for(int i=0; i<modelo.getRowCount(); i++){
+            System.out.println(modelo.getValueAt(i, 0)+"");
+        }
+        
+        System.out.println("---------------MODELO NUMERO 2---------------------");
+        for(int i=0; i<modelo2.getRowCount(); i++){
+            System.out.println(modelo2.getValueAt(i, 0)+"");
+        }*/
         if (evt.getClickCount() == 1) {
             //System.out.println("1 Clic");
         }
@@ -443,7 +485,7 @@ public class jpPais extends javax.swing.JPanel {
 
     private void tablaPaisMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaPaisMousePressed
         // TODO add your handling code here:
-      
+
     }//GEN-LAST:event_tablaPaisMousePressed
 
 

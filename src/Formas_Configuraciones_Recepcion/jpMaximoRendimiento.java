@@ -5,91 +5,85 @@
  */
 package Formas_Configuraciones_Recepcion;
 
-import FormasGenerales.pantallaPrincipal;
+import Formas_Configuraciones_BeneficioHumedo.*;
+import Formas_Configuraciones_Recepcion.*;
+import Formas_Configuraciones_DatosBasicos.*;
 import Metodos_Configuraciones.metodosDatosBasicos;
-import java.sql.CallableStatement;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableRowSorter;
 
 /**
  *
  * @author Carlos Valdez
  */
-public class jpFactorForma extends javax.swing.JPanel {
+public class jpMaximoRendimiento extends javax.swing.JPanel {
 
     /**
-     * Creates new form jp
+     * Creates new form jdRstado
      */
-    pantallaPrincipal fprin;
-    jdFactorForma jdR;
+    jdMaximoRendimiento jdMR;
+    Connection cn;
     metodosDatosBasicos mdb;
     DefaultTableModel modelo;
-    Connection cn;
 
-    public jpFactorForma(Connection c) {
+    public jpMaximoRendimiento(Connection c) {
         initComponents();
         cn = c;
-
-        modelo = (DefaultTableModel) tabla.getModel();
-        tabla.setRowSorter(new TableRowSorter(modelo));
+        mdb = new metodosDatosBasicos(cn);
+        modelo = (DefaultTableModel) tablaMaximoR.getModel();
 
         llenaTabla();
     }
 
     public void llenaTabla() {
-        limpiar(tabla);
-        mdb = new metodosDatosBasicos(cn);
-        mdb.cargarInformacion2(modelo, 5, "select f2.Descripcion,f3.Descripcion, f1.Formula,f1.Factor,f1.Porcentaje \n"
-                + "from FactorForma f1\n"
-                + "inner join formacafe f2 on (f2.ID = f1.ID_Forma1)\n"
-                + "inner join formacafe f3 on (f3.ID = f1.ID_Forma2)\n"
-                + "where f1.ID_Situacion=1");
+        limpiar(tablaMaximoR);
+        String sql = "SELECT m.Rendimiento, p.Descripcion, f.Descripcion\n "
+                + "FROM maximorendimiento m\n "
+                + "inner join procesocafe p on (p.ID=m.ID_Proceso)\n "
+                + "inner join formacafe f on (f.ID=m.ID_Forma) where m.ID_Situacion=1";
+        mdb.cargarInformacion2(modelo, 3, sql);
     }
 
     public void busqueda() {
-        String tipoP = "";
-        String tipoK = "";
-        String tipoL = "";
-        String tipoÑ = "";
-        String situacion = "";
-        String where = "";
+        String tipoC = "";
+        String tipoF = "", tipoN = "", tipoD = "";
+        String situacion;
 
         situacion = comboSituacion.getSelectedItem() + "";
         if (situacion.equals("Inactivo")) {
             situacion = "2";
         } else if (situacion.equals("Activo")) {
             situacion = "1";
-
         }
 
-        if (txtBusquedaForma1.getText().length() > 0) {
-            tipoP = " AND f2.descripcion like '" + txtBusquedaForma1.getText() + "%'";
+        if (txtBusquedaMaximoR.getText().length() > 0) {
+            tipoC = " AND m.rendimiento like '" + txtBusquedaMaximoR.getText() + "%'";
         }
-        if (txtBusquedaFormula.getText().length() > 0) {
-            tipoK = " AND f1.formula like '" + txtBusquedaFormula.getText() + "%'";
+        if (txtBusquedaProceso.getText().length() > 0) {
+            tipoF = " AND p.descripcion like '" + txtBusquedaProceso.getText() + "%'";
         }
-        
+        if (txtBusquedaForma.getText().length() > 0) {
+            tipoN = " AND f.descripcion like '" + txtBusquedaForma.getText() + "%'";
+        }
+
         String sql;
         if (situacion.equals("Todos")) {
-            sql = "select f2.Descripcion,f3.Descripcion, f1.Formula,f1.Factor,f1.Porcentaje \n"
-                + "from FactorForma f1\n"
-                + "inner join formacafe f2 on (f2.ID = f1.ID_Forma1)\n"
-                + "inner join formacafe f3 on (f3.ID = f1.ID_Forma2)\n"
-                + "WHERE f1.ID_Situacion<>3 " + tipoP + tipoK;
+            sql = "SELECT m.Rendimiento, p.Descripcion, f.Descripcion\n "
+                    + "FROM maximorendimiento m\n "
+                    + "inner join procesocafe p on (p.ID=m.ID_Proceso) "
+                    + "inner join formacafe f on (f.ID=m.ID_Forma) "
+                    + "where m.ID_Situacion <> 3" + tipoC + tipoN + tipoF + tipoD;
         } else {
-            sql = "select f2.Descripcion,f3.Descripcion, f1.Formula,f1.Factor,f1.Porcentaje \n"
-                + "from FactorForma f1\n"
-                + "inner join formacafe f2 on (f2.ID = f1.ID_Forma1)\n"
-                + "inner join formacafe f3 on (f3.ID = f1.ID_Forma2)\n"
-                + "WHERE f1.ID_Situacion=" + situacion + tipoP + tipoK;
+            sql = "SELECT m.Rendimiento, p.Descripcion, f.Descripcion\n "
+                    + "FROM maximorendimiento m\n "
+                    + "inner join procesocafe p on (p.ID=m.ID_Proceso) "
+                    + "inner join formacafe f on (f.ID=m.ID_Forma) "
+                    + "where m.ID_Situacion=" + situacion + tipoC + tipoN + tipoF + tipoD;
         }
-        //System.out.println(sql);
-        limpiar(tabla);
-        mdb.cargarInformacion2(modelo, 5, sql);
+        limpiar(tablaMaximoR);
+        mdb.cargarInformacion2(modelo, 3, sql);
 
     }
 
@@ -111,46 +105,48 @@ public class jpFactorForma extends javax.swing.JPanel {
         jPanel5 = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
-        txtBusquedaForma1 = new javax.swing.JTextField();
+        txtBusquedaMaximoR = new javax.swing.JTextField();
+        txtBusquedaProceso = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
-        txtBusquedaFormula = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
+        txtBusquedaForma = new javax.swing.JTextField();
         jPanel7 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        tabla = new javax.swing.JTable();
+        tablaMaximoR = new javax.swing.JTable();
         jPanel8 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
         comboSituacion = new javax.swing.JComboBox<>();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
+
+        setPreferredSize(new java.awt.Dimension(1010, 700));
 
         jPanel5.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanel5.setPreferredSize(new java.awt.Dimension(830, 570));
 
-        jLabel6.setText("Formula:");
+        jLabel6.setText("Maximo Rendimiento");
 
-        txtBusquedaForma1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtBusquedaForma1ActionPerformed(evt);
-            }
-        });
-        txtBusquedaForma1.addKeyListener(new java.awt.event.KeyAdapter() {
+        txtBusquedaMaximoR.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtBusquedaForma1KeyReleased(evt);
+                txtBusquedaMaximoRKeyReleased(evt);
             }
         });
 
-        jLabel7.setText("Forma Cafe 1:");
-
-        txtBusquedaFormula.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtBusquedaFormulaActionPerformed(evt);
-            }
-        });
-        txtBusquedaFormula.addKeyListener(new java.awt.event.KeyAdapter() {
+        txtBusquedaProceso.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtBusquedaFormulaKeyReleased(evt);
+                txtBusquedaProcesoKeyReleased(evt);
+            }
+        });
+
+        jLabel7.setText("Proceso de Cafe");
+
+        jLabel8.setText("Forma de Cafe");
+
+        txtBusquedaForma.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtBusquedaFormaKeyReleased(evt);
             }
         });
 
@@ -161,12 +157,16 @@ public class jpFactorForma extends javax.swing.JPanel {
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtBusquedaForma1, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel7))
-                .addGap(18, 18, 18)
+                    .addComponent(jLabel6)
+                    .addComponent(txtBusquedaMaximoR, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtBusquedaFormula, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6))
+                    .addComponent(jLabel7)
+                    .addComponent(txtBusquedaProceso, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel8)
+                    .addComponent(txtBusquedaForma, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
@@ -175,37 +175,47 @@ public class jpFactorForma extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel6))
+                        .addComponent(jLabel8)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtBusquedaFormula, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(txtBusquedaForma1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(txtBusquedaForma, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jLabel7)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtBusquedaProceso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jLabel6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtBusquedaMaximoR, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        tabla.setModel(new javax.swing.table.DefaultTableModel(
+        tablaMaximoR.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Forma de Cafe 1", "Forma de Cafe 2", "Formula", "Factor", "Porcentaje"
+                "Maximo Rendimiento", "Proceso de Cafe", "Forma de Cafe"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
+                false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        tabla.addMouseListener(new java.awt.event.MouseAdapter() {
+        tablaMaximoR.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tablaMouseClicked(evt);
+                tablaMaximoRMouseClicked(evt);
             }
         });
-        jScrollPane2.setViewportView(tabla);
+        jScrollPane2.setViewportView(tablaMaximoR);
+        if (tablaMaximoR.getColumnModel().getColumnCount() > 0) {
+            tablaMaximoR.getColumnModel().getColumn(0).setResizable(false);
+            tablaMaximoR.getColumnModel().getColumn(1).setResizable(false);
+            tablaMaximoR.getColumnModel().getColumn(2).setResizable(false);
+        }
 
         jLabel10.setText("Situacion");
 
@@ -213,11 +223,6 @@ public class jpFactorForma extends javax.swing.JPanel {
         comboSituacion.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 comboSituacionItemStateChanged(evt);
-            }
-        });
-        comboSituacion.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                comboSituacionActionPerformed(evt);
             }
         });
 
@@ -242,12 +247,7 @@ public class jpFactorForma extends javax.swing.JPanel {
             }
         });
 
-        jButton5.setText("Cerrar");
-        jButton5.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton5ActionPerformed(evt);
-            }
-        });
+        jButton1.setText("Cerrar");
 
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
@@ -258,14 +258,14 @@ public class jpFactorForma extends javax.swing.JPanel {
                 .addComponent(jLabel10)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(comboSituacion, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 309, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 491, Short.MAX_VALUE)
                 .addComponent(jButton2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton5)
+                .addComponent(jButton1)
                 .addContainerGap())
         );
         jPanel8Layout.setVerticalGroup(
@@ -278,7 +278,7 @@ public class jpFactorForma extends javax.swing.JPanel {
                     .addComponent(jButton4)
                     .addComponent(comboSituacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel10)
-                    .addComponent(jButton5))
+                    .addComponent(jButton1))
                 .addContainerGap())
         );
 
@@ -289,15 +289,15 @@ public class jpFactorForma extends javax.swing.JPanel {
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2))
+                    .addComponent(jScrollPane2)
+                    .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 113, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 506, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -333,120 +333,99 @@ public class jpFactorForma extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, 808, Short.MAX_VALUE)
+                .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, 990, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, 285, Short.MAX_VALUE)
+                .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, 678, Short.MAX_VALUE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        jdR = new jdFactorForma(null, true, "1", ID_Forma1, ID_Forma2, TxTvar, Factor, Porcentaje, cn);
-        jdR.jp = this;
-        jdR.setVisible(true);
-
+        jdMR = new jdMaximoRendimiento(null, true, "1", rendimiento, proceso, forma, cn);
+        jdMR.jpMR = this;
+        jdMR.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
+    String rendimiento = "", proceso = "", forma = "";
+    private void tablaMaximoRMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaMaximoRMouseClicked
+        // TODO add your handling code here:
+        rendimiento = modelo.getValueAt(tablaMaximoR.getSelectedRow(), 0) + "";
+        proceso = modelo.getValueAt(tablaMaximoR.getSelectedRow(), 1) + "";
+        forma = modelo.getValueAt(tablaMaximoR.getSelectedRow(), 2) + "";
+
+        if (evt.getClickCount() == 1) {
+            // System.out.println("1 Clic");
+        }
+        if (evt.getClickCount() == 2) {
+            jdMR = new jdMaximoRendimiento(null, true, "2", rendimiento, proceso, forma, cn);
+            jdMR.jpMR = this;
+            jdMR.setVisible(true);
+        }
+    }//GEN-LAST:event_tablaMaximoRMouseClicked
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        if (ID_Forma2.equals("")) {
-            JOptionPane.showMessageDialog(null, "selecciona un registro");
+        if (rendimiento.equals("")) {
+            JOptionPane.showMessageDialog(null, "Seleccione un registro");
         } else {
-            jdR = new jdFactorForma(null, true, "2", ID_Forma1, ID_Forma2, TxTvar, Factor, Porcentaje, cn);
-            jdR.jp = this;
-            jdR.setVisible(true);
+            jdMR = new jdMaximoRendimiento(null, true, "2", rendimiento, proceso, forma, cn);
+            jdMR.jpMR = this;
+            jdMR.setVisible(true);
         }
-
     }//GEN-LAST:event_jButton3ActionPerformed
-    String ID_Forma2 = "";
-    String ID_Forma1 = "";
-    String TxTvar = "";
-    String Factor = "";
-    String Porcentaje = "";
-    private void tablaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaMouseClicked
-        // TODO add your handling code here: Retenciones
-        ID_Forma1 = modelo.getValueAt(tabla.getSelectedRow(), 0) + "";
-        ID_Forma2 = modelo.getValueAt(tabla.getSelectedRow(), 1) + "";  //
-        TxTvar = modelo.getValueAt(tabla.getSelectedRow(), 2) + "";
-        Factor = modelo.getValueAt(tabla.getSelectedRow(), 3) + "";
-        Porcentaje = modelo.getValueAt(tabla.getSelectedRow(), 4) + "";
-        if (evt.getClickCount() == 1) {
-            System.out.println("1 Clic");
-        }
-        if (evt.getClickCount() == 2) {
 
-            jdR = new jdFactorForma(null, true, "2", ID_Forma1, ID_Forma2, TxTvar, Factor, Porcentaje, cn);
-            jdR.jp = this;
-            jdR.setVisible(true);
-        }
-    }//GEN-LAST:event_tablaMouseClicked
-
-    private void txtBusquedaForma1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBusquedaForma1KeyReleased
+    private void txtBusquedaMaximoRKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBusquedaMaximoRKeyReleased
         // TODO add your handling code here:
         busqueda();
-    }//GEN-LAST:event_txtBusquedaForma1KeyReleased
+    }//GEN-LAST:event_txtBusquedaMaximoRKeyReleased
+
+    private void txtBusquedaProcesoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBusquedaProcesoKeyReleased
+        // TODO add your handling code here:
+        busqueda();
+    }//GEN-LAST:event_txtBusquedaProcesoKeyReleased
 
     private void comboSituacionItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionItemStateChanged
         // TODO add your handling code here:
         busqueda();
     }//GEN-LAST:event_comboSituacionItemStateChanged
 
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        // TODO add your handling code here:
-        this.removeAll();
-        this.revalidate();
-        this.repaint();
-        /*fprin.panelPrincipal.removeAll();
-        fprin.panelPrincipal.revalidate();
-        fprin.panelPrincipal.repaint();*/
-    }//GEN-LAST:event_jButton5ActionPerformed
-
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        String sql = "UPDATE FactorForma SET ID_Situacion=2 where ID_Forma1='" + ID_Forma1 + "' AND ID_Forma2='" + ID_Forma2 + "' ";
+        /*  String sql = "UPDATE maximorendimiento SET ID_Situacion=2 where descripcion='" + forma + "' ";
+        System.out.println(sql);
         mdb.actualizarBasicos(sql);
-        llenaTabla();
+        llenaTabla();*/
     }//GEN-LAST:event_jButton4ActionPerformed
 
-    private void txtBusquedaForma1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBusquedaForma1ActionPerformed
+    private void txtBusquedaFormaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBusquedaFormaKeyReleased
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtBusquedaForma1ActionPerformed
-
-    private void comboSituacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboSituacionActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_comboSituacionActionPerformed
-
-    private void txtBusquedaFormulaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBusquedaFormulaActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtBusquedaFormulaActionPerformed
-
-    private void txtBusquedaFormulaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBusquedaFormulaKeyReleased
-        busqueda(); // TODO add your handling code here:
-    }//GEN-LAST:event_txtBusquedaFormulaKeyReleased
+        busqueda();
+    }//GEN-LAST:event_txtBusquedaFormaKeyReleased
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    public javax.swing.JComboBox<String> comboSituacion;
-    public javax.swing.JButton jButton2;
-    public javax.swing.JButton jButton3;
-    public javax.swing.JButton jButton4;
-    public javax.swing.JButton jButton5;
-    public javax.swing.JLabel jLabel10;
-    public javax.swing.JLabel jLabel6;
-    public javax.swing.JLabel jLabel7;
-    public javax.swing.JPanel jPanel5;
-    public javax.swing.JPanel jPanel6;
-    public javax.swing.JPanel jPanel7;
-    public javax.swing.JPanel jPanel8;
-    public javax.swing.JScrollPane jScrollPane2;
-    public javax.swing.JTable tabla;
-    public javax.swing.JTextField txtBusquedaForma1;
-    public javax.swing.JTextField txtBusquedaFormula;
+    private javax.swing.JComboBox<String> comboSituacion;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel8;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTable tablaMaximoR;
+    private javax.swing.JTextField txtBusquedaForma;
+    private javax.swing.JTextField txtBusquedaMaximoR;
+    private javax.swing.JTextField txtBusquedaProceso;
     // End of variables declaration//GEN-END:variables
 }

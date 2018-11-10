@@ -87,7 +87,7 @@ public class jdMunicipio extends javax.swing.JDialog {
             if (mdb.comprobarExistencia("select descripcion from municipio where descripcion='" + txtMunicipio.getText() + "'") == null) {
 
                 sql = "INSERT INTO municipio VALUES(null,'" + txtMunicipio.getText() + "', 1, 1,current_date()"
-                        + ", current_time(), 1, 1, 1, 1, " + mdb.devuelveIdPais(estado, "estado") + " )";
+                        + ", current_time(), 1, 1, 1, 1, " + mdb.devuelveId("select id from estado where descripcion='"+estado+"'") + " )";
                 mdb.insertarBasicos(sql);
                 jpM.llenaTablaMunicipios();
                 this.dispose();
@@ -96,7 +96,7 @@ public class jdMunicipio extends javax.swing.JDialog {
             }
         } else {
             //editarMunicipio();
-            sql = "UPDATE municipio SET  descripcion ='" + txtMunicipio.getText() + "', ID_Estado='" + mdb.devuelveIdPais(estado, "estado") + "' where descripcion='" + municipio + "' ";
+            sql = "UPDATE municipio SET  descripcion ='" + txtMunicipio.getText() + "', ID_Estado='" + mdb.devuelveId("select id from estado where descripcion='"+estado+"'") + "' where descripcion='" + municipio + "' ";
             mdb.actualizarBasicos(sql);
             jpM.llenaTablaMunicipios();
             this.dispose();

@@ -38,19 +38,25 @@ public class jdFactorForma extends javax.swing.JDialog {
         this.ID_Forma2C = ID_Forma2C;
         cn = c;
         valiConf = new validaConfi();
+        mdb = new metodosDatosBasicos(cn);
 
         if (tipo.equals("1")) {
             setTitle("Nuevo Factor Forma");
         } else {
             setTitle("Editar Factor Forma");
             txtForm.setText(FormulaC);
-            txtF2.setText(ID_Forma2C);
-            txtF1.setText(ID_Forma1C);
             txtFactor.setText(FactorC);
             txtPorcentaje.setText(PorcentajeC);
-
         }
 
+        rellenarCombos();
+    }
+
+    public void rellenarCombos() {
+        String[] datos;
+        datos = mdb.cargarCombos("SELECT descripcion from formacafe").split(",");
+        comboForma1.setModel(new DefaultComboBoxModel((Object[]) datos));
+        comboForma2.setModel(new DefaultComboBoxModel((Object[]) datos));
     }
 
     public void tipoProceso() {
@@ -59,21 +65,32 @@ public class jdFactorForma extends javax.swing.JDialog {
 
             mdb = new metodosDatosBasicos(cn);
             Formula = txtForm.getText();
-            ID_Forma2 = txtF2.getText();
-            ID_Forma1 = txtF1.getText();
+            ID_Forma2 = comboForma2.getSelectedItem() + "";
+            ID_Forma1 = comboForma1.getSelectedItem() + "";
+            Formula = txtForm.getText();
             Factor = txtFactor.getText();
             Porcentaje = txtPorcentaje.getText();
 
             if (tipo.equals("1")) {
                 //nuevoPais();
-                sql = "INSERT INTO FactorForma VALUES(null,'" + ID_Forma1 + "','" + ID_Forma2 + "','" + Formula + "','" + Factor + "','" + Porcentaje + "', 1, 1,current_date()"
+                sql = "INSERT INTO FactorForma VALUES(null,'" + mdb.devuelveId("select id from formacafe where descripcion='" + ID_Forma1 + "'") + "','"
+                        + mdb.devuelveId("select id from formacafe where descripcion='" + ID_Forma2 + "'") + "','"
+                        + Formula + "','" + Factor + "','" + Porcentaje + "', 1, 1,current_date()"
                         + ", current_time(),1,1,1,1)";
+                System.out.println(sql);
                 mdb.insertarBasicos(sql);
                 jp.llenaTabla();
                 this.dispose();
             } else {
                 //editarPais();
-                sql = "UPDATE FactorForma SET  ID_Forma2='" + ID_Forma2 + "',Formula='" + Formula + "',ID_Forma1='" + ID_Forma1 + "',Factor='" + Factor + "' ,Porcentaje='" + Porcentaje + "'where ID_Forma1='" + ID_Forma1C + "' AND ID_Forma2='" + ID_Forma2C + "' ";
+                sql = "UPDATE FactorForma "
+                        + "SET  ID_Forma1='" + mdb.devuelveId("select id from formacafe where descripcion='" + ID_Forma1 + "'") 
+                        + "',Formula='" + Formula + "',ID_Forma2='" 
+                        + mdb.devuelveId("select id from formacafe where descripcion='" + ID_Forma2 + "'") 
+                        + "',Factor='" + Factor + "' "
+                        + ",Porcentaje='" + Porcentaje 
+                        + "'where ID_Forma1='" + mdb.devuelveId("select id from formacafe where descripcion='" + ID_Forma1C + "'") 
+                        + "' AND ID_Forma2='" + mdb.devuelveId("select id from formacafe where descripcion='" + ID_Forma2C + "'") + "' ";
                 System.out.print(sql);
                 mdb.actualizarBasicos(sql);
                 jp.llenaTabla();
@@ -84,11 +101,6 @@ public class jdFactorForma extends javax.swing.JDialog {
         }
     }
 
-    /* public void llenaUsuarios() {
-        limpiar(tablaUsuarios);
-        DefaultTableModel modelo = (DefaultTableModel) tablaUsuarios.getModel();
-        u.cargarUsu(modelo);
-    }*/
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -100,27 +112,21 @@ public class jdFactorForma extends javax.swing.JDialog {
 
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        txtF2 = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         txtForm = new javax.swing.JTextField();
-        txtF1 = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         txtFactor = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         txtPorcentaje = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
+        comboForma1 = new javax.swing.JComboBox<>();
+        comboForma2 = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel1.setText("Forma de Cafe 2");
-
-        txtF2.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtF2KeyReleased(evt);
-            }
-        });
 
         jButton1.setText("Aceptar");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -138,23 +144,16 @@ public class jdFactorForma extends javax.swing.JDialog {
 
         jLabel2.setText("Formula");
 
+        txtForm.setEditable(false);
+        txtForm.setEnabled(false);
+        txtForm.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtFormActionPerformed(evt);
+            }
+        });
         txtForm.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtFormKeyReleased(evt);
-            }
-        });
-
-        txtF1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtF1ActionPerformed(evt);
-            }
-        });
-        txtF1.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtF1KeyReleased(evt);
-            }
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                txtF1KeyTyped(evt);
             }
         });
 
@@ -184,6 +183,12 @@ public class jdFactorForma extends javax.swing.JDialog {
 
         jLabel5.setText("Porcentaje");
 
+        comboForma2.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                comboForma2ItemStateChanged(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -191,15 +196,14 @@ public class jdFactorForma extends javax.swing.JDialog {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtF2)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE))
-                    .addComponent(txtF1)
                     .addComponent(txtForm)
                     .addComponent(txtFactor)
                     .addComponent(txtPorcentaje)
+                    .addComponent(comboForma1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
@@ -207,7 +211,8 @@ public class jdFactorForma extends javax.swing.JDialog {
                             .addComponent(jLabel2)
                             .addComponent(jLabel4)
                             .addComponent(jLabel5))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(comboForma2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -216,11 +221,11 @@ public class jdFactorForma extends javax.swing.JDialog {
                 .addGap(7, 7, 7)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtF1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(comboForma1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtF2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(comboForma2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -264,30 +269,6 @@ public class jdFactorForma extends javax.swing.JDialog {
         tipoProceso();
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void txtF1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtF1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtF1ActionPerformed
-
-    private void txtF1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtF1KeyReleased
-        // TODO add your handling code here:
-        if (txtF1.getText().length() != 0) {
-            txtF1.setText(valiConf.primerLetraMayuscula(txtF1.getText()).replace("S/n", "S/N"));
-            txtF1.setText(valiConf.primerLetraMayuscula(txtF1.getText()).replace("S/d", "S/D"));
-            txtF1.setText(valiConf.primerLetraMayuscula(txtF1.getText()).replace("S/o", "S/O"));
-        }
-
-    }//GEN-LAST:event_txtF1KeyReleased
-
-    private void txtF2KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtF2KeyReleased
-        // TODO add your handling code here:
-        if (txtF2.getText().length() != 0) {
-            txtF2.setText(valiConf.primerLetraMayuscula(txtF2.getText()).replace("S/n", "S/N"));
-            txtF2.setText(valiConf.primerLetraMayuscula(txtF2.getText()).replace("S/d", "S/D"));
-            txtF2.setText(valiConf.primerLetraMayuscula(txtF2.getText()).replace("S/o", "S/O"));
-        }
-
-    }//GEN-LAST:event_txtF2KeyReleased
-
     private void txtFormKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtFormKeyReleased
         // TODO add your handling code here:
         if (txtForm.getText().length() != 0) {
@@ -322,15 +303,6 @@ public class jdFactorForma extends javax.swing.JDialog {
 
     }//GEN-LAST:event_txtPorcentajeKeyReleased
 
-    private void txtF1KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtF1KeyTyped
-        // TODO add your handling code here:
-        char c = evt.getKeyChar();
-        if (Character.isDigit(c)) {
-            getToolkit().beep();
-            evt.consume();
-        }
-    }//GEN-LAST:event_txtF1KeyTyped
-
     private void txtPorcentajeKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPorcentajeKeyTyped
         // TODO add your handling code here:
         char c = evt.getKeyChar();
@@ -339,6 +311,17 @@ public class jdFactorForma extends javax.swing.JDialog {
             evt.consume();
         }
     }//GEN-LAST:event_txtPorcentajeKeyTyped
+
+    private void txtFormActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFormActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtFormActionPerformed
+
+    private void comboForma2ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboForma2ItemStateChanged
+        // TODO add your handling code here:
+        ID_Forma2 = comboForma2.getSelectedItem() + "";
+        ID_Forma1 = comboForma1.getSelectedItem() + "";
+        txtForm.setText(ID_Forma1 + " / " + ID_Forma2);
+    }//GEN-LAST:event_comboForma2ItemStateChanged
 
     /**
      * @param args the command line arguments
@@ -381,6 +364,8 @@ public class jdFactorForma extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> comboForma1;
+    private javax.swing.JComboBox<String> comboForma2;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
@@ -389,8 +374,6 @@ public class jdFactorForma extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField txtF1;
-    private javax.swing.JTextField txtF2;
     private javax.swing.JTextField txtFactor;
     private javax.swing.JTextField txtForm;
     private javax.swing.JTextField txtPorcentaje;

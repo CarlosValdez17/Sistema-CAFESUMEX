@@ -73,7 +73,7 @@ public class jdCalidadSombra extends javax.swing.JDialog {
 
         if (tipo.equals("1")) {
             //nuevo
-            sql = "INSERT INTO calidadsombra VALUES(null," + mdb.devuelveIdPais(tipoS, "tiposombra") + "," + txtCalidad.getText() + ","
+            sql = "INSERT INTO calidadsombra VALUES(null," + mdb.devuelveId("select id from tiposombra where descripcion='"+tipoS+"' ") + "," + txtCalidad.getText() + ","
                     + txtAltura.getText() + "," + txtCobertura.getText() + ", 1, 1,current_date()"
                     + ", current_time(), 1, 1, 1, 1  )";
             System.out.println(sql);
@@ -82,7 +82,7 @@ public class jdCalidadSombra extends javax.swing.JDialog {
             this.dispose();
         } else {
             //editar
-            sql = "UPDATE calidadsombra SET id_tiposombra=" + mdb.devuelveIdPais(tipoS, "tiposombra") + ","
+            sql = "UPDATE calidadsombra SET id_tiposombra=" + mdb.devuelveId("select id from tiposombra where descripcion='"+tipoS+"' ") + ","
                     + " estrellas=" + txtCalidad.getText() + ",alturasombrametros=" + txtAltura.getText() + ",cobertura="
                     + txtCobertura.getText() + " where id=" + id;
             mdb.actualizarBasicos(sql);

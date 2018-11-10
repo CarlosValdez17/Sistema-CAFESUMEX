@@ -119,7 +119,7 @@ public class jdColoniaEjido extends javax.swing.JDialog {
             //nuevo
             if (mdb.comprobarExistencia("select descripcion from ejidocolonia where descripcion='" + txtColonia.getText() + "'") == null) {
                 sql = "INSERT INTO ejidocolonia VALUES(null,'" + txtColonia.getText() + "', 1, 1,current_date()"
-                        + ", current_time(), 1, 1, 1, 1, " + mdb.devuelveIdPais(localidad, "localidad") + " )";
+                        + ", current_time(), 1, 1, 1, 1, " + mdb.devuelveId("select id from localidad where descripcion='"+localidad+"'") + " )";
                 mdb.insertarBasicos(sql);
                 jpC.llenaTablaColonia();
                 this.dispose();
@@ -128,7 +128,7 @@ public class jdColoniaEjido extends javax.swing.JDialog {
             }
         } else {
             //editar
-            sql = "UPDATE ejidocolonia SET descripcion ='" + txtColonia.getText() + "', ID_localidad='" + mdb.devuelveIdPais(localidad, "localidad") + "' where descripcion='" + co + "' ";
+            sql = "UPDATE ejidocolonia SET descripcion ='" + txtColonia.getText() + "', ID_localidad='" + mdb.devuelveId("select id from localidad where descripcion='"+localidad+"'") + "' where descripcion='" + co + "' ";
             System.out.println(sql);
             mdb.actualizarBasicos(sql);
             jpC.llenaTablaColonia();

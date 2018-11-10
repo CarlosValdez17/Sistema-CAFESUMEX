@@ -11,6 +11,7 @@ import FormasInternas.panelPrueba;
 import Formas_Configuraciones_BeneficioHumedo.jpActividadesBH;
 import Formas_Configuraciones_BeneficioHumedo.jpAreaAlmacen;
 import Formas_Configuraciones_BeneficioHumedo.jpClima;
+import Formas_Configuraciones_BeneficioHumedo.jpRutas;
 import Formas_Configuraciones_BeneficioHumedo.jpSobrante;
 import Formas_Configuraciones_BeneficioHumedo.jpVehiculo;
 import Formas_Configuraciones_DatosBasicos.jpColoniaEjido;
@@ -48,6 +49,7 @@ import Formas_Configuraciones_Recepcion.jpCalificacionSeco;
 import Formas_Configuraciones_Recepcion.jpEvaluaciones;
 import Formas_Configuraciones_Recepcion.jpFactorForma;
 import Formas_Configuraciones_Recepcion.jpFormaCafe;
+import Formas_Configuraciones_Recepcion.jpMaximoRendimiento;
 import Formas_Configuraciones_Recepcion.jpMaximoTamañoPromedio;
 import Formas_Configuraciones_Recepcion.jpProcesoCafe;
 import Formas_Configuraciones_Recepcion.jpReglasEvaluacion;
@@ -547,9 +549,26 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 panelPrincipal.revalidate();
                 panelPrincipal.repaint();
                 break;
+            case "Rutas":
+                jpRutas jpRut = new jpRutas(cn);
+                jpRut.setSize(size);
+                jpRut.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpRut);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+            case "Máximo Rendimiento":
+                jpMaximoRendimiento jpMR = new jpMaximoRendimiento(cn);
+                jpMR.setSize(size);
+                jpMR.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpMR);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
 
             default:
-
                 jpFondo jpF = new jpFondo();
                 jpF.setSize(size);
                 jpF.setLocation(-5, -35);
@@ -572,7 +591,6 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         panelPrincipal.paint(grafico);
 
     }*/
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

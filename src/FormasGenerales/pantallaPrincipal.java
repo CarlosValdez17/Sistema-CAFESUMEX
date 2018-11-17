@@ -102,7 +102,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         setContentPane(image);*/
     }
 
-    public void paintComponent(Graphics g) {
+    /**  public void paintComponent(Graphics g) {
         Dimension tamanio = getSize();
         ImageIcon fondo = new ImageIcon(getClass().getResource("Imagenes/FondoPantalla.png"));
         g.drawImage(fondo.getImage(), 0, 0, tamanio.width, tamanio.height, null);
@@ -110,13 +110,13 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         panelPrincipal.paintComponents(g);// paint(g);
     }
 
-    @Override
+  @Override
     public Image getIconImage() {
         Image retValue = Toolkit.getDefaultToolkit().
                 getImage(ClassLoader.getSystemResource("Imagenes/frmLogin.jpg"));
 
         return retValue;
-    }
+    }**/
 
     public void pintarPanel(String tipo) {
         Dimension size = panelPrincipal.getSize();
@@ -618,7 +618,6 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("FincaLab - Pantalla Principal");
         setFocusTraversalPolicyProvider(true);
-        setIconImage(getIconImage());
         setResizable(false);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());

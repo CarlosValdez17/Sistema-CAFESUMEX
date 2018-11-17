@@ -49,6 +49,7 @@ import Formas_Configuraciones_Recepcion.jpCalificacionSeco;
 import Formas_Configuraciones_Recepcion.jpEvaluaciones;
 import Formas_Configuraciones_Recepcion.jpFactorForma;
 import Formas_Configuraciones_Recepcion.jpFormaCafe;
+import Formas_Configuraciones_Recepcion.jpFormaProceso;
 import Formas_Configuraciones_Recepcion.jpMaximoRendimiento;
 import Formas_Configuraciones_Recepcion.jpMaximoTamañoPromedio;
 import Formas_Configuraciones_Recepcion.jpProcesoCafe;
@@ -58,6 +59,7 @@ import Formas_Configuraciones_Seguridad.jpPerfiles;
 import Formas_Configuraciones_Sociedades.jpPuestos;
 import Formas_Configuraciones_Sociedades.jpRetenciones;
 import Formas_Personas.jpPersonas;
+import Formas_Personas.jpPersonas1;
 import MetodosGenerales.JComboCheckBox;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -75,6 +77,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreePath;
 
 /**
@@ -100,6 +103,16 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         /*  ImageFondo image=new ImageFondo();
         image.setImage("/Imagenes/FondoPantalla.png");
         setContentPane(image);*/
+        //jButton3.setVisible(false);
+        jButton4.setVisible(false);
+        jButton5.setVisible(false);
+        jButton6.setVisible(false);
+        jButton7.setVisible(false);
+
+        DefaultTreeCellRenderer render = (DefaultTreeCellRenderer) jTree1.getCellRenderer();
+        render.setLeafIcon(new ImageIcon(this.getClass().getResource("../Imagenes/database.png")));
+        render.setOpenIcon(new ImageIcon(this.getClass().getResource("../Imagenes/database.png")));
+        render.setClosedIcon(new ImageIcon(this.getClass().getResource("../Imagenes/database.png")));
     }
 
     /**  public void paintComponent(Graphics g) {
@@ -350,7 +363,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 panelPrincipal.revalidate();
                 panelPrincipal.repaint();
                 break;
-            case "Personas":
+            case "Propuesta 1":
                 jpPersonas jpPer = new jpPersonas(cn);
                 jpPer.setSize(size);
                 jpPer.setLocation(0, 0);
@@ -358,7 +371,15 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 panelPrincipal.add(jpPer);
                 panelPrincipal.revalidate();
                 panelPrincipal.repaint();
-
+                break;
+            case "Propuesta 2":
+                jpPersonas1 jpPer1 = new jpPersonas1(cn);
+                jpPer1.setSize(size);
+                jpPer1.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpPer1);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
                 break;
             case "Perfiles":
                 jpPerfiles jpPerf = new jpPerfiles(cn);
@@ -567,7 +588,15 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 panelPrincipal.revalidate();
                 panelPrincipal.repaint();
                 break;
-
+            case "Forma Procesos":
+                jpFormaProceso jpFP = new jpFormaProceso(cn);
+                jpFP.setSize(size);
+                jpFP.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpFP);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
             default:
                 jpFondo jpF = new jpFondo();
                 jpF.setSize(size);
@@ -823,6 +852,8 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         treeNode2.add(treeNode3);
         treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Calificación Cereza");
         treeNode2.add(treeNode3);
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Forma Procesos");
+        treeNode2.add(treeNode3);
         treeNode1.add(treeNode2);
         treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Beneficio Húmedo");
         treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Vehículos");
@@ -944,14 +975,10 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         jScrollPane2.setOpaque(false);
 
         javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Modulo Personas");
-        javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Personas");
-        javax.swing.tree.DefaultMutableTreeNode treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Nueva Persona");
+        javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Propuestas");
+        javax.swing.tree.DefaultMutableTreeNode treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Propuesta 1");
         treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Editar Persona");
-        treeNode2.add(treeNode3);
-        treeNode1.add(treeNode2);
-        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Submodulo");
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Prueba1");
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Propuesta 2");
         treeNode2.add(treeNode3);
         treeNode1.add(treeNode2);
         jTree1.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));

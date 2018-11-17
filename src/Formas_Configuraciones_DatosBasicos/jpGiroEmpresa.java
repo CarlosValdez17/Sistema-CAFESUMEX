@@ -177,6 +177,11 @@ public class jpGiroEmpresa extends javax.swing.JPanel {
         });
 
         jButton3.setText("Editar");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jButton4.setText("Desactivar");
         jButton4.addActionListener(new java.awt.event.ActionListener() {
@@ -293,7 +298,7 @@ public class jpGiroEmpresa extends javax.swing.JPanel {
     String giro = "";
     private void tablaGiroMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaGiroMouseClicked
         // TODO add your handling code here:
-        giro = modelo.getValueAt(tablaGiro.getSelectedRow(), 0) + "";  //pais
+        giro = tablaGiro.getValueAt(tablaGiro.getSelectedRow(), 0) + "";  //pais
 
         if (evt.getClickCount() == 1) {
             System.out.println("1 Clic");
@@ -320,6 +325,13 @@ public class jpGiroEmpresa extends javax.swing.JPanel {
         mdb.actualizarBasicos("UPDATE girodemoral SET ID_Situacion=2 where descripcion='" + giro + "'");
         llenaTablaGiro();
     }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+            jdG = new jdGiroEmpresa(null, true, "2", giro, cn);
+            jdG.jpG = this;
+            jdG.setVisible(true);       
+    }//GEN-LAST:event_jButton3ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

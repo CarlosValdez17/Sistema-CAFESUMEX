@@ -235,7 +235,9 @@ public class jpCalidadSombra extends javax.swing.JPanel {
         jScrollPane2.setViewportView(tablaCalidadSombra);
         if (tablaCalidadSombra.getColumnModel().getColumnCount() > 0) {
             tablaCalidadSombra.getColumnModel().getColumn(0).setResizable(false);
+            tablaCalidadSombra.getColumnModel().getColumn(1).setResizable(false);
             tablaCalidadSombra.getColumnModel().getColumn(2).setResizable(false);
+            tablaCalidadSombra.getColumnModel().getColumn(3).setResizable(false);
         }
 
         jLabel10.setText("Situacion");

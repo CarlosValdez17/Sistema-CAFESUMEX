@@ -35,6 +35,16 @@ public class metodosDatosBasicos {
             JOptionPane.showMessageDialog(null, "Error al Insertar\n" + ex);
         }
     }
+    
+    public void insertarEnCiclo(String sql) {
+        try {
+            PreparedStatement cmd = cn.prepareCall(sql);
+            cmd.execute();
+            cmd.close();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Error al Insertar\n" + ex);
+        }
+    }
 
     public void actualizarBasicos(String sql) {
         try {
@@ -131,7 +141,7 @@ public class metodosDatosBasicos {
 
     public String comprobarExistencia(String sql) {
         try {
-            System.out.println();
+           // System.out.println();
             CallableStatement cmd = cn.prepareCall(sql);
             ResultSet rs = cmd.executeQuery();
             while (rs.next()) {
@@ -151,7 +161,7 @@ public class metodosDatosBasicos {
 
     public String cargarCombos(String sql) {
         try {
-            System.out.println(sql+"\n");
+           // System.out.println(sql + "\n");
             CallableStatement cmd = cn.prepareCall(sql);
             ResultSet rs = cmd.executeQuery();
             String a = "";
@@ -160,7 +170,7 @@ public class metodosDatosBasicos {
                 for (int i = 0; i < 1; i++) {
                     datos[i] = rs.getString(i + 1);
                 }
-                a += datos[0] + ",";
+                a += datos[0]+ "#";
             }
             cmd.close();
             return a;
@@ -170,6 +180,28 @@ public class metodosDatosBasicos {
         return null;
     }
 
+        public String cargarFormaProceso(String sql) {
+        try {
+           // System.out.println(sql + "\n");
+            CallableStatement cmd = cn.prepareCall(sql);
+            ResultSet rs = cmd.executeQuery();
+            String a = "";
+            while (rs.next()) {
+                Object[] datos = new Object[2];
+                for (int i = 0; i < 1; i++) {
+                    datos[i] = rs.getString(i + 1);
+                }
+                a += "• "+datos[0]+"\n\n";
+            }
+            cmd.close();
+            return a;
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Error - Cargar Combos \n" + ex);
+        }
+        return null;
+    }
+
+    
     public String devuelveId(String sql) {
         try {
 
@@ -205,7 +237,7 @@ public class metodosDatosBasicos {
         }
     }
 
-        public void cargarInformacion3(DefaultTableModel modelo, int tamaño, String sql) {
+    public void cargarInformacion3(DefaultTableModel modelo, int tamaño, String sql) {
         try {
             //System.out.println(sql);
             CallableStatement cmd = cn.prepareCall(sql);
@@ -241,4 +273,73 @@ public class metodosDatosBasicos {
 
     }
 
+    
+    public void cargarInformacionFormaEvaluaciones(DefaultTableModel modelo, String sql) {
+
+        try {
+            System.out.println(sql);
+            CallableStatement cmd = cn.prepareCall(sql);
+            ResultSet rs = cmd.executeQuery();
+
+            System.out.println("antes de while");
+            while (rs.next()) {
+                System.out.println("while");
+                Object[] datos = new Object[2];
+                datos[0] = rs.getString("estad");
+                datos[1] = rs.getString("idventa");
+                datos[2] = rs.getString("total");
+                datos[3] = 0;
+
+                modelo.addRow(datos);
+
+            }
+
+            System.out.println("desps de while");
+            
+            cmd.close();
+            //    cn.close();
+
+        } catch (Exception ex) {
+        }
+    }
+
+    
+    
+    public void cargarInformacionEvaluaciones(DefaultTableModel modelo, int tamaño, String sql) {
+        try {
+            //System.out.println(sql);
+            CallableStatement cmd = cn.prepareCall(sql);
+            ResultSet rs = cmd.executeQuery();
+
+            while (rs.next()) {
+                Object[] datos = new Object[10];
+                for (int i = 0; i < tamaño; i++) {
+
+                    datos[i] = rs.getString(i + 1);
+                    if (i == 1) {
+
+                        if (datos[1].equals("1")) {
+                            datos[1] = true;
+                        } else {
+                            datos[1] = false;
+                        }
+                        System.out.println(datos[i]);
+                    } else if (i == 2) {
+                        if (datos[2].equals("1")) {
+                            datos[2] = true;
+                        } else {
+                            datos[2] = false;
+                        }
+                    }
+                }
+                modelo.addRow(datos);
+            }
+            cmd.close();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Excepcion - Error Cargar Info 2" + ex);
+        }
+
+    }
+    
+    
 }

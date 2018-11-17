@@ -35,9 +35,9 @@ public class jpReglasEvaluacion extends javax.swing.JPanel {
         modelo = (DefaultTableModel) tablaReglas.getModel();
 
         llenaTabla();
+
     }
-    
-    
+
     public void llenaTabla() {
         limpiar(tablaReglas);
         String sql = "select grado,defectos,descripcion from reglasevaluacion where ID_Situacion=1";
@@ -82,7 +82,6 @@ public class jpReglasEvaluacion extends javax.swing.JPanel {
             ((DefaultTableModel) tabla.getModel()).removeRow(0);
         }
     }
-
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -338,7 +337,7 @@ public class jpReglasEvaluacion extends javax.swing.JPanel {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        jdE = new jdReglasEvaluacion(null, true, "1", grados,defectos, desc, cn);
+        jdE = new jdReglasEvaluacion(null, true, "1", grados, defectos, desc, cn);
         jdE.jpE = this;
         jdE.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
@@ -353,7 +352,7 @@ public class jpReglasEvaluacion extends javax.swing.JPanel {
             // System.out.println("1 Clic");
         }
         if (evt.getClickCount() == 2) {
-            jdE = new jdReglasEvaluacion(null, true, "2", grados,defectos,desc, cn);
+            jdE = new jdReglasEvaluacion(null, true, "2", grados, defectos, desc, cn);
             jdE.jpE = this;
             jdE.setVisible(true);
         }
@@ -364,7 +363,7 @@ public class jpReglasEvaluacion extends javax.swing.JPanel {
         if (grados.equals("")) {
             JOptionPane.showMessageDialog(null, "Seleccione un registro");
         } else {
-            jdE = new jdReglasEvaluacion(null, true, "2", grados,defectos, desc, cn);
+            jdE = new jdReglasEvaluacion(null, true, "2", grados, defectos, desc, cn);
             jdE.jpE = this;
             jdE.setVisible(true);
         }
@@ -387,7 +386,7 @@ public class jpReglasEvaluacion extends javax.swing.JPanel {
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        String sql = "UPDATE reglasevaluacion SET ID_Situacion=2 where descripcion='" + desc+ "' ";
+        String sql = "UPDATE reglasevaluacion SET ID_Situacion=2 where descripcion='" + desc + "' ";
         System.out.println(sql);
         mdb.actualizarBasicos(sql);
         llenaTabla();

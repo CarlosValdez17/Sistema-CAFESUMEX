@@ -5,8 +5,14 @@
  */
 package Formas_Personas;
 
+import MetodosGenerales.JComboCheckBox;
 import Metodos_Configuraciones.metodosDatosBasicos;
+import java.awt.Checkbox;
 import java.sql.Connection;
+import java.util.Vector;
+import javafx.scene.control.CheckBox;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JCheckBox;
 //import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 /**
@@ -21,6 +27,8 @@ public class jpPersonas extends javax.swing.JPanel {
     Connection cn;
     metodosDatosBasicos mdb;
     jdPersonas jdP;
+    //CheckBox c1;
+    Checkbox c1;
 
     public jpPersonas(Connection c) {
         initComponents();
@@ -28,15 +36,37 @@ public class jpPersonas extends javax.swing.JPanel {
         cn = c;
         mdb = new metodosDatosBasicos(cn);
 
+        //c1 = new Checkbox("Prueba 1", true);
+        //panelRadios.add(c1);
+        
         combo();
-      //  AutoCompleteDecorator.decorate(comboPersona);
+        //  AutoCompleteDecorator.decorate(comboPersona);
+
+    }
+
+    public void checks() {
+
+        
     }
 
     public void combo() {
-        comboPersona.addItem("Hola");
-        comboPersona.addItem("Pruebas");
-        comboPersona.addItem("Zulema");
-        comboPersona.addItem("Carlos");
+        String[] datos = mdb.cargarCombos("SELECT descripcion from puestos").split("#");
+        //comboAtributos.setModel(new DefaultComboBoxModel((Object[]) datos));
+        
+        String[] datos2 = mdb.cargarCombos("SELECT descripcion from genero").split("#");
+        //comboAtributos.setModel(new DefaultComboBoxModel((Object[]) datos));
+        String a ="";
+        
+        for(int i=0; i<datos.length; i++){
+            a += datos[i]+ "#";
+        }
+        for(int i=0; i<datos2.length; i++){
+            a += datos2[i]+ "#";
+        }
+        
+       String[] datosfinales = a.split("#");
+       comboAtributos.setModel(new DefaultComboBoxModel ((Object[]) datosfinales));
+       
     }
 
     /**
@@ -56,7 +86,7 @@ public class jpPersonas extends javax.swing.JPanel {
         jLabel3 = new javax.swing.JLabel();
         jComboBox2 = new javax.swing.JComboBox<>();
         txtBusqueda = new javax.swing.JTextField();
-        jComboBox3 = new javax.swing.JComboBox<>();
+        comboAtributos = new javax.swing.JComboBox<>();
         jPanel7 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         tablaActividades = new javax.swing.JTable();
@@ -67,6 +97,7 @@ public class jpPersonas extends javax.swing.JPanel {
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
+        panelRadios = new javax.swing.JPanel();
 
         jPanel5.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanel5.setPreferredSize(new java.awt.Dimension(830, 570));
@@ -82,7 +113,7 @@ public class jpPersonas extends javax.swing.JPanel {
 
         jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        jComboBox3.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        comboAtributos.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -98,7 +129,7 @@ public class jpPersonas extends javax.swing.JPanel {
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addComponent(comboPersona, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(comboAtributos, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -120,7 +151,7 @@ public class jpPersonas extends javax.swing.JPanel {
                     .addComponent(comboPersona, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(comboAtributos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -227,7 +258,7 @@ public class jpPersonas extends javax.swing.JPanel {
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 104, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -244,7 +275,10 @@ public class jpPersonas extends javax.swing.JPanel {
                         .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(panelRadios, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
@@ -253,6 +287,8 @@ public class jpPersonas extends javax.swing.JPanel {
                 .addGap(8, 8, 8)
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(panelRadios, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
@@ -270,7 +306,7 @@ public class jpPersonas extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE)
+                .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, 382, Short.MAX_VALUE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -297,7 +333,7 @@ public class jpPersonas extends javax.swing.JPanel {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        jdP = new jdPersonas(null,true);
+        jdP = new jdPersonas(null, true);
         jdP.setVisible(true);
         /*jdABH = new jdActividadesBH(null, true, "1", actividad,desc, cn);
         jdABH.jpABH = this;
@@ -324,6 +360,7 @@ public class jpPersonas extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> comboAtributos;
     private javax.swing.JComboBox<String> comboPersona;
     private javax.swing.JComboBox<String> comboSituacion;
     private javax.swing.JButton jButton1;
@@ -331,7 +368,6 @@ public class jpPersonas extends javax.swing.JPanel {
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JComboBox<String> jComboBox2;
-    private javax.swing.JComboBox<String> jComboBox3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
@@ -341,6 +377,7 @@ public class jpPersonas extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JPanel panelRadios;
     private javax.swing.JTable tablaActividades;
     private javax.swing.JTextField txtBusqueda;
     // End of variables declaration//GEN-END:variables

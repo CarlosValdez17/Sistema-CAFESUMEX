@@ -57,22 +57,24 @@ public class jdRetenciones extends javax.swing.JDialog {
             mdb = new metodosDatosBasicos(cn);
             importe = Centavos.getText();
             Retenciones = txtRetenciones.getText();
-
+ 
             if (tipo.equals("1")) {
+                if (mdb.comprobarExistencia("select descripcion from retenciones where descripcion='" + Retenciones+ "'") == null) {
                 //nuevoPais();
-                sql = "INSERT INTO Retenciones VALUES(null,'" + Retenciones + "','" + importe + "', 1, 1,current_date()"
+                sql = "INSERT INTO Retenciones VALUES(null,'" +  importe+ "','" + Retenciones + "', 1, 1,current_date()"
                         + ", current_time(),1,1,1,1)";
                 mdb.insertarBasicos(sql);
-                jp.llenaTablaRetenciones();
+                jp.busqueda();
                 this.dispose();
+                }else {JOptionPane.showMessageDialog(null, "Dato Repetido");}
             } else {
                 //editarPais();
                 sql = "UPDATE Retenciones SET  Descripcion ='" + Retenciones + "', Importe='" + importe + "' where Descripcion='" + RetencionesC + "' ";
                 mdb.actualizarBasicos(sql);
-                jp.llenaTablaRetenciones();
+                jp.busqueda();
                 this.dispose();
 
-            }
+            }  
         } catch (Exception e) {
         }
     }
@@ -195,6 +197,7 @@ public class jdRetenciones extends javax.swing.JDialog {
 
     private void txtRetencionesKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtRetencionesKeyReleased
         // TODO add your handling code here:
+      txtRetenciones.setText(txtRetenciones.getText().toLowerCase());
         if (txtRetenciones.getText().length() != 0) {
             txtRetenciones.setText(valiConf.primerLetraMayuscula(txtRetenciones.getText()).replace("S/n", "S/N"));
             txtRetenciones.setText(valiConf.primerLetraMayuscula(txtRetenciones.getText()).replace("S/d", "S/D"));

@@ -57,22 +57,23 @@ public class jdPuestos extends javax.swing.JDialog {
             mdb = new metodosDatosBasicos(cn);
 
             Puestos = txtPuestos.getText();
-
+ if (mdb.comprobarExistencia("select descripcion from puestos where descripcion='" + Puestos + "'") == null) {
             if (tipo.equals("1")) {
                 //nuevoPais();
                 sql = "INSERT INTO Puestos VALUES(null,'" + Puestos + "', 1, 1,current_date()"
                         + ", current_time(),1,1,1,1)";
                 mdb.insertarBasicos(sql);
-                jp.llenaTablaPuestos();
+                jp.busqueda();
                 this.dispose();
             } else {
                 //editarPais();
                 sql = "UPDATE Puestos SET  Descripcion ='" + Puestos + "' where Descripcion='" + PuestosC + "' ";
                 mdb.actualizarBasicos(sql);
-                jp.llenaTablaPuestos();
+                jp.busqueda();
                 this.dispose();
 
             }
+            }else {JOptionPane.showMessageDialog(null, "Dato Repetido");}
         } catch (Exception e) {
         }
     }
@@ -180,6 +181,7 @@ public class jdPuestos extends javax.swing.JDialog {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void txtPuestosKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPuestosKeyReleased
+       txtPuestos.setText(txtPuestos.getText().toLowerCase());
         // TODO add your handling code here:
         if (txtPuestos.getText().length() != 0) {
             txtPuestos.setText(valiConf.primerLetraMayuscula(txtPuestos.getText()).replace("S/n", "S/N"));

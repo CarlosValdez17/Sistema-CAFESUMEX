@@ -36,16 +36,13 @@ public class jpPuestos extends javax.swing.JPanel {
 
         modelo = (DefaultTableModel) tablaPuestos.getModel();
         tablaPuestos.setRowSorter(new TableRowSorter(modelo));
+mdb=new metodosDatosBasicos(cn);
+   tablaPuestos.getTableHeader().setReorderingAllowed(false);
+    busqueda();
+       
+    }
 
    
-        llenaTablaPuestos();
-    }
-
-    public void llenaTablaPuestos() {
-        limpiar(tablaPuestos);
-        mdb = new metodosDatosBasicos(cn);
-        mdb.cargarInformacion2(modelo,1,"select Descripcion from Puestos where ID_Situacion=1");
-    }
 
     public void busqueda() {
         String tipoP = "";
@@ -62,7 +59,7 @@ public class jpPuestos extends javax.swing.JPanel {
         }
 
         if (txtBusquedaP.getText().length() > 0) {
-            tipoP = " AND descripcion like '%" + txtBusquedaP.getText() + "%'";
+            tipoP = " AND t.descripcion like '" + txtBusquedaP.getText() + "%'";
         }
         /*  if (txtBusquedaK.getText().length() > 0) {
             tipoK = " AND Importe like '%" + txtBusquedaK.getText() + "%'";
@@ -76,13 +73,17 @@ public class jpPuestos extends javax.swing.JPanel {
         String sql;
         System.out.println("SITUACION: " + situacion);
         if (situacion.equals("Todos")) {
-            sql = "SELECT Descripcion from Puestos WHERE ID_Situacion<>3 "+tipoP;
+            sql = "select t.descripcion, s.descripcion "
+                + "from Puestos t "
+                + "inner join situacion s on (t.id_situacion=s.id) WHERE t.ID_Situacion<>3 "+tipoP;
         } else {
-            sql = "SELECT Descripcion from Puestos WHERE ID_Situacion=" + situacion+tipoP;
+            sql = "select t.descripcion, s.descripcion "
+                + "from Puestos t "
+                + "inner join situacion s on (t.id_situacion=s.id) WHERE t.ID_Situacion=" + situacion+tipoP;
         }
         //System.out.println(sql);
         limpiar(tablaPuestos);
-        mdb.cargarInformacion2(modelo,1, sql);
+        mdb.cargarInformacion2(modelo,2, sql);
 
     }
 
@@ -158,11 +159,11 @@ public class jpPuestos extends javax.swing.JPanel {
 
             },
             new String [] {
-                "Puesto"
+                "Puesto", "Situacion"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false
+                false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -327,26 +328,32 @@ public class jpPuestos extends javax.swing.JPanel {
         if (Puestos.equals("")) {
             JOptionPane.showMessageDialog(null,"selecciona un registro");
         }else{
+            if (situacion.equals("Activo")) {
              jdP = new jdPuestos(null, true, "2", Puestos ,cn);
         jdP.jp = this;
         jdP.setVisible(true);
+        }else if(situacion.equals("Inactivo")){
+         JOptionPane.showMessageDialog(null,"Dato inactivo");   
+        }
         }
 
     }//GEN-LAST:event_jButton3ActionPerformed
+   String situacion="";
     String Puestos = "";
-    String importe="";
+   
     private void tablaPuestosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaPuestosMouseClicked
         // TODO add your handling code here: Puestos
-        Puestos = modelo.getValueAt(tablaPuestos.getSelectedRow(), 0) + "";  //
-        importe=modelo.getValueAt(tablaPuestos.getSelectedRow(), 1) + "";
-        if (evt.getClickCount() == 1) {
-            System.out.println("1 Clic");
-        }
+        Puestos = tablaPuestos.getValueAt(tablaPuestos.getSelectedRow(), 0) + "";  //
+        situacion=tablaPuestos.getValueAt(tablaPuestos.getSelectedRow(), 1) + "";
+        
         if (evt.getClickCount() == 2) {
-            
+             if (situacion.equals("Activo")) {
             jdP = new jdPuestos(null, true, "2", Puestos, cn);
             jdP.jp = this;
             jdP.setVisible(true);
+             }else if(situacion.equals("Inactivo")){
+            JOptionPane.showMessageDialog(null,"Dato inactivo");
+        }
         }
     }//GEN-LAST:event_tablaPuestosMouseClicked
 
@@ -354,8 +361,14 @@ public class jpPuestos extends javax.swing.JPanel {
         // TODO add your handling code here:
         busqueda();
     }//GEN-LAST:event_txtBusquedaPKeyReleased
-
+String estatus="2";
     private void comboSituacionPuestosItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionPuestosItemStateChanged
+       if (comboSituacionPuestos.getSelectedItem().equals("Inactivo")) {
+         estatus="1";
+            jButton4.setText("Activar");
+        }else{jButton4.setText("Desactivar");
+        estatus="2";
+        }
         // TODO add your handling code here:
         busqueda();
     }//GEN-LAST:event_comboSituacionPuestosItemStateChanged
@@ -372,9 +385,16 @@ public class jpPuestos extends javax.swing.JPanel {
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        String sql = "UPDATE Puestos SET ID_Situacion=2 where descripcion='" + Puestos+ "'";
-        mdb.actualizarBasicos(sql);
-        llenaTablaPuestos();
+        String sql="";
+
+        if (estatus.equals("2")) {
+             sql = "UPDATE Puestos SET ID_Situacion=2 where descripcion='" + Puestos + "'";
+       
+        }else if(estatus.equals("1")){
+            sql = "UPDATE Puestos SET ID_Situacion=1 where descripcion='" + Puestos + "'";
+        }
+     mdb.actualizarBasicos(sql);
+         busqueda();
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void txtBusquedaPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBusquedaPActionPerformed

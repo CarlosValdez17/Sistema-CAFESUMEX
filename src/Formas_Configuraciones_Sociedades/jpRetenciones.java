@@ -33,19 +33,16 @@ public class jpRetenciones extends javax.swing.JPanel {
     public jpRetenciones(Connection c) {
         initComponents();
         cn = c;
-
+mdb=new metodosDatosBasicos(cn);
         modelo = (DefaultTableModel) tablaRetenciones.getModel();
         tablaRetenciones.setRowSorter(new TableRowSorter(modelo));
+tablaRetenciones.getTableHeader().setReorderingAllowed(false);
+    busqueda();
+   
+     
+    }
 
    
-        llenaTablaRetenciones();
-    }
-
-    public void llenaTablaRetenciones() {
-        limpiar(tablaRetenciones);
-        mdb = new metodosDatosBasicos(cn);
-        mdb.cargarInformacion2(modelo,2,"select Descripcion,Importe from Retenciones where ID_Situacion=1");
-    }
 
     public void busqueda() {
         String tipoP = "";
@@ -62,10 +59,10 @@ public class jpRetenciones extends javax.swing.JPanel {
         }
 
         if (txtBusquedaP.getText().length() > 0) {
-            tipoP = " AND descripcion like '%" + txtBusquedaP.getText() + "%'";
+            tipoP = " AND t.descripcion like '" + txtBusquedaP.getText() + "%'";
         }
         if (txtBusquedaK.getText().length() > 0) {
-            tipoK = " AND Importe like '%" + txtBusquedaK.getText() + "%'";
+            tipoK = " AND t.Importe like '" + txtBusquedaK.getText() + "%'";
         }
        /* if (txtBusquedaUE.getText().length() > 0) {
             tipoUE = "AND UE like '" + txtBusquedaUE.getText() + "%'";
@@ -76,13 +73,17 @@ public class jpRetenciones extends javax.swing.JPanel {
         String sql;
         System.out.println("SITUACION: " + situacion);
         if (situacion.equals("Todos")) {
-            sql = "SELECT Descripcion,Importe  from Retenciones WHERE ID_Situacion<>3 "+tipoP+tipoK;
+            sql = "select t.descripcion,t.Importe, s.descripcion "
+                + "from retenciones t "
+                + "inner join situacion s on (t.id_situacion=s.id) WHERE t.ID_Situacion<>3 "+tipoP+tipoK;
         } else {
-            sql = "SELECT Descripcion,Importe  from Retenciones WHERE ID_Situacion=" + situacion+tipoP+tipoK;
+            sql = "select t.descripcion,t.Importe, s.descripcion "
+                + "from retenciones t "
+                + "inner join situacion s on (t.id_situacion=s.id) WHERE t.ID_Situacion=" + situacion+tipoP+tipoK;
         }
         //System.out.println(sql);
         limpiar(tablaRetenciones);
-        mdb.cargarInformacion2(modelo,2, sql);
+        mdb.cargarInformacion2(modelo,3, sql);
 
     }
 
@@ -183,11 +184,11 @@ public class jpRetenciones extends javax.swing.JPanel {
 
             },
             new String [] {
-                "Nombre de la Retencion", "Centavos por Kg"
+                "Nombre de la Retencion", "Centavos por Kg", "Situacion"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false
+                false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -351,37 +352,47 @@ public class jpRetenciones extends javax.swing.JPanel {
         // TODO add your handling code here:
         if (Retenciones.equals("")) {
             JOptionPane.showMessageDialog(null,"selecciona un registro");
-        }else{
+        }else{ if (situacion.equals("Activo")) {
              jdR = new jdRetenciones(null, true, "2", Retenciones,importe ,cn);
         jdR.jp = this;
         jdR.setVisible(true);
+        }else if(situacion.equals("Inactivo")){
+            JOptionPane.showMessageDialog(null,"Dato inactivo");
+        }
         }
 
     }//GEN-LAST:event_jButton3ActionPerformed
+    String situacion="";
     String Retenciones = "";
     String importe="";
     private void tablaRetencionesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaRetencionesMouseClicked
         // TODO add your handling code here: Retenciones
-        Retenciones = modelo.getValueAt(tablaRetenciones.getSelectedRow(), 0) + "";  //
-        importe=modelo.getValueAt(tablaRetenciones.getSelectedRow(), 1) + "";
-        if (evt.getClickCount() == 1) {
-            System.out.println("1 Clic");
-        }
+        Retenciones = tablaRetenciones.getValueAt(tablaRetenciones.getSelectedRow(), 0) + "";  //
+        importe=tablaRetenciones.getValueAt(tablaRetenciones.getSelectedRow(), 1) + "";
+         situacion=tablaRetenciones.getValueAt(tablaRetenciones.getSelectedRow(), 2) + "";
+      
         if (evt.getClickCount() == 2) {
-            
+             if (situacion.equals("Activo")) {
             jdR = new jdRetenciones(null, true, "2", Retenciones,importe, cn);
             jdR.jp = this;
             jdR.setVisible(true);
-        }
+             }else if(situacion.equals("Inactivo")){
+            JOptionPane.showMessageDialog(null,"Dato inactivo");
+        }}
     }//GEN-LAST:event_tablaRetencionesMouseClicked
 
     private void txtBusquedaPKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBusquedaPKeyReleased
         // TODO add your handling code here:
         busqueda();
     }//GEN-LAST:event_txtBusquedaPKeyReleased
-
+String estatus="2";
     private void comboSituacionRetencionesItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionRetencionesItemStateChanged
-        // TODO add your handling code here:
+      if (comboSituacionRetenciones.getSelectedItem().equals("Inactivo")) {
+         estatus="1";
+            jButton4.setText("Activar");
+        }else{jButton4.setText("Desactivar");
+        estatus="2";
+        }  // TODO add your handling code here:
         busqueda();
     }//GEN-LAST:event_comboSituacionRetencionesItemStateChanged
 
@@ -397,9 +408,17 @@ public class jpRetenciones extends javax.swing.JPanel {
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        String sql = "UPDATE Retenciones SET ID_Situacion=2 where descripcion='" + Retenciones+ "'";
-        mdb.actualizarBasicos(sql);
-        llenaTablaRetenciones();
+          String sql="";
+
+        if (estatus.equals("2")) {
+             sql = "UPDATE retenciones SET ID_Situacion=2 where descripcion='" + Retenciones + "'";
+       
+        }else if(estatus.equals("1")){
+             sql = "UPDATE retenciones SET ID_Situacion=1 where descripcion='" + Retenciones + "'";
+        }
+        
+     mdb.actualizarBasicos(sql);
+         busqueda();
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void txtBusquedaPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBusquedaPActionPerformed

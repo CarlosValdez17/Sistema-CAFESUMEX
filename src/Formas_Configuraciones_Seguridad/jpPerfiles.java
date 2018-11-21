@@ -34,18 +34,14 @@ public class jpPerfiles extends javax.swing.JPanel {
     public jpPerfiles(Connection c) {
         initComponents();
         cn = c;
-
+mdb=new metodosDatosBasicos(cn);
         modelo = (DefaultTableModel) tablaPerfiles.getModel();
         tablaPerfiles.setRowSorter(new TableRowSorter(modelo));
-
-        llenaTablaPerfiles();
+tablaPerfiles.getTableHeader().setReorderingAllowed(false);
+    busquedaPerfiles();
     }
 
-    public void llenaTablaPerfiles() {
-        limpiar(tablaPerfiles);
-        mdb = new metodosDatosBasicos(cn);
-        mdb.cargarInformacion2(modelo,2,"select descripcion,ID_Situacion from Perfiles where ID_Situacion=1");
-    }
+  
 
     public void busquedaPerfiles() {
         String tipoP = "";
@@ -62,7 +58,7 @@ public class jpPerfiles extends javax.swing.JPanel {
         }
 
         if (txtBusquedaP.getText().length() > 0) {
-            tipoP = " AND descripcion like '" + txtBusquedaP.getText() + "%'";
+            tipoP = " AND t.descripcion like '" + txtBusquedaP.getText() + "%'";
         }
         /*if (txtBusquedaOIC.getText().length() > 0) {
             tipoOIC = "AND OIC like '" + txtBusquedaOIC.getText() + "%'";
@@ -76,13 +72,17 @@ public class jpPerfiles extends javax.swing.JPanel {
         String sql;
         System.out.println("SITUACION: " + situacion);
         if (situacion.equals("Todos")) {
-            sql = "SELECT descripcion from Perfiles WHERE ID_Situacion<>3 "+tipoP;
+            sql = "select t.descripcion, s.descripcion "
+                + "from perfiles t "
+                + "inner join situacion s on (t.id_situacion=s.id) WHERE t.ID_Situacion<>3 "+tipoP;
         } else {
-            sql = "SELECT descripcion from Perfiles WHERE ID_Situacion=" + situacion+tipoP;
+            sql = "select t.descripcion, s.descripcion "
+                + "from perfiles t "
+                + "inner join situacion s on (t.id_situacion=s.id) WHERE t.ID_Situacion=" + situacion+tipoP;
         }
         //System.out.println(sql);
         limpiar(tablaPerfiles);
-        mdb.cargarInformacion2(modelo,1, sql);
+        mdb.cargarInformacion2(modelo,2, sql);
 
     }
 
@@ -158,11 +158,11 @@ public class jpPerfiles extends javax.swing.JPanel {
 
             },
             new String [] {
-                "Perfiles"
+                "Perfiles", "Situacion"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false
+                false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -326,26 +326,32 @@ public class jpPerfiles extends javax.swing.JPanel {
         // TODO add your handling code here:
         if (Perfiles.equals("")) {
             JOptionPane.showMessageDialog(null,"selecciona un registro");
-        }else{
-             jdP = new jdPerfiles(null, true, "2", Perfiles, cn);
-        jdP.jp = this;
-        jdP.setVisible(true);
-        }
-
-    }//GEN-LAST:event_jButton3ActionPerformed
-    String Perfiles = "";
-    private void tablaPerfilesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaPerfilesMouseClicked
-        // TODO add your handling code here:
-        Perfiles = modelo.getValueAt(tablaPerfiles.getSelectedRow(), 0) + "";  //pais
-
-        if (evt.getClickCount() == 1) {
-            System.out.println("1 Clic");
-        }
-        if (evt.getClickCount() == 2) {
-            
+        }else{ if (situacion.equals("Activo")) {
             jdP = new jdPerfiles(null, true, "2", Perfiles, cn);
             jdP.jp = this;
             jdP.setVisible(true);
+            }else if(situacion.equals("Inactivo")){
+            JOptionPane.showMessageDialog(null,"Dato inactivo");
+            }
+          
+        }
+
+    }//GEN-LAST:event_jButton3ActionPerformed
+    String Perfiles = "",situacion="";
+    private void tablaPerfilesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaPerfilesMouseClicked
+        // TODO add your handling code here:
+        Perfiles = tablaPerfiles.getValueAt(tablaPerfiles.getSelectedRow(), 0) + "";  //cambia el nombre de la tabla
+        situacion=tablaPerfiles.getValueAt(tablaPerfiles.getSelectedRow(), 1) + "";
+       
+        if (evt.getClickCount() == 2) {
+            if (situacion.equals("Activo")) {
+            jdP = new jdPerfiles(null, true, "2", Perfiles, cn);
+            jdP.jp = this;
+            jdP.setVisible(true);
+            }else if(situacion.equals("Inactivo")){
+            JOptionPane.showMessageDialog(null,"Dato inactivo");
+            }
+    
         }
     }//GEN-LAST:event_tablaPerfilesMouseClicked
 
@@ -353,8 +359,15 @@ public class jpPerfiles extends javax.swing.JPanel {
         // TODO add your handling code here:
         busquedaPerfiles();
     }//GEN-LAST:event_txtBusquedaPKeyReleased
-
+String estatus="2";
     private void comboSituacionPerfilesItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionPerfilesItemStateChanged
+        if (comboSituacionPerfiles.getSelectedItem().equals("Inactivo")) {
+         estatus="1";
+            jButton4.setText("Activar");
+        }else{jButton4.setText("Desactivar");
+        estatus="2";
+        }
+
         // TODO add your handling code here:
         busquedaPerfiles();
     }//GEN-LAST:event_comboSituacionPerfilesItemStateChanged
@@ -371,9 +384,16 @@ public class jpPerfiles extends javax.swing.JPanel {
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        String sql = "UPDATE Perfiles SET ID_Situacion=2 where descripcion='" + Perfiles + "'";
-        mdb.actualizarBasicos(sql);
-        llenaTablaPerfiles();
+        String sql="";
+  
+        if (estatus.equals("2")) {
+             sql = "UPDATE Perfiles SET ID_Situacion=2 where descripcion='" + Perfiles + "'";
+       
+        }else if(estatus.equals("1")){
+            sql = "UPDATE Perfiles SET ID_Situacion=1 where descripcion='" + Perfiles + "'";
+        }
+     mdb.actualizarBasicos(sql);
+       busquedaPerfiles();
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void txtBusquedaPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBusquedaPActionPerformed

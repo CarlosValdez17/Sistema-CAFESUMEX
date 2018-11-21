@@ -56,22 +56,22 @@ public class jdPerfiles extends javax.swing.JDialog {
             mdb = new metodosDatosBasicos(cn);
 
             Perfiles = txtPerfiles.getText();
-
+ if (mdb.comprobarExistencia("select descripcion from perfiles where descripcion='" + Perfiles + "'") == null) {
             if (tipo.equals("1")) {
-                //nuevoPais();
+        //nuevoPais();
                 sql = "INSERT INTO Perfiles VALUES(null,'" + Perfiles + "', 1, 1,current_date()"
                         + ", current_time(),1,1,1,1)";
                 mdb.insertarBasicos(sql);
-                jp.llenaTablaPerfiles();
+                jp.busquedaPerfiles();
                 this.dispose();
-            } else {
+                } else {
                 //editarPais();
                 sql = "UPDATE Perfiles SET  descripcion ='" + Perfiles + "' where descripcion='" + PerfilesC + "' ";
                 mdb.actualizarBasicos(sql);
-                jp.llenaTablaPerfiles();
+                jp.busquedaPerfiles();
                 this.dispose();
-
-            }
+                 }
+            }else {JOptionPane.showMessageDialog(null, "Dato Repetido");}
         } catch (Exception e) {
         }
     }
@@ -179,6 +179,8 @@ public class jdPerfiles extends javax.swing.JDialog {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void txtPerfilesKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPerfilesKeyReleased
+
+txtPerfiles.setText(txtPerfiles.getText().toLowerCase());
         // TODO add your handling code here:
         if (txtPerfiles.getText().length() != 0) {
             txtPerfiles.setText(valiConf.primerLetraMayuscula(txtPerfiles.getText()).replace("S/n", "S/N"));

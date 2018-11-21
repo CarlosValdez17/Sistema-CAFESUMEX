@@ -60,24 +60,26 @@ valiConf = new validaConfi();
           
          Suelos = txtSuelos.getText();
         
-
-            if (tipo.equals("1")) {
+           if (tipo.equals("1")) {
+                if (mdb.comprobarExistencia("select descripcion from retenciones where descripcion='" +Suelos+ "'") == null) {
                 //nuevoPais();
-                sql = "INSERT INTO TipoSuelo VALUES(null,'" +Suelos+ "', 1, 1,current_date()"
+              sql = "INSERT INTO TipoSuelo VALUES(null,'" +Suelos+ "', 1, 1,current_date()"
                         + ", current_time(),1,1,1,1)";
                 mdb.insertarBasicos(sql);
-                jp.llenaTabla();
+                jp.busqueda();
                 this.dispose();
+              
             } else {
                 //editarPais();
                 sql = "UPDATE TipoSuelo SET  Descripcion ='" +Suelos+ "' where Descripcion='" + SuelosC + "' ";
                 mdb.actualizarBasicos(sql);
-                jp.llenaTabla();
+                jp.busqueda();
                 this.dispose();
 
-            }
+            }    }else {JOptionPane.showMessageDialog(null, "Dato Repetido");}
         } catch (Exception e) {
         }
+      
     }
 
     /* public void llenaUsuarios() {

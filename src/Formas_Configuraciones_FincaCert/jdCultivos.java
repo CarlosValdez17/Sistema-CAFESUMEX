@@ -8,6 +8,7 @@ package Formas_Configuraciones_FincaCert;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -22,18 +23,19 @@ public class jdCultivos extends javax.swing.JDialog {
     Connection cn;
     metodosDatosBasicos mdb;
     String tipo, dato;
- validaConfi valiConf;
+    validaConfi valiConf;
+
     public jdCultivos(java.awt.Frame parent, boolean modal, String tipo, String dato, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
-  valiConf = new validaConfi();
+        valiConf = new validaConfi();
         cn = c;
         this.dato = dato;
         this.tipo = tipo;
 
         mdb = new metodosDatosBasicos(cn);
-        
+
         if (tipo.equals("1")) {
             setTitle("Nuevo Cultivo");
         } else {
@@ -45,21 +47,21 @@ public class jdCultivos extends javax.swing.JDialog {
     public void tipoProceso() {
         try {
             String sql = "";
-
-            if (tipo.equals("1")) {
-                //nuevoPais();
-                sql = "INSERT INTO cultivos VALUES(null,'" + txtCultivos.getText() + "', 1, 1,current_date()"
-                        + ", current_time(), 1, 1, 1, 1 )";
-                mdb.insertarBasicos(sql);
-                jpC.llenaTabla();
-                this.dispose();
+            if (mdb.comprobarExistencia("select descripcion from cultivos where descripcion='" + txtCultivos.getText() + "'") == null) {
+                if (tipo.equals("1")) {
+                    sql = "INSERT INTO cultivos VALUES(null,'" + txtCultivos.getText() + "', 1, 1,current_date()"
+                            + ", current_time(), 1, 1, 1, 1 )";
+                    mdb.insertarBasicos(sql);
+                    jpC.busqueda();
+                    this.dispose();
+                } else {
+                    sql = "UPDATE cultivos SET  descripcion ='" + txtCultivos.getText() + "' where descripcion='" + dato + "' ";
+                    mdb.actualizarBasicos(sql);
+                    jpC.busqueda();
+                    this.dispose();
+                }
             } else {
-                //editarPais();
-                sql = "UPDATE cultivos SET  descripcion ='" + txtCultivos.getText() + "' where descripcion='" + dato + "' ";
-                mdb.actualizarBasicos(sql);
-                jpC.llenaTabla();
-                this.dispose();
-
+                JOptionPane.showMessageDialog(null, "Dato Repetido");
             }
         } catch (Exception e) {
         }
@@ -163,16 +165,17 @@ public class jdCultivos extends javax.swing.JDialog {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void txtCultivosKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCultivosKeyReleased
- if (txtCultivos.getText().length() != 0) {
+        txtCultivos.setText(txtCultivos.getText().toLowerCase());
+        if (txtCultivos.getText().length() != 0) {
             txtCultivos.setText(valiConf.primerLetraMayuscula(txtCultivos.getText()).replace("S/n", "S/N"));
             txtCultivos.setText(valiConf.primerLetraMayuscula(txtCultivos.getText()).replace("S/d", "S/D"));
             txtCultivos.setText(valiConf.primerLetraMayuscula(txtCultivos.getText()).replace("S/o", "S/O"));
         }
-       // TODO add your handling code here:
+        // TODO add your handling code here:
     }//GEN-LAST:event_txtCultivosKeyReleased
 
     private void txtCultivosKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCultivosKeyTyped
-char c = evt.getKeyChar();
+        char c = evt.getKeyChar();
         if (Character.isDigit(c)) {//if (Character.isLetter(c)){
             getToolkit().beep();
             evt.consume();

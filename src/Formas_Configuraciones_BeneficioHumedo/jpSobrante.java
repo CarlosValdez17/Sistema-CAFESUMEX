@@ -34,13 +34,7 @@ public class jpSobrante extends javax.swing.JPanel {
         mdb = new metodosDatosBasicos(cn);
         modelo = (DefaultTableModel) tablaSobrante.getModel();
 
-        llenaTabla();
-    }
-
-    public void llenaTabla() {
-        limpiar(tablaSobrante);
-        String sql = "select clave,factor,nombre,descripcion from sobrante where ID_Situacion=1";
-        mdb.cargarInformacion2(modelo, 4, sql);
+        busqueda();
     }
 
     public void busqueda() {
@@ -65,17 +59,23 @@ public class jpSobrante extends javax.swing.JPanel {
             tipoN = " AND nombre like '" + txtBusquedaN.getText() + "%'";
         }
         if (txtBusquedaD.getText().length() > 0) {
-            tipoD = " AND descripcion like '" + txtBusquedaD.getText() + "%'";
+            tipoD = " AND s.descripcion like '" + txtBusquedaD.getText() + "%'";
         }
 
         String sql;
         if (situacion.equals("Todos")) {
-            sql = "select clave,factor,nombre,descripcion from sobrante where ID_Situacion <> 3" + tipoC + tipoN + tipoF + tipoD;
+            sql = "select s.clave,s.factor,s.nombre,s.descripcion, x.descripcion "
+                    + "from sobrante s "
+                    + "inner join situacion x on (s.id_situacion=x.id) "
+                    + "where s.ID_Situacion <> 3" + tipoC + tipoN + tipoF + tipoD;
         } else {
-            sql = "select clave,factor,nombre,descripcion from sobrante where ID_Situacion=" + situacion + tipoC + tipoN + tipoF + tipoD;
+            sql = "select s.clave,s.factor,s.nombre,s.descripcion, x.descripcion "
+                    + "from sobrante s "
+                    + "inner join situacion x on (s.id_situacion=x.id) "
+                    + "where s.ID_Situacion=" + situacion + tipoC + tipoN + tipoF + tipoD;
         }
         limpiar(tablaSobrante);
-        mdb.cargarInformacion2(modelo, 4, sql);
+        mdb.cargarInformacion2(modelo, 5, sql);
 
     }
 
@@ -204,11 +204,11 @@ public class jpSobrante extends javax.swing.JPanel {
 
             },
             new String [] {
-                "Clave", "Factor", "Nombre", "Descripcion"
+                "Clave", "Factor", "Nombre", "Descripcion", "Situacion"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, true, true
+                false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -224,7 +224,9 @@ public class jpSobrante extends javax.swing.JPanel {
         if (tablaSobrante.getColumnModel().getColumnCount() > 0) {
             tablaSobrante.getColumnModel().getColumn(0).setResizable(false);
             tablaSobrante.getColumnModel().getColumn(1).setResizable(false);
+            tablaSobrante.getColumnModel().getColumn(2).setResizable(false);
             tablaSobrante.getColumnModel().getColumn(3).setResizable(false);
+            tablaSobrante.getColumnModel().getColumn(4).setResizable(false);
         }
 
         jLabel10.setText("Situacion");
@@ -357,25 +359,27 @@ public class jpSobrante extends javax.swing.JPanel {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        jdR = new jdSobrante(null, true, "1", clave,factor,nom, desc, cn);
+        jdR = new jdSobrante(null, true, "1", clave, factor, nom, desc, cn);
         jdR.jpR = this;
         jdR.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
-    String clave = "", factor = "", nom = "", desc = "";
+    String clave = "", factor = "", nom = "", desc = "", situacion = "";
     private void tablaSobranteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaSobranteMouseClicked
         // TODO add your handling code here:
-        clave = modelo.getValueAt(tablaSobrante.getSelectedRow(), 0) + "";
-        factor = modelo.getValueAt(tablaSobrante.getSelectedRow(), 1) + "";
-        nom = modelo.getValueAt(tablaSobrante.getSelectedRow(), 2) + "";
-        desc = modelo.getValueAt(tablaSobrante.getSelectedRow(), 3) + "";
+        clave = tablaSobrante.getValueAt(tablaSobrante.getSelectedRow(), 0) + "";
+        factor = tablaSobrante.getValueAt(tablaSobrante.getSelectedRow(), 1) + "";
+        nom = tablaSobrante.getValueAt(tablaSobrante.getSelectedRow(), 2) + "";
+        desc = tablaSobrante.getValueAt(tablaSobrante.getSelectedRow(), 3) + "";
+        situacion = tablaSobrante.getValueAt(tablaSobrante.getSelectedRow(), 4) + "";
 
-        if (evt.getClickCount() == 1) {
-            // System.out.println("1 Clic");
-        }
         if (evt.getClickCount() == 2) {
-            jdR = new jdSobrante(null, true, "2", clave,factor,nom, desc, cn);
-            jdR.jpR = this;
-            jdR.setVisible(true);
+            if (situacion.equals("Activo")) {
+                jdR = new jdSobrante(null, true, "2", clave, factor, nom, desc, cn);
+                jdR.jpR = this;
+                jdR.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(null, "Dato Inactivo");
+            }
         }
     }//GEN-LAST:event_tablaSobranteMouseClicked
 
@@ -384,9 +388,13 @@ public class jpSobrante extends javax.swing.JPanel {
         if (clave.equals("")) {
             JOptionPane.showMessageDialog(null, "Seleccione un registro");
         } else {
-            jdR = new jdSobrante(null, true, "2", clave,factor,nom, desc, cn);
-            jdR.jpR = this;
-            jdR.setVisible(true);
+            if (situacion.equals("Activo")) {
+                jdR = new jdSobrante(null, true, "2", clave, factor, nom, desc, cn);
+                jdR.jpR = this;
+                jdR.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(null, "Dato Inactivo");
+            }
         }
     }//GEN-LAST:event_jButton3ActionPerformed
 
@@ -399,17 +407,27 @@ public class jpSobrante extends javax.swing.JPanel {
         // TODO add your handling code here:
         busqueda();
     }//GEN-LAST:event_txtBusquedaFKeyReleased
-
+    String estatus = "2";
     private void comboSituacionItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionItemStateChanged
         // TODO add your handling code here:
+        if (comboSituacion.getSelectedItem().equals("Inactivo")) {
+            estatus = "1";
+            jButton4.setText("Activar");
+        } else {
+            estatus = "2";
+            jButton4.setText("Desactivar");
+        }
         busqueda();
     }//GEN-LAST:event_comboSituacionItemStateChanged
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        String sql = "UPDATE sobrante SET ID_Situacion=2 where clave='" + clave + "'";
-        mdb.actualizarBasicos(sql);
-        llenaTabla();
+        if (estatus.equals("2")) {
+            mdb.actualizarBasicos("UPDATE sobrante SET ID_Situacion=2 where clave='" + clave + "'");
+        } else if (estatus.equals("1")) {
+            mdb.actualizarBasicos("UPDATE sobrante SET ID_Situacion=1 where clave='" + clave + "'");
+        }
+        busqueda();
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void txtBusquedaNKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBusquedaNKeyReleased

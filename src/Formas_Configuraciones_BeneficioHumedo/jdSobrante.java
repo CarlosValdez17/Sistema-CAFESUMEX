@@ -61,17 +61,21 @@ public class jdSobrante extends javax.swing.JDialog {
 
         if (tipo.equals("1")) {
             //nuevoPais();
-            sql = "INSERT INTO sobrante VALUES(null,'" + txtClave.getText() + "','" + txtNombre.getText() + "',"
-                    + "'" + txtFactor.getText() + "','" + txtDesc.getText() + "',1, 1,current_date(),current_time(), 1, 1, 1, 1 )";
-            mdb.insertarBasicos(sql);
-            jpR.llenaTabla();
-            this.dispose();
+            if (mdb.comprobarExistencia("select clave from sobrante where clave='" + txtClave.getText() + "'") == null) {
+                sql = "INSERT INTO sobrante VALUES(null,'" + txtClave.getText() + "','" + txtNombre.getText() + "',"
+                        + "'" + txtFactor.getText() + "','" + txtDesc.getText() + "',1, 1,current_date(),current_time(), 1, 1, 1, 1 )";
+                mdb.insertarBasicos(sql);
+                jpR.busqueda();
+                this.dispose();
+            } else {
+                JOptionPane.showMessageDialog(null, "Dato Repetido");
+            }
         } else {
             //editarPais();
             sql = "UPDATE sobrante SET clave='" + txtClave.getText() + "', nombre='" + txtNombre.getText() + "', factor='" + txtFactor.getText() + "', descripcion='" + txtDesc.getText()
                     + "' where clave='" + clave + "' ";
             mdb.actualizarBasicos(sql);
-            jpR.llenaTabla();
+            jpR.busqueda();
             this.dispose();
         }
     }
@@ -256,6 +260,8 @@ public class jdSobrante extends javax.swing.JDialog {
 
     private void txtNombreKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNombreKeyReleased
         // TODO add your handling code here:
+        txtNombre.setText(txtNombre.getText().toLowerCase());
+
         if (txtNombre.getText().length() != 0) {
             txtNombre.setText(valiConf.primerLetraMayuscula(txtNombre.getText()).replace("S/n", "S/N"));
             txtNombre.setText(valiConf.primerLetraMayuscula(txtNombre.getText()).replace("S/d", "S/D"));

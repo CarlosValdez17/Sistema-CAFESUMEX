@@ -40,7 +40,6 @@ public class jdReglasEvaluacion extends javax.swing.JDialog {
         defectos = dato2;
         desc = dato3;
         valiConf = new validaConfi();
-        
 
         if (tipo.equals("1")) {
             setTitle("Nueva Regla");
@@ -61,17 +60,21 @@ public class jdReglasEvaluacion extends javax.swing.JDialog {
 
         if (tipo.equals("1")) {
             //nuevoPais();
-            sql = "INSERT INTO reglasevaluacion VALUES(null,'" + txtDesc.getText() + "','" + txtClave.getText() + "',"
-                    + "'" + txtDefectos.getText() + "',1, 1,current_date(),current_time(), 1, 1, 1, 1 )";
-            mdb.insertarBasicos(sql);
-            jpE.llenaTabla();
-            this.dispose();
+            if (mdb.comprobarExistencia("select descripcion from reglasevaluacion where descripcion='" + txtDesc.getText() + "'") == null) {
+                sql = "INSERT INTO reglasevaluacion VALUES(null,'" + txtDesc.getText() + "','" + txtClave.getText() + "',"
+                        + "'" + txtDefectos.getText() + "',1, 1,current_date(),current_time(), 1, 1, 1, 1 )";
+                mdb.insertarBasicos(sql);
+                jpE.busqueda();
+                this.dispose();
+            } else {
+                JOptionPane.showMessageDialog(null, "Dato Repetido");
+            }
         } else {
             //editarPais();
-            sql = "UPDATE reglasevaluacion SET descripcion'" + txtDesc.getText() + "', grado='" + txtClave.getText() + "', defectos='" + txtDefectos.getText()
+            sql = "UPDATE reglasevaluacion SET descripcion ='" + txtDesc.getText() + "', grado='" + txtClave.getText() + "', defectos='" + txtDefectos.getText()
                     + "' where grado='" + clave + "' ";
             mdb.actualizarBasicos(sql);
-            jpE.llenaTabla();
+            jpE.busqueda();
             this.dispose();
         }
     }
@@ -235,6 +238,7 @@ public class jdReglasEvaluacion extends javax.swing.JDialog {
 
     private void txtDescKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDescKeyReleased
         // TODO add your handling code here:
+        txtDesc.setText(txtDesc.getText().toLowerCase());
         if (txtDesc.getText().length() != 0) {
             txtDesc.setText(valiConf.primerLetraMayuscula(txtDesc.getText()).replace("S/n", "S/N"));
             txtDesc.setText(valiConf.primerLetraMayuscula(txtDesc.getText()).replace("S/d", "S/D"));

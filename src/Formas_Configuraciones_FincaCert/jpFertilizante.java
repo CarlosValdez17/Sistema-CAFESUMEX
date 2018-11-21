@@ -7,6 +7,7 @@ package Formas_Configuraciones_FincaCert;
 
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.Connection;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
@@ -26,19 +27,12 @@ public class jpFertilizante extends javax.swing.JPanel {
 
     public jpFertilizante(Connection c) {
         initComponents();
-        
+
         cn = c;
         mdb = new metodosDatosBasicos(cn);
         modelo = (DefaultTableModel) tablaFertilizante.getModel();
 
-        llenaTabla();
-    }
-    
-    
-    public void llenaTabla() {
-        limpiar(tablaFertilizante);
-        mdb = new metodosDatosBasicos(cn);
-        mdb.cargarInformacion2(modelo, 1, "select descripcion from fertilizante where id_Situacion=1");
+        busqueda();
     }
 
     public void busqueda() {
@@ -54,18 +48,23 @@ public class jpFertilizante extends javax.swing.JPanel {
         }
 
         if (txtFertilizante.getText().length() > 0) {
-            tipoB = "AND descripcion like '" + txtFertilizante.getText() + "%'";
+            tipoB = "AND f.descripcion like '" + txtFertilizante.getText() + "%'";
         }
 
         String sql;
         if (situacion.equals("Todos")) {
-            sql = "SELECT descripcion from fertilizante where ID_Situacion <> 3 " + tipoB;
+            sql = "SELECT f.descripcion,s.descripcion "
+                    + "from fertilizante f "
+                    + "inner join situacion s on (f.id_situacion = s.id) "
+                    + "where f.ID_Situacion <> 3 " + tipoB;
         } else {
-            sql = "SELECT descripcion from fertilizante where ID_SItuacion=" + situacion + " " + tipoB;
+            sql = "SELECT f.descripcion,s.descripcion "
+                    + "from fertilizante f "
+                    + "inner join situacion s on (f.id_situacion = s.id) "
+                    + "where f.ID_SItuacion=" + situacion + " " + tipoB;
         }
-        //System.out.println(sql);
         limpiar(tablaFertilizante);
-        mdb.cargarInformacion2(modelo, 1, sql);
+        mdb.cargarInformacion2(modelo, 2, sql);
     }
 
     private void limpiar(JTable tabla) {
@@ -73,7 +72,6 @@ public class jpFertilizante extends javax.swing.JPanel {
             ((DefaultTableModel) tabla.getModel()).removeRow(0);
         }
     }
-
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -136,11 +134,11 @@ public class jpFertilizante extends javax.swing.JPanel {
 
             },
             new String [] {
-                "Fertilizante"
+                "Fertilizante", "Situacion"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false
+                false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -155,6 +153,7 @@ public class jpFertilizante extends javax.swing.JPanel {
         jScrollPane2.setViewportView(tablaFertilizante);
         if (tablaFertilizante.getColumnModel().getColumnCount() > 0) {
             tablaFertilizante.getColumnModel().getColumn(0).setResizable(false);
+            tablaFertilizante.getColumnModel().getColumn(1).setResizable(false);
         }
 
         jLabel10.setText("Situacion");
@@ -295,23 +294,35 @@ public class jpFertilizante extends javax.swing.JPanel {
         busqueda();
     }//GEN-LAST:event_txtFertilizanteKeyReleased
 
-    String variedad;
+    String variedad = "", situacion = "";
     private void tablaFertilizanteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaFertilizanteMouseClicked
         // TODO add your handling code here:
-        variedad = modelo.getValueAt(tablaFertilizante.getSelectedRow(), 0) + "";  //pais
+        try {
+            variedad = tablaFertilizante.getValueAt(tablaFertilizante.getSelectedRow(), 0) + "";  //pais
+            situacion = tablaFertilizante.getValueAt(tablaFertilizante.getSelectedRow(), 1) + "";
 
-        if (evt.getClickCount() == 1) {
-            System.out.println("1 Clic");
-        }
-        if (evt.getClickCount() == 2) {
-            jdF = new jdFertilizante(null, true, "2", variedad, cn);
-            jdF.jpF = this;
-            jdF.setVisible(true);
+            if (evt.getClickCount() == 2) {
+                if (situacion.equals("Activo")) {
+                    jdF = new jdFertilizante(null, true, "2", variedad, cn);
+                    jdF.jpF = this;
+                    jdF.setVisible(true);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Dato Inactivo");
+                }
+            }
+        } catch (Exception e) {
         }
     }//GEN-LAST:event_tablaFertilizanteMouseClicked
-
+    String estatus = "2";
     private void comboSituacionFertilizanteItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionFertilizanteItemStateChanged
         // TODO add your handling code here:
+        if (comboSituacionFertilizante.getSelectedItem().equals("Inactivo")) {
+            estatus = "1";
+            jButton4.setText("Activar");
+        } else {
+            estatus = "2";
+            jButton4.setText("Desactivar");
+        }
         busqueda();
     }//GEN-LAST:event_comboSituacionFertilizanteItemStateChanged
 
@@ -324,15 +335,23 @@ public class jpFertilizante extends javax.swing.JPanel {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        jdF = new jdFertilizante(null, true, "2", variedad, cn);
-        jdF.jpF = this;
-        jdF.setVisible(true);
+        if (situacion.equals("Activo")) {
+            jdF = new jdFertilizante(null, true, "2", variedad, cn);
+            jdF.jpF = this;
+            jdF.setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(null, "Dato Inactivo");
+        }
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        mdb.actualizarBasicos("UPDATE fertilizante SET ID_Situacion=2 where descripcion='" + variedad + "'");
-        llenaTabla();
+        if (estatus.equals("2")) {
+            mdb.actualizarBasicos("UPDATE fertilizante SET ID_Situacion=2 where descripcion='" + variedad + "'");
+        } else if (estatus.equals("1")) {
+            mdb.actualizarBasicos("UPDATE fertilizante SET ID_Situacion=1 where descripcion='" + variedad + "'");
+        }
+        busqueda();
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed

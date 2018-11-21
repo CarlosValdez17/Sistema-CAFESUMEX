@@ -33,13 +33,7 @@ public class jpTipoEvaluacion extends javax.swing.JPanel {
         mdb = new metodosDatosBasicos(cn);
         modelo = (DefaultTableModel) tablaTipoEvaluacion.getModel();
 
-        llenaTabla();
-    }
-
-    public void llenaTabla() {
-        limpiar(tablaTipoEvaluacion);
-        String sql = "select descripcion, formula from tipoevaluacion where ID_Situacion=1";
-        mdb.cargarInformacion2(modelo, 2, sql);
+        busqueda();
     }
 
     public void busqueda() {
@@ -55,20 +49,26 @@ public class jpTipoEvaluacion extends javax.swing.JPanel {
         }
 
         if (txtBusquedaTipo.getText().length() > 0) {
-            tipoE = " AND descripcion like '" + txtBusquedaTipo.getText() + "%'";
+            tipoE = " AND t.descripcion like '" + txtBusquedaTipo.getText() + "%'";
         }
         if (txtBusquedaFormula.getText().length() > 0) {
-            tipoP = " AND formula like '" + txtBusquedaFormula.getText() + "%'";
+            tipoP = " AND t.formula like '" + txtBusquedaFormula.getText() + "%'";
         }
 
         String sql;
         if (situacion.equals("Todos")) {
-            sql = "select descripcion, formula from tipoevaluacion where ID_Situacion <> 3" + tipoE + tipoP;
+            sql = "select t.descripcion, t.formula,s.descripcion "
+                    + "from tipoevaluacion t "
+                    + "inner join situacion s on (t.id_situacion=s.id) "
+                    + "where t.ID_Situacion <> 3" + tipoE + tipoP;
         } else {
-            sql = "select descripcion, formula from tipoevaluacion where ID_Situacion=" + situacion + tipoE + tipoP;
+            sql = "select t.descripcion, t.formula,s.descripcion "
+                    + "from tipoevaluacion t "
+                    + "inner join situacion s on (t.id_situacion=s.id) "
+                    + "where t.ID_Situacion=" + situacion + tipoE + tipoP;
         }
         limpiar(tablaTipoEvaluacion);
-        mdb.cargarInformacion2(modelo, 2, sql);
+        mdb.cargarInformacion2(modelo, 3, sql);
 
     }
 
@@ -161,11 +161,11 @@ public class jpTipoEvaluacion extends javax.swing.JPanel {
 
             },
             new String [] {
-                "Tipo de Evaluacin", "Formula"
+                "Tipo de Evaluacin", "Formula", "Situacion"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false
+                false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -181,6 +181,7 @@ public class jpTipoEvaluacion extends javax.swing.JPanel {
         if (tablaTipoEvaluacion.getColumnModel().getColumnCount() > 0) {
             tablaTipoEvaluacion.getColumnModel().getColumn(0).setResizable(false);
             tablaTipoEvaluacion.getColumnModel().getColumn(1).setResizable(false);
+            tablaTipoEvaluacion.getColumnModel().getColumn(2).setResizable(false);
         }
 
         jLabel10.setText("Situacion");
@@ -189,6 +190,11 @@ public class jpTipoEvaluacion extends javax.swing.JPanel {
         comboSituacion.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 comboSituacionItemStateChanged(evt);
+            }
+        });
+        comboSituacion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboSituacionActionPerformed(evt);
             }
         });
 
@@ -313,23 +319,25 @@ public class jpTipoEvaluacion extends javax.swing.JPanel {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        jdTE = new jdTiposEvaluacion(null, true, "1", tipoevaluacion,formula, cn);
+        jdTE = new jdTiposEvaluacion(null, true, "1", tipoevaluacion, formula, cn);
         jdTE.jpTE = this;
         jdTE.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
-    String tipoevaluacion = "", formula = "";
+    String tipoevaluacion = "", formula = "", situacion = "";
     private void tablaTipoEvaluacionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaTipoEvaluacionMouseClicked
         // TODO add your handling code here:
-        tipoevaluacion = modelo.getValueAt(tablaTipoEvaluacion.getSelectedRow(), 0) + "";  
-        formula = modelo.getValueAt(tablaTipoEvaluacion.getSelectedRow(), 1) + "";  
+        tipoevaluacion = tablaTipoEvaluacion.getValueAt(tablaTipoEvaluacion.getSelectedRow(), 0) + "";
+        formula = tablaTipoEvaluacion.getValueAt(tablaTipoEvaluacion.getSelectedRow(), 1) + "";
+        situacion = tablaTipoEvaluacion.getValueAt(tablaTipoEvaluacion.getSelectedRow(), 2) + "";
 
-        if (evt.getClickCount() == 1) {
-            // System.out.println("1 Clic");
-        }
         if (evt.getClickCount() == 2) {
-            jdTE = new jdTiposEvaluacion(null, true, "2", tipoevaluacion,formula, cn);
-            jdTE.jpTE = this;
-            jdTE.setVisible(true);
+            if (situacion.equals("Activo")) {
+                jdTE = new jdTiposEvaluacion(null, true, "2", tipoevaluacion, formula, cn);
+                jdTE.jpTE = this;
+                jdTE.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(null, "Dato Inactivo");
+            }
         }
     }//GEN-LAST:event_tablaTipoEvaluacionMouseClicked
 
@@ -338,9 +346,13 @@ public class jpTipoEvaluacion extends javax.swing.JPanel {
         if (tipoevaluacion.equals("")) {
             JOptionPane.showMessageDialog(null, "Seleccione un tipoevaluacion");
         } else {
-            jdTE = new jdTiposEvaluacion(null, true, "2", tipoevaluacion,formula, cn);
-            jdTE.jpTE = this;
-            jdTE.setVisible(true);
+            if (situacion.equals("Activo")) {
+                jdTE = new jdTiposEvaluacion(null, true, "2", tipoevaluacion, formula, cn);
+                jdTE.jpTE = this;
+                jdTE.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(null, "Dato Inactivo");
+            }
         }
     }//GEN-LAST:event_jButton3ActionPerformed
 
@@ -353,18 +365,32 @@ public class jpTipoEvaluacion extends javax.swing.JPanel {
         // TODO add your handling code here:
         busqueda();
     }//GEN-LAST:event_txtBusquedaFormulaKeyReleased
-
+    String estatus = "2";
     private void comboSituacionItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionItemStateChanged
         // TODO add your handling code here:
+        if (comboSituacion.getSelectedItem().equals("Inactivo")) {
+            estatus = "1";
+            jButton4.setText("Activar");
+        } else {
+            estatus = "2";
+            jButton4.setText("Desactivar");
+        }
         busqueda();
     }//GEN-LAST:event_comboSituacionItemStateChanged
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        String sql = "UPDATE tipoevaluacion SET ID_Situacion=2 where descripcion='" + tipoevaluacion + "'";
-        mdb.actualizarBasicos(sql);
-        llenaTabla();
+        if (estatus.equals("2")) {
+            mdb.actualizarBasicos("UPDATE tipoevaluacion SET ID_Situacion=2 where descripcion='" + tipoevaluacion + "'");
+        } else if (estatus.equals("1")) {
+            mdb.actualizarBasicos("UPDATE tipoevaluacion SET ID_Situacion=1 where descripcion='" + tipoevaluacion + "'");
+        }
+        busqueda();
     }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void comboSituacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboSituacionActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_comboSituacionActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

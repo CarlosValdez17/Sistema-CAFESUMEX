@@ -55,18 +55,22 @@ public class jdTiposEvaluacion extends javax.swing.JDialog {
         mdb = new metodosDatosBasicos(cn);
 
         if (tipo.equals("1")) {
-            //nuevoPais();
-            sql = "INSERT INTO tipoevaluacion VALUES(null,'" + txtEvaluacion.getText() + "','" + txtFormula.getText() + "', "
-                    + "1, 1,current_date(),current_time(), 1, 1, 1, 1 )";
-            mdb.insertarBasicos(sql);
-            jpTE.llenaTabla();
-            this.dispose();
+            //nuevo
+            if (mdb.comprobarExistencia("select descripcion from tipoevaluacion where descripcion='" + txtEvaluacion.getText() + "'") == null) {
+                sql = "INSERT INTO tipoevaluacion VALUES(null,'" + txtEvaluacion.getText() + "','" + txtFormula.getText() + "', "
+                        + "1, 1,current_date(),current_time(), 1, 1, 1, 1 )";
+                mdb.insertarBasicos(sql);
+                jpTE.busqueda();
+                this.dispose();
+            } else {
+                JOptionPane.showMessageDialog(null, "Dato Repetido");
+            }
         } else {
-            //editarPais();
+            //editar
             sql = "UPDATE tipoevaluacion SET descripcion='" + txtEvaluacion.getText() + "', formula='" + txtFormula.getText() + "' where descripcion='" + tipoevaluacion + "' ";
             System.out.println(sql);
             mdb.actualizarBasicos(sql);
-            jpTE.llenaTabla();
+            jpTE.busqueda();
             this.dispose();
         }
     }
@@ -204,6 +208,7 @@ public class jdTiposEvaluacion extends javax.swing.JDialog {
 
     private void txtFormulaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtFormulaKeyReleased
         // TODO add your handling code here:
+        txtFormula.setText(txtFormula.getText().toLowerCase());
         if (txtFormula.getText().length() != 0) {
             txtFormula.setText(valiConf.primerLetraMayuscula(txtFormula.getText()).replace("S/n", "S/N"));
             txtFormula.setText(valiConf.primerLetraMayuscula(txtFormula.getText()).replace("S/d", "S/D"));
@@ -213,6 +218,7 @@ public class jdTiposEvaluacion extends javax.swing.JDialog {
 
     private void txtEvaluacionKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEvaluacionKeyReleased
         // TODO add your handling code here:
+        txtEvaluacion.setText(txtEvaluacion.getText().toLowerCase());
         if (txtEvaluacion.getText().length() != 0) {
             txtEvaluacion.setText(valiConf.primerLetraMayuscula(txtEvaluacion.getText()).replace("S/n", "S/N"));
             txtEvaluacion.setText(valiConf.primerLetraMayuscula(txtEvaluacion.getText()).replace("S/d", "S/D"));

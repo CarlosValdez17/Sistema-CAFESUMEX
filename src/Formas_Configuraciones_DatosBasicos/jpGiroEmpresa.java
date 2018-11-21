@@ -7,9 +7,9 @@ package Formas_Configuraciones_DatosBasicos;
 
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.Connection;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableRowSorter;
 
 /**
  *
@@ -30,18 +30,18 @@ public class jpGiroEmpresa extends javax.swing.JPanel {
 
         cn = c;
         mdb = new metodosDatosBasicos(cn);
-
         modelo = (DefaultTableModel) tablaGiro.getModel();
-
-        tablaGiro.setRowSorter(new TableRowSorter(modelo));
-
+        tablaGiro.getTableHeader().setReorderingAllowed(false);
         llenaTablaGiro();
     }
 
     public void llenaTablaGiro() {
         limpiar(tablaGiro);
         mdb = new metodosDatosBasicos(cn);
-        mdb.cargarInformacion2(modelo, 1, "select descripcion from girodemoral where id_Situacion=1");
+        mdb.cargarInformacion2(modelo, 2, "select g.descripcion, s.descripcion "
+                + "from girodemoral g "
+                + "inner join situacion s on (g.id_situacion=s.id)"
+                + "where g.id_Situacion=1");
     }
 
     public void busquedaGiro() {
@@ -57,19 +57,23 @@ public class jpGiroEmpresa extends javax.swing.JPanel {
         }
 
         if (txtBusquedaGiro.getText().length() > 0) {
-            tipoB = "AND descripcion like '" + txtBusquedaGiro.getText() + "%'";
+            tipoB = "AND g.descripcion like '" + txtBusquedaGiro.getText() + "%'";
         }
 
         String sql;
         if (situacion.equals("Todos")) {
-            sql = "SELECT descripcion from girodemoral where ID_Situacion <> 3 " + tipoB;
-        } else {
-            sql = "SELECT descripcion from girodemoral where ID_SItuacion=" + situacion + " " + tipoB;
-        }
-        System.out.println(sql);
-        limpiar(tablaGiro);
-        mdb.cargarInformacion2(modelo, 1, sql);
 
+            sql = "SELECT g.descripcion, s.descripcion from girodemoral g "
+                    + "inner join situacion s on (g.id_situacion=s.id) "
+                    + "where g.ID_Situacion <> 3 " + tipoB;
+        } else {
+            sql = "SELECT g.descripcion, s.descripcion from girodemoral g "
+                    + "inner join situacion s on (g.id_situacion=s.id) "
+                    + "where g.ID_Situacion=" + situacion + " " + tipoB;
+        }
+        //System.out.println(sql);
+        limpiar(tablaGiro);
+        mdb.cargarInformacion2(modelo, 2, sql);
     }
 
     private void limpiar(JTable tabla) {
@@ -134,16 +138,17 @@ public class jpGiroEmpresa extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        tablaGiro.setAutoCreateRowSorter(true);
         tablaGiro.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Giro Empresarial"
+                "Giro Empresarial", "Situacion"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false
+                false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -295,18 +300,20 @@ public class jpGiroEmpresa extends javax.swing.JPanel {
         jdG.setVisible(true);
 
     }//GEN-LAST:event_jButton2ActionPerformed
-    String giro = "";
+    String giro = "", situacion = "";
     private void tablaGiroMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaGiroMouseClicked
         // TODO add your handling code here:
         giro = tablaGiro.getValueAt(tablaGiro.getSelectedRow(), 0) + "";  //pais
+        situacion = tablaGiro.getValueAt(tablaGiro.getSelectedRow(), 1) + "";
 
-        if (evt.getClickCount() == 1) {
-            System.out.println("1 Clic");
-        }
         if (evt.getClickCount() == 2) {
-            jdG = new jdGiroEmpresa(null, true, "2", giro, cn);
-            jdG.jpG = this;
-            jdG.setVisible(true);
+            if (situacion.equals("Activo")) {
+                jdG = new jdGiroEmpresa(null, true, "2", giro, cn);
+                jdG.jpG = this;
+                jdG.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(null, "Dato Inactivo");
+            }
         }
     }//GEN-LAST:event_tablaGiroMouseClicked
 
@@ -314,23 +321,38 @@ public class jpGiroEmpresa extends javax.swing.JPanel {
         // TODO add your handling code here:
         busquedaGiro();
     }//GEN-LAST:event_txtBusquedaGiroKeyReleased
-
+    String estatus = "";
     private void comboSituacionGiroItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionGiroItemStateChanged
         // TODO add your handling code here:
+        if (comboSituacionGiro.getSelectedItem().equals("Inactivo")) {
+            jButton4.setText("Activar");
+            estatus = "1";
+        } else {
+            estatus = "2";
+            jButton4.setText("Desactivar");
+        }
         busquedaGiro();
     }//GEN-LAST:event_comboSituacionGiroItemStateChanged
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        mdb.actualizarBasicos("UPDATE girodemoral SET ID_Situacion=2 where descripcion='" + giro + "'");
+        if (estatus.equals("2")) {
+            mdb.actualizarBasicos("UPDATE girodemoral SET ID_Situacion=2 where descripcion='" + giro + "'");
+        } else if (estatus.equals("1")) {
+            mdb.actualizarBasicos("UPDATE girodemoral SET ID_Situacion=1 where descripcion='" + giro + "'");
+        }
         llenaTablaGiro();
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
+        if (situacion.equals("Activo")) {
             jdG = new jdGiroEmpresa(null, true, "2", giro, cn);
             jdG.jpG = this;
-            jdG.setVisible(true);       
+            jdG.setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(null, "Dato Inactivo");
+        }
     }//GEN-LAST:event_jButton3ActionPerformed
 
 

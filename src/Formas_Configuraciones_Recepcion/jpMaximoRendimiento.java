@@ -34,16 +34,7 @@ public class jpMaximoRendimiento extends javax.swing.JPanel {
         mdb = new metodosDatosBasicos(cn);
         modelo = (DefaultTableModel) tablaMaximoR.getModel();
 
-        llenaTabla();
-    }
-
-    public void llenaTabla() {
-        limpiar(tablaMaximoR);
-        String sql = "SELECT m.Rendimiento, p.Descripcion, f.Descripcion\n "
-                + "FROM maximorendimiento m\n "
-                + "inner join procesocafe p on (p.ID=m.ID_Proceso)\n "
-                + "inner join formacafe f on (f.ID=m.ID_Forma) where m.ID_Situacion=1";
-        mdb.cargarInformacion2(modelo, 3, sql);
+        busqueda();
     }
 
     public void busqueda() {
@@ -70,20 +61,22 @@ public class jpMaximoRendimiento extends javax.swing.JPanel {
 
         String sql;
         if (situacion.equals("Todos")) {
-            sql = "SELECT m.Rendimiento, p.Descripcion, f.Descripcion\n "
+            sql = "SELECT m.Rendimiento, p.Descripcion, f.Descripcion, s.descripcion\n "
                     + "FROM maximorendimiento m\n "
                     + "inner join procesocafe p on (p.ID=m.ID_Proceso) "
                     + "inner join formacafe f on (f.ID=m.ID_Forma) "
+                    + "inner join situacion s on (m.id_situacion=s.id) "
                     + "where m.ID_Situacion <> 3" + tipoC + tipoN + tipoF + tipoD;
         } else {
-            sql = "SELECT m.Rendimiento, p.Descripcion, f.Descripcion\n "
+            sql = "SELECT m.Rendimiento, p.Descripcion, f.Descripcion, s.descripcion\n "
                     + "FROM maximorendimiento m\n "
                     + "inner join procesocafe p on (p.ID=m.ID_Proceso) "
                     + "inner join formacafe f on (f.ID=m.ID_Forma) "
+                    + "inner join situacion s on (m.id_situacion=s.id) "
                     + "where m.ID_Situacion=" + situacion + tipoC + tipoN + tipoF + tipoD;
         }
         limpiar(tablaMaximoR);
-        mdb.cargarInformacion2(modelo, 3, sql);
+        mdb.cargarInformacion2(modelo, 4, sql);
 
     }
 
@@ -194,11 +187,11 @@ public class jpMaximoRendimiento extends javax.swing.JPanel {
 
             },
             new String [] {
-                "Maximo Rendimiento", "Proceso de Cafe", "Forma de Cafe"
+                "Maximo Rendimiento", "Proceso de Cafe", "Forma de Cafe", "Situacion"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false
+                false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -215,6 +208,7 @@ public class jpMaximoRendimiento extends javax.swing.JPanel {
             tablaMaximoR.getColumnModel().getColumn(0).setResizable(false);
             tablaMaximoR.getColumnModel().getColumn(1).setResizable(false);
             tablaMaximoR.getColumnModel().getColumn(2).setResizable(false);
+            tablaMaximoR.getColumnModel().getColumn(3).setResizable(false);
         }
 
         jLabel10.setText("Situacion");
@@ -351,20 +345,25 @@ public class jpMaximoRendimiento extends javax.swing.JPanel {
         jdMR.jpMR = this;
         jdMR.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
-    String rendimiento = "", proceso = "", forma = "";
+    String rendimiento = "", proceso = "", forma = "", situacion = "";
     private void tablaMaximoRMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaMaximoRMouseClicked
         // TODO add your handling code here:
-        rendimiento = modelo.getValueAt(tablaMaximoR.getSelectedRow(), 0) + "";
-        proceso = modelo.getValueAt(tablaMaximoR.getSelectedRow(), 1) + "";
-        forma = modelo.getValueAt(tablaMaximoR.getSelectedRow(), 2) + "";
+        try {
+            rendimiento = tablaMaximoR.getValueAt(tablaMaximoR.getSelectedRow(), 0) + "";
+            proceso = tablaMaximoR.getValueAt(tablaMaximoR.getSelectedRow(), 1) + "";
+            forma = tablaMaximoR.getValueAt(tablaMaximoR.getSelectedRow(), 2) + "";
+            situacion = tablaMaximoR.getValueAt(tablaMaximoR.getSelectedRow(), 3) + "";
 
-        if (evt.getClickCount() == 1) {
-            // System.out.println("1 Clic");
-        }
-        if (evt.getClickCount() == 2) {
-            jdMR = new jdMaximoRendimiento(null, true, "2", rendimiento, proceso, forma, cn);
-            jdMR.jpMR = this;
-            jdMR.setVisible(true);
+            if (evt.getClickCount() == 2) {
+                if (situacion.equals("Activo")) {
+                    jdMR = new jdMaximoRendimiento(null, true, "2", rendimiento, proceso, forma, cn);
+                    jdMR.jpMR = this;
+                    jdMR.setVisible(true);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Dato Inactivo");
+                }
+            }
+        } catch (Exception e) {
         }
     }//GEN-LAST:event_tablaMaximoRMouseClicked
 
@@ -373,9 +372,13 @@ public class jpMaximoRendimiento extends javax.swing.JPanel {
         if (rendimiento.equals("")) {
             JOptionPane.showMessageDialog(null, "Seleccione un registro");
         } else {
-            jdMR = new jdMaximoRendimiento(null, true, "2", rendimiento, proceso, forma, cn);
-            jdMR.jpMR = this;
-            jdMR.setVisible(true);
+            if (situacion.equals("Activo")) {
+                jdMR = new jdMaximoRendimiento(null, true, "2", rendimiento, proceso, forma, cn);
+                jdMR.jpMR = this;
+                jdMR.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(null, "Dato Inactivo");
+            }
         }
     }//GEN-LAST:event_jButton3ActionPerformed
 
@@ -388,18 +391,32 @@ public class jpMaximoRendimiento extends javax.swing.JPanel {
         // TODO add your handling code here:
         busqueda();
     }//GEN-LAST:event_txtBusquedaProcesoKeyReleased
-
+    String estatus = "2";
     private void comboSituacionItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionItemStateChanged
         // TODO add your handling code here:
+        if (comboSituacion.getSelectedItem().equals("Inactivo")) {
+            estatus = "1";
+            jButton4.setText("Activar");
+        } else {
+            estatus = "2";
+            jButton4.setText("Desactivar");
+        }
         busqueda();
     }//GEN-LAST:event_comboSituacionItemStateChanged
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        /*  String sql = "UPDATE maximorendimiento SET ID_Situacion=2 where descripcion='" + forma + "' ";
-        System.out.println(sql);
-        mdb.actualizarBasicos(sql);
-        llenaTabla();*/
+        if (estatus.equals("2")) {
+            mdb.actualizarBasicos("UPDATE maximorendimiento SET ID_Situacion=2 "
+                    + "where id_proceso=" + mdb.devuelveId("select id from procesocafe where descripcion='" + proceso + "'") + " "
+                    + "and id_forma=" + mdb.devuelveId("select id from formacafe where descripcion='" + forma + "'"));
+        } else if (estatus.equals("1")) {
+            mdb.actualizarBasicos("UPDATE maximorendimiento SET ID_Situacion=1 "
+                    + "where id_proceso=" + mdb.devuelveId("select id from procesocafe where descripcion='" + proceso + "'") + " "
+                    + "and id_forma=" + mdb.devuelveId("select id from formacafe where descripcion='" + forma + "'"));
+        }
+
+        busqueda();
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void txtBusquedaFormaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBusquedaFormaKeyReleased

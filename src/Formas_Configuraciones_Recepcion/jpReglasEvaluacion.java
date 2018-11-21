@@ -34,14 +34,7 @@ public class jpReglasEvaluacion extends javax.swing.JPanel {
         mdb = new metodosDatosBasicos(cn);
         modelo = (DefaultTableModel) tablaReglas.getModel();
 
-        llenaTabla();
-
-    }
-
-    public void llenaTabla() {
-        limpiar(tablaReglas);
-        String sql = "select grado,defectos,descripcion from reglasevaluacion where ID_Situacion=1";
-        mdb.cargarInformacion2(modelo, 3, sql);
+        busqueda();
     }
 
     public void busqueda() {
@@ -57,23 +50,29 @@ public class jpReglasEvaluacion extends javax.swing.JPanel {
         }
 
         if (txtGrados.getText().length() > 0) {
-            tipoC = " AND grado like '" + txtGrados.getText() + "%'";
+            tipoC = " AND r.grado like '" + txtGrados.getText() + "%'";
         }
         if (txtDefectos.getText().length() > 0) {
-            tipoF = " AND defectos like '" + txtDefectos.getText() + "%'";
+            tipoF = " AND r.defectos like '" + txtDefectos.getText() + "%'";
         }
         if (txtDesc.getText().length() > 0) {
-            tipoN = " AND descripcion like '" + txtDesc.getText() + "%'";
+            tipoN = " AND r.descripcion like '" + txtDesc.getText() + "%'";
         }
 
         String sql;
         if (situacion.equals("Todos")) {
-            sql = "select grado,defectos,descripcion from reglasevaluacion where ID_Situacion <> 3" + tipoC + tipoN + tipoF + tipoD;
+            sql = "select r.grado,r.defectos,r.descripcion,s.descripcion "
+                    + "from reglasevaluacion r "
+                    + "inner join situacion s on (r.id_situacion = s.id) "
+                    + "where r.ID_Situacion <> 3" + tipoC + tipoN + tipoF + tipoD;
         } else {
-            sql = "select grado,defectos,descripcion from reglasevaluacion where ID_Situacion=" + situacion + tipoC + tipoN + tipoF + tipoD;
+            sql = "select r.grado,r.defectos,r.descripcion,s.descripcion "
+                    + "from reglasevaluacion r "
+                    + "inner join situacion s on (r.id_situacion = s.id) "
+                    + "where r.ID_Situacion=" + situacion + tipoC + tipoN + tipoF + tipoD;
         }
         limpiar(tablaReglas);
-        mdb.cargarInformacion2(modelo, 3, sql);
+        mdb.cargarInformacion2(modelo, 4, sql);
 
     }
 
@@ -184,11 +183,11 @@ public class jpReglasEvaluacion extends javax.swing.JPanel {
 
             },
             new String [] {
-                "Grados", "Defectos", "Descripcion"
+                "Grados", "Defectos", "Descripcion", "Situacion"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false
+                false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -205,6 +204,7 @@ public class jpReglasEvaluacion extends javax.swing.JPanel {
             tablaReglas.getColumnModel().getColumn(0).setResizable(false);
             tablaReglas.getColumnModel().getColumn(1).setResizable(false);
             tablaReglas.getColumnModel().getColumn(2).setResizable(false);
+            tablaReglas.getColumnModel().getColumn(3).setResizable(false);
         }
 
         jLabel10.setText("Situacion");
@@ -341,20 +341,22 @@ public class jpReglasEvaluacion extends javax.swing.JPanel {
         jdE.jpE = this;
         jdE.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
-    String grados = "", defectos = "", desc = "";
+    String grados = "", defectos = "", desc = "", situacion = "";
     private void tablaReglasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaReglasMouseClicked
         // TODO add your handling code here:
-        grados = modelo.getValueAt(tablaReglas.getSelectedRow(), 0) + "";
-        defectos = modelo.getValueAt(tablaReglas.getSelectedRow(), 1) + "";
-        desc = modelo.getValueAt(tablaReglas.getSelectedRow(), 2) + "";
+        grados = tablaReglas.getValueAt(tablaReglas.getSelectedRow(), 0) + "";
+        defectos = tablaReglas.getValueAt(tablaReglas.getSelectedRow(), 1) + "";
+        desc = tablaReglas.getValueAt(tablaReglas.getSelectedRow(), 2) + "";
+        situacion = tablaReglas.getValueAt(tablaReglas.getSelectedRow(), 3) + "";
 
-        if (evt.getClickCount() == 1) {
-            // System.out.println("1 Clic");
-        }
         if (evt.getClickCount() == 2) {
-            jdE = new jdReglasEvaluacion(null, true, "2", grados, defectos, desc, cn);
-            jdE.jpE = this;
-            jdE.setVisible(true);
+            if (situacion.equals("Activo")) {
+                jdE = new jdReglasEvaluacion(null, true, "2", grados, defectos, desc, cn);
+                jdE.jpE = this;
+                jdE.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(null, "Dato Inactivo");
+            }
         }
     }//GEN-LAST:event_tablaReglasMouseClicked
 
@@ -363,9 +365,13 @@ public class jpReglasEvaluacion extends javax.swing.JPanel {
         if (grados.equals("")) {
             JOptionPane.showMessageDialog(null, "Seleccione un registro");
         } else {
-            jdE = new jdReglasEvaluacion(null, true, "2", grados, defectos, desc, cn);
-            jdE.jpE = this;
-            jdE.setVisible(true);
+            if (situacion.equals("Activo")) {
+                jdE = new jdReglasEvaluacion(null, true, "2", grados, defectos, desc, cn);
+                jdE.jpE = this;
+                jdE.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(null, "Dato Inactivo");
+            }
         }
     }//GEN-LAST:event_jButton3ActionPerformed
 
@@ -378,18 +384,27 @@ public class jpReglasEvaluacion extends javax.swing.JPanel {
         // TODO add your handling code here:
         busqueda();
     }//GEN-LAST:event_txtDefectosKeyReleased
-
+    String estatus = "2";
     private void comboSituacionItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionItemStateChanged
         // TODO add your handling code here:
+        if (comboSituacion.getSelectedItem().equals("Inactivo")) {
+            estatus = "1";
+            jButton4.setText("Activar");
+        } else {
+            estatus = "2";
+            jButton4.setText("Desactivar");
+        }
         busqueda();
     }//GEN-LAST:event_comboSituacionItemStateChanged
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        String sql = "UPDATE reglasevaluacion SET ID_Situacion=2 where descripcion='" + desc + "' ";
-        System.out.println(sql);
-        mdb.actualizarBasicos(sql);
-        llenaTabla();
+        if (estatus.equals("2")) {
+            mdb.actualizarBasicos("UPDATE reglasevaluacion SET ID_Situacion=2 where descripcion='" + desc + "' ");
+        } else if (estatus.equals("1")) {
+            mdb.actualizarBasicos("UPDATE reglasevaluacion SET ID_Situacion=1 where descripcion='" + desc + "' ");
+        }
+        busqueda();
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void txtDescKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDescKeyReleased

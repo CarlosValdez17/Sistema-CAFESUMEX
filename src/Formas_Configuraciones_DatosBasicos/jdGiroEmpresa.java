@@ -50,7 +50,6 @@ public class jdGiroEmpresa extends javax.swing.JDialog {
             String sql = "";
 
             if (tipo.equals("1")) {
-                //nuevoPais();
                 if (mdb.comprobarExistencia("select descripcion from girodemoral where descripcion='" + txtGiro.getText() + "'") == null) {
                     sql = "INSERT INTO girodemoral VALUES(null,'" + txtGiro.getText() + "', 1, 1,current_date()"
                             + ", current_time(), 1, 1, 1, 1 )";
@@ -61,7 +60,6 @@ public class jdGiroEmpresa extends javax.swing.JDialog {
                     JOptionPane.showMessageDialog(null, "Dato Repetido");
                 }
             } else {
-                //editarPais();
                 sql = "UPDATE girodemoral SET  descripcion ='" + txtGiro.getText() + "' where descripcion='" + giro + "' ";
                 mdb.actualizarBasicos(sql);
                 jpG.llenaTablaGiro();

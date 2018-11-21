@@ -60,22 +60,25 @@ public class jpPais extends javax.swing.JPanel {
         jLabel8.setVisible(false);
         jLabel9.setVisible(false);
 
-        ClaseTable.ordernar(tablaPais);
+      //  ClaseTable.ordernar(tablaPais);
         llenaTablaPais();
 
-     /*   tablaPais.getTableHeader().addMouseListener(new MouseAdapter() {
+        tablaPais.getTableHeader().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                int col = tablaPais.columnAtPoint(e.getPoint());
+               int col = tablaPais.columnAtPoint(e.getPoint());
                 String name = tablaPais.getColumnName(col);
                 System.out.println("Column index selected " + col + " " + name);
-                ordena();
+                ordena(name);
             }
-        });*/
+        });
     }
 
-    public void ordena() {
-        ClaseTable.ordernar(tablaPais);
+    public void ordena(String name) {
+        
+        String sql = "SELECT descripcion, OIC, UE, ISO from pais WHERE ID_SItuacion=1 order by descripcion asc"; 
+        limpiar(tablaPais);
+        mdb.cargarInformacion2(modelo, 4, sql);
     }
 
     public void llenaTablaPais() {

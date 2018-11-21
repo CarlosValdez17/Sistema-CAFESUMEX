@@ -8,6 +8,7 @@ package Formas_Configuraciones_FincaCert;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -22,19 +23,19 @@ public class jdDiseñoPlantacion extends javax.swing.JDialog {
     Connection cn;
     metodosDatosBasicos mdb;
     String tipo, dato;
-     validaConfi valiConf;
+    validaConfi valiConf;
 
     public jdDiseñoPlantacion(java.awt.Frame parent, boolean modal, String tipo, String dato, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
-valiConf = new validaConfi();
+        valiConf = new validaConfi();
         cn = c;
         this.dato = dato;
         this.tipo = tipo;
 
         mdb = new metodosDatosBasicos(cn);
-        
+
         if (tipo.equals("1")) {
             setTitle("Nuevo Diseño Plantacion");
         } else {
@@ -47,20 +48,21 @@ valiConf = new validaConfi();
         try {
             String sql = "";
 
-            if (tipo.equals("1")) {
-                //nuevoPais();
-                sql = "INSERT INTO diseñoplantacion VALUES(null,'" + txtDiseño.getText() + "', 1, 1,current_date()"
-                        + ", current_time(), 1, 1, 1, 1 )";
-                mdb.insertarBasicos(sql);
-                jpD.llenaTabla();
-                this.dispose();
+            if (mdb.comprobarExistencia("select descripcion from diseñoplantacion where descripcion='" + txtDiseño.getText() + "'") == null) {
+                if (tipo.equals("1")) {
+                    sql = "INSERT INTO diseñoplantacion VALUES(null,'" + txtDiseño.getText() + "', 1, 1,current_date()"
+                            + ", current_time(), 1, 1, 1, 1 )";
+                    mdb.insertarBasicos(sql);
+                    jpD.busqueda();
+                    this.dispose();
+                } else {
+                    sql = "UPDATE diseñoplantacion SET  descripcion ='" + txtDiseño.getText() + "' where descripcion='" + dato + "' ";
+                    mdb.actualizarBasicos(sql);
+                    jpD.busqueda();
+                    this.dispose();
+                }
             } else {
-                //editarPais();
-                sql = "UPDATE diseñoplantacion SET  descripcion ='" + txtDiseño.getText() + "' where descripcion='" + dato + "' ";
-                mdb.actualizarBasicos(sql);
-                jpD.llenaTabla();
-                this.dispose();
-
+                JOptionPane.showMessageDialog(null, "Dato Repetido");
             }
         } catch (Exception e) {
         }
@@ -83,7 +85,7 @@ valiConf = new validaConfi();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        jLabel1.setText("Diseñp Plantacion");
+        jLabel1.setText("Diseño Plantacion");
 
         txtDiseño.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -164,7 +166,8 @@ valiConf = new validaConfi();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void txtDiseñoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDiseñoKeyReleased
-if (txtDiseño.getText().length() != 0) {
+        txtDiseño.setText(txtDiseño.getText().toLowerCase());
+        if (txtDiseño.getText().length() != 0) {
             txtDiseño.setText(valiConf.primerLetraMayuscula(txtDiseño.getText()).replace("S/n", "S/N"));
             txtDiseño.setText(valiConf.primerLetraMayuscula(txtDiseño.getText()).replace("S/d", "S/D"));
             txtDiseño.setText(valiConf.primerLetraMayuscula(txtDiseño.getText()).replace("S/o", "S/O"));
@@ -173,7 +176,7 @@ if (txtDiseño.getText().length() != 0) {
     }//GEN-LAST:event_txtDiseñoKeyReleased
 
     private void txtDiseñoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDiseñoKeyTyped
-char c = evt.getKeyChar();
+        char c = evt.getKeyChar();
         if (Character.isDigit(c)) {//if (Character.isLetter(c)){
             getToolkit().beep();
             evt.consume();

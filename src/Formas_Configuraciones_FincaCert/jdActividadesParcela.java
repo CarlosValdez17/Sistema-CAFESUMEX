@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package Formas_Configuraciones_FincaCert;
+
 import Metodos_Configuraciones.validaConfi;
 import Formas_Configuraciones_Recepcion.*;
 import Formas_Configuraciones_DatosBasicos.*;
@@ -25,17 +26,17 @@ public class jdActividadesParcela extends javax.swing.JDialog {
     String actividad, tipo, desc;
     metodosDatosBasicos mdb;
     Connection cn;
- validaConfi valiConf;
-    public jdActividadesParcela(java.awt.Frame parent, boolean modal, String tipo, String dato1,String dato2, Connection c) {
+    validaConfi valiConf;
+
+    public jdActividadesParcela(java.awt.Frame parent, boolean modal, String tipo, String dato1, String dato2, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
 
-        
         cn = c;
         this.tipo = tipo;
-        actividad=dato1;
-        desc=dato2;
+        actividad = dato1;
+        desc = dato2;
         valiConf = new validaConfi();
         if (tipo.equals("1")) {
             setTitle("Nueva Actividad");
@@ -44,32 +45,31 @@ public class jdActividadesParcela extends javax.swing.JDialog {
             txtActividad.setText(dato1);
             txtDesc.setText(dato2);
         }
-        
-        mdb = new metodosDatosBasicos(cn);
- }
 
-   
+        mdb = new metodosDatosBasicos(cn);
+    }
+
     public void tipoProceso() {
         String sql = "";
 
         mdb = new metodosDatosBasicos(cn);
-
         if (tipo.equals("1")) {
-            //nuevoPais();
-            sql = "INSERT INTO actividadesparcelas VALUES(null,'" + txtDesc.getText() + "'," 
-                    + "1, 1,current_date(),current_time(), 1, 1, 1, 1,'"+ txtActividad.getText() + "' )";
-            System.out.println(sql);
-            mdb.insertarBasicos(sql);
-            jpAP.llenaTabla();
-            this.dispose();
+            if (mdb.comprobarExistencia("select actividad from actividadesparcelas where actividad='" + txtActividad.getText() + "'") == null) {
+                sql = "INSERT INTO actividadesparcelas VALUES(null,'" + txtDesc.getText() + "',"
+                        + "1, 1,current_date(),current_time(), 1, 1, 1, 1,'" + txtActividad.getText() + "' )";
+                mdb.insertarBasicos(sql);
+                jpAP.busqueda();
+                this.dispose();
+            } else {
+                JOptionPane.showMessageDialog(null, "Dato Repetido");
+            }
         } else {
-            //editarPais();
-            sql = "UPDATE actividadesparcelas SET actividad='" + txtActividad.getText() + "', descripcion='" +txtDesc.getText()+ "' where actividad='" + actividad + "' ";
-            System.out.println(sql);
+            sql = "UPDATE actividadesparcelas SET actividad='" + txtActividad.getText() + "', descripcion='" + txtDesc.getText() + "' where actividad='" + actividad + "' ";
             mdb.actualizarBasicos(sql);
-            jpAP.llenaTabla();
+            jpAP.busqueda();
             this.dispose();
         }
+
     }
 
     /**
@@ -199,7 +199,8 @@ public class jdActividadesParcela extends javax.swing.JDialog {
     }//GEN-LAST:event_txtActividadKeyTyped
 
     private void txtActividadKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtActividadKeyReleased
-if (txtActividad.getText().length() != 0) {
+        txtActividad.setText(txtActividad.getText().toLowerCase());
+        if (txtActividad.getText().length() != 0) {
             txtActividad.setText(valiConf.primerLetraMayuscula(txtActividad.getText()).replace("S/n", "S/N"));
             txtActividad.setText(valiConf.primerLetraMayuscula(txtActividad.getText()).replace("S/d", "S/D"));
             txtActividad.setText(valiConf.primerLetraMayuscula(txtActividad.getText()).replace("S/o", "S/O"));
@@ -208,12 +209,13 @@ if (txtActividad.getText().length() != 0) {
     }//GEN-LAST:event_txtActividadKeyReleased
 
     private void txtDescKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDescKeyReleased
-  if (txtDesc.getText().length() != 0) {
+        txtDesc.setText(txtDesc.getText().toLowerCase());
+        if (txtDesc.getText().length() != 0) {
             txtDesc.setText(valiConf.primerLetraMayuscula(txtDesc.getText()).replace("S/n", "S/N"));
             txtDesc.setText(valiConf.primerLetraMayuscula(txtDesc.getText()).replace("S/d", "S/D"));
             txtDesc.setText(valiConf.primerLetraMayuscula(txtDesc.getText()).replace("S/o", "S/O"));
         }
-      // TODO add your handling code here:
+        // TODO add your handling code here:
     }//GEN-LAST:event_txtDescKeyReleased
 
     /**

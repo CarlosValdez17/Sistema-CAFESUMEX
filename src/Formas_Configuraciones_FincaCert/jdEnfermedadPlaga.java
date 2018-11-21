@@ -8,6 +8,7 @@ package Formas_Configuraciones_FincaCert;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -22,20 +23,19 @@ public class jdEnfermedadPlaga extends javax.swing.JDialog {
     Connection cn;
     metodosDatosBasicos mdb;
     String tipo, dato;
-     validaConfi valiConf;
-
+    validaConfi valiConf;
 
     public jdEnfermedadPlaga(java.awt.Frame parent, boolean modal, String tipo, String dato, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
-valiConf = new validaConfi();
+        valiConf = new validaConfi();
         cn = c;
         this.dato = dato;
         this.tipo = tipo;
 
         mdb = new metodosDatosBasicos(cn);
-        
+
         if (tipo.equals("1")) {
             setTitle("Nuevo Enfermedad/Plaga");
         } else {
@@ -47,21 +47,22 @@ valiConf = new validaConfi();
     public void tipoProceso() {
         try {
             String sql = "";
+            if (mdb.comprobarExistencia("select descripcion from enfermedadplaga where descripcion='" + txtEnfermedad.getText() + "'") == null) {
+                if (tipo.equals("1")) {
+                    sql = "INSERT INTO enfermedadplaga VALUES(null,'" + txtEnfermedad.getText() + "', 1, 1,current_date()"
+                            + ", current_time(), 1, 1, 1, 1 )";
+                    mdb.insertarBasicos(sql);
+                    jpE.busqueda();
+                    this.dispose();
+                } else {
+                    sql = "UPDATE enfermedadplaga SET  descripcion ='" + txtEnfermedad.getText() + "' where descripcion='" + dato + "' ";
+                    mdb.actualizarBasicos(sql);
+                    jpE.busqueda();
+                    this.dispose();
 
-            if (tipo.equals("1")) {
-                //nuevoPais();
-                sql = "INSERT INTO enfermedadplaga VALUES(null,'" + txtEnfermedad.getText() + "', 1, 1,current_date()"
-                        + ", current_time(), 1, 1, 1, 1 )";
-                mdb.insertarBasicos(sql);
-                jpE.llenaTabla();
-                this.dispose();
+                }
             } else {
-                //editarPais();
-                sql = "UPDATE enfermedadplaga SET  descripcion ='" + txtEnfermedad.getText() + "' where descripcion='" + dato + "' ";
-                mdb.actualizarBasicos(sql);
-                jpE.llenaTabla();
-                this.dispose();
-
+                JOptionPane.showMessageDialog(null, "Dato Repetido");
             }
         } catch (Exception e) {
         }
@@ -165,16 +166,17 @@ valiConf = new validaConfi();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void txtEnfermedadKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEnfermedadKeyReleased
-    if (txtEnfermedad.getText().length() != 0) {
+        txtEnfermedad.setText(txtEnfermedad.getText().toLowerCase());
+        if (txtEnfermedad.getText().length() != 0) {
             txtEnfermedad.setText(valiConf.primerLetraMayuscula(txtEnfermedad.getText()).replace("S/n", "S/N"));
             txtEnfermedad.setText(valiConf.primerLetraMayuscula(txtEnfermedad.getText()).replace("S/d", "S/D"));
             txtEnfermedad.setText(valiConf.primerLetraMayuscula(txtEnfermedad.getText()).replace("S/o", "S/O"));
         }
-    // TODO add your handling code here:
+        // TODO add your handling code here:
     }//GEN-LAST:event_txtEnfermedadKeyReleased
 
     private void txtEnfermedadKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEnfermedadKeyTyped
- char c = evt.getKeyChar();
+        char c = evt.getKeyChar();
         if (Character.isDigit(c)) {//if (Character.isLetter(c)){
             getToolkit().beep();
             evt.consume();

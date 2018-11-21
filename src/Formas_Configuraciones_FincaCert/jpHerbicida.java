@@ -7,6 +7,7 @@ package Formas_Configuraciones_FincaCert;
 
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.Connection;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
@@ -26,19 +27,12 @@ public class jpHerbicida extends javax.swing.JPanel {
 
     public jpHerbicida(Connection c) {
         initComponents();
-        
+
         cn = c;
         mdb = new metodosDatosBasicos(cn);
         modelo = (DefaultTableModel) tablaHerbicida.getModel();
 
-        llenaTabla();
-    }
-    
-    
-    public void llenaTabla() {
-        limpiar(tablaHerbicida);
-        mdb = new metodosDatosBasicos(cn);
-        mdb.cargarInformacion2(modelo, 1, "select descripcion from herbicidas where id_Situacion=1");
+        busqueda();
     }
 
     public void busqueda() {
@@ -54,18 +48,23 @@ public class jpHerbicida extends javax.swing.JPanel {
         }
 
         if (txtBusquedaHerbicida.getText().length() > 0) {
-            tipoB = "AND descripcion like '" + txtBusquedaHerbicida.getText() + "%'";
+            tipoB = "AND h.descripcion like '" + txtBusquedaHerbicida.getText() + "%'";
         }
 
         String sql;
         if (situacion.equals("Todos")) {
-            sql = "SELECT descripcion from herbicidas where ID_Situacion <> 3 " + tipoB;
+            sql = "SELECT h.descripcion, s.descripcion "
+                    + "from herbicidas h "
+                    + "inner join situacion s on (h.id_situacion=s.id) "
+                    + "where h.ID_Situacion <> 3 " + tipoB;
         } else {
-            sql = "SELECT descripcion from herbicidas where ID_SItuacion=" + situacion + " " + tipoB;
+            sql = "SELECT h.descripcion, s.descripcion "
+                    + "from herbicidas h "
+                    + "inner join situacion s on (h.id_situacion=s.id) "
+                    + "where h.ID_SItuacion=" + situacion + " " + tipoB;
         }
-        //System.out.println(sql);
         limpiar(tablaHerbicida);
-        mdb.cargarInformacion2(modelo, 1, sql);
+        mdb.cargarInformacion2(modelo, 2, sql);
     }
 
     private void limpiar(JTable tabla) {
@@ -73,7 +72,6 @@ public class jpHerbicida extends javax.swing.JPanel {
             ((DefaultTableModel) tabla.getModel()).removeRow(0);
         }
     }
-
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -136,11 +134,11 @@ public class jpHerbicida extends javax.swing.JPanel {
 
             },
             new String [] {
-                "Herbicidas"
+                "Herbicidas", "Situacion"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false
+                false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -155,6 +153,7 @@ public class jpHerbicida extends javax.swing.JPanel {
         jScrollPane2.setViewportView(tablaHerbicida);
         if (tablaHerbicida.getColumnModel().getColumnCount() > 0) {
             tablaHerbicida.getColumnModel().getColumn(0).setResizable(false);
+            tablaHerbicida.getColumnModel().getColumn(1).setResizable(false);
         }
 
         jLabel10.setText("Situacion");
@@ -295,23 +294,32 @@ public class jpHerbicida extends javax.swing.JPanel {
         busqueda();
     }//GEN-LAST:event_txtBusquedaHerbicidaKeyReleased
 
-    String variedad;
+    String variedad = "", situacion = "";
     private void tablaHerbicidaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaHerbicidaMouseClicked
         // TODO add your handling code here:
-        variedad = modelo.getValueAt(tablaHerbicida.getSelectedRow(), 0) + "";  //pais
+        variedad = tablaHerbicida.getValueAt(tablaHerbicida.getSelectedRow(), 0) + "";  //pais
+        situacion = tablaHerbicida.getValueAt(tablaHerbicida.getSelectedRow(), 1) + "";
 
-        if (evt.getClickCount() == 1) {
-            System.out.println("1 Clic");
-        }
         if (evt.getClickCount() == 2) {
-            jdH = new jdHerbicida(null, true, "2", variedad, cn);
-            jdH.jpH = this;
-            jdH.setVisible(true);
+            if (situacion.equals("Activo")) {
+                jdH = new jdHerbicida(null, true, "2", variedad, cn);
+                jdH.jpH = this;
+                jdH.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(null, "Dato Inactivo");
+            }
         }
     }//GEN-LAST:event_tablaHerbicidaMouseClicked
-
+    String estatus = "2";
     private void comboSituacionHerbicidaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionHerbicidaItemStateChanged
         // TODO add your handling code here:
+        if (comboSituacionHerbicida.getSelectedItem().equals("Inactivo")) {
+            estatus = "1";
+            jButton4.setText("Activar");
+        } else {
+            estatus = "2";
+            jButton4.setText("Desactivar");
+        }
         busqueda();
     }//GEN-LAST:event_comboSituacionHerbicidaItemStateChanged
 
@@ -324,15 +332,23 @@ public class jpHerbicida extends javax.swing.JPanel {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        jdH = new jdHerbicida(null, true, "2", variedad, cn);
-        jdH.jpH = this;
-        jdH.setVisible(true);
+        if (situacion.equals("Activo")) {
+            jdH = new jdHerbicida(null, true, "2", variedad, cn);
+            jdH.jpH = this;
+            jdH.setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(null, "Dato Inactivo");
+        }
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        mdb.actualizarBasicos("UPDATE herbicidas SET ID_Situacion=2 where descripcion='" + variedad + "'");
-        llenaTabla();
+        if (estatus.equals("2")) {
+            mdb.actualizarBasicos("UPDATE herbicidas SET ID_Situacion=2 where descripcion='" + variedad + "'");
+        } else if (estatus.equals("1")) {
+            mdb.actualizarBasicos("UPDATE herbicidas SET ID_Situacion=1 where descripcion='" + variedad + "'");
+        }
+        busqueda();
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed

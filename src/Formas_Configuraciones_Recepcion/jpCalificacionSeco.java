@@ -33,14 +33,9 @@ public class jpCalificacionSeco extends javax.swing.JPanel {
         mdb = new metodosDatosBasicos(cn);
         modelo = (DefaultTableModel) tablaCalSeco.getModel();
 
-        llenaTabla();
+        busqueda();
     }
 
-    public void llenaTabla() {
-        limpiar(tablaCalSeco);
-        mdb = new metodosDatosBasicos(cn);
-        mdb.cargarInformacion2(modelo, 4, "select clave, descripcion,minima, maxima from calidadseco where ID_Situacion=1");
-    }
 
     public void busqueda() {
         String tipo1 = "";
@@ -58,29 +53,32 @@ public class jpCalificacionSeco extends javax.swing.JPanel {
         }
 
         if (txtClave.getText().length() > 0) {
-            tipo2 = "AND clave like '" + txtClave.getText() + "%'";
+            tipo2 = "AND c.clave like '" + txtClave.getText() + "%'";
         }
         if (txtDesc.getText().length() > 0) {
-            tipo3 = "AND descripcion like '" + txtDesc.getText() + "%'";
+            tipo3 = "AND c.descripcion like '" + txtDesc.getText() + "%'";
         }
         if (txtMinima.getText().length() > 0) {
-            tipo4 = "AND minima like '" + txtMinima.getText() + "%'";
+            tipo4 = "AND c.minima like '" + txtMinima.getText() + "%'";
         }
         if (txtMaxima.getText().length() > 0) {
-            tipo4 = "AND maxima like '" + txtMaxima.getText() + "%'";
+            tipo4 = "AND c.maxima like '" + txtMaxima.getText() + "%'";
         }
 
         String sql;
         if (situacion.equals("Todos")) {
-            sql = "SELECT clave, descripcion, minima, maxima from calidadseco "
-                    + "where ID_Situacion <> 3 " + tipo1 + " " + tipo2 + " " + tipo3 + " " + tipo4;
+            sql = "select c.clave, c.descripcion, c.minima, c.maxima, s.descripcion "
+                    + "from calidadseco c "
+                    + "inner join situacion s on (c.id_situacion = s.id) "
+                    + "where c.ID_Situacion <> 3 " + tipo1 + " " + tipo2 + " " + tipo3 + " " + tipo4;
         } else {
-            sql = "SELECT clave, descripcion, minima, maxima from calidadseco "
-                    + "where ID_Situacion=" + situacion + " " + tipo1 + " " + tipo2 + " " + tipo3 + " " + tipo4;
+            sql = "select c.clave, c.descripcion, c.minima, c.maxima, s.descripcion "
+                    + "from calidadseco c "
+                    + "inner join situacion s on (c.id_situacion = s.id) "
+                    + "where c.ID_Situacion=" + situacion + " " + tipo1 + " " + tipo2 + " " + tipo3 + " " + tipo4;
         }
-        System.out.println(sql);
         limpiar(tablaCalSeco);
-        mdb.cargarInformacion2(modelo, 4, sql);
+        mdb.cargarInformacion2(modelo, 5, sql);
 
     }
 
@@ -207,11 +205,11 @@ public class jpCalificacionSeco extends javax.swing.JPanel {
 
             },
             new String [] {
-                "Clave", "Descripcion", "Minima", "Máxima"
+                "Clave", "Descripcion", "Minima", "Máxima", "Situacion"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -229,6 +227,7 @@ public class jpCalificacionSeco extends javax.swing.JPanel {
             tablaCalSeco.getColumnModel().getColumn(1).setResizable(false);
             tablaCalSeco.getColumnModel().getColumn(2).setResizable(false);
             tablaCalSeco.getColumnModel().getColumn(3).setResizable(false);
+            tablaCalSeco.getColumnModel().getColumn(4).setResizable(false);
         }
 
         jLabel10.setText("Situacion");
@@ -365,21 +364,23 @@ public class jpCalificacionSeco extends javax.swing.JPanel {
         jdCS.jpCS = this;
         jdCS.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
-    String clave = "", descripcion = "", maxima = "", minima = "";
+    String clave = "", descripcion = "", maxima = "", minima = "", situacion = "";
     private void tablaCalSecoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaCalSecoMouseClicked
         // TODO add your handling code here:
-        clave = modelo.getValueAt(tablaCalSeco.getSelectedRow(), 0) + "";  //Estado String
-        descripcion = modelo.getValueAt(tablaCalSeco.getSelectedRow(), 1) + "";
-        minima = modelo.getValueAt(tablaCalSeco.getSelectedRow(), 2) + "";
-        maxima = modelo.getValueAt(tablaCalSeco.getSelectedRow(), 3) + "";
+        clave = tablaCalSeco.getValueAt(tablaCalSeco.getSelectedRow(), 0) + "";  //Estado String
+        descripcion = tablaCalSeco.getValueAt(tablaCalSeco.getSelectedRow(), 1) + "";
+        minima = tablaCalSeco.getValueAt(tablaCalSeco.getSelectedRow(), 2) + "";
+        maxima = tablaCalSeco.getValueAt(tablaCalSeco.getSelectedRow(), 3) + "";
+        situacion = tablaCalSeco.getValueAt(tablaCalSeco.getSelectedRow(), 4) + "";
 
-        if (evt.getClickCount() == 1) {
-            System.out.println("1 Clic");
-        }
         if (evt.getClickCount() == 2) {
-            jdCS = new jdCalificacionSeco(null, true, "2", clave, descripcion, minima, maxima, cn);
-            jdCS.jpCS = this;
-            jdCS.setVisible(true);
+            if (situacion.equals("Activo")) {
+                jdCS = new jdCalificacionSeco(null, true, "2", clave, descripcion, minima, maxima, cn);
+                jdCS.jpCS = this;
+                jdCS.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(null, "Dato Inactivo");
+            }
         }
     }//GEN-LAST:event_tablaCalSecoMouseClicked
 
@@ -388,9 +389,13 @@ public class jpCalificacionSeco extends javax.swing.JPanel {
         if (clave.equals("")) {
             JOptionPane.showMessageDialog(null, "Seleccione un registro");
         } else {
-            jdCS = new jdCalificacionSeco(null, true, "2", clave, descripcion, minima, maxima, cn);
-            jdCS.jpCS = this;
-            jdCS.setVisible(true);
+            if (situacion.equals("Activo")) {
+                jdCS = new jdCalificacionSeco(null, true, "2", clave, descripcion, minima, maxima, cn);
+                jdCS.jpCS = this;
+                jdCS.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(null, "Dato Inactivo");
+            }
         }
     }//GEN-LAST:event_jButton3ActionPerformed
 
@@ -413,16 +418,27 @@ public class jpCalificacionSeco extends javax.swing.JPanel {
         // TODO add your handling code here:
         busqueda();
     }//GEN-LAST:event_txtMaximaKeyReleased
-
+    String estatus = "2";
     private void comoSituacionItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comoSituacionItemStateChanged
         // TODO add your handling code here:
+        if (comoSituacion.getSelectedItem().equals("Inactivo")) {
+            estatus = "1";
+            jButton4.setText("Activar");
+        } else {
+            estatus = "2";
+            jButton4.setText("Desactivar");
+        }
         busqueda();
     }//GEN-LAST:event_comoSituacionItemStateChanged
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        mdb.actualizarBasicos("UPDATE calidadseco SET ID_Situacion=2 where clave='" + clave + "'");
-        llenaTabla();
+        if (estatus.equals("2")) {
+            mdb.actualizarBasicos("UPDATE calidadseco SET ID_Situacion=2 where clave='" + clave + "'");
+        } else if (estatus.equals("1")) {
+            mdb.actualizarBasicos("UPDATE calidadseco SET ID_Situacion=1 where clave='" + clave + "'");
+        }
+        busqueda();
     }//GEN-LAST:event_jButton4ActionPerformed
 
 

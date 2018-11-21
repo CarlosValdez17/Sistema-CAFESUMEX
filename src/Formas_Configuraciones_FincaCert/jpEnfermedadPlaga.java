@@ -7,6 +7,7 @@ package Formas_Configuraciones_FincaCert;
 
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.Connection;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
@@ -26,19 +27,12 @@ public class jpEnfermedadPlaga extends javax.swing.JPanel {
 
     public jpEnfermedadPlaga(Connection c) {
         initComponents();
-        
+
         cn = c;
         mdb = new metodosDatosBasicos(cn);
         modelo = (DefaultTableModel) tablaEnfermedad.getModel();
 
-        llenaTabla();
-    }
-    
-    
-    public void llenaTabla() {
-        limpiar(tablaEnfermedad);
-        mdb = new metodosDatosBasicos(cn);
-        mdb.cargarInformacion2(modelo, 1, "select descripcion from enfermedadplaga where id_Situacion=1");
+        busqueda();
     }
 
     public void busqueda() {
@@ -54,18 +48,24 @@ public class jpEnfermedadPlaga extends javax.swing.JPanel {
         }
 
         if (txtBusquedaHerbicida.getText().length() > 0) {
-            tipoB = "AND descripcion like '" + txtBusquedaHerbicida.getText() + "%'";
+            tipoB = "AND e.descripcion like '" + txtBusquedaHerbicida.getText() + "%'";
         }
 
         String sql;
         if (situacion.equals("Todos")) {
-            sql = "SELECT descripcion from enfermedadplaga where ID_Situacion <> 3 " + tipoB;
+            sql = "SELECT e.descripcion, s.descripcion "
+                    + "from enfermedadplaga e "
+                    + "inner join situacion s on (e.id_situacion = s.id) "
+                    + "where e.ID_Situacion <> 3 " + tipoB;
         } else {
-            sql = "SELECT descripcion from enfermedadplaga where ID_SItuacion=" + situacion + " " + tipoB;
+            sql = "SELECT e.descripcion, s.descripcion "
+                    + "from enfermedadplaga e "
+                    + "inner join situacion s on (e.id_situacion = s.id) "
+                    + "where e.ID_SItuacion=" + situacion + " " + tipoB;
         }
-        //System.out.println(sql);
+
         limpiar(tablaEnfermedad);
-        mdb.cargarInformacion2(modelo, 1, sql);
+        mdb.cargarInformacion2(modelo, 2, sql);
     }
 
     private void limpiar(JTable tabla) {
@@ -73,7 +73,6 @@ public class jpEnfermedadPlaga extends javax.swing.JPanel {
             ((DefaultTableModel) tabla.getModel()).removeRow(0);
         }
     }
-
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -136,11 +135,11 @@ public class jpEnfermedadPlaga extends javax.swing.JPanel {
 
             },
             new String [] {
-                "Enfermedad/Plaga"
+                "Enfermedad/Plaga", "Situacion"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false
+                false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -155,6 +154,7 @@ public class jpEnfermedadPlaga extends javax.swing.JPanel {
         jScrollPane2.setViewportView(tablaEnfermedad);
         if (tablaEnfermedad.getColumnModel().getColumnCount() > 0) {
             tablaEnfermedad.getColumnModel().getColumn(0).setResizable(false);
+            tablaEnfermedad.getColumnModel().getColumn(1).setResizable(false);
         }
 
         jLabel10.setText("Situacion");
@@ -295,23 +295,32 @@ public class jpEnfermedadPlaga extends javax.swing.JPanel {
         busqueda();
     }//GEN-LAST:event_txtBusquedaHerbicidaKeyReleased
 
-    String variedad;
+    String variedad = "", situacion = "";
     private void tablaEnfermedadMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaEnfermedadMouseClicked
         // TODO add your handling code here:
-        variedad = modelo.getValueAt(tablaEnfermedad.getSelectedRow(), 0) + "";  //pais
+        variedad = tablaEnfermedad.getValueAt(tablaEnfermedad.getSelectedRow(), 0) + "";
+        situacion = tablaEnfermedad.getValueAt(tablaEnfermedad.getSelectedRow(), 1) + "";
 
-        if (evt.getClickCount() == 1) {
-            System.out.println("1 Clic");
-        }
         if (evt.getClickCount() == 2) {
-            jdE = new jdEnfermedadPlaga(null, true, "2", variedad, cn);
-            jdE.jpE = this;
-            jdE.setVisible(true);
+            if (situacion.equals("Activo")) {
+                jdE = new jdEnfermedadPlaga(null, true, "2", variedad, cn);
+                jdE.jpE = this;
+                jdE.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(null, "Dato Inactivo");
+            }
         }
     }//GEN-LAST:event_tablaEnfermedadMouseClicked
-
+    String estatus = "2";
     private void comboSituacionEnfermedadItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionEnfermedadItemStateChanged
         // TODO add your handling code here:
+        if (comboSituacionEnfermedad.getSelectedItem().equals("Inactivo")) {
+            estatus = "1";
+            jButton4.setText("Activar");
+        } else {
+            estatus = "2";
+            jButton4.setText("Desactivar");
+        }
         busqueda();
     }//GEN-LAST:event_comboSituacionEnfermedadItemStateChanged
 
@@ -324,15 +333,23 @@ public class jpEnfermedadPlaga extends javax.swing.JPanel {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        jdE = new jdEnfermedadPlaga(null, true, "2", variedad, cn);
-        jdE.jpE = this;
-        jdE.setVisible(true);
+        if (situacion.equals("Activo")) {
+            jdE = new jdEnfermedadPlaga(null, true, "2", variedad, cn);
+            jdE.jpE = this;
+            jdE.setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(null, "Dato Inactivo");
+        }
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        mdb.actualizarBasicos("UPDATE enfermedadplaga SET ID_Situacion=2 where descripcion='" + variedad + "'");
-        llenaTabla();
+        if (estatus.equals("2")) {
+            mdb.actualizarBasicos("UPDATE enfermedadplaga SET ID_Situacion=2 where descripcion='" + variedad + "'");
+        } else if (estatus.equals("1")) {
+            mdb.actualizarBasicos("UPDATE enfermedadplaga SET ID_Situacion=1 where descripcion='" + variedad + "'");
+        }
+        busqueda();
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed

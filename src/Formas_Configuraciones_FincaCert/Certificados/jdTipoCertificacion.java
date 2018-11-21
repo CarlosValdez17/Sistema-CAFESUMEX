@@ -27,9 +27,9 @@ public class jdTipoCertificacion extends javax.swing.JDialog {
     String clave, tipo, desc;
     metodosDatosBasicos mdb;
     Connection cn;
- validaConfi valiConf;
+    validaConfi valiConf;
 
-    public jdTipoCertificacion(java.awt.Frame parent, boolean modal, String tipo, String dato1,String dato2, Connection c) {
+    public jdTipoCertificacion(java.awt.Frame parent, boolean modal, String tipo, String dato1, String dato2, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
@@ -37,9 +37,9 @@ public class jdTipoCertificacion extends javax.swing.JDialog {
         valiConf = new validaConfi();
         cn = c;
         this.tipo = tipo;
-        clave=dato1;
-        desc=dato2;
-        
+        clave = dato1;
+        desc = dato2;
+
         if (tipo.equals("1")) {
             setTitle("Nueva Tipo Certificacion");
         } else {
@@ -47,31 +47,32 @@ public class jdTipoCertificacion extends javax.swing.JDialog {
             txtClave.setText(dato1);
             txtDesc.setText(dato2);
         }
-        
-        mdb = new metodosDatosBasicos(cn);
- }
 
-   
+        mdb = new metodosDatosBasicos(cn);
+    }
+
     public void tipoProceso() {
         String sql = "";
 
         mdb = new metodosDatosBasicos(cn);
 
-        if (tipo.equals("1")) {
-            //nuevoPais();
-            sql = "INSERT INTO estandarescert VALUES(null,'" + txtDesc.getText() + "'," 
-                    + "1, 1,current_date(),current_time(), 1, 1, 1, 1,'"+ txtClave.getText() + "' )";
-            //System.out.println(sql);
-            mdb.insertarBasicos(sql);
-            jpTC.llenaTabla();
-            this.dispose();
+        if (mdb.comprobarExistencia("select clave from estandarescert where clave='" + txtClave.getText() + "'") == null) {
+            if (tipo.equals("1")) {
+                sql = "INSERT INTO estandarescert VALUES(null,'" + txtDesc.getText() + "',"
+                        + "1, 1,current_date(),current_time(), 1, 1, 1, 1,'" + txtClave.getText() + "' )";
+                //System.out.println(sql);
+                mdb.insertarBasicos(sql);
+                jpTC.busqueda();
+                this.dispose();
+            } else {
+                sql = "UPDATE estandarescert SET clave='" + txtClave.getText() + "', descripcion='" + txtDesc.getText() + "' where clave='" + clave + "' ";
+                System.out.println(sql);
+                mdb.actualizarBasicos(sql);
+                jpTC.busqueda();
+                this.dispose();
+            }
         } else {
-            //editarPais();
-            sql = "UPDATE estandarescert SET clave='" + txtClave.getText() + "', descripcion='" +txtDesc.getText()+ "' where clave='" + clave + "' ";
-            System.out.println(sql);
-            mdb.actualizarBasicos(sql);
-            jpTC.llenaTabla();
-            this.dispose();
+            JOptionPane.showMessageDialog(null, "Dato Repetido");
         }
     }
 
@@ -192,7 +193,7 @@ public class jdTipoCertificacion extends javax.swing.JDialog {
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void txtClaveKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtClaveKeyTyped
-  char c = evt.getKeyChar();
+        char c = evt.getKeyChar();
         if (Character.isDigit(c)) {//if (Character.isLetter(c)){
             getToolkit().beep();
             evt.consume();
@@ -200,17 +201,18 @@ public class jdTipoCertificacion extends javax.swing.JDialog {
     }//GEN-LAST:event_txtClaveKeyTyped
 
     private void txtDescKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDescKeyReleased
-     if (txtDesc.getText().length() != 0) {
+        txtDesc.setText(txtDesc.getText().toLowerCase());
+        if (txtDesc.getText().length() != 0) {
             txtDesc.setText(valiConf.primerLetraMayuscula(txtDesc.getText()).replace("S/n", "S/N"));
             txtDesc.setText(valiConf.primerLetraMayuscula(txtDesc.getText()).replace("S/d", "S/D"));
             txtDesc.setText(valiConf.primerLetraMayuscula(txtDesc.getText()).replace("S/o", "S/O"));
         }
-   // TODO add your handling code here:
+        // TODO add your handling code here:
     }//GEN-LAST:event_txtDescKeyReleased
 
     private void txtClaveKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtClaveKeyReleased
-      
-if (txtClave.getText().length() != 0) {
+
+        if (txtClave.getText().length() != 0) {
             txtClave.setText(valiConf.primerLetraMayuscula(txtClave.getText()).replace("S/n", "S/N"));
             txtClave.setText(valiConf.primerLetraMayuscula(txtClave.getText()).replace("S/d", "S/D"));
             txtClave.setText(valiConf.primerLetraMayuscula(txtClave.getText()).replace("S/o", "S/O"));
@@ -219,7 +221,7 @@ if (txtClave.getText().length() != 0) {
 
     private void txtDescKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDescKeyTyped
 
-char c = evt.getKeyChar();
+        char c = evt.getKeyChar();
         if (Character.isDigit(c)) {//if (Character.isLetter(c)){
             getToolkit().beep();
             evt.consume();
@@ -253,117 +255,6 @@ char c = evt.getKeyChar();
         }
         //</editor-fold>
 
-        /* Create and display the dialog */
- /*        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                jdEstado dialog = new jdEstado(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        //</editor-fold>
-
-        /* Create and display the dialog */
- /*        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                jdEstado dialog = new jdEstado(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        //</editor-fold>
-
-        /* Create and display the dialog */
- /*        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                jdEstado dialog = new jdEstado(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        //</editor-fold>
-
-        /* Create and display the dialog */
- /*        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                jdEstado dialog = new jdEstado(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        //</editor-fold>
-
-        /* Create and display the dialog */
- /*        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                jdEstado dialog = new jdEstado(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        //</editor-fold>
-
-        /* Create and display the dialog */
- /*        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                jdEstado dialog = new jdEstado(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        //</editor-fold>
-
-        /* Create and display the dialog */
- /*        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                jdEstado dialog = new jdEstado(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        //</editor-fold>
-
-        /* Create and display the dialog */
- /*        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                jdEstado dialog = new jdEstado(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });*/
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -56,9 +56,9 @@ public class jdMaximoRendimiento extends javax.swing.JDialog {
 
     public void rellenaCombos() {
         String[] datos;
-        datos = mdb.cargarCombos("SELECT descripcion from procesocafe").split(",");
+        datos = mdb.cargarCombos("SELECT descripcion from procesocafe").split("#");
         comboProceso.setModel(new DefaultComboBoxModel((Object[]) datos));
-        datos = mdb.cargarCombos("SELECT descripcion from formacafe").split(",");
+        datos = mdb.cargarCombos("SELECT descripcion from formacafe").split("#");
         comboForma.setModel(new DefaultComboBoxModel((Object[]) datos));
     }
 
@@ -71,20 +71,30 @@ public class jdMaximoRendimiento extends javax.swing.JDialog {
         String f = comboForma.getSelectedItem() + "";
 
         if (tipo.equals("1")) {
-            sql = "INSERT INTO maximorendimiento VALUES(null,'" + txtRendimiento.getText()
-                    + "','" + mdb.devuelveId("select id from procesocafe where descripcion='" + p + "'") + "',"
-                    + "'" + mdb.devuelveId("select id from formacafe where descripcion='" + f + "'") + "',1, 1,current_date(),current_time(), 1, 1, 1, 1 )";
-            mdb.insertarBasicos(sql);
-            jpMR.llenaTabla();
-            this.dispose();
+            if (mdb.comprobarExistencia("select id_proceso, id_forma from maximorendimiento "
+                    + "where id_proceso=" + mdb.devuelveId("select id from procesocafe where descripcion='" + p + "'") + " "
+                    + "and id_forma=" + mdb.devuelveId("select id from formacafe where descripcion='" + f + "'")) == null) {
+
+                sql = "INSERT INTO maximorendimiento VALUES(null,'" + txtRendimiento.getText()
+                        + "','" + mdb.devuelveId("select id from procesocafe where descripcion='" + p + "'") + "',"
+                        + "'" + mdb.devuelveId("select id from formacafe where descripcion='" + f + "'") + "',1, 1,current_date(),current_time(), 1, 1, 1, 1 )";
+
+                mdb.insertarBasicos(sql);
+                jpMR.busqueda();
+                this.dispose();
+            } else {
+                JOptionPane.showMessageDialog(null, "Dato Repetido");
+            }
         } else {
             //CAMBIAR WHERE RENDIMIENTO POR ID DEL REGISTRO.
             sql = "UPDATE maximorendimiento SET rendimiento='" + txtRendimiento.getText() + "', "
-                    + "id_proceso='" + mdb.devuelveId("select id from procesocafe where descripcion='" + p + "'") + "', "
-                    + "id_forma='" + mdb.devuelveId("select id from formacafe where descripcion='" + f + "'")
-                    + "' where rendimiento='" + rendimiento + "' ";
+                    + "id_proceso=" + mdb.devuelveId("select id from procesocafe where descripcion='" + p + "' ") + ", "
+                    + "id_forma=" + mdb.devuelveId("select id from formacafe where descripcion='" + f + "'")+" "
+                    + "where id_proceso=" + mdb.devuelveId("select id from procesocafe where descripcion='" + proceso + "'") + " "
+                    + "and id_forma=" + mdb.devuelveId("select id from formacafe where descripcion='" + forma + "'");
+                    
             mdb.actualizarBasicos(sql);
-            jpMR.llenaTabla();
+            jpMR.busqueda();
             this.dispose();
         }
     }

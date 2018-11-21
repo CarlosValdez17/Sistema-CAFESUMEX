@@ -34,13 +34,7 @@ public class jpActividadesParcela extends javax.swing.JPanel {
         mdb = new metodosDatosBasicos(cn);
         modelo = (DefaultTableModel) tablaActividades.getModel();
 
-        llenaTabla();
-    }
-
-    public void llenaTabla() {
-        limpiar(tablaActividades);
-        String sql = "select actividad, descripcion from actividadesparcelas where ID_Situacion=1";
-        mdb.cargarInformacion2(modelo, 2, sql);
+        busqueda();
     }
 
     public void busqueda() {
@@ -56,20 +50,26 @@ public class jpActividadesParcela extends javax.swing.JPanel {
         }
 
         if (txtBusquedaActividad.getText().length() > 0) {
-            tipoE = " AND actividad like '" + txtBusquedaActividad.getText() + "%'";
+            tipoE = " AND a.actividad like '" + txtBusquedaActividad.getText() + "%'";
         }
         if (txtBusquedaDescripcion.getText().length() > 0) {
-            tipoP = " AND descripcion like '" + txtBusquedaDescripcion.getText() + "%'";
+            tipoP = " AND a.descripcion like '" + txtBusquedaDescripcion.getText() + "%'";
         }
 
         String sql;
         if (situacion.equals("Todos")) {
-            sql = "select actividad, descripcion from actividadesparcelas where ID_Situacion <> 3" + tipoE + tipoP;
+            sql = "select a.actividad, a.descripcion, s.descripcion "
+                    + "from actividadesparcelas a "
+                    + "inner join situacion s on (a.id_situacion=s.id) "
+                    + "where a.ID_Situacion <> 3" + tipoE + tipoP;
         } else {
-            sql = "select actividad, descripcion from actividadesparcelas where ID_Situacion=" + situacion + tipoE + tipoP;
+            sql = "select a.actividad, a.descripcion, s.descripcion "
+                    + "from actividadesparcelas a "
+                    + "inner join situacion s on (a.id_situacion=s.id) "
+                    + "where a.ID_Situacion=" + situacion + tipoE + tipoP;
         }
         limpiar(tablaActividades);
-        mdb.cargarInformacion2(modelo, 2, sql);
+        mdb.cargarInformacion2(modelo, 3, sql);
 
     }
 
@@ -162,11 +162,11 @@ public class jpActividadesParcela extends javax.swing.JPanel {
 
             },
             new String [] {
-                "Actividad", "Descripcion"
+                "Actividad", "Descripcion", "Situacion"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false
+                false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -182,6 +182,7 @@ public class jpActividadesParcela extends javax.swing.JPanel {
         if (tablaActividades.getColumnModel().getColumnCount() > 0) {
             tablaActividades.getColumnModel().getColumn(0).setResizable(false);
             tablaActividades.getColumnModel().getColumn(1).setResizable(false);
+            tablaActividades.getColumnModel().getColumn(2).setResizable(false);
         }
 
         jLabel10.setText("Situacion");
@@ -314,23 +315,25 @@ public class jpActividadesParcela extends javax.swing.JPanel {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        jdAP = new jdActividadesParcela(null, true, "1", actividadesparcela,desc, cn);
+        jdAP = new jdActividadesParcela(null, true, "1", actividadesparcela, desc, cn);
         jdAP.jpAP = this;
         jdAP.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
-    String actividadesparcela = "", desc = "";
+    String actividadesparcela = "", desc = "", situacion = "";
     private void tablaActividadesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaActividadesMouseClicked
         // TODO add your handling code here:
-        actividadesparcela = modelo.getValueAt(tablaActividades.getSelectedRow(), 0) + "";  
-        desc = modelo.getValueAt(tablaActividades.getSelectedRow(), 1) + "";  
+        actividadesparcela = tablaActividades.getValueAt(tablaActividades.getSelectedRow(), 0) + "";
+        desc = tablaActividades.getValueAt(tablaActividades.getSelectedRow(), 1) + "";
+        situacion = tablaActividades.getValueAt(tablaActividades.getSelectedRow(), 2) + "";
 
-        if (evt.getClickCount() == 1) {
-            // System.out.println("1 Clic");
-        }
         if (evt.getClickCount() == 2) {
-            jdAP = new jdActividadesParcela(null, true, "2", actividadesparcela,desc, cn);
-            jdAP.jpAP = this;
-            jdAP.setVisible(true);
+            if (situacion.equals("Activo")) {
+                jdAP = new jdActividadesParcela(null, true, "2", actividadesparcela, desc, cn);
+                jdAP.jpAP = this;
+                jdAP.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(null, "Dato Inactivo");
+            }
         }
     }//GEN-LAST:event_tablaActividadesMouseClicked
 
@@ -339,9 +342,13 @@ public class jpActividadesParcela extends javax.swing.JPanel {
         if (actividadesparcela.equals("")) {
             JOptionPane.showMessageDialog(null, "Seleccione un actividadesparcela");
         } else {
-            jdAP = new jdActividadesParcela(null, true, "2", actividadesparcela,desc, cn);
-            jdAP.jpAP = this;
-            jdAP.setVisible(true);
+            if (situacion.equals("Activo")) {
+                jdAP = new jdActividadesParcela(null, true, "2", actividadesparcela, desc, cn);
+                jdAP.jpAP = this;
+                jdAP.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(null, "Dato Inactivo");
+            }
         }
     }//GEN-LAST:event_jButton3ActionPerformed
 
@@ -354,17 +361,27 @@ public class jpActividadesParcela extends javax.swing.JPanel {
         // TODO add your handling code here:
         busqueda();
     }//GEN-LAST:event_txtBusquedaDescripcionKeyReleased
-
+    String estatus = "2";
     private void comboSituacionItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionItemStateChanged
         // TODO add your handling code here:
+        if (comboSituacion.getSelectedItem().equals("Inactivo")) {
+            estatus = "1";
+            jButton4.setText("Activar");
+        } else {
+            estatus = "2";
+            jButton4.setText("Desactivar");
+        }
         busqueda();
     }//GEN-LAST:event_comboSituacionItemStateChanged
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        String sql = "UPDATE actividadesparcelas SET ID_Situacion=2 where actividad='" + actividadesparcela + "'";
-        mdb.actualizarBasicos(sql);
-        llenaTabla();
+        if (estatus.equals("2")) {
+            mdb.actualizarBasicos("UPDATE actividadesparcelas SET ID_Situacion=2 where actividad='" + actividadesparcela + "'");
+        } else if (estatus.equals("1")) {
+            mdb.actualizarBasicos("UPDATE actividadesparcelas SET ID_Situacion=1 where actividad='" + actividadesparcela + "'");
+        }
+        busqueda();
     }//GEN-LAST:event_jButton4ActionPerformed
 
 

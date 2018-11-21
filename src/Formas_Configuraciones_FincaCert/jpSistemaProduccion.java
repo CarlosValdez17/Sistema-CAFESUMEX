@@ -7,6 +7,7 @@ package Formas_Configuraciones_FincaCert;
 
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.Connection;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
@@ -26,19 +27,12 @@ public class jpSistemaProduccion extends javax.swing.JPanel {
 
     public jpSistemaProduccion(Connection c) {
         initComponents();
-        
+
         cn = c;
         mdb = new metodosDatosBasicos(cn);
         modelo = (DefaultTableModel) tablaSP.getModel();
 
-        llenaTabla();
-    }
-    
-    
-    public void llenaTabla() {
-        limpiar(tablaSP);
-        mdb = new metodosDatosBasicos(cn);
-        mdb.cargarInformacion2(modelo, 1, "select descripcion from tipoproduccion where id_Situacion=1");
+        busqueda();
     }
 
     public void busqueda() {
@@ -54,18 +48,23 @@ public class jpSistemaProduccion extends javax.swing.JPanel {
         }
 
         if (txtBusquedaSP.getText().length() > 0) {
-            tipoB = "AND descripcion like '" + txtBusquedaSP.getText() + "%'";
+            tipoB = "AND t.descripcion like '" + txtBusquedaSP.getText() + "%'";
         }
 
         String sql;
         if (situacion.equals("Todos")) {
-            sql = "SELECT descripcion from tipoproduccion where ID_Situacion <> 3 " + tipoB;
+            sql = "SELECT t.descripcion, s.descripcion "
+                    + "from tipoproduccion t "
+                    + "inner join situacion s on (t.id_situacion = s.id) "
+                    + "where t.ID_Situacion <> 3 " + tipoB;
         } else {
-            sql = "SELECT descripcion from tipoproduccion where ID_SItuacion=" + situacion + " " + tipoB;
+            sql = "SELECT t.descripcion, s.descripcion "
+                    + "from tipoproduccion t "
+                    + "inner join situacion s on (t.id_situacion = s.id) "
+                    + "where t.ID_SItuacion=" + situacion + " " + tipoB;
         }
-        //System.out.println(sql);
         limpiar(tablaSP);
-        mdb.cargarInformacion2(modelo, 1, sql);
+        mdb.cargarInformacion2(modelo, 2, sql);
     }
 
     private void limpiar(JTable tabla) {
@@ -73,7 +72,6 @@ public class jpSistemaProduccion extends javax.swing.JPanel {
             ((DefaultTableModel) tabla.getModel()).removeRow(0);
         }
     }
-
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -136,11 +134,11 @@ public class jpSistemaProduccion extends javax.swing.JPanel {
 
             },
             new String [] {
-                "Sistema de Produccion"
+                "Sistema de Produccion", "Situacion"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false
+                false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -155,6 +153,7 @@ public class jpSistemaProduccion extends javax.swing.JPanel {
         jScrollPane2.setViewportView(tablaSP);
         if (tablaSP.getColumnModel().getColumnCount() > 0) {
             tablaSP.getColumnModel().getColumn(0).setResizable(false);
+            tablaSP.getColumnModel().getColumn(1).setResizable(false);
         }
 
         jLabel10.setText("Situacion");
@@ -295,23 +294,32 @@ public class jpSistemaProduccion extends javax.swing.JPanel {
         busqueda();
     }//GEN-LAST:event_txtBusquedaSPKeyReleased
 
-    String variedad;
+    String variedad = "", situacion = "";
     private void tablaSPMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaSPMouseClicked
         // TODO add your handling code here:
-        variedad = modelo.getValueAt(tablaSP.getSelectedRow(), 0) + "";  //pais
+        variedad = tablaSP.getValueAt(tablaSP.getSelectedRow(), 0) + "";  //pais
+        situacion = tablaSP.getValueAt(tablaSP.getSelectedRow(), 1) + "";
 
-        if (evt.getClickCount() == 1) {
-            System.out.println("1 Clic");
-        }
         if (evt.getClickCount() == 2) {
-            jdSP = new jdSistemaProduccion(null, true, "2", variedad, cn);
-            jdSP.jpSP = this;
-            jdSP.setVisible(true);
+            if (situacion.equals("Activo")) {
+                jdSP = new jdSistemaProduccion(null, true, "2", variedad, cn);
+                jdSP.jpSP = this;
+                jdSP.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(null, "Dato Inactivo");
+            }
         }
     }//GEN-LAST:event_tablaSPMouseClicked
-
+    String estatus = "2";
     private void comboSituacionSPItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionSPItemStateChanged
         // TODO add your handling code here:
+        if (comboSituacionSP.getSelectedItem().equals("Inactivo")) {
+            estatus = "1";
+            jButton4.setText("Activar");
+        } else {
+            estatus = "2";
+            jButton4.setText("Desactivar");
+        }
         busqueda();
     }//GEN-LAST:event_comboSituacionSPItemStateChanged
 
@@ -324,15 +332,23 @@ public class jpSistemaProduccion extends javax.swing.JPanel {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        jdSP = new jdSistemaProduccion(null, true, "2", variedad, cn);
-        jdSP.jpSP = this;
-        jdSP.setVisible(true);
+        if (situacion.equals("Activo")) {
+            jdSP = new jdSistemaProduccion(null, true, "2", variedad, cn);
+            jdSP.jpSP = this;
+            jdSP.setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(null, "Dato Inactivo");
+        }
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        mdb.actualizarBasicos("UPDATE tipoproduccion SET ID_Situacion=2 where descripcion='" + variedad + "'");
-        llenaTabla();
+        if (estatus.equals("2")) {
+            mdb.actualizarBasicos("UPDATE tipoproduccion SET ID_Situacion=2 where descripcion='" + variedad + "'");
+        } else if (estatus.equals("1")) {
+            mdb.actualizarBasicos("UPDATE tipoproduccion SET ID_Situacion=1 where descripcion='" + variedad + "'");
+        }
+        busqueda();
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed

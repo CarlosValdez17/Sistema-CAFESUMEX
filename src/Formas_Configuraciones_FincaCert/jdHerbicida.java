@@ -8,6 +8,7 @@ package Formas_Configuraciones_FincaCert;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -22,45 +23,45 @@ public class jdHerbicida extends javax.swing.JDialog {
     Connection cn;
     metodosDatosBasicos mdb;
     String tipo, dato;
- validaConfi valiConf;
+    validaConfi valiConf;
 
     public jdHerbicida(java.awt.Frame parent, boolean modal, String tipo, String dato, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
-valiConf = new validaConfi();
+        valiConf = new validaConfi();
         cn = c;
         this.dato = dato;
         this.tipo = tipo;
 
         mdb = new metodosDatosBasicos(cn);
-        
+
         if (tipo.equals("1")) {
             setTitle("Nuevo Herbicida");
         } else {
             setTitle("Editar Herbicidas");
-            txtPlantacion.setText(dato);
+            txtHerbicida.setText(dato);
         }
     }
 
     public void tipoProceso() {
         try {
             String sql = "";
-
-            if (tipo.equals("1")) {
-                //nuevoPais();
-                sql = "INSERT INTO herbicidas VALUES(null,'" + txtPlantacion.getText() + "', 1, 1,current_date()"
-                        + ", current_time(), 1, 1, 1, 1 )";
-                mdb.insertarBasicos(sql);
-                jpH.llenaTabla();
-                this.dispose();
+            if (mdb.comprobarExistencia("select descripcion from herbicidas where descripcion='" + txtHerbicida.getText() + "'") == null) {
+                if (tipo.equals("1")) {
+                    sql = "INSERT INTO herbicidas VALUES(null,'" + txtHerbicida.getText() + "', 1, 1,current_date()"
+                            + ", current_time(), 1, 1, 1, 1 )";
+                    mdb.insertarBasicos(sql);
+                    jpH.busqueda();
+                    this.dispose();
+                } else {
+                    sql = "UPDATE herbicidas SET  descripcion ='" + txtHerbicida.getText() + "' where descripcion='" + dato + "' ";
+                    mdb.actualizarBasicos(sql);
+                    jpH.busqueda();
+                    this.dispose();
+                }
             } else {
-                //editarPais();
-                sql = "UPDATE herbicidas SET  descripcion ='" + txtPlantacion.getText() + "' where descripcion='" + dato + "' ";
-                mdb.actualizarBasicos(sql);
-                jpH.llenaTabla();
-                this.dispose();
-
+                JOptionPane.showMessageDialog(null, "Dato Repetido");
             }
         } catch (Exception e) {
         }
@@ -77,20 +78,20 @@ valiConf = new validaConfi();
 
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        txtPlantacion = new javax.swing.JTextField();
+        txtHerbicida = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        jLabel1.setText("Diseñp Plantacion");
+        jLabel1.setText("Herbicida");
 
-        txtPlantacion.addKeyListener(new java.awt.event.KeyAdapter() {
+        txtHerbicida.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtPlantacionKeyReleased(evt);
+                txtHerbicidaKeyReleased(evt);
             }
             public void keyTyped(java.awt.event.KeyEvent evt) {
-                txtPlantacionKeyTyped(evt);
+                txtHerbicidaKeyTyped(evt);
             }
         });
 
@@ -115,7 +116,7 @@ valiConf = new validaConfi();
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtPlantacion)
+                    .addComponent(txtHerbicida)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(0, 0, Short.MAX_VALUE))
@@ -131,7 +132,7 @@ valiConf = new validaConfi();
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtPlantacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtHerbicida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
@@ -163,21 +164,22 @@ valiConf = new validaConfi();
         this.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
 
-    private void txtPlantacionKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPlantacionKeyReleased
-     if (txtPlantacion.getText().length() != 0) {
-            txtPlantacion.setText(valiConf.primerLetraMayuscula(txtPlantacion.getText()).replace("S/n", "S/N"));
-            txtPlantacion.setText(valiConf.primerLetraMayuscula(txtPlantacion.getText()).replace("S/d", "S/D"));
-            txtPlantacion.setText(valiConf.primerLetraMayuscula(txtPlantacion.getText()).replace("S/o", "S/O"));
+    private void txtHerbicidaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtHerbicidaKeyReleased
+        txtHerbicida.setText(txtHerbicida.getText().toLowerCase());
+        if (txtHerbicida.getText().length() != 0) {
+            txtHerbicida.setText(valiConf.primerLetraMayuscula(txtHerbicida.getText()).replace("S/n", "S/N"));
+            txtHerbicida.setText(valiConf.primerLetraMayuscula(txtHerbicida.getText()).replace("S/d", "S/D"));
+            txtHerbicida.setText(valiConf.primerLetraMayuscula(txtHerbicida.getText()).replace("S/o", "S/O"));
         }   // TODO add your handling code here:
-    }//GEN-LAST:event_txtPlantacionKeyReleased
+    }//GEN-LAST:event_txtHerbicidaKeyReleased
 
-    private void txtPlantacionKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPlantacionKeyTyped
-char c = evt.getKeyChar();
+    private void txtHerbicidaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtHerbicidaKeyTyped
+        char c = evt.getKeyChar();
         if (Character.isDigit(c)) {//if (Character.isLetter(c)){
             getToolkit().beep();
             evt.consume();
         }        // TODO add your handling code here:
-    }//GEN-LAST:event_txtPlantacionKeyTyped
+    }//GEN-LAST:event_txtHerbicidaKeyTyped
 
     /**
      * @param args the command line arguments
@@ -206,117 +208,6 @@ char c = evt.getKeyChar();
         }
         //</editor-fold>
 
-        /* Create and display the dialog */
- /*  java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                jdVariedadCafe dialog = new jdVariedadCafe(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        //</editor-fold>
-
-        /* Create and display the dialog */
- /*  java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                jdVariedadCafe dialog = new jdVariedadCafe(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        //</editor-fold>
-
-        /* Create and display the dialog */
- /*  java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                jdVariedadCafe dialog = new jdVariedadCafe(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        //</editor-fold>
-
-        /* Create and display the dialog */
- /*  java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                jdVariedadCafe dialog = new jdVariedadCafe(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        //</editor-fold>
-
-        /* Create and display the dialog */
- /*  java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                jdVariedadCafe dialog = new jdVariedadCafe(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        //</editor-fold>
-
-        /* Create and display the dialog */
- /*  java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                jdVariedadCafe dialog = new jdVariedadCafe(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        //</editor-fold>
-
-        /* Create and display the dialog */
- /*  java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                jdVariedadCafe dialog = new jdVariedadCafe(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        //</editor-fold>
-
-        /* Create and display the dialog */
- /*  java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                jdVariedadCafe dialog = new jdVariedadCafe(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });*/
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -324,6 +215,6 @@ char c = evt.getKeyChar();
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField txtPlantacion;
+    private javax.swing.JTextField txtHerbicida;
     // End of variables declaration//GEN-END:variables
 }

@@ -8,8 +8,10 @@ package Formas_Configuraciones_FincaCert;
 import FormasGenerales.pantallaPrincipal;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.Connection;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 
 /**
  *
@@ -27,18 +29,21 @@ public class jpTipoSombra extends javax.swing.JPanel {
 
     public jpTipoSombra(Connection c) {
         initComponents();
-
         cn = c;
         mdb = new metodosDatosBasicos(cn);
         modelo = (DefaultTableModel) tablaTS.getModel();
-
+        tablaTS.getTableHeader().setReorderingAllowed(false);
+        tablaTS.setRowSorter(new TableRowSorter(modelo));
         llenaTablaTS();
     }
 
     public void llenaTablaTS() {
         limpiar(tablaTS);
         mdb = new metodosDatosBasicos(cn);
-        mdb.cargarInformacion2(modelo, 1, "select descripcion from tiposombra where id_Situacion=1");
+        mdb.cargarInformacion2(modelo, 2, "select t.descripcion, s.descripcion "
+                + "from tiposombra t "
+                + "inner join situacion s on (t.id_situacion=s.id)"
+                + "where t.id_Situacion=1");
     }
 
     public void busquedaGiro() {
@@ -54,18 +59,24 @@ public class jpTipoSombra extends javax.swing.JPanel {
         }
 
         if (txtBusquedaTS.getText().length() > 0) {
-            tipoB = "AND descripcion like '" + txtBusquedaTS.getText() + "%'";
+            tipoB = "AND t.descripcion like '" + txtBusquedaTS.getText() + "%'";
         }
 
         String sql;
         if (situacion.equals("Todos")) {
-            sql = "SELECT descripcion from tiposombra where ID_Situacion <> 3 " + tipoB;
+            sql = "select t.descripcion, s.descripcion "
+                    + "from tiposombra t "
+                    + "inner join situacion s on (t.id_situacion=s.id) "
+                    + "where t.ID_Situacion <> 3 " + tipoB;
         } else {
-            sql = "SELECT descripcion from tiposombra where ID_SItuacion=" + situacion + " " + tipoB;
+            sql = "select t.descripcion, s.descripcion "
+                    + "from tiposombra t "
+                    + "inner join situacion s on (t.id_situacion=s.id)"
+                    + " where t.ID_SItuacion=" + situacion + " " + tipoB;
         }
-        System.out.println(sql);
+        //System.out.println(sql);
         limpiar(tablaTS);
-        mdb.cargarInformacion2(modelo, 1, sql);
+        mdb.cargarInformacion2(modelo, 2, sql);
 
     }
 
@@ -136,11 +147,11 @@ public class jpTipoSombra extends javax.swing.JPanel {
 
             },
             new String [] {
-                "Tipo de Sombra"
+                "Tipo de Sombra", "Situacion"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false
+                false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -155,6 +166,7 @@ public class jpTipoSombra extends javax.swing.JPanel {
         jScrollPane2.setViewportView(tablaTS);
         if (tablaTS.getColumnModel().getColumnCount() > 0) {
             tablaTS.getColumnModel().getColumn(0).setResizable(false);
+            tablaTS.getColumnModel().getColumn(1).setResizable(false);
         }
 
         jLabel10.setText("Situacion");
@@ -294,23 +306,32 @@ public class jpTipoSombra extends javax.swing.JPanel {
         // TODO add your handling code here:
         busquedaGiro();
     }//GEN-LAST:event_txtBusquedaTSKeyReleased
-    String sombra = "";
+    String sombra = "", situacion = "";
     private void tablaTSMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaTSMouseClicked
         // TODO add your handling code here:
-        sombra = modelo.getValueAt(tablaTS.getSelectedRow(), 0) + "";  //pais
+        sombra = tablaTS.getValueAt(tablaTS.getSelectedRow(), 0) + "";  //pais
+        situacion = tablaTS.getValueAt(tablaTS.getSelectedRow(), 1) + "";
 
-        if (evt.getClickCount() == 1) {
-            System.out.println("1 Clic");
-        }
         if (evt.getClickCount() == 2) {
-            jdTS = new jdTipoSombra(null, true, "2", sombra, cn);
-            jdTS.jpTS = this;
-            jdTS.setVisible(true);
+            if (situacion.equals("Activo")) {
+                jdTS = new jdTipoSombra(null, true, "2", sombra, cn);
+                jdTS.jpTS = this;
+                jdTS.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(null, "Dato Inactivo");
+            }
         }
     }//GEN-LAST:event_tablaTSMouseClicked
-
+    String estatus = "";
     private void comboSituacionTipoSombraItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionTipoSombraItemStateChanged
         // TODO add your handling code here:
+        if (comboSituacionTipoSombra.getSelectedItem().equals("Inactivo")) {
+            jButton4.setText("Activar");
+            estatus = "1";
+        } else {
+            estatus = "2";
+            jButton4.setText("Desactivar");
+        }
         busquedaGiro();
     }//GEN-LAST:event_comboSituacionTipoSombraItemStateChanged
 
@@ -323,20 +344,28 @@ public class jpTipoSombra extends javax.swing.JPanel {
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        mdb.actualizarBasicos("UPDATE tiposombra SET ID_Situacion=2 where descripcion='" + sombra+ "'");
+        if (estatus.equals("2")) {
+            mdb.actualizarBasicos("UPDATE tiposombra SET ID_Situacion=2 where descripcion='" + sombra + "'");
+        } else if (estatus.equals("1")) {
+            mdb.actualizarBasicos("UPDATE tiposombra SET ID_Situacion=1 where descripcion='" + sombra + "'");
+        }
         llenaTablaTS();
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        jdTS = new jdTipoSombra(null, true, "1", sombra, cn);
-        jdTS.jpTS = this;
-        jdTS.setVisible(true);
+        if (situacion.equals("Activo")) {
+            jdTS = new jdTipoSombra(null, true, "2", sombra, cn);
+            jdTS.jpTS = this;
+            jdTS.setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(null, "Dato Inactivo");
+        }
     }//GEN-LAST:event_jButton3ActionPerformed
-    
+
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
-        
+
     }//GEN-LAST:event_jButton5ActionPerformed
 
 

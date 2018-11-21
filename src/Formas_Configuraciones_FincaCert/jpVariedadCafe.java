@@ -7,6 +7,7 @@ package Formas_Configuraciones_FincaCert;
 
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.Connection;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
@@ -26,19 +27,21 @@ public class jpVariedadCafe extends javax.swing.JPanel {
 
     public jpVariedadCafe(Connection c) {
         initComponents();
-        
+
         cn = c;
         mdb = new metodosDatosBasicos(cn);
         modelo = (DefaultTableModel) tablaVariedad.getModel();
 
         llenaTabla();
     }
-    
-    
+
     public void llenaTabla() {
         limpiar(tablaVariedad);
         mdb = new metodosDatosBasicos(cn);
-        mdb.cargarInformacion2(modelo, 1, "select descripcion from variedadcafe where id_Situacion=1");
+        mdb.cargarInformacion2(modelo, 2, "select v.descripcion, s.descripcion "
+                + "from variedadcafe v "
+                + "inner join situacion s on (v.id_situacion=s.id)"
+                + "where v.id_Situacion=1");
     }
 
     public void busqueda() {
@@ -54,18 +57,24 @@ public class jpVariedadCafe extends javax.swing.JPanel {
         }
 
         if (txtBusquedaVariedad.getText().length() > 0) {
-            tipoB = "AND descripcion like '" + txtBusquedaVariedad.getText() + "%'";
+            tipoB = "AND v.descripcion like '" + txtBusquedaVariedad.getText() + "%'";
         }
 
         String sql;
         if (situacion.equals("Todos")) {
-            sql = "SELECT descripcion from variedadcafe where ID_Situacion <> 3 " + tipoB;
+            sql = "select v.descripcion, s.descripcion "
+                    + "from variedadcafe v "
+                    + "inner join situacion s on (v.id_situacion=s.id) "
+                    + "where v.ID_Situacion <> 3 " + tipoB;
         } else {
-            sql = "SELECT descripcion from variedadcafe where ID_SItuacion=" + situacion + " " + tipoB;
+            sql = "select v.descripcion, s.descripcion "
+                    + "from variedadcafe v "
+                    + "inner join situacion s on (v.id_situacion=s.id) "
+                    + "where v.ID_SItuacion=" + situacion + " " + tipoB;
         }
         //System.out.println(sql);
         limpiar(tablaVariedad);
-        mdb.cargarInformacion2(modelo, 1, sql);
+        mdb.cargarInformacion2(modelo, 2, sql);
     }
 
     private void limpiar(JTable tabla) {
@@ -73,7 +82,6 @@ public class jpVariedadCafe extends javax.swing.JPanel {
             ((DefaultTableModel) tabla.getModel()).removeRow(0);
         }
     }
-
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -131,16 +139,17 @@ public class jpVariedadCafe extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        tablaVariedad.setAutoCreateRowSorter(true);
         tablaVariedad.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Variedad de Cafe"
+                "Variedad de Cafe", "Situacion"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false
+                false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -155,6 +164,7 @@ public class jpVariedadCafe extends javax.swing.JPanel {
         jScrollPane2.setViewportView(tablaVariedad);
         if (tablaVariedad.getColumnModel().getColumnCount() > 0) {
             tablaVariedad.getColumnModel().getColumn(0).setResizable(false);
+            tablaVariedad.getColumnModel().getColumn(1).setResizable(false);
         }
 
         jLabel10.setText("Situacion");
@@ -295,23 +305,33 @@ public class jpVariedadCafe extends javax.swing.JPanel {
         busqueda();
     }//GEN-LAST:event_txtBusquedaVariedadKeyReleased
 
-    String variedad;
+    String variedad = "", situacion = "";
     private void tablaVariedadMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaVariedadMouseClicked
         // TODO add your handling code here:
-        variedad = modelo.getValueAt(tablaVariedad.getSelectedRow(), 0) + "";  //pais
-
-        if (evt.getClickCount() == 1) {
-            System.out.println("1 Clic");
-        }
+        variedad = tablaVariedad.getValueAt(tablaVariedad.getSelectedRow(), 0) + "";  //pais
+        situacion = tablaVariedad.getValueAt(tablaVariedad.getSelectedRow(), 1) + "";
         if (evt.getClickCount() == 2) {
-            jdV = new jdVariedadCafe(null, true, "2", variedad, cn);
-            jdV.jpV = this;
-            jdV.setVisible(true);
+            if (situacion.equals("Activo")) {
+                jdV = new jdVariedadCafe(null, true, "2", variedad, cn);
+                jdV.jpV = this;
+                jdV.setVisible(true);
+            } else if (situacion.equals("Inactivo")) {
+                JOptionPane.showMessageDialog(null, "Dato Inactivo");
+            } else {
+                JOptionPane.showMessageDialog(null, "Error, verifica tu seleccion");
+            }
         }
     }//GEN-LAST:event_tablaVariedadMouseClicked
-
+    String estatus = "";
     private void comboSituacionVariedadItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionVariedadItemStateChanged
         // TODO add your handling code here:
+        if (comboSituacionVariedad.getSelectedItem().equals("Inactivo")) {
+            jButton4.setText("Activar");
+            estatus = "1";
+        } else {
+            estatus = "2";
+            jButton4.setText("Desactivar");
+        }
         busqueda();
     }//GEN-LAST:event_comboSituacionVariedadItemStateChanged
 
@@ -324,14 +344,22 @@ public class jpVariedadCafe extends javax.swing.JPanel {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        jdV = new jdVariedadCafe(null, true, "2", variedad, cn);
-        jdV.jpV = this;
-        jdV.setVisible(true);
+        if (situacion.equals("Activo")) {
+            jdV = new jdVariedadCafe(null, true, "2", variedad, cn);
+            jdV.jpV = this;
+            jdV.setVisible(true);
+        } else if (situacion.equals("Inactivo")) {
+            JOptionPane.showMessageDialog(null,"Dato Inactivo");
+        }
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        mdb.actualizarBasicos("UPDATE variedadcafe SET ID_Situacion=2 where descripcion='" + variedad + "'");
+        if (estatus.equals("2")) {
+            mdb.actualizarBasicos("UPDATE variedadcafe SET ID_Situacion=2 where descripcion='" + variedad + "'");
+        } else if (estatus.equals("1")) {
+            mdb.actualizarBasicos("UPDATE variedadcafe SET ID_Situacion=1 where descripcion='" + variedad + "'");
+        }
         llenaTabla();
     }//GEN-LAST:event_jButton4ActionPerformed
 

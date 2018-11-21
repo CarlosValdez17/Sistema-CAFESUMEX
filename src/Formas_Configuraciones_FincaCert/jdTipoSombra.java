@@ -8,6 +8,7 @@ package Formas_Configuraciones_FincaCert;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -21,19 +22,19 @@ public class jdTipoSombra extends javax.swing.JDialog {
     jpTipoSombra jpTS;
     Connection cn;
     metodosDatosBasicos mdb;
-    String sombra,tipo;
+    String sombra, tipo;
     validaConfi valiConf;
 
     public jdTipoSombra(java.awt.Frame parent, boolean modal, String tipo, String sombra, Connection c) {
         super(parent, modal);
         initComponents();
-         setLocationRelativeTo(null);
+        setLocationRelativeTo(null);
         valiConf = new validaConfi();
         cn = c;
         this.tipo = tipo;
         this.sombra = sombra;
         mdb = new metodosDatosBasicos(cn);
-        
+
         if (tipo.equals("1")) {
             setTitle("Nuevo Tipo de Sombra");
         } else {
@@ -41,30 +42,32 @@ public class jdTipoSombra extends javax.swing.JDialog {
             txtSombra.setText(sombra);
         }
     }
-    
+
     public void tipoProceso() {
         try {
             String sql = "";
-            
+
             if (tipo.equals("1")) {
-                //nuevoPais();
-                sql = "INSERT INTO tiposombra VALUES(null,'" + txtSombra.getText() + "', 1, 1,current_date()"
-                        + ", current_time(), 1, 1, 1, 1 )";
-                mdb.insertarBasicos(sql);
-                jpTS.llenaTablaTS();
-                this.dispose();
+                if (mdb.comprobarExistencia("select descripcion from tiposombra where descripcion='" + txtSombra.getText() + "'") == null) {
+                    sql = "INSERT INTO tiposombra VALUES(null,'" + txtSombra.getText() + "', 1, 1,current_date()"
+                            + ", current_time(), 1, 1, 1, 1 )";
+                    mdb.insertarBasicos(sql);
+                    jpTS.llenaTablaTS();
+                    this.dispose();
+                } else {
+                    JOptionPane.showMessageDialog(null, "Dato Repetido");
+                }
             } else {
                 //editarPais();
                 sql = "UPDATE tiposombra SET  descripcion ='" + txtSombra.getText() + "' where descripcion='" + sombra + "' ";
                 mdb.actualizarBasicos(sql);
                 jpTS.llenaTablaTS();
                 this.dispose();
-                
+
             }
         } catch (Exception e) {
         }
     }
-
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -164,16 +167,17 @@ public class jdTipoSombra extends javax.swing.JDialog {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void txtSombraKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSombraKeyReleased
-     if (txtSombra.getText().length() != 0) {
+        txtSombra.setText(txtSombra.getText().toLowerCase());
+        if (txtSombra.getText().length() != 0) {
             txtSombra.setText(valiConf.primerLetraMayuscula(txtSombra.getText()).replace("S/n", "S/N"));
             txtSombra.setText(valiConf.primerLetraMayuscula(txtSombra.getText()).replace("S/d", "S/D"));
             txtSombra.setText(valiConf.primerLetraMayuscula(txtSombra.getText()).replace("S/o", "S/O"));
         }
-   // TODO add your handling code here:
+        // TODO add your handling code here:
     }//GEN-LAST:event_txtSombraKeyReleased
 
     private void txtSombraKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSombraKeyTyped
-char c = evt.getKeyChar();
+        char c = evt.getKeyChar();
         if (Character.isDigit(c)) {//if (Character.isLetter(c)){
             getToolkit().beep();
             evt.consume();
@@ -208,7 +212,7 @@ char c = evt.getKeyChar();
         //</editor-fold>
 
         /* Create and display the dialog */
-/*        java.awt.EventQueue.invokeLater(new Runnable() {
+ /*        java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 jdTipoSombra dialog = new jdTipoSombra(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {

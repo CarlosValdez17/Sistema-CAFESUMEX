@@ -76,7 +76,7 @@
       <SubComponents>
         <Component class="javax.swing.JLabel" name="jLabel1">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Dise&#xf1;p Plantacion"/>
+            <Property name="text" type="java.lang.String" value="Dise&#xf1;o Plantacion"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="txtDise&#xf1;o">

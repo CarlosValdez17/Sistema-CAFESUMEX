@@ -55,19 +55,22 @@ public class jdFormaCafe extends javax.swing.JDialog {
         mdb = new metodosDatosBasicos(cn);
 
         if (tipo.equals("1")) {
-            //nuevoPais();
-            sql = "INSERT INTO formacafe VALUES(null,'" + txtClav.getText() + "','" + txtForma.getText() + "', "
-                    + "1, 1,current_date(),current_time(), 1, 1, 1, 1 )";
-            mdb.insertarBasicos(sql);
-            jpFC.llenaTabla();
-            this.dispose();
+            if (mdb.comprobarExistencia("select clave from formacafe where clave='" + txtClav.getText() + "'") == null) {
+                sql = "INSERT INTO formacafe VALUES(null,'" + txtClav.getText() + "','" + txtForma.getText() + "', "
+                        + "1, 1,current_date(),current_time(), 1, 1, 1, 1 )";
+                mdb.insertarBasicos(sql);
+                jpFC.busqueda();
+                this.dispose();
+            } else {
+                JOptionPane.showMessageDialog(null, "Dato Repetido");
+            }
         } else {
-            //editarPais();
             sql = "UPDATE formacafe SET clave='" + txtClav.getText() + "', descripcion='" + txtForma.getText() + "' where clave='" + clave + "' ";
             mdb.actualizarBasicos(sql);
-            jpFC.llenaTabla();
+            jpFC.busqueda();
             this.dispose();
         }
+
     }
 
     /**
@@ -198,6 +201,7 @@ public class jdFormaCafe extends javax.swing.JDialog {
 
     private void txtFormaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtFormaKeyReleased
         // TODO add your handling code here:
+        txtForma.setText(txtForma.getText().toLowerCase());
         if (txtForma.getText().length() != 0) {
             txtForma.setText(valiConf.primerLetraMayuscula(txtForma.getText()).replace("S/n", "S/N"));
             txtForma.setText(valiConf.primerLetraMayuscula(txtForma.getText()).replace("S/d", "S/D"));

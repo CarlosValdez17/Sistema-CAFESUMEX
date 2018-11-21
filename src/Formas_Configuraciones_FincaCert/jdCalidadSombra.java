@@ -8,6 +8,7 @@ package Formas_Configuraciones_FincaCert;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.Connection;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
@@ -49,7 +50,6 @@ public class jdCalidadSombra extends javax.swing.JDialog {
 
         } else {
             setTitle("Editar Tipo de Sombra");
-
             comboTipo.addItem(tSombra);
             comboTipo.setSelectedItem(tSombra);
 
@@ -62,7 +62,7 @@ public class jdCalidadSombra extends javax.swing.JDialog {
     String[] datos;
 
     public void rellenarCombos() {
-        datos = mdb.cargarCombos("SELECT descripcion from tiposombra where id_situacion=1").split(",");
+        datos = mdb.cargarCombos("SELECT descripcion from tiposombra where id_situacion=1").split("#");
         comboTipo.setModel(new DefaultComboBoxModel((Object[]) datos));
     }
 
@@ -72,17 +72,20 @@ public class jdCalidadSombra extends javax.swing.JDialog {
         String tipoS = comboTipo.getSelectedItem() + "";
 
         if (tipo.equals("1")) {
-            //nuevo
-            sql = "INSERT INTO calidadsombra VALUES(null," + mdb.devuelveId("select id from tiposombra where descripcion='"+tipoS+"' ") + "," + txtCalidad.getText() + ","
-                    + txtAltura.getText() + "," + txtCobertura.getText() + ", 1, 1,current_date()"
-                    + ", current_time(), 1, 1, 1, 1  )";
-            System.out.println(sql);
-            mdb.insertarBasicos(sql);
-            jpCS.llenaTablaCalidad();
-            this.dispose();
+            if (mdb.comprobarExistencia("select estrellas from calidadsombra where estrellas=" + txtCalidad.getText()) == null) {
+                sql = "INSERT INTO calidadsombra VALUES(null," + mdb.devuelveId("select id from tiposombra where descripcion='" + tipoS + "' ") + "," + txtCalidad.getText() + ","
+                        + txtAltura.getText() + "," + txtCobertura.getText() + ", 1, 1,current_date()"
+                        + ", current_time(), 1, 1, 1, 1  )";
+                System.out.println(sql);
+                mdb.insertarBasicos(sql);
+                jpCS.llenaTablaCalidad();
+                this.dispose();
+            } else {
+                JOptionPane.showMessageDialog(null, "Dato Repetido");
+            }
         } else {
             //editar
-            sql = "UPDATE calidadsombra SET id_tiposombra=" + mdb.devuelveId("select id from tiposombra where descripcion='"+tipoS+"' ") + ","
+            sql = "UPDATE calidadsombra SET id_tiposombra=" + mdb.devuelveId("select id from tiposombra where descripcion='" + tipoS + "' ") + ","
                     + " estrellas=" + txtCalidad.getText() + ",alturasombrametros=" + txtAltura.getText() + ",cobertura="
                     + txtCobertura.getText() + " where id=" + id;
             mdb.actualizarBasicos(sql);
@@ -235,7 +238,7 @@ public class jdCalidadSombra extends javax.swing.JDialog {
 
     private void txtAlturaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAlturaKeyTyped
         char c = evt.getKeyChar();
-        if (Character.isLetter(c)){//if (Character.isLetter(c)){
+        if (Character.isLetter(c)) {//if (Character.isLetter(c)){
             getToolkit().beep();
             evt.consume();
         }        // TODO add your handling code here:
@@ -243,7 +246,7 @@ public class jdCalidadSombra extends javax.swing.JDialog {
 
     private void txtCoberturaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCoberturaKeyTyped
         char c = evt.getKeyChar();
-        if (Character.isDigit(c)) {//if (Character.isLetter(c)){
+        if (Character.isLetter(c)) {//if (Character.isLetter(c)){
             getToolkit().beep();
             evt.consume();
         }        // TODO add your handling code here:

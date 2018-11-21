@@ -58,16 +58,20 @@ public class jdActividadesBH extends javax.swing.JDialog {
 
         if (tipo.equals("1")) {
             //nuevoPais();
-            sql = "INSERT INTO actividadesbh VALUES(null,'" + txtActividad.getText() + "','" + txtDesc.getText() + "', "
-                    + "1, 1,current_date(),current_time(), 1, 1, 1, 1 )";
-            mdb.insertarBasicos(sql);
-            jpABH.llenaTabla();
-            this.dispose();
+            if (mdb.comprobarExistencia("select actividad from actividadesbh where actividad='" + txtActividad.getText() + "'") == null) {
+                sql = "INSERT INTO actividadesbh VALUES(null,'" + txtActividad.getText() + "','" + txtDesc.getText() + "', "
+                        + "1, 1,current_date(),current_time(), 1, 1, 1, 1 )";
+                mdb.insertarBasicos(sql);
+                jpABH.busqueda();
+                this.dispose();
+            } else {
+                JOptionPane.showMessageDialog(null, "Dato Repetido");
+            }
         } else {
             //editarPais();
             sql = "UPDATE actividadesbh SET actividad='" + txtActividad.getText() + "', descripcion='" + txtDesc.getText() + "' where actividad='" + actividad + "' ";
             mdb.actualizarBasicos(sql);
-            jpABH.llenaTabla();
+            jpABH.busqueda();
             this.dispose();
         }
     }
@@ -201,6 +205,8 @@ public class jdActividadesBH extends javax.swing.JDialog {
 
     private void txtActividadKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtActividadKeyReleased
         // TODO add your handling code here:
+        txtActividad.setText(txtActividad.getText().toLowerCase());
+
         if (txtActividad.getText().length() != 0) {
             txtActividad.setText(valConf.primerLetraMayuscula(txtActividad.getText()).replace("S/n", "S/N"));
             txtActividad.setText(valConf.primerLetraMayuscula(txtActividad.getText()).replace("S/d", "S/D"));
@@ -210,6 +216,7 @@ public class jdActividadesBH extends javax.swing.JDialog {
 
     private void txtDescKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDescKeyReleased
         // TODO add your handling code here:
+        txtDesc.setText(txtDesc.getText().toLowerCase());
         if (txtDesc.getText().length() != 0) {
             txtDesc.setText(valConf.primerLetraMayuscula(txtDesc.getText()).replace("S/n", "S/N"));
             txtDesc.setText(valConf.primerLetraMayuscula(txtDesc.getText()).replace("S/d", "S/D"));

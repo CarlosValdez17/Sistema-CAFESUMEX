@@ -33,13 +33,7 @@ public class jpFormaCafe extends javax.swing.JPanel {
         mdb = new metodosDatosBasicos(cn);
         modelo = (DefaultTableModel) tablaFormaCafe.getModel();
 
-        llenaTabla();
-    }
-
-    public void llenaTabla() {
-        limpiar(tablaFormaCafe);
-        String sql = "select clave, descripcion from formacafe where ID_Situacion=1";
-        mdb.cargarInformacion2(modelo, 2, sql);
+        busqueda();
     }
 
     public void busqueda() {
@@ -55,20 +49,26 @@ public class jpFormaCafe extends javax.swing.JPanel {
         }
 
         if (txtBusquedaClave.getText().length() > 0) {
-            tipoE = " AND clave like '" + txtBusquedaClave.getText() + "%'";
+            tipoE = " AND f.clave like '" + txtBusquedaClave.getText() + "%'";
         }
         if (txtBusquedaForma.getText().length() > 0) {
-            tipoP = " AND descripcion like '" + txtBusquedaForma.getText() + "%'";
+            tipoP = " AND f.descripcion like '" + txtBusquedaForma.getText() + "%'";
         }
 
         String sql;
         if (situacion.equals("Todos")) {
-            sql = "select clave, descripcion from formacafe where ID_Situacion <> 3" + tipoE + tipoP;
+            sql = "select f.clave, f.descripcion, s.descripcion "
+                    + "from formacafe f "
+                    + "inner join situacion s on (f.id_situacion=s.id) "
+                    + "where f.ID_Situacion <> 3" + tipoE + tipoP;
         } else {
-            sql = "select clave, descripcion from formacafe where ID_Situacion=" + situacion + tipoE + tipoP;
+            sql = "select f.clave, f.descripcion, s.descripcion "
+                    + "from formacafe f "
+                    + "inner join situacion s on (f.id_situacion=s.id)"
+                    + "where f.ID_Situacion=" + situacion + tipoE + tipoP;
         }
         limpiar(tablaFormaCafe);
-        mdb.cargarInformacion2(modelo, 2, sql);
+        mdb.cargarInformacion2(modelo, 3, sql);
 
     }
 
@@ -161,11 +161,11 @@ public class jpFormaCafe extends javax.swing.JPanel {
 
             },
             new String [] {
-                "Clave", "Forma Cafe"
+                "Clave", "Forma Cafe", "Situacion"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false
+                false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -181,6 +181,7 @@ public class jpFormaCafe extends javax.swing.JPanel {
         if (tablaFormaCafe.getColumnModel().getColumnCount() > 0) {
             tablaFormaCafe.getColumnModel().getColumn(0).setResizable(false);
             tablaFormaCafe.getColumnModel().getColumn(1).setResizable(false);
+            tablaFormaCafe.getColumnModel().getColumn(2).setResizable(false);
         }
 
         jLabel10.setText("Situacion");
@@ -313,23 +314,28 @@ public class jpFormaCafe extends javax.swing.JPanel {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        jdFC = new jdFormaCafe(null, true, "1", clave,desc, cn);
+        jdFC = new jdFormaCafe(null, true, "1", clave, desc, cn);
         jdFC.jpFC = this;
         jdFC.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
-    String clave = "", desc = "";
+    String clave = "", desc = "", situacion = "";
     private void tablaFormaCafeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaFormaCafeMouseClicked
         // TODO add your handling code here:
-        clave = modelo.getValueAt(tablaFormaCafe.getSelectedRow(), 0) + "";  
-        desc = modelo.getValueAt(tablaFormaCafe.getSelectedRow(), 1) + "";  
+        try {
+            clave = tablaFormaCafe.getValueAt(tablaFormaCafe.getSelectedRow(), 0) + "";
+            desc = tablaFormaCafe.getValueAt(tablaFormaCafe.getSelectedRow(), 1) + "";
+            situacion = tablaFormaCafe.getValueAt(tablaFormaCafe.getSelectedRow(), 2) + "";
 
-        if (evt.getClickCount() == 1) {
-            // System.out.println("1 Clic");
-        }
-        if (evt.getClickCount() == 2) {
-            jdFC = new jdFormaCafe(null, true, "2", clave,desc, cn);
-            jdFC.jpFC = this;
-            jdFC.setVisible(true);
+            if (evt.getClickCount() == 2) {
+                if (situacion.equals("Activo")) {
+                    jdFC = new jdFormaCafe(null, true, "2", clave, desc, cn);
+                    jdFC.jpFC = this;
+                    jdFC.setVisible(true);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Dato Inactivo");
+                }
+            }
+        } catch (Exception e) {
         }
     }//GEN-LAST:event_tablaFormaCafeMouseClicked
 
@@ -338,9 +344,13 @@ public class jpFormaCafe extends javax.swing.JPanel {
         if (clave.equals("")) {
             JOptionPane.showMessageDialog(null, "Seleccione un formacafe");
         } else {
-            jdFC = new jdFormaCafe(null, true, "2", clave,desc, cn);
-            jdFC.jpFC = this;
-            jdFC.setVisible(true);
+            if (situacion.equals("Activo")) {
+                jdFC = new jdFormaCafe(null, true, "2", clave, desc, cn);
+                jdFC.jpFC = this;
+                jdFC.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(null, "Dato Inactivo");
+            }
         }
     }//GEN-LAST:event_jButton3ActionPerformed
 
@@ -353,17 +363,27 @@ public class jpFormaCafe extends javax.swing.JPanel {
         // TODO add your handling code here:
         busqueda();
     }//GEN-LAST:event_txtBusquedaFormaKeyReleased
-
+    String estatus = "2";
     private void comboSituacionItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionItemStateChanged
         // TODO add your handling code here:
+        if (comboSituacion.getSelectedItem().equals("Inactivo")) {
+            estatus = "1";
+            jButton4.setText("Activar");
+        } else {
+            estatus = "2";
+            jButton4.setText("Desactivar");
+        }
         busqueda();
     }//GEN-LAST:event_comboSituacionItemStateChanged
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        String sql = "UPDATE formacafe SET ID_Situacion=2 where clave='" + clave + "'";
-        mdb.actualizarBasicos(sql);
-        llenaTabla();
+        if (estatus.equals("2")) {
+            mdb.actualizarBasicos("UPDATE formacafe SET ID_Situacion=2 where clave='" + clave + "'");
+        } else if (estatus.equals("1")) {
+            mdb.actualizarBasicos("UPDATE formacafe SET ID_Situacion=1 where clave='" + clave + "'");
+        }
+        busqueda();
     }//GEN-LAST:event_jButton4ActionPerformed
 
 

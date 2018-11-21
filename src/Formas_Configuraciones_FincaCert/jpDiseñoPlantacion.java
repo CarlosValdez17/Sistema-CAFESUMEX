@@ -7,6 +7,7 @@ package Formas_Configuraciones_FincaCert;
 
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.Connection;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
@@ -26,19 +27,12 @@ public class jpDiseñoPlantacion extends javax.swing.JPanel {
 
     public jpDiseñoPlantacion(Connection c) {
         initComponents();
-        
+
         cn = c;
         mdb = new metodosDatosBasicos(cn);
         modelo = (DefaultTableModel) tablaDiseño.getModel();
 
-        llenaTabla();
-    }
-    
-    
-    public void llenaTabla() {
-        limpiar(tablaDiseño);
-        mdb = new metodosDatosBasicos(cn);
-        mdb.cargarInformacion2(modelo, 1, "select descripcion from diseñoplantacion where id_Situacion=1");
+        busqueda();
     }
 
     public void busqueda() {
@@ -54,18 +48,24 @@ public class jpDiseñoPlantacion extends javax.swing.JPanel {
         }
 
         if (txtBusquedaDiseño.getText().length() > 0) {
-            tipoB = "AND descripcion like '" + txtBusquedaDiseño.getText() + "%'";
+            tipoB = "AND d.descripcion like '" + txtBusquedaDiseño.getText() + "%'";
         }
 
         String sql;
         if (situacion.equals("Todos")) {
-            sql = "SELECT descripcion from diseñoplantacion where ID_Situacion <> 3 " + tipoB;
+            sql = "SELECT d.descripcion, s.descripcion "
+                    + "from diseñoplantacion d "
+                    + "inner join situacion s on (d.id_situacion = s.id) "
+                    + "where d.ID_Situacion <> 3 " + tipoB;
         } else {
-            sql = "SELECT descripcion from diseñoplantacion where ID_SItuacion=" + situacion + " " + tipoB;
+            sql = "SELECT d.descripcion, s.descripcion "
+                    + "from diseñoplantacion d "
+                    + "inner join situacion s on (d.id_situacion = s.id) "
+                    + "where d.ID_SItuacion=" + situacion + " " + tipoB;
         }
         //System.out.println(sql);
         limpiar(tablaDiseño);
-        mdb.cargarInformacion2(modelo, 1, sql);
+        mdb.cargarInformacion2(modelo, 2, sql);
     }
 
     private void limpiar(JTable tabla) {
@@ -73,7 +73,6 @@ public class jpDiseñoPlantacion extends javax.swing.JPanel {
             ((DefaultTableModel) tabla.getModel()).removeRow(0);
         }
     }
-
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -136,11 +135,11 @@ public class jpDiseñoPlantacion extends javax.swing.JPanel {
 
             },
             new String [] {
-                "Diseño Plantacion"
+                "Diseño Plantacion", "Situacion"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false
+                false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -155,6 +154,7 @@ public class jpDiseñoPlantacion extends javax.swing.JPanel {
         jScrollPane2.setViewportView(tablaDiseño);
         if (tablaDiseño.getColumnModel().getColumnCount() > 0) {
             tablaDiseño.getColumnModel().getColumn(0).setResizable(false);
+            tablaDiseño.getColumnModel().getColumn(1).setResizable(false);
         }
 
         jLabel10.setText("Situacion");
@@ -295,23 +295,35 @@ public class jpDiseñoPlantacion extends javax.swing.JPanel {
         busqueda();
     }//GEN-LAST:event_txtBusquedaDiseñoKeyReleased
 
-    String variedad;
+    String variedad = "", situacion = "";
     private void tablaDiseñoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaDiseñoMouseClicked
         // TODO add your handling code here:
-        variedad = modelo.getValueAt(tablaDiseño.getSelectedRow(), 0) + "";  //pais
+        try {
+            variedad = tablaDiseño.getValueAt(tablaDiseño.getSelectedRow(), 0) + "";  //pais
+            situacion = tablaDiseño.getValueAt(tablaDiseño.getSelectedRow(), 1) + "";
 
-        if (evt.getClickCount() == 1) {
-            System.out.println("1 Clic");
-        }
-        if (evt.getClickCount() == 2) {
-            jdD = new jdDiseñoPlantacion(null, true, "2", variedad, cn);
-            jdD.jpD = this;
-            jdD.setVisible(true);
+            if (evt.getClickCount() == 2) {
+                if (situacion.equals("Activo")) {
+                    jdD = new jdDiseñoPlantacion(null, true, "2", variedad, cn);
+                    jdD.jpD = this;
+                    jdD.setVisible(true);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Dato Inactivo");
+                }
+            }
+        } catch (Exception e) {
         }
     }//GEN-LAST:event_tablaDiseñoMouseClicked
-
+    String estatus = "2";
     private void comboSituacionDiseñoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionDiseñoItemStateChanged
         // TODO add your handling code here:
+        if (comboSituacionDiseño.getSelectedItem().equals("Inactivo")) {
+            estatus = "1";
+            jButton4.setText("Activar");
+        } else {
+            estatus = "2";
+            jButton4.setText("Desactivar");
+        }
         busqueda();
     }//GEN-LAST:event_comboSituacionDiseñoItemStateChanged
 
@@ -324,15 +336,27 @@ public class jpDiseñoPlantacion extends javax.swing.JPanel {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        jdD = new jdDiseñoPlantacion(null, true, "2", variedad, cn);
-        jdD.jpD = this;
-        jdD.setVisible(true);
+        if (situacion.equals("Activo")) {
+            jdD = new jdDiseñoPlantacion(null, true, "2", variedad, cn);
+            jdD.jpD = this;
+            jdD.setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(null, "Dato Inactivo");
+        }
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        mdb.actualizarBasicos("UPDATE diseñoplantacion SET ID_Situacion=2 where descripcion='" + variedad + "'");
-        llenaTabla();
+        if (estatus.equals("2")) {
+            mdb.actualizarBasicos("UPDATE diseñoplantacion SET ID_Situacion=2 where descripcion='" + variedad + "'");
+            busqueda();
+        } else if (estatus.equals("1")) {
+            mdb.actualizarBasicos("UPDATE diseñoplantacion SET ID_Situacion=1 where descripcion='" + variedad + "'");
+            busqueda();
+        } else {
+            JOptionPane.showMessageDialog(null, "Error, verifique selección.");
+        }
+
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed

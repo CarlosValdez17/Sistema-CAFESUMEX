@@ -5,6 +5,7 @@
  */
 package Formas_Configuraciones_FincaCert;
 
+import FormasGenerales.pantallaPrincipal;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public class jpCalidadSombra extends javax.swing.JPanel {
     metodosDatosBasicos mdb;
     DefaultTableModel modelo;
     jdCalidadSombra jdCS;
+    public pantallaPrincipal pp;
     Connection cn;
 
     public jpCalidadSombra(Connection c) {
@@ -42,9 +44,10 @@ public class jpCalidadSombra extends javax.swing.JPanel {
 
         limpiar(tablaCalidadSombra);
         mdb = new metodosDatosBasicos(cn);
-        mdb.cargarInformacionPruebaArray(modelo, 5, "select estrellas, alturasombrametros, t.Descripcion, cobertura, c.id \n"
+        mdb.cargarInformacionPruebaArray(modelo, 6, "select estrellas, alturasombrametros, t.Descripcion, cobertura,s.descripcion,c.id \n"
                 + "from calidadsombra c \n"
                 + "inner join tiposombra t on (c.ID_tiposombra=t.ID) \n"
+                + "inner join situacion s on (c.id_situacion=s.id) "
                 + "where c.ID_Situacion=1", array);
     }
 
@@ -78,18 +81,22 @@ public class jpCalidadSombra extends javax.swing.JPanel {
 
         String sql;
         if (situacion.equals("Todos")) {
-            sql = "select estrellas, alturasombrametros, t.Descripcion, cobertura,c.id \n"
+            sql = "select estrellas, alturasombrametros, t.Descripcion, cobertura,s.descripcion,c.id \n"
                     + "from calidadsombra c \n"
                     + "inner join tiposombra t on (c.ID_tiposombra=t.ID) \n"
+                    + "inner join situacion s on (c.id_situacion=s.id) "
                     + "where c.ID_Situacion <> 3 " + tipoP + " " + tipoOIC + " " + tipoUE + " " + tipoISO;
         } else {
-            sql = "select estrellas, alturasombrametros, t.Descripcion, cobertura, c.id \n"
+            sql = "select estrellas, alturasombrametros, t.Descripcion, cobertura,s.descripcion,c.id \n"
                     + "from calidadsombra c \n"
                     + "inner join tiposombra t on (c.ID_tiposombra=t.ID) \n"
+                    + "inner join situacion s on (c.id_situacion=s.id) "
                     + "where c.ID_Situacion=" + situacion + " " + tipoP + " " + tipoOIC + " " + tipoUE + " " + tipoISO;
         }
         limpiar(tablaCalidadSombra);
-        mdb.cargarInformacion2(modelo, 4, sql);
+        array.clear();
+        mdb.cargarInformacionPruebaArray(modelo, 6, sql, array);
+        System.out.println("ARRAY IMPRESO POSICION \n"+array);
 
     }
 
@@ -216,11 +223,11 @@ public class jpCalidadSombra extends javax.swing.JPanel {
 
             },
             new String [] {
-                "Calidad (Estrellas)", "Altura (metros)", "Tipo de Sombra", "Cobertura %"
+                "Calidad (Estrellas)", "Altura (metros)", "Tipo de Sombra", "Cobertura %", "Situacion"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -238,6 +245,7 @@ public class jpCalidadSombra extends javax.swing.JPanel {
             tablaCalidadSombra.getColumnModel().getColumn(1).setResizable(false);
             tablaCalidadSombra.getColumnModel().getColumn(2).setResizable(false);
             tablaCalidadSombra.getColumnModel().getColumn(3).setResizable(false);
+            tablaCalidadSombra.getColumnModel().getColumn(4).setResizable(false);
         }
 
         jLabel10.setText("Situacion");
@@ -271,6 +279,11 @@ public class jpCalidadSombra extends javax.swing.JPanel {
         });
 
         jButton5.setText("Cerrar");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
@@ -387,28 +400,36 @@ public class jpCalidadSombra extends javax.swing.JPanel {
         // TODO add your handling code here:
         busquedaLocalidad();
     }//GEN-LAST:event_txtBusquedaCSKeyReleased
-    String id = "", calidad = "", altura = "", tipo = "", cobertura = "";
+    String id = "", calidad = "", altura = "", tipo = "", cobertura = "", situacion = "";
     private void tablaCalidadSombraMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaCalidadSombraMouseClicked
         // TODO add your handling code here:
-        calidad = modelo.getValueAt(tablaCalidadSombra.getSelectedRow(), 0) + "";  //Estado String
-        altura = modelo.getValueAt(tablaCalidadSombra.getSelectedRow(), 1) + "";
-        tipo = modelo.getValueAt(tablaCalidadSombra.getSelectedRow(), 2) + "";
-        cobertura = modelo.getValueAt(tablaCalidadSombra.getSelectedRow(), 3) + "";
+        calidad = tablaCalidadSombra.getValueAt(tablaCalidadSombra.getSelectedRow(), 0) + "";  //Estado String
+        altura = tablaCalidadSombra.getValueAt(tablaCalidadSombra.getSelectedRow(), 1) + "";
+        tipo = tablaCalidadSombra.getValueAt(tablaCalidadSombra.getSelectedRow(), 2) + "";
+        cobertura = tablaCalidadSombra.getValueAt(tablaCalidadSombra.getSelectedRow(), 3) + "";
+        situacion = tablaCalidadSombra.getValueAt(tablaCalidadSombra.getSelectedRow(), 4) + "";
         id = array.get(tablaCalidadSombra.getSelectedRow());
 
-        if (evt.getClickCount() == 1) {
-            //System.out.println(array);
-            //JOptionPane.showMessageDialog(this,array.get(tablaCalidadSombra.getSelectedRow()) );
-        }
         if (evt.getClickCount() == 2) {
-            jdCS = new jdCalidadSombra(null, true, "2", calidad, altura, tipo, cobertura, id, cn);
-            jdCS.jpCS = this;
-            jdCS.setVisible(true);
+            if (situacion.equals("Activo")) {
+                jdCS = new jdCalidadSombra(null, true, "2", calidad, altura, tipo, cobertura, id, cn);
+                jdCS.jpCS = this;
+                jdCS.setVisible(true);
+            } else if (situacion.equals("Inactivo")) {
+                JOptionPane.showMessageDialog(null, "Dato Inactivo");
+            }
         }
     }//GEN-LAST:event_tablaCalidadSombraMouseClicked
-
+    String estatus = "";
     private void comboSituacionCalidadSombraItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionCalidadSombraItemStateChanged
         // TODO add your handling code here:
+        if (comboSituacionCalidadSombra.getSelectedItem().equals("Inactivo")) {
+            jButton4.setText("Activar");
+            estatus = "1";
+        } else {
+            estatus = "2";
+            jButton4.setText("Desactivar");
+        }
         busquedaLocalidad();
     }//GEN-LAST:event_comboSituacionCalidadSombraItemStateChanged
 
@@ -424,17 +445,30 @@ public class jpCalidadSombra extends javax.swing.JPanel {
         if (calidad.equals("")) {
             JOptionPane.showMessageDialog(null, "Seleccione un estado");
         } else {
-            jdCS = new jdCalidadSombra(null, true, "2", calidad, altura, tipo, cobertura, id, cn);
-            jdCS.jpCS = this;
-            jdCS.setVisible(true);
+            if (situacion.equals("Activo")) {
+                jdCS = new jdCalidadSombra(null, true, "2", calidad, altura, tipo, cobertura, id, cn);
+                jdCS.jpCS = this;
+                jdCS.setVisible(true);
+            } else if (situacion.equals("Inactivo")) {
+                JOptionPane.showMessageDialog(null, "Dato Inactivo");
+            }
         }
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        mdb.actualizarBasicos("UPDATE calidadsombra SET ID_Situacion=2 where id=" + id);
+        if (estatus.equals("2")) {
+            mdb.actualizarBasicos("UPDATE calidadsombra SET ID_Situacion=2 where id=" + id);
+        } else if (estatus.equals("1")) {
+            mdb.actualizarBasicos("UPDATE calidadsombra SET ID_Situacion=1 where id=" + id);
+        }
         llenaTablaCalidad();
     }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        // TODO add your handling code here:
+        pp.pintarPanel("fondo");
+    }//GEN-LAST:event_jButton5ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

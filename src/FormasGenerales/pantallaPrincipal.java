@@ -110,7 +110,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         jButton7.setVisible(false);
 
         DefaultTreeCellRenderer render = (DefaultTreeCellRenderer) jTree1.getCellRenderer();
-        render.setLeafIcon(new ImageIcon(this.getClass().getResource("../Imagenes/database.png")));
+        //render.setLeafIcon(new ImageIcon(this.getClass().getResource("../Imagenes/database.png")));
         render.setOpenIcon(new ImageIcon(this.getClass().getResource("../Imagenes/database.png")));
         render.setClosedIcon(new ImageIcon(this.getClass().getResource("../Imagenes/database.png")));
     }
@@ -202,6 +202,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 break;
             case "Calidad de Sombra":
                 jpCalidadSombra jpCS = new jpCalidadSombra(cn);
+                jpCS.pp=this;
                 jpCS.setSize(size);
                 jpCS.setLocation(0, 0);
                 panelPrincipal.removeAll();

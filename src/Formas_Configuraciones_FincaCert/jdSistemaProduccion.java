@@ -8,6 +8,7 @@ package Formas_Configuraciones_FincaCert;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -22,19 +23,19 @@ public class jdSistemaProduccion extends javax.swing.JDialog {
     Connection cn;
     metodosDatosBasicos mdb;
     String tipo, dato;
-validaConfi valiConf;
+    validaConfi valiConf;
 
     public jdSistemaProduccion(java.awt.Frame parent, boolean modal, String tipo, String dato, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
-valiConf = new validaConfi();
+        valiConf = new validaConfi();
         cn = c;
         this.dato = dato;
         this.tipo = tipo;
 
         mdb = new metodosDatosBasicos(cn);
-        
+
         if (tipo.equals("1")) {
             setTitle("Nuevo Sistema de Produccion");
         } else {
@@ -47,20 +48,22 @@ valiConf = new validaConfi();
         try {
             String sql = "";
 
-            if (tipo.equals("1")) {
-                //nuevoPais();
-                sql = "INSERT INTO tipoproduccion VALUES(null,'" + txtSistema.getText() + "', 1, 1,current_date()"
-                        + ", current_time(), 1, 1, 1, 1 )";
-                mdb.insertarBasicos(sql);
-                jpSP.llenaTabla();
-                this.dispose();
-            } else {
-                //editarPais();
-                sql = "UPDATE tipoproduccion SET  descripcion ='" + txtSistema.getText() + "' where descripcion='" + dato + "' ";
-                mdb.actualizarBasicos(sql);
-                jpSP.llenaTabla();
-                this.dispose();
+            if (mdb.comprobarExistencia("select descripcion from tipoproduccion where descripcion='" + txtSistema.getText() + "'") == null) {
+                if (tipo.equals("1")) {
+                    sql = "INSERT INTO tipoproduccion VALUES(null,'" + txtSistema.getText() + "', 1, 1,current_date()"
+                            + ", current_time(), 1, 1, 1, 1 )";
+                    mdb.insertarBasicos(sql);
+                    jpSP.busqueda();
+                    this.dispose();
+                } else {
+                    sql = "UPDATE tipoproduccion SET  descripcion ='" + txtSistema.getText() + "' where descripcion='" + dato + "' ";
+                    mdb.actualizarBasicos(sql);
+                    jpSP.busqueda();
+                    this.dispose();
 
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Dato Repetido");
             }
         } catch (Exception e) {
         }
@@ -164,16 +167,17 @@ valiConf = new validaConfi();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void txtSistemaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSistemaKeyReleased
-if ( txtSistema.getText().length() != 0) {
-             txtSistema.setText(valiConf.primerLetraMayuscula( txtSistema.getText()).replace("S/n", "S/N"));
-             txtSistema.setText(valiConf.primerLetraMayuscula( txtSistema.getText()).replace("S/d", "S/D"));
-             txtSistema.setText(valiConf.primerLetraMayuscula( txtSistema.getText()).replace("S/o", "S/O"));
+        txtSistema.setText(txtSistema.getText().toLowerCase());
+        if (txtSistema.getText().length() != 0) {
+            txtSistema.setText(valiConf.primerLetraMayuscula(txtSistema.getText()).replace("S/n", "S/N"));
+            txtSistema.setText(valiConf.primerLetraMayuscula(txtSistema.getText()).replace("S/d", "S/D"));
+            txtSistema.setText(valiConf.primerLetraMayuscula(txtSistema.getText()).replace("S/o", "S/O"));
         }
         // TODO add your handling code here:
     }//GEN-LAST:event_txtSistemaKeyReleased
 
     private void txtSistemaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSistemaKeyTyped
-char c = evt.getKeyChar();
+        char c = evt.getKeyChar();
         if (Character.isDigit(c)) {//if (Character.isLetter(c)){
             getToolkit().beep();
             evt.consume();

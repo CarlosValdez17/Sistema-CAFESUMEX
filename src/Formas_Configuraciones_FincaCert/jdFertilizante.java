@@ -8,6 +8,7 @@ package Formas_Configuraciones_FincaCert;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -22,19 +23,19 @@ public class jdFertilizante extends javax.swing.JDialog {
     Connection cn;
     metodosDatosBasicos mdb;
     String tipo, dato;
- validaConfi valiConf;
+    validaConfi valiConf;
 
     public jdFertilizante(java.awt.Frame parent, boolean modal, String tipo, String dato, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
-valiConf = new validaConfi();
+        valiConf = new validaConfi();
         cn = c;
         this.dato = dato;
         this.tipo = tipo;
 
         mdb = new metodosDatosBasicos(cn);
-        
+
         if (tipo.equals("1")) {
             setTitle("Nuevo Fertilizante");
         } else {
@@ -46,21 +47,23 @@ valiConf = new validaConfi();
     public void tipoProceso() {
         try {
             String sql = "";
+            if (mdb.comprobarExistencia("select descripcion from fertilizante where descripcion='" + txtFertilizante.getText() + "'") == null) {
+                if (tipo.equals("1")) {
+                    //nuevoPais();
+                    sql = "INSERT INTO fertilizante VALUES(null,'" + txtFertilizante.getText() + "', 1, 1,current_date()"
+                            + ", current_time(), 1, 1, 1, 1 )";
+                    mdb.insertarBasicos(sql);
+                    jpF.busqueda();
+                    this.dispose();
+                } else {
+                    sql = "UPDATE fertilizante SET  descripcion ='" + txtFertilizante.getText() + "' where descripcion='" + dato + "' ";
+                    mdb.actualizarBasicos(sql);
+                    jpF.busqueda();
+                    this.dispose();
 
-            if (tipo.equals("1")) {
-                //nuevoPais();
-                sql = "INSERT INTO fertilizante VALUES(null,'" + txtFertilizante.getText() + "', 1, 1,current_date()"
-                        + ", current_time(), 1, 1, 1, 1 )";
-                mdb.insertarBasicos(sql);
-                jpF.llenaTabla();
-                this.dispose();
+                }
             } else {
-                //editarPais();
-                sql = "UPDATE fertilizante SET  descripcion ='" + txtFertilizante.getText() + "' where descripcion='" + dato + "' ";
-                mdb.actualizarBasicos(sql);
-                jpF.llenaTabla();
-                this.dispose();
-
+                JOptionPane.showMessageDialog(null, "Dato Repetido");
             }
         } catch (Exception e) {
         }
@@ -85,6 +88,11 @@ valiConf = new validaConfi();
 
         jLabel1.setText("Fertilizante");
 
+        txtFertilizante.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtFertilizanteActionPerformed(evt);
+            }
+        });
         txtFertilizante.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtFertilizanteKeyReleased(evt);
@@ -164,7 +172,8 @@ valiConf = new validaConfi();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void txtFertilizanteKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtFertilizanteKeyReleased
-if (txtFertilizante.getText().length() != 0) {
+        txtFertilizante.setText(txtFertilizante.getText().toLowerCase());
+        if (txtFertilizante.getText().length() != 0) {
             txtFertilizante.setText(valiConf.primerLetraMayuscula(txtFertilizante.getText()).replace("S/n", "S/N"));
             txtFertilizante.setText(valiConf.primerLetraMayuscula(txtFertilizante.getText()).replace("S/d", "S/D"));
             txtFertilizante.setText(valiConf.primerLetraMayuscula(txtFertilizante.getText()).replace("S/o", "S/O"));
@@ -173,12 +182,16 @@ if (txtFertilizante.getText().length() != 0) {
     }//GEN-LAST:event_txtFertilizanteKeyReleased
 
     private void txtFertilizanteKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtFertilizanteKeyTyped
-char c = evt.getKeyChar();
+        char c = evt.getKeyChar();
         if (Character.isDigit(c)) {//if (Character.isLetter(c)){
             getToolkit().beep();
             evt.consume();
         }        // TODO add your handling code here:
     }//GEN-LAST:event_txtFertilizanteKeyTyped
+
+    private void txtFertilizanteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFertilizanteActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtFertilizanteActionPerformed
 
     /**
      * @param args the command line arguments

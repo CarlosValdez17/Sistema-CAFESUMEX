@@ -34,13 +34,7 @@ public class jpTipoCertificacion extends javax.swing.JPanel {
         mdb = new metodosDatosBasicos(cn);
         modelo = (DefaultTableModel) tablaTipoCert.getModel();
 
-        llenaTabla();
-    }
-
-    public void llenaTabla() {
-        limpiar(tablaTipoCert);
-        String sql = "select clave,descripcion from estandarescert where ID_Situacion=1";
-        mdb.cargarInformacion2(modelo, 2, sql);
+        busqueda();
     }
 
     public void busqueda() {
@@ -56,20 +50,26 @@ public class jpTipoCertificacion extends javax.swing.JPanel {
         }
 
         if (txtBusquedaClave.getText().length() > 0) {
-            tipoE = " AND clave like '" + txtBusquedaClave.getText() + "%'";
+            tipoE = " AND e.clave like '" + txtBusquedaClave.getText() + "%'";
         }
         if (txtBusquedaTipo.getText().length() > 0) {
-            tipoP = " AND descripcion like '" + txtBusquedaTipo.getText() + "%'";
+            tipoP = " AND e.descripcion like '" + txtBusquedaTipo.getText() + "%'";
         }
 
         String sql;
         if (situacion.equals("Todos")) {
-            sql = "select clave,descripcion from estandarescert where ID_Situacion <> 3" + tipoE + tipoP;
+            sql = "select e.clave, e.descripcion, s.descripcion "
+                    + "from estandarescert e "
+                    + "inner join situacion s on (e.id_situacion=s.id) "
+                    + "where e.ID_Situacion <> 3" + tipoE + tipoP;
         } else {
-            sql = "select clave,descripcion from estandarescert where ID_Situacion=" + situacion + tipoE + tipoP;
+            sql = "select e.clave, e.descripcion, s.descripcion "
+                    + "from estandarescert e "
+                    + "inner join situacion s on (e.id_situacion=s.id) "
+                    + "where e.ID_Situacion=" + situacion + tipoE + tipoP;
         }
         limpiar(tablaTipoCert);
-        mdb.cargarInformacion2(modelo, 2, sql);
+        mdb.cargarInformacion2(modelo, 3, sql);
 
     }
 
@@ -157,16 +157,17 @@ public class jpTipoCertificacion extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        tablaTipoCert.setAutoCreateRowSorter(true);
         tablaTipoCert.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Clave", "Tipo de Certificacion"
+                "Clave", "Tipo de Certificacion", "Situacion"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false
+                false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -180,8 +181,8 @@ public class jpTipoCertificacion extends javax.swing.JPanel {
         });
         jScrollPane2.setViewportView(tablaTipoCert);
         if (tablaTipoCert.getColumnModel().getColumnCount() > 0) {
-            tablaTipoCert.getColumnModel().getColumn(0).setResizable(false);
             tablaTipoCert.getColumnModel().getColumn(1).setResizable(false);
+            tablaTipoCert.getColumnModel().getColumn(2).setResizable(false);
         }
 
         jLabel10.setText("Situacion");
@@ -314,23 +315,25 @@ public class jpTipoCertificacion extends javax.swing.JPanel {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        jdTC = new jdTipoCertificacion(null, true, "1", clave,desc, cn);
+        jdTC = new jdTipoCertificacion(null, true, "1", clave, desc, cn);
         jdTC.jpTC = this;
         jdTC.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
-    String clave = "", desc = "";
+    String clave = "", desc = "", situacion = "";
     private void tablaTipoCertMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaTipoCertMouseClicked
         // TODO add your handling code here:
-        clave = modelo.getValueAt(tablaTipoCert.getSelectedRow(), 0) + "";  
-        desc = modelo.getValueAt(tablaTipoCert.getSelectedRow(), 1) + "";  
+        clave = tablaTipoCert.getValueAt(tablaTipoCert.getSelectedRow(), 0) + "";
+        desc = tablaTipoCert.getValueAt(tablaTipoCert.getSelectedRow(), 1) + "";
+        situacion = tablaTipoCert.getValueAt(tablaTipoCert.getSelectedRow(), 2) + "";
 
-        if (evt.getClickCount() == 1) {
-            // System.out.println("1 Clic");
-        }
         if (evt.getClickCount() == 2) {
-            jdTC = new jdTipoCertificacion(null, true, "2", clave,desc, cn);
-            jdTC.jpTC = this;
-            jdTC.setVisible(true);
+            if (situacion.equals("Activo")) {
+                jdTC = new jdTipoCertificacion(null, true, "2", clave, desc, cn);
+                jdTC.jpTC = this;
+                jdTC.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(null, "Dato Inactivo");
+            }
         }
     }//GEN-LAST:event_tablaTipoCertMouseClicked
 
@@ -339,9 +342,13 @@ public class jpTipoCertificacion extends javax.swing.JPanel {
         if (clave.equals("")) {
             JOptionPane.showMessageDialog(null, "Seleccione un clave");
         } else {
-            jdTC = new jdTipoCertificacion(null, true, "2", clave,desc, cn);
-            jdTC.jpTC = this;
-            jdTC.setVisible(true);
+            if (situacion.equals("Activo")) {
+                jdTC = new jdTipoCertificacion(null, true, "2", clave, desc, cn);
+                jdTC.jpTC = this;
+                jdTC.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(null, "Dato Inactivo");
+            }
         }
     }//GEN-LAST:event_jButton3ActionPerformed
 
@@ -354,17 +361,29 @@ public class jpTipoCertificacion extends javax.swing.JPanel {
         // TODO add your handling code here:
         busqueda();
     }//GEN-LAST:event_txtBusquedaTipoKeyReleased
-
+    String estatus = "";
     private void comboSituacionItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionItemStateChanged
         // TODO add your handling code here:
+        if (comboSituacion.getSelectedItem().equals("Inactivo")) {
+            jButton4.setText("Activar");
+            estatus = "1";
+        } else {
+            jButton4.setText("Desactivar");
+            estatus = "2";
+        }
         busqueda();
     }//GEN-LAST:event_comboSituacionItemStateChanged
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        String sql = "UPDATE estandarescert SET ID_Situacion=2 where clave='" + clave + "'";
+        String sql = "";
+        if (estatus.equals("2")) {
+            sql = "UPDATE estandarescert SET ID_Situacion=2 where clave='" + clave + "'";
+        } else if (estatus.equals("1")) {
+            sql = "UPDATE estandarescert SET ID_Situacion=1 where clave='" + clave + "'";
+        }
         mdb.actualizarBasicos(sql);
-        llenaTabla();
+        busqueda();
     }//GEN-LAST:event_jButton4ActionPerformed
 
 

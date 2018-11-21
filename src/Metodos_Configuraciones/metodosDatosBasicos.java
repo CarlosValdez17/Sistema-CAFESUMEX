@@ -48,6 +48,7 @@ public class metodosDatosBasicos {
 
     public void actualizarBasicos(String sql) {
         try {
+            System.out.println(sql);
             PreparedStatement cmd = cn.prepareCall(sql);
             cmd.execute();
             cmd.close();
@@ -80,7 +81,7 @@ public class metodosDatosBasicos {
 
     public void cargarInformacion2(DefaultTableModel modelo, int tamaño, String sql) {
         try {
-            System.out.println(sql);
+            //System.out.println(sql);
             CallableStatement cmd = cn.prepareCall(sql);
             ResultSet rs = cmd.executeQuery();
 
@@ -141,7 +142,7 @@ public class metodosDatosBasicos {
 
     public String comprobarExistencia(String sql) {
         try {
-           // System.out.println();
+            //System.out.println(sql);
             CallableStatement cmd = cn.prepareCall(sql);
             ResultSet rs = cmd.executeQuery();
             while (rs.next()) {
@@ -204,7 +205,6 @@ public class metodosDatosBasicos {
     
     public String devuelveId(String sql) {
         try {
-
             //String sql = "SELECT id from " + tabla + " where descripcion= '" + valor + "' ";
             CallableStatement cmd = cn.prepareCall(sql);
             ResultSet rs = cmd.executeQuery();

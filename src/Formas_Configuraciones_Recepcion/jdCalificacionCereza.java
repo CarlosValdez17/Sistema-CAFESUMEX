@@ -66,9 +66,8 @@ public class jdCalificacionCereza extends javax.swing.JDialog {
             if (mdb.comprobarExistencia("select clave from calidadcereza where clave='" + txtClave.getText() + "'") == null) {
                 sql = "INSERT INTO calidadcereza VALUES(null,'" + txtClave.getText() + "','" + txtDesc.getText() + "'," + txtMin.getText() + "," + txtMax.getText() + ",1 , 1, 1,current_date()"
                         + ", current_time(), 1, 1, 1, 1 )";
-                System.out.println(sql);
                 mdb.insertarBasicos(sql);
-                jpCC.llenaTabla();
+                jpCC.busqueda();
                 this.dispose();
             } else {
                 JOptionPane.showMessageDialog(null, "Dato Repetido");
@@ -78,9 +77,8 @@ public class jdCalificacionCereza extends javax.swing.JDialog {
             sql = "UPDATE calidadcereza SET clave ='" + txtClave.getText() + "', descripcion='" + txtDesc.getText() + "',"
                     + " minima=" + txtMin.getText() + ", maxima=" + txtMax.getText() + " "
                     + " where clave='" + cla + "' ";
-            System.out.println(sql);
             mdb.actualizarBasicos(sql);
-            jpCC.llenaTabla();
+            jpCC.busqueda();
             this.dispose();
         }
     }
@@ -243,7 +241,7 @@ public class jdCalificacionCereza extends javax.swing.JDialog {
     private void txtClaveKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtClaveKeyTyped
         // TODO add your handling code here:
         char c = evt.getKeyChar();
-        if (Character.isDigit(c)) {
+        if (Character.isLetter(c)) {
             getToolkit().beep();
             evt.consume();
         }
@@ -287,6 +285,7 @@ public class jdCalificacionCereza extends javax.swing.JDialog {
 
     private void txtDescKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDescKeyReleased
         // TODO add your handling code here:
+        txtDesc.setText(txtDesc.getText().toLowerCase());
         if (txtDesc.getText().length() != 0) {
             txtDesc.setText(valiConf.primerLetraMayuscula(txtDesc.getText()).replace("S/n", "S/N"));
             txtDesc.setText(valiConf.primerLetraMayuscula(txtDesc.getText()).replace("S/d", "S/D"));

@@ -66,9 +66,8 @@ public class jdCalificacionSeco extends javax.swing.JDialog {
             if (mdb.comprobarExistencia("select clave from calidadseco where clave='" + txtClave.getText() + "'") == null) {
                 sql = "INSERT INTO calidadseco VALUES(null,'" + txtClave.getText() + "','" + txtDesc.getText() + "'," + txtMax.getText() + "," + txtMin.getText() + ", 1, 1,current_date()"
                         + ", current_time(), 1, 1, 1, 1 )";
-                System.out.println(sql);
                 mdb.insertarBasicos(sql);
-                jpCS.llenaTabla();
+                jpCS.busqueda();
                 this.dispose();
             } else {
                 JOptionPane.showMessageDialog(null, "Dato Repetido");
@@ -78,9 +77,8 @@ public class jdCalificacionSeco extends javax.swing.JDialog {
             sql = "UPDATE calidadseco SET clave ='" + txtClave.getText() + "', descripcion='" + txtDesc.getText() + "',"
                     + " maxima=" + txtMax.getText() + ", minima=" + txtMin.getText() + " "
                     + " where clave='" + cla + "' ";
-            System.out.println(sql);
             mdb.actualizarBasicos(sql);
-            jpCS.llenaTabla();
+            jpCS.busqueda();
             this.dispose();
         }
     }
@@ -251,6 +249,7 @@ public class jdCalificacionSeco extends javax.swing.JDialog {
 
     private void txtDescKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDescKeyReleased
         // TODO add your handling code here:
+txtDesc.setText(txtDesc.getText().toLowerCase());
         if (txtDesc.getText().length() != 0) {
             txtDesc.setText(valiConf.primerLetraMayuscula(txtDesc.getText()).replace("S/n", "S/N"));
             txtDesc.setText(valiConf.primerLetraMayuscula(txtDesc.getText()).replace("S/d", "S/D"));

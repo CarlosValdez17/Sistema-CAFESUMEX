@@ -13,6 +13,8 @@ import java.util.Vector;
 import javafx.scene.control.CheckBox;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 //import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 /**
@@ -28,6 +30,7 @@ public class jpPersonas extends javax.swing.JPanel {
     metodosDatosBasicos mdb;
     jdPersonas jdP;
     //CheckBox c1;
+    DefaultTableModel modelo;
     Checkbox c1;
 
     public jpPersonas(Connection c) {
@@ -35,10 +38,13 @@ public class jpPersonas extends javax.swing.JPanel {
 
         cn = c;
         mdb = new metodosDatosBasicos(cn);
+        modelo = (DefaultTableModel) tablaPersonas.getModel();
+
+        modelo.addRow(new Object[]{"Carlos German Valdez Correa", "✓", "✓",
+            "Tequesquite #125 Int. 2", "63197", "1332292", "3112036242", "Mexico", "Nayarit", "Tepic", "Local", "Infonavit Los Fresnos",});
 
         //c1 = new Checkbox("Prueba 1", true);
         //panelRadios.add(c1);
-        
         combo();
         //  AutoCompleteDecorator.decorate(comboPersona);
 
@@ -46,27 +52,32 @@ public class jpPersonas extends javax.swing.JPanel {
 
     public void checks() {
 
-        
     }
 
     public void combo() {
         String[] datos = mdb.cargarCombos("SELECT descripcion from puestos").split("#");
         //comboAtributos.setModel(new DefaultComboBoxModel((Object[]) datos));
-        
+
         String[] datos2 = mdb.cargarCombos("SELECT descripcion from genero").split("#");
         //comboAtributos.setModel(new DefaultComboBoxModel((Object[]) datos));
-        String a ="";
-        
-        for(int i=0; i<datos.length; i++){
-            a += datos[i]+ "#";
+        String a = "";
+
+        for (int i = 0; i < datos.length; i++) {
+            a += datos[i] + "#";
         }
-        for(int i=0; i<datos2.length; i++){
-            a += datos2[i]+ "#";
+        for (int i = 0; i < datos2.length; i++) {
+            a += datos2[i] + "#";
         }
-        
-       String[] datosfinales = a.split("#");
-       comboAtributos.setModel(new DefaultComboBoxModel ((Object[]) datosfinales));
-       
+
+        String[] datosfinales = a.split("#");
+        comboAtributos.setModel(new DefaultComboBoxModel((Object[]) datosfinales));
+
+    }
+
+    private void limpiar(JTable tabla) {
+        while (tabla.getRowCount() > 0) {
+            ((DefaultTableModel) tabla.getModel()).removeRow(0);
+        }
     }
 
     /**
@@ -89,7 +100,7 @@ public class jpPersonas extends javax.swing.JPanel {
         comboAtributos = new javax.swing.JComboBox<>();
         jPanel7 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        tablaActividades = new javax.swing.JTable();
+        tablaPersonas = new javax.swing.JTable();
         jPanel8 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
         comboSituacion = new javax.swing.JComboBox<>();
@@ -105,13 +116,18 @@ public class jpPersonas extends javax.swing.JPanel {
         jLabel1.setText("Persona");
 
         comboPersona.setEditable(true);
-        comboPersona.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Fisica", "Moral", "Prueba", "Blabla", "Jaja", "Orale" }));
+        comboPersona.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Fisica", "Moral" }));
+        comboPersona.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                comboPersonaItemStateChanged(evt);
+            }
+        });
 
         jLabel2.setText("Atributos");
 
         jLabel3.setText("Busqueda");
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Nombre", "Direccion", "CP", "Telefono Fijo", "Telefono Movil", "Pais", "Estado", "Municipio", "Localidad", "Colonia" }));
 
         comboAtributos.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
@@ -155,28 +171,28 @@ public class jpPersonas extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        tablaActividades.setModel(new javax.swing.table.DefaultTableModel(
+        tablaPersonas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Actividad", "Descripcion"
+                "Nombre", "Socio", "Productor", "Direccion", "Codigo Postal", "Telefono Fijo", "Telefono Movil", "Pais", "Estado", "Municipio", "Localidad", "Colonia"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false
+                false, false, false, false, false, false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        tablaActividades.addMouseListener(new java.awt.event.MouseAdapter() {
+        tablaPersonas.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tablaActividadesMouseClicked(evt);
+                tablaPersonasMouseClicked(evt);
             }
         });
-        jScrollPane2.setViewportView(tablaActividades);
+        jScrollPane2.setViewportView(tablaPersonas);
 
         jLabel10.setText("Situacion");
 
@@ -311,7 +327,7 @@ public class jpPersonas extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void tablaActividadesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaActividadesMouseClicked
+    private void tablaPersonasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaPersonasMouseClicked
         // TODO add your handling code here:
         /*actividad = modelo.getValueAt(tablaActividades.getSelectedRow(), 0) + "";
         desc = modelo.getValueAt(tablaActividades.getSelectedRow(), 1) + "";
@@ -324,7 +340,7 @@ public class jpPersonas extends javax.swing.JPanel {
             jdABH.jpABH = this;
             jdABH.setVisible(true);
         }*/
-    }//GEN-LAST:event_tablaActividadesMouseClicked
+    }//GEN-LAST:event_tablaPersonasMouseClicked
 
     private void comboSituacionItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionItemStateChanged
         // TODO add your handling code here:
@@ -358,6 +374,21 @@ public class jpPersonas extends javax.swing.JPanel {
         llenaTabla();*/
     }//GEN-LAST:event_jButton4ActionPerformed
 
+    private void comboPersonaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboPersonaItemStateChanged
+        // TODO add your handling code here:
+        if (comboPersona.getSelectedItem().equals("Fisica")) {
+            limpiar(tablaPersonas);
+            modelo.addRow(new Object[]{"Carlos German Valdez Correa", "✓", "✓",
+                "Tequesquite #125 Int. 2", "63197", "1332292", "3112036242", "Mexico", "Nayarit", "Tepic", "Local", "Infonavit Los Fresnos",});
+
+        } else {
+            limpiar(tablaPersonas);
+            modelo.addRow(new Object[]{"Cafes Sustentables de Mexico", "✓", "✘",
+                "Nayarit #290 Col. Morelos", "12345", "1336242", "3112032426", "Mexico", "Nayarit", "Tepic", "Local", "Morelos",});
+
+        }
+    }//GEN-LAST:event_comboPersonaItemStateChanged
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> comboAtributos;
@@ -378,7 +409,7 @@ public class jpPersonas extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel8;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JPanel panelRadios;
-    private javax.swing.JTable tablaActividades;
+    private javax.swing.JTable tablaPersonas;
     private javax.swing.JTextField txtBusqueda;
     // End of variables declaration//GEN-END:variables
 }

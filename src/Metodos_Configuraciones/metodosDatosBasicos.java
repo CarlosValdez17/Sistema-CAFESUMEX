@@ -27,6 +27,7 @@ public class metodosDatosBasicos {
 
     public void insertarBasicos(String sql) {
         try {
+            System.out.println(sql);
             PreparedStatement cmd = cn.prepareCall(sql);
             cmd.execute();
             cmd.close();

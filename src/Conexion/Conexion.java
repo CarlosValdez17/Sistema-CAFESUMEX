@@ -17,22 +17,20 @@ import javax.swing.JOptionPane;
  *
  * @author Carlos Valdez
  */
+public class Conexion {
 
-public class Conexion{
-
-    public Connection conectar(){ // Uso tradicional de conexionBD
+    public Connection conectar() { // Uso tradicional de conexionBD
         Connection con;
-        try{
-           Class.forName("com.mysql.jdbc.Driver");
-           String url = "jdbc:mysql://localhost/beta_fincalab?autoReconnect=true&useSSL=false";
-           con = DriverManager.getConnection(url, "root", "root");
-           //JOptionPane.showMessageDialog(null,"Conexión establecida");
-        }
-       
-        catch(Exception ex){
-            JOptionPane.showMessageDialog(null, "Error en Conexion de BD "+ex.getMessage(),
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            String url = "jdbc:mysql://localhost/beta_fincalab?autoReconnect=true&useSSL=false";
+            con = DriverManager.getConnection(url, "root", "");
+            //JOptionPane.showMessageDialog(null, "Conexión establecida");
+            //ip local 127.0.0.1:3306
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Error en Conexion de BD " + ex.getMessage(),
                     "Error", JOptionPane.ERROR_MESSAGE);
-            con=null;
+            con = null;
         }
         return con;
     }

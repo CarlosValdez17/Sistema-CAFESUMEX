@@ -15,8 +15,12 @@ import javafx.scene.control.CheckBox;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 //import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 /**
@@ -30,74 +34,85 @@ public class jpPersonas1 extends javax.swing.JPanel {
      */
     Connection cn;
     metodosDatosBasicos mdb;
-    DefaultTableModel modelo;
+    DefaultTableModel modelo, modelo2;
+    jdDetallePersona1 jdDP;
     ArrayList<String> array = new ArrayList<String>();
 
     public jpPersonas1(Connection c) {
         initComponents();
-
+        //tablaPersonas.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        //new JScrollPane(tablaPersonas, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         cn = c;
         mdb = new metodosDatosBasicos(cn);
         modelo = (DefaultTableModel) tablaPersonas.getModel();
-        combo();
+        //combo();
         //  AutoCompleteDecorator.decorate(comboPersona);
+
         llenarTabla();
 
     }
 
-    public void combo() {
+    /*    public void combo() {
         String[] datos = mdb.cargarCombos("SELECT descripcion from puestos").split("#");
         comboPuestos.setModel(new DefaultComboBoxModel((Object[]) datos));
-    }
-
+    }*/
     //✘ ✓
     public void llenarTabla() {
         array.clear();
         String tipo = comboPersona.getSelectedItem() + "";
         if (tipo.equals("Moral")) {
             comboGenero.setEnabled(false);
-            comboPuestos.setEnabled(false);
+            //comboPuestos.setEnabled(false);
             limpiar(tablaPersonas);
-            mdb.cargarInformacionPruebaArray(modelo, 4, "select  p.RazonSocial, p.productor, p.socio, p.id\n"
-                    + "from persona p\n "
-                    + "inner join genero g on (p.ID_Genero=g.ID)\n "
-                    + "where p.ID_TipoPersona=2", array);
+            mdb.cargarInformacionPruebaArray(modelo, 15, "select nombre, ApellidoPaterno, ApellidoMaterno, RazonSocial, socio, productor, Direccion, CodigoPostal, Telefono, telefonoMovil, p.descripcion, e.descripcion, m.descripcion, l.descripcion, c.descripcion\n"
+                    + "from persona x\n"
+                    + "inner join pais p on (x.ID_Pais=p.ID)\n"
+                    + "inner join estado e on (x.ID_Estado=e.ID)\n"
+                    + "inner join municipio m on (x.ID_Municipio=m.ID)\n"
+                    + "inner join localidad l on (x.ID_Localidad=l.ID)\n"
+                    + "inner join ejidocolonia c on (x.ID_EjidoColonia=c.ID)"
+                    + "where x.ID_TipoPersona=2", array);
             System.out.println(array);
 
         } else if (tipo.equals("Fisica")) {
             comboGenero.setEnabled(true);
-            comboPuestos.setEnabled(true);
+            //comboPuestos.setEnabled(true);
             limpiar(tablaPersonas);
-            mdb.cargarInformacionPruebaArray(modelo, 4, "select  CONCAT(p.Nombre,\" \",p.ApellidoPaterno,\" \",p.ApellidoMaterno) AS Nombre, p.productor, p.socio, p.id\n"
-                    + "from persona p\n "
-                    + "inner join genero g on (p.ID_Genero=g.ID)\n "
-                    + "where p.ID_TipoPersona=1", array);
+            mdb.cargarInformacionPruebaArray(modelo, 15, "select nombre, ApellidoPaterno, ApellidoMaterno, RazonSocial, socio, productor, Direccion, CodigoPostal, Telefono, telefonoMovil, p.descripcion, e.descripcion, m.descripcion, l.descripcion, c.descripcion\n"
+                    + "from persona x\n"
+                    + "inner join pais p on (x.ID_Pais=p.ID)\n"
+                    + "inner join estado e on (x.ID_Estado=e.ID)\n"
+                    + "inner join municipio m on (x.ID_Municipio=m.ID)\n"
+                    + "inner join localidad l on (x.ID_Localidad=l.ID)\n"
+                    + "inner join ejidocolonia c on (x.ID_EjidoColonia=c.ID)"
+                    + "where x.ID_TipoPersona=1", array);
 
         } else {
             comboGenero.setEnabled(true);
-            comboPuestos.setEnabled(true);
+            //comboPuestos.setEnabled(true);
             limpiar(tablaPersonas);
-            mdb.cargarInformacionPruebaArray(modelo, 4, "select  CONCAT(p.Nombre,\" \",p.ApellidoPaterno,\" \",p.ApellidoMaterno) AS Nombre, p.productor, p.socio, p.id\n"
-                    + "from persona p\n "
-                    + "inner join genero g on (p.ID_Genero=g.ID)\n "
-                    + "where p.ID_TipoPersona=1", array);
-            mdb.cargarInformacionPruebaArray(modelo, 4, "select  p.RazonSocial, p.productor, p.socio, p.id\n"
-                    + "from persona p\n "
-                    + "inner join genero g on (p.ID_Genero=g.ID)\n "
-                    + "where p.ID_TipoPersona=2", array);
+            mdb.cargarInformacionPruebaArray(modelo, 15, "select nombre, ApellidoPaterno, ApellidoMaterno, RazonSocial, socio, productor, Direccion, CodigoPostal, Telefono,telefonoMovil, p.descripcion, e.descripcion, m.descripcion, l.descripcion, c.descripcion\n"
+                    + "from persona x\n"
+                    + "inner join pais p on (x.ID_Pais=p.ID)\n"
+                    + "inner join estado e on (x.ID_Estado=e.ID)\n"
+                    + "inner join municipio m on (x.ID_Municipio=m.ID)\n"
+                    + "inner join localidad l on (x.ID_Localidad=l.ID)\n"
+                    + "inner join ejidocolonia c on (x.ID_EjidoColonia=c.ID)", array);
+            //+ "where p.ID_TipoPersona=1", array);
+
         }
 
         for (int i = 0; i < modelo.getRowCount(); i++) {
-            if (modelo.getValueAt(i, 1).equals("1")) {
-                modelo.setValueAt("✓", i, 1);
+            if (modelo.getValueAt(i, 4).equals("1")) {
+                modelo.setValueAt("✓", i, 4);
             } else {
-                modelo.setValueAt("✘", i, 1);
+                modelo.setValueAt("✘", i, 4);
             }
 
-            if (modelo.getValueAt(i, 2).equals("1")) {
-                modelo.setValueAt("✓", i, 2);
+            if (modelo.getValueAt(i, 5).equals("1")) {
+                modelo.setValueAt("✓", i, 5);
             } else {
-                modelo.setValueAt("✘", i, 2);
+                modelo.setValueAt("✘", i, 5);
             }
         }
 
@@ -123,12 +138,10 @@ public class jpPersonas1 extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         comboPersona = new javax.swing.JComboBox<>();
         jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        comboPuestos = new javax.swing.JComboBox<>();
         comboGenero = new javax.swing.JComboBox<>();
+        jTextField1 = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
         jPanel7 = new javax.swing.JPanel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        tablaPersonas = new javax.swing.JTable();
         jPanel8 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
         comboSituacion = new javax.swing.JComboBox<>();
@@ -136,6 +149,8 @@ public class jpPersonas1 extends javax.swing.JPanel {
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tablaPersonas = new javax.swing.JTable();
         panelRadios = new javax.swing.JPanel();
 
         jPanel5.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -143,7 +158,6 @@ public class jpPersonas1 extends javax.swing.JPanel {
 
         jLabel1.setText("Persona");
 
-        comboPersona.setEditable(true);
         comboPersona.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Todos", "Fisica", "Moral" }));
         comboPersona.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -158,16 +172,14 @@ public class jpPersonas1 extends javax.swing.JPanel {
 
         jLabel2.setText("Genero");
 
-        jLabel3.setText("Puesto");
-
-        comboPuestos.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
         comboGenero.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Todos", "Masculino", "Femenino" }));
         comboGenero.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 comboGeneroItemStateChanged(evt);
             }
         });
+
+        jLabel3.setText("Busqueda");
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -180,13 +192,13 @@ public class jpPersonas1 extends javax.swing.JPanel {
                     .addComponent(jLabel1))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addComponent(comboGenero, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(comboGenero, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(comboPuestos, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
-                .addContainerGap(171, Short.MAX_VALUE))
+                    .addComponent(jLabel3)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -199,38 +211,10 @@ public class jpPersonas1 extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(comboPersona, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(comboPuestos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(comboGenero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(comboGenero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
-
-        tablaPersonas.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Nombre", "Productor", "Socio"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        tablaPersonas.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tablaPersonasMouseClicked(evt);
-            }
-        });
-        jScrollPane2.setViewportView(tablaPersonas);
-        if (tablaPersonas.getColumnModel().getColumnCount() > 0) {
-            tablaPersonas.getColumnModel().getColumn(0).setResizable(false);
-            tablaPersonas.getColumnModel().getColumn(1).setResizable(false);
-            tablaPersonas.getColumnModel().getColumn(2).setResizable(false);
-        }
 
         jLabel10.setText("Situacion");
 
@@ -273,7 +257,7 @@ public class jpPersonas1 extends javax.swing.JPanel {
                 .addComponent(jLabel10)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(comboSituacion, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 191, Short.MAX_VALUE)
                 .addComponent(jButton2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton3)
@@ -297,6 +281,29 @@ public class jpPersonas1 extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
+        tablaPersonas.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Nombre", "Apellido Paterno", "Apellido Materno", "Razon Social", "Socio", "Productor", "Direccion", "Codigo Postal", "Telefono Fijo", "Telefono Movil", "Pais", "Estado", "Municipio", "Localidad", "Colonia", "Sociedades"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tablaPersonas.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tablaPersonasMouseClicked(evt);
+            }
+        });
+        jScrollPane2.setViewportView(tablaPersonas);
+
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
         jPanel7Layout.setHorizontalGroup(
@@ -304,8 +311,8 @@ public class jpPersonas1 extends javax.swing.JPanel {
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2)
-                    .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2))
                 .addContainerGap())
         );
         jPanel7Layout.setVerticalGroup(
@@ -313,7 +320,7 @@ public class jpPersonas1 extends javax.swing.JPanel {
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(23, 23, 23)
                 .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -342,7 +349,7 @@ public class jpPersonas1 extends javax.swing.JPanel {
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(panelRadios, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
@@ -364,24 +371,7 @@ public class jpPersonas1 extends javax.swing.JPanel {
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
-    String id;
-    private void tablaPersonasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaPersonasMouseClicked
-        // TODO add your handling code here:
-        id = array.get(tablaPersonas.getSelectedRow());
-        //actividad = modelo.getValueAt(tablaActividades.getSelectedRow(), 0) + "";
-        //desc = modelo.getValueAt(tablaActividades.getSelectedRow(), 1) + "";
-
-        if (evt.getClickCount() == 1) {
-            // System.out.println("1 Clic");
-            JOptionPane.showMessageDialog(null, "El id es " + id);
-        }
-        /*  if (evt.getClickCount() == 2) {
-            jdABH = new jdActividadesBH(null, true, "2", actividad,desc, cn);
-            jdABH.jpABH = this;
-            jdABH.setVisible(true);
-        }*/
-    }//GEN-LAST:event_tablaPersonasMouseClicked
-
+    String id, persona = "";
     private void comboSituacionItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionItemStateChanged
         // TODO add your handling code here:
         // busqueda();
@@ -389,11 +379,8 @@ public class jpPersonas1 extends javax.swing.JPanel {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-//        jdP = new jdPersonas(null, true);
-//        jdP.setVisible(true);
-        /*jdABH = new jdActividadesBH(null, true, "1", actividad,desc, cn);
-        jdABH.jpABH = this;
-        jdABH.setVisible(true);*/
+        jdDP = new jdDetallePersona1(null, true, "2", cn);
+        jdDP.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
@@ -420,6 +407,19 @@ public class jpPersonas1 extends javax.swing.JPanel {
 
     private void comboPersonaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboPersonaItemStateChanged
         // TODO add your handling code here:
+        if (comboPersona.getSelectedItem().equals("Moral")) {
+            JTableHeader tableHeader = tablaPersonas.getTableHeader();
+            TableColumnModel tableColumnModel = tableHeader.getColumnModel();
+            TableColumn tableColumn = tableColumnModel.getColumn(0);
+            tableColumn.setHeaderValue("Razon Social");
+            tableHeader.repaint();
+        } else {
+            JTableHeader tableHeader = tablaPersonas.getTableHeader();
+            TableColumnModel tableColumnModel = tableHeader.getColumnModel();
+            TableColumn tableColumn = tableColumnModel.getColumn(0);
+            tableColumn.setHeaderValue("Nombre");
+            tableHeader.repaint();
+        }
         llenarTabla();
     }//GEN-LAST:event_comboPersonaItemStateChanged
 
@@ -465,11 +465,25 @@ public class jpPersonas1 extends javax.swing.JPanel {
 
     }//GEN-LAST:event_comboGeneroItemStateChanged
 
+    private void tablaPersonasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaPersonasMouseClicked
+        // TODO add your handling code here:
+        //actividad = modelo.getValueAt(tablaActividades.getSelectedRow(), 0) + "";
+        //desc = modelo.getValueAt(tablaActividades.getSelectedRow(), 1) + "";
+
+        if (evt.getClickCount() == 1) {
+            // System.out.println("1 Clic");
+        }
+        if (evt.getClickCount() == 2) {
+            jdDP = new jdDetallePersona1(null, true, "1", cn);
+            //jdDP.jpABH = this;
+            jdDP.setVisible(true);
+        }
+    }//GEN-LAST:event_tablaPersonasMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> comboGenero;
     private javax.swing.JComboBox<String> comboPersona;
-    private javax.swing.JComboBox<String> comboPuestos;
     private javax.swing.JComboBox<String> comboSituacion;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
@@ -484,6 +498,7 @@ public class jpPersonas1 extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTextField jTextField1;
     private javax.swing.JPanel panelRadios;
     private javax.swing.JTable tablaPersonas;
     // End of variables declaration//GEN-END:variables

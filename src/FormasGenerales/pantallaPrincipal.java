@@ -98,7 +98,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         setLocationRelativeTo(null);
         //cn=c;
         cn = (new Conexion()).conectar();
-        this.setExtendedState(MAXIMIZED_BOTH);
+        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         //pintarPanel("fondo");
         /*  ImageFondo image=new ImageFondo();
         image.setImage("/Imagenes/FondoPantalla.png");
@@ -109,13 +109,15 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         jButton6.setVisible(false);
         jButton7.setVisible(false);
 
+        jButton2.setBackground(Color.getHSBColor(0.56f, 1.0f, 0.8f));
+
         DefaultTreeCellRenderer render = (DefaultTreeCellRenderer) jTree1.getCellRenderer();
         //render.setLeafIcon(new ImageIcon(this.getClass().getResource("../Imagenes/database.png")));
-        render.setOpenIcon(new ImageIcon(this.getClass().getResource("../Imagenes/database.png")));
-        render.setClosedIcon(new ImageIcon(this.getClass().getResource("../Imagenes/database.png")));
+        //render.setOpenIcon(new ImageIcon(this.getClass().getResource("../Imagenes/database.png")));
+        //render.setClosedIcon(new ImageIcon(this.getClass().getResource("../Imagenes/database.png")));
     }
 
-    /**  public void paintComponent(Graphics g) {
+    /* public void paintComponent(Graphics g) {
         Dimension tamanio = getSize();
         ImageIcon fondo = new ImageIcon(getClass().getResource("Imagenes/FondoPantalla.png"));
         g.drawImage(fondo.getImage(), 0, 0, tamanio.width, tamanio.height, null);
@@ -130,7 +132,6 @@ public class pantallaPrincipal extends javax.swing.JFrame {
 
         return retValue;
     }**/
-
     public void pintarPanel(String tipo) {
         Dimension size = panelPrincipal.getSize();
         //Tamaño Manual = 830, 570
@@ -202,7 +203,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 break;
             case "Calidad de Sombra":
                 jpCalidadSombra jpCS = new jpCalidadSombra(cn);
-                jpCS.pp=this;
+                jpCS.pp = this;
                 jpCS.setSize(size);
                 jpCS.setLocation(0, 0);
                 panelPrincipal.removeAll();

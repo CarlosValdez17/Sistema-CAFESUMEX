@@ -76,6 +76,7 @@ public class jdFormaEvaluacion extends javax.swing.JDialog {
             }
         }
     }
+   
 
     public void llenarCombo() {
         String[] datos = mdb.cargarCombos("SELECT descripcion from formacafe").split("#");
@@ -216,7 +217,7 @@ public class jdFormaEvaluacion extends javax.swing.JDialog {
                     String idEvaluacion = mdb.devuelveId("select id from tipoevaluacion where descripcion='" + desc + "'");
                     String sql = "INSERT INTO formaevaluacion VALUES(null,'" + idForma + "','" + idEvaluacion + "', 1, 1,current_date()"
                             + ", current_time(),1,1,1,1)";
-                    System.out.println(sql);
+                    //System.out.println(sql);
                     mdb.insertarEnCiclo(sql);
                 }
             }
@@ -269,20 +270,6 @@ public class jdFormaEvaluacion extends javax.swing.JDialog {
         }
         //</editor-fold>
         //</editor-fold>
-
-        /* Create and display the dialog */
- /*        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                jdFormaEvaluacion dialog = new jdFormaEvaluacion(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });*/
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

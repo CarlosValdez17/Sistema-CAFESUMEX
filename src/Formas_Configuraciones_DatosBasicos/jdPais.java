@@ -80,6 +80,7 @@ public class jdPais extends javax.swing.JDialog {
 
             if (tipo.equals("1")) {
                 //nuevoPais();
+                System.out.println(mdb.comprobarExistencia("select descripcion from pais where descripcion='" + txtPais.getText() + "'"));
                 if (mdb.comprobarExistencia("select descripcion from pais where descripcion='" + txtPais.getText() + "'") == null) {
                     sql = "INSERT INTO pais VALUES(null,'" + pais + "', 1, 1,current_date()"
                             + ", current_time(), 1, 1, 1, 1, '" + ISO + "', '" + UE + "', '" + OIC + "')";

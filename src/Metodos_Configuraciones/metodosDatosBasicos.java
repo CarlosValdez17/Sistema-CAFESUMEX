@@ -27,7 +27,7 @@ public class metodosDatosBasicos {
 
     public void insertarBasicos(String sql) {
         try {
-            System.out.println(sql);
+            //System.out.println(sql);
             PreparedStatement cmd = cn.prepareCall(sql);
             cmd.execute();
             cmd.close();
@@ -36,14 +36,15 @@ public class metodosDatosBasicos {
             JOptionPane.showMessageDialog(null, "Error al Insertar\n" + ex);
         }
     }
-    
+
     public void insertarEnCiclo(String sql) {
         try {
+            //System.out.println(sql);
             PreparedStatement cmd = cn.prepareCall(sql);
             cmd.execute();
             cmd.close();
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Error al Insertar\n" + ex);
+            JOptionPane.showMessageDialog(null, "Error al Insertar en Ciclo\n" + ex);
         }
     }
 
@@ -55,7 +56,7 @@ public class metodosDatosBasicos {
             cmd.close();
             JOptionPane.showMessageDialog(null, "Dato Actualizado");
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Error al Actualizar");
+            JOptionPane.showMessageDialog(null, "Error al Actualizar \n" + ex);
         }
     }
 
@@ -82,7 +83,7 @@ public class metodosDatosBasicos {
 
     public void cargarInformacion2(DefaultTableModel modelo, int tamaño, String sql) {
         try {
-            //System.out.println(sql);
+            System.out.println(sql);
             CallableStatement cmd = cn.prepareCall(sql);
             ResultSet rs = cmd.executeQuery();
 
@@ -102,7 +103,6 @@ public class metodosDatosBasicos {
 
     public void cargarInformacionPruebaArray(DefaultTableModel modelo, int tamaño, String sql, ArrayList<String> array) {
         try {
-            //System.out.println(sql);
             CallableStatement cmd = cn.prepareCall(sql);
             ResultSet rs = cmd.executeQuery();
 
@@ -141,6 +141,27 @@ public class metodosDatosBasicos {
         return null;
     }
 
+    public String cargarDatosFormularioPersonas(String sql, int tamaño) {
+        try {
+            CallableStatement cmd = cn.prepareCall(sql);
+            ResultSet rs = cmd.executeQuery();
+            String a = "";
+            while (rs.next()) {
+                Object[] datos = new Object[tamaño];
+                for (int i = 0; i < tamaño; i++) {
+                    datos[i] = rs.getString(i + 1);
+                    a += datos[i] + "¬";
+                }
+                //String a = datos[0] + "," + datos[1] + "," + datos[2] + "," + datos[3] + "," + datos[4]+ "," + datos[5] + "," + datos[6] + "," + datos[7] + "," + datos[8]+ "," + datos[9] + "," + datos[10] + "," + datos[11] + "," + datos[12]+ "," + datos[13] + "," + datos[14] + "," + datos[15] + "," + datos[16]+","+datos[17];
+                return a;
+            }
+            cmd.close();
+        } catch (Exception ex) {
+
+        }
+        return null;
+    }
+
     public String comprobarExistencia(String sql) {
         try {
             //System.out.println(sql);
@@ -163,7 +184,7 @@ public class metodosDatosBasicos {
 
     public String cargarCombos(String sql) {
         try {
-           // System.out.println(sql + "\n");
+            System.out.println(sql + "\n");
             CallableStatement cmd = cn.prepareCall(sql);
             ResultSet rs = cmd.executeQuery();
             String a = "";
@@ -172,7 +193,7 @@ public class metodosDatosBasicos {
                 for (int i = 0; i < 1; i++) {
                     datos[i] = rs.getString(i + 1);
                 }
-                a += datos[0]+ "#";
+                a += datos[0] + "#";
             }
             cmd.close();
             return a;
@@ -182,9 +203,9 @@ public class metodosDatosBasicos {
         return null;
     }
 
-        public String cargarFormaProceso(String sql) {
+    public String cargarFormaProceso(String sql) {
         try {
-           // System.out.println(sql + "\n");
+            // System.out.println(sql + "\n");
             CallableStatement cmd = cn.prepareCall(sql);
             ResultSet rs = cmd.executeQuery();
             String a = "";
@@ -193,7 +214,7 @@ public class metodosDatosBasicos {
                 for (int i = 0; i < 1; i++) {
                     datos[i] = rs.getString(i + 1);
                 }
-                a += "• "+datos[0]+"\n\n";
+                a += "• " + datos[0] + "\n\n";
             }
             cmd.close();
             return a;
@@ -203,10 +224,10 @@ public class metodosDatosBasicos {
         return null;
     }
 
-    
     public String devuelveId(String sql) {
         try {
             //String sql = "SELECT id from " + tabla + " where descripcion= '" + valor + "' ";
+            //System.out.println(sql);
             CallableStatement cmd = cn.prepareCall(sql);
             ResultSet rs = cmd.executeQuery();
             String id = "";
@@ -216,7 +237,29 @@ public class metodosDatosBasicos {
             cmd.close();
             return id;
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Error - Devolver Id Pais \n" + ex);
+            JOptionPane.showMessageDialog(null, "Error - Devolver Id - Metodo \n" + ex);
+        }
+        return null;
+    }
+
+    public String devuelveUnDato(String sql) {
+        try {
+            System.out.println(sql);
+            CallableStatement cmd = cn.prepareCall(sql);
+            ResultSet rs = cmd.executeQuery();
+            String a = "";
+            while (rs.next()) {
+                Object[] datos = new Object[2];
+                for (int i = 0; i < 1; i++) {
+                    datos[i] = rs.getString(i + 1);
+                }
+                a = datos[0] + "";
+            }
+            System.out.println("DATOOOOOOOOOOOOOOOOOOOO =" + a);
+            cmd.close();
+            return a;
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Error - Devolver 1 Dato - Metodo \n" + ex);
         }
         return null;
     }
@@ -274,7 +317,6 @@ public class metodosDatosBasicos {
 
     }
 
-    
     public void cargarInformacionFormaEvaluaciones(DefaultTableModel modelo, String sql) {
 
         try {
@@ -296,7 +338,7 @@ public class metodosDatosBasicos {
             }
 
             System.out.println("desps de while");
-            
+
             cmd.close();
             //    cn.close();
 
@@ -304,8 +346,6 @@ public class metodosDatosBasicos {
         }
     }
 
-    
-    
     public void cargarInformacionEvaluaciones(DefaultTableModel modelo, int tamaño, String sql) {
         try {
             //System.out.println(sql);
@@ -341,6 +381,5 @@ public class metodosDatosBasicos {
         }
 
     }
-    
-    
+
 }

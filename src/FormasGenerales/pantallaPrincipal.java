@@ -109,6 +109,8 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         jButton6.setVisible(false);
         jButton7.setVisible(false);
 
+        jButton2.setToolTipText("Configurador");
+        
         jButton2.setBackground(Color.getHSBColor(0.56f, 1.0f, 0.8f));
 
         DefaultTreeCellRenderer render = (DefaultTreeCellRenderer) jTree1.getCellRenderer();

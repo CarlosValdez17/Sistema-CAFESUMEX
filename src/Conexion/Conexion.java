@@ -24,7 +24,7 @@ public class Conexion {
         try {
             Class.forName("com.mysql.jdbc.Driver");
             String url = "jdbc:mysql://localhost/beta_fincalab?autoReconnect=true&useSSL=false";
-            con = DriverManager.getConnection(url, "root", "");
+            con = DriverManager.getConnection(url, "root", "root");
             //JOptionPane.showMessageDialog(null, "Conexión establecida");
             //ip local 127.0.0.1:3306
         } catch (Exception ex) {

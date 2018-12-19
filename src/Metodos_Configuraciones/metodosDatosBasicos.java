@@ -39,7 +39,7 @@ public class metodosDatosBasicos {
 
     public void insertarEnCiclo(String sql) {
         try {
-            //System.out.println(sql);
+            System.out.println(sql);
             PreparedStatement cmd = cn.prepareCall(sql);
             cmd.execute();
             cmd.close();
@@ -184,7 +184,7 @@ public class metodosDatosBasicos {
 
     public String cargarCombos(String sql) {
         try {
-            System.out.println(sql + "\n");
+            //System.out.println(sql + "\n");
             CallableStatement cmd = cn.prepareCall(sql);
             ResultSet rs = cmd.executeQuery();
             String a = "";
@@ -193,7 +193,28 @@ public class metodosDatosBasicos {
                 for (int i = 0; i < 1; i++) {
                     datos[i] = rs.getString(i + 1);
                 }
-                a += datos[0] + "#";
+                a +=datos[0] + "#";
+            }
+            cmd.close();
+            return "Seleccione..#"+a;
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Error - Cargar Combos \n" + ex);
+        }
+        return null;
+    }
+
+    public String generadorStrings(String sql) {
+        try {
+            //System.out.println(sql + "\n");
+            CallableStatement cmd = cn.prepareCall(sql);
+            ResultSet rs = cmd.executeQuery();
+            String a = "";
+            while (rs.next()) {
+                Object[] datos = new Object[2];
+                for (int i = 0; i < 1; i++) {
+                    datos[i] = rs.getString(i + 1);
+                }
+                a +=datos[0] + "#";
             }
             cmd.close();
             return a;
@@ -203,6 +224,7 @@ public class metodosDatosBasicos {
         return null;
     }
 
+    
     public String cargarFormaProceso(String sql) {
         try {
             // System.out.println(sql + "\n");
@@ -227,7 +249,7 @@ public class metodosDatosBasicos {
     public String devuelveId(String sql) {
         try {
             //String sql = "SELECT id from " + tabla + " where descripcion= '" + valor + "' ";
-            //System.out.println(sql);
+            System.out.println(sql);
             CallableStatement cmd = cn.prepareCall(sql);
             ResultSet rs = cmd.executeQuery();
             String id = "";

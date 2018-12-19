@@ -23,12 +23,12 @@ public class jdSociedadesPersonas extends javax.swing.JDialog {
      * Creates new form jdFormaProceso
      */
     Connection cn;
-    String tipoOperacion, nombrePersona, idPersona, tipoPersona;
+    String tipoOperacion, tipoPregunta, idPersona, tipoPersona;
     metodosDatosBasicos mdb;
     jpEvaluaciones jpE;
     jdFormularioProductor jdFP;
 
-    public jdSociedadesPersonas(java.awt.Frame parent, boolean modal, String tipoOperacion, String tipoPersona, String nombrePersona, String idPersona, Connection c) {
+    public jdSociedadesPersonas(java.awt.Frame parent, boolean modal, String tipoOperacion, String tipoPersona, String tipoPregunta, String idPersona, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
@@ -36,14 +36,25 @@ public class jdSociedadesPersonas extends javax.swing.JDialog {
         cn = c;
         this.idPersona = idPersona;
         this.tipoOperacion = tipoOperacion;
-        this.nombrePersona = nombrePersona;
+        this.tipoPregunta = tipoPregunta;
         this.tipoPersona = tipoPersona;
         mdb = new metodosDatosBasicos(cn);
 
         llenarTabla();
-        labelPersona.setText(nombrePersona);
+        lblPregunta.setText(tipoPregunta);
         setTitle("Sociedades");
 
+        if(tipoOperacion.equals("1")){
+            //Tipo operacion 1 = a nuevo mensajes de preguntas
+            lblPregunta.setText(tipoPregunta);
+            labelPersona.setText("");
+        
+        }else if(tipoOperacion.equals("2")){
+            //Tipo operacion 2 = a edicion - mensajes de
+            lblPregunta.setText(tipoPregunta);
+            labelPersona.setText("");
+        }
+        
         //JOptionPane.showMessageDialog(null, "Tipo Operacion=" + tipoOperacion + " - Tipo Persona=" + tipoPersona + " - id=" + idPersona);
         rellenar();
     }
@@ -60,17 +71,20 @@ public class jdSociedadesPersonas extends javax.swing.JDialog {
         String[] datos;
 
         if (tipoPersona.equals("1")) {
-            datos = mdb.cargarCombos("select p.razonsocial \n"
+            datos = mdb.generadorStrings("select p.razonsocial \n"
                     + "from sociedadespersona a\n "
                     + "inner join personam p on (a.ID_asociado=p.ID)\n "
                     + "where a.id_persona= " + idPersona + " and a.tipoPersona=1 order by p.razonsocial asc").split("#");
+
+            labelPersona.setText(mdb.devuelveUnDato("select concat(nombre,' ',apellidomaterno,' ',apellidopaterno) as nombre from personaf where id=" + idPersona));
         } else {
-            datos = mdb.cargarCombos("select p.razonsocial \n"
+            datos = mdb.generadorStrings("select p.razonsocial \n"
                     + "from sociedadespersona a\n "
                     + "inner join personam p on (a.ID_asociado=p.ID)\n "
                     + "where a.id_persona= " + idPersona + " and a.tipoPersona=2 order by p.razonsocial asc").split("#");
-        }
 
+            labelPersona.setText(mdb.devuelveUnDato("select razonsocial from personam where id=" + idPersona));
+        }
         int e = 0;
         //System.out.println("Tamaño datos= " + datos.length);
         for (int i = 0; i < modelo.getRowCount(); i++) {
@@ -91,14 +105,14 @@ public class jdSociedadesPersonas extends javax.swing.JDialog {
         //JOptionPane.showMessageDialog(null, "Entre al case");
         switch (formulario) {
             case "Productor":
-                jdFP = new jdFormularioProductor(null, true, idPersona,nombrePersona, cn);
+                jdFP = new jdFormularioProductor(null, true, idPersona, tipoPregunta, cn);
                 jdFP.setVisible(true);
                 break;
         }
     }
 
     public void tipoOperacion() {
-        DefaultTableModel modelo = (DefaultTableModel) tablaSociedades.getModel();
+    DefaultTableModel modelo = (DefaultTableModel) tablaSociedades.getModel();
 
         if (tipoOperacion.equals("1")) {
 
@@ -175,7 +189,7 @@ public class jdSociedadesPersonas extends javax.swing.JDialog {
         tablaSociedades = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
+        lblPregunta = new javax.swing.JLabel();
         labelPersona = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -238,7 +252,7 @@ public class jdSociedadesPersonas extends javax.swing.JDialog {
             }
         });
 
-        jLabel2.setText("Sociedades de:");
+        lblPregunta.setText("pregunta");
 
         labelPersona.setText("-");
 
@@ -249,7 +263,7 @@ public class jdSociedadesPersonas extends javax.swing.JDialog {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 703, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jButton1)
@@ -257,8 +271,8 @@ public class jdSociedadesPersonas extends javax.swing.JDialog {
                         .addComponent(jButton2))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(labelPersona))
+                            .addComponent(labelPersona)
+                            .addComponent(lblPregunta))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -266,9 +280,9 @@ public class jdSociedadesPersonas extends javax.swing.JDialog {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(labelPersona)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblPregunta)
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 312, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
@@ -363,10 +377,10 @@ public class jdSociedadesPersonas extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel labelPersona;
+    private javax.swing.JLabel lblPregunta;
     private javax.swing.JTable tablaSociedades;
     // End of variables declaration//GEN-END:variables
 }

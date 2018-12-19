@@ -64,7 +64,7 @@ public class jdAsignacionesPersonas extends javax.swing.JDialog {
     public void rellenar() {
 
         DefaultTableModel modelo = (DefaultTableModel) tablaAsignaciones.getModel();
-        String[] datos = mdb.cargarCombos("select p.descripcion \n"
+        String[] datos = mdb.generadorStrings("select p.descripcion \n"
                 + "from asignacionespersona a\n "
                 + "inner join puestos p on (a.ID_puesto=p.ID)\n"
                 + "where a.id_persona= " + idPersona + " order by p.descripcion asc").split("#");
@@ -162,7 +162,12 @@ public class jdAsignacionesPersonas extends javax.swing.JDialog {
         });
         jPopupMenu1.add(jMenuItem1);
 
-        jMenuItem2.setText("Opcion 2");
+        jMenuItem2.setText("Parcelas");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
         jPopupMenu1.add(jMenuItem2);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -364,6 +369,12 @@ public class jdAsignacionesPersonas extends javax.swing.JDialog {
         // TODO add your handling code here:
         editarDetalles(asignacion);
     }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        // TODO add your handling code here:
+        editarDetalles(asignacion);
+
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     /**
      * @param args the command line arguments

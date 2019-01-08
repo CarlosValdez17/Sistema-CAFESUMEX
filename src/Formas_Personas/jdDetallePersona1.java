@@ -62,7 +62,6 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
         //pFisica.setSelected(true);
 
         rellenarInformacion();
-
     }
 
     public void rellenarInformacion() {
@@ -70,7 +69,6 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
         //EXPLICACION DE VARIABLE "TIPO" = TIPO DE PROCESO
         //Comparación de tipo de proceso (Visualizacion/Modificacion = 2 | Nuevo = 1)
         if (tipo.equals("2")) {
-
             //Comparacion de tipo de persona para realizar consulta en su tabla especifica.
             if (tipoPersona.equals("1")) {
 
@@ -79,8 +77,8 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
                         + "inner join personam p on (a.ID_asociado=p.ID)\n "
                         + "where a.id_persona= " + idPersona + " and a.tipoPersona=1 order by p.razonsocial asc").replace("#", ", ");
 
-                lblSociedades.setText("Sociedad: "+ds);
-                        
+                lblSociedades.setText("Sociedad: " + ds);
+
                 String[] datos = mdb.cargarDatosFormularioPersonas("select nombre, apellidopaterno, apellidomaterno, "
                         + "registrodepoblacion, identificacionfiscal, id_genero,telefono, telefonomovil, direccion, codigopostal, "
                         + "id_pais, id_estado, id_municipio, id_localidad, id_ejidocolonia, foto from personaf where id=" + idPersona, 16).split("¬");
@@ -146,10 +144,10 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
                         + "identificacionFiscal,telefono, direccion,email,paginaweb, codigopostal, "
                         + "id_pais, id_estado, id_municipio, id_localidad, id_ejidocolonia, foto from personam where id=" + idPersona, 15).split("¬");
 
-/*                System.out.println(mdb.cargarDatosFormularioPersonas("select razonsocial, nombrecorto, clavecorte, "
+                /*                System.out.println(mdb.cargarDatosFormularioPersonas("select razonsocial, nombrecorto, clavecorte, "
                         + "identificacionFiscal,telefono, direccion,email,paginaweb, codigopostal, "
                         + "id_pais, id_estado, id_municipio, id_localidad, id_ejidocolonia, foto from personam where id=" + idPersona, 15));
-*/
+                 */
                 pFisica.setSelected(false);
                 pMoral.setSelected(true);
 
@@ -190,7 +188,6 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
                 } else {
                     tSocio.setSelected(true);
                 }
-
                 apagarCampos();
             }
             /*else {
@@ -290,14 +287,11 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
                 lbFoto.setText(null);
                 lbFoto.setIcon(icono);
             }
-
         } catch (SQLException ex) {
         }
-
     }
 
     public void tipoFormulario() {
-
         if (tipo.equals("2")) {
             jButton5.setEnabled(true);
             jButton6.setEnabled(true);
@@ -332,7 +326,6 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
             jLabel3.setText("Clave Corte");
             jLabel16.setText("Pagina Web");
             jLabel8.setText("Email");
-
         } else {
             jLabel1.setText("Nombre");
             jLabel2.setText("Apellido Paterno");
@@ -399,12 +392,52 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
         return imageString;
     }
 
+    public Boolean validarCampos() {
+        Boolean valor = null;
+
+        if (!tSocio.isSelected() && !tProductor.isSelected()) {
+            JOptionPane.showMessageDialog(null, "Seleccione Socio o Productor");
+            return false;
+        } else {
+            valor = true;
+        }
+
+        if (txtNombre.getText().length() == 0 || txtApPat.getText().length() == 0 || txtApMat.getText().length() == 0
+                || txtDireccion.getText().length() == 0 || txtRFC.getText().length() == 0 || txtCURP.getText().length() == 0
+                || txtTelefono.getText().length() == 0 || txtTelefono1.getText().length() == 0) {
+            JOptionPane.showMessageDialog(null, "Existen Campos Vacios");
+            return false;
+        } else {
+            valor = true;
+        }
+
+        if (!radioM.isSelected() && !radioF.isSelected()) {
+            JOptionPane.showMessageDialog(null, "Seleccione un Genero");
+            return false;
+        } else {
+            valor = true;
+        }
+
+        if (comboPais.getSelectedItem().equals("Seleccione..")
+                || comboEstado.getSelectedItem().equals("Seleccione..")
+                || comboMunicipio.getSelectedItem().equals("Seleccione..")
+                || comboLocalidad.getSelectedItem().equals("Seleccione..")
+                || comboColonia.getSelectedItem().equals("Seleccione..")) {
+            JOptionPane.showMessageDialog(null, "Verifica Ubicacion Geografica");
+            return false;
+        } else {
+            valor = true;
+        }
+        return valor;
+    }
+
     public void tipoProceso() {
         try {
             String image_string = "NO", atributoS = "0", atributoP = "0", genero = "", asignacion = "";
             if (!txtRuta.getText().equals("NO")) {
                 try {
                     BufferedImage img = ImageIO.read(new File(fichero.toString()));
+
                     image_string = encodeToString(img);
                 } catch (Exception e) {
                 }
@@ -414,7 +447,6 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
             if (tSocio.isSelected() && tProductor.isSelected()) {
                 //Preguntar y Añadir Sociedad
                 estadoSocio = "1";
-
             } else if (!tSocio.isSelected() && tProductor.isSelected()) {
                 //Preguntar y Añadir Sociedad a quien entregará Cafe
                 estadoSocio = "0";
@@ -464,7 +496,6 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
                         asignacion = "Socio";
                         mdb.insertarBasicos("insert into asignacionespersona "
                                 + "values (null, " + idPersona + ", " + mdb.devuelveId("select id from puestos where descripcion='" + asignacion + "'") + ")");
-
                     }
                     if (tProductor.isSelected()) {
                         //atributoP = "1";
@@ -472,7 +503,6 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
                         mdb.insertarBasicos("insert into asignacionespersona "
                                 + "values (null, " + idPersona + ", " + mdb.devuelveId("select id from puestos where descripcion='" + asignacion + "'") + ")");
                     }
-
                     detalleAsignaciones(idPersona, "1");
                     tipo = "2";
                 } else {
@@ -502,9 +532,7 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
                         mdb.insertarBasicos("insert into asignacionespersona "
                                 + "values (null," + idPersona + ", " + mdb.devuelveId("select id from puestos where descripcion='" + asignacion + "'") + ")");
                     }
-
                     detalleAsignaciones(idPersona, "2");
-
                 }
                 /*if (mdb.comprobarExistencia("select id from persona "
                         + "where (nombre='" + txtNombre.getText() + "' and apellidoPaterno='" + txtApPat.getText() + "' and apellidoMaterno='" + txtApMat.getText() + "' ) "
@@ -517,7 +545,6 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
                 jButton6.setEnabled(true);
             } else {
                 //AQUI METODOS PARA ACTUALIZACION DE DATOS
-
                 if (tipoPersona.equals("1")) {
                     mdb.actualizarBasicos("UPDATE personaf SET nombre='" + txtNombre.getText() + "' , "
                             + "apellidoPaterno='" + txtApPat.getText() + "', apellidoMaterno='" + txtApMat.getText() + "',  "
@@ -546,9 +573,7 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
                             + " where id=" + idPersona);
                 }
             }
-
             jpDP.llenarTabla();
-
         } catch (Exception e) {
             System.err.println(e);
         }
@@ -559,23 +584,17 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
 
         if (tSocio.isSelected() && tProductor.isSelected()) {
             //Preguntar y Añadir Sociedad
-
             formSoc = new jdSociedadesPersonas(null, true, "1", tipoP, "¿A que sociedad perteneces?", id, cn);
             formSoc.setVisible(true);
-
         } else if (!tSocio.isSelected() && tProductor.isSelected()) {
             //Preguntar y Añadir Sociedad a quien entregará Cafe
-
             formSoc = new jdSociedadesPersonas(null, true, "1", tipoP, "¿A que sociedad entregaras tu cafe?", id, cn);
             formSoc.setVisible(true);
-
         } else if (tSocio.isSelected() && !tProductor.isSelected()) {
             //Preguntar y añadir Sociedad
-
             formSoc = new jdSociedadesPersonas(null, true, "1", tipoP, "¿A que sociedad perteneces?", id, cn);
             formSoc.setVisible(true);
         }
-
         /*if (tSocio.isSelected()) {
             int result = JOptionPane.showConfirmDialog(null, "¿Deseas añadir la información de 'Sociedades' ?",
                     null, JOptionPane.YES_NO_OPTION);
@@ -587,7 +606,6 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
                 JOptionPane.showMessageDialog(null, "Información Pendiente");
             }
         }
-
         if (tProductor.isSelected()) {
             int result = JOptionPane.showConfirmDialog(null, "¿Deseas añadir la información de 'Productor' ?",
                     null, JOptionPane.YES_NO_OPTION);
@@ -1274,7 +1292,6 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
             id = mdb.comprobarExistencia("select id from personam "
                     + "where (razonsocial='" + txtNombre.getText() + "')");
         }
-
         jdAP = new jdAsignacionesPersonas(null, true, tipoPersona, txtNombre.getText() + " " + txtApPat.getText() + " " + txtApMat.getText(), idPersona, cn);
         jdAP.setVisible(true);
     }//GEN-LAST:event_jButton5ActionPerformed
@@ -1290,7 +1307,9 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        tipoProceso();
+        if (validarCampos() == true) {
+            tipoProceso();
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void pMoralItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_pMoralItemStateChanged
@@ -1424,7 +1443,7 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
         JFileChooser file = new JFileChooser();
-        FileNameExtensionFilter filtro = new FileNameExtensionFilter("*.jpg", "jpg");
+        FileNameExtensionFilter filtro = new FileNameExtensionFilter("*.pdf", "pdf");
         file.setFileFilter(filtro);
 
         int seleccion = file.showOpenDialog(contentPane);

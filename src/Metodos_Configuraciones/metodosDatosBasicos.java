@@ -27,7 +27,7 @@ public class metodosDatosBasicos {
 
     public void insertarBasicos(String sql) {
         try {
-            //System.out.println(sql);
+            System.out.println(sql);
             PreparedStatement cmd = cn.prepareCall(sql);
             cmd.execute();
             cmd.close();
@@ -88,7 +88,7 @@ public class metodosDatosBasicos {
             ResultSet rs = cmd.executeQuery();
 
             while (rs.next()) {
-                Object[] datos = new Object[10];
+                Object[] datos = new Object[tamaño];
                 for (int i = 0; i < tamaño; i++) {
                     datos[i] = rs.getString(i + 1);
                 }
@@ -143,6 +143,7 @@ public class metodosDatosBasicos {
 
     public String cargarDatosFormularioPersonas(String sql, int tamaño) {
         try {
+            System.out.println(sql);
             CallableStatement cmd = cn.prepareCall(sql);
             ResultSet rs = cmd.executeQuery();
             String a = "";
@@ -150,10 +151,15 @@ public class metodosDatosBasicos {
                 Object[] datos = new Object[tamaño];
                 for (int i = 0; i < tamaño; i++) {
                     datos[i] = rs.getString(i + 1);
+                    if(datos[i].equals("")){
+                        datos[i]=" ";
+                    }
                     a += datos[i] + "¬";
                 }
                 //String a = datos[0] + "," + datos[1] + "," + datos[2] + "," + datos[3] + "," + datos[4]+ "," + datos[5] + "," + datos[6] + "," + datos[7] + "," + datos[8]+ "," + datos[9] + "," + datos[10] + "," + datos[11] + "," + datos[12]+ "," + datos[13] + "," + datos[14] + "," + datos[15] + "," + datos[16]+","+datos[17];
+                System.out.println(a);
                 return a;
+                
             }
             cmd.close();
         } catch (Exception ex) {
@@ -241,20 +247,19 @@ public class metodosDatosBasicos {
             cmd.close();
             return a;
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Error - Cargar Combos \n" + ex);
+            JOptionPane.showMessageDialog(null, "Error - Cargar Forma/Procesos \n" + ex);
         }
         return null;
     }
 
     public String devuelveId(String sql) {
         try {
-            //String sql = "SELECT id from " + tabla + " where descripcion= '" + valor + "' ";
-            System.out.println(sql);
             CallableStatement cmd = cn.prepareCall(sql);
             ResultSet rs = cmd.executeQuery();
-            String id = "";
+            String id="";
             if (rs.next()) {
                 id = rs.getString("ID");
+                return id;
             }
             cmd.close();
             return id;
@@ -266,7 +271,7 @@ public class metodosDatosBasicos {
 
     public String devuelveUnDato(String sql) {
         try {
-            System.out.println(sql);
+           // System.out.println(sql);
             CallableStatement cmd = cn.prepareCall(sql);
             ResultSet rs = cmd.executeQuery();
             String a = "";
@@ -277,7 +282,6 @@ public class metodosDatosBasicos {
                 }
                 a = datos[0] + "";
             }
-            System.out.println("DATOOOOOOOOOOOOOOOOOOOO =" + a);
             cmd.close();
             return a;
         } catch (Exception ex) {
@@ -321,7 +325,7 @@ public class metodosDatosBasicos {
                         } else {
                             datos[1] = false;
                         }
-                        System.out.println(datos[i]);
+                        //System.out.println(datos[i]);
                     } else if (i == 2) {
                         if (datos[2].equals("1")) {
                             datos[2] = true;
@@ -342,13 +346,13 @@ public class metodosDatosBasicos {
     public void cargarInformacionFormaEvaluaciones(DefaultTableModel modelo, String sql) {
 
         try {
-            System.out.println(sql);
+            //System.out.println(sql);
             CallableStatement cmd = cn.prepareCall(sql);
             ResultSet rs = cmd.executeQuery();
 
-            System.out.println("antes de while");
+            //System.out.println("antes de while");
             while (rs.next()) {
-                System.out.println("while");
+                //System.out.println("while");
                 Object[] datos = new Object[2];
                 datos[0] = rs.getString("estad");
                 datos[1] = rs.getString("idventa");
@@ -359,7 +363,7 @@ public class metodosDatosBasicos {
 
             }
 
-            System.out.println("desps de while");
+            //System.out.println("desps de while");
 
             cmd.close();
             //    cn.close();
@@ -386,7 +390,7 @@ public class metodosDatosBasicos {
                         } else {
                             datos[1] = false;
                         }
-                        System.out.println(datos[i]);
+                        //System.out.println(datos[i]);
                     } else if (i == 2) {
                         if (datos[2].equals("1")) {
                             datos[2] = true;

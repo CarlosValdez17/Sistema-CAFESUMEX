@@ -653,13 +653,26 @@ public class jpPersonas1 extends javax.swing.JPanel {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        if (nom.equals("")) {
-            JOptionPane.showMessageDialog(null, "Seleccione un registro");
-        } else {
-            jdDP = new jdDetallePersona1(null, true, "2", id, "", cn);
-            //jdDP.jpABH = this;
+        if (!nom.equals("")) {
+            //Abrir detalle para persona fisica = 1
+            id = mdb.comprobarExistencia("select id from personaf "
+                    + "where (nombre='" + nom + "' and apellidoPaterno='" + app + "' and apellidoMaterno='" + apm + "' ) ");
+            //JOptionPane.showMessageDialog(null,"Persona Fisica #"+id);
+            jdDP = new jdDetallePersona1(null, true, "2", id, "1", cn);
+            jdDP.jpDP = this;
+            jdDP.setVisible(true);
+
+        } else if (nom.equals("") && !rsocial.equals("")) {
+            //Abrir detalle para persona moral = 2
+
+            id = mdb.comprobarExistencia("select id from personam "
+                    + "where razonsocial='" + rsocial + "'");
+            //JOptionPane.showMessageDialog(null,"Persona Moral #"+id);
+            jdDP = new jdDetallePersona1(null, true, "2", id, "2", cn);
+            jdDP.jpDP = this;
             jdDP.setVisible(true);
         }
+
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed

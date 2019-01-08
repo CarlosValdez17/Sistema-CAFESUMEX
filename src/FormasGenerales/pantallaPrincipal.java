@@ -104,13 +104,13 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         image.setImage("/Imagenes/FondoPantalla.png");
         setContentPane(image);*/
         //jButton3.setVisible(false);
-        jButton4.setVisible(false);
+        //jButton4.setVisible(false);
         jButton5.setVisible(false);
         jButton6.setVisible(false);
         jButton7.setVisible(false);
 
         jButton2.setToolTipText("Configurador");
-        
+
         jButton2.setBackground(Color.getHSBColor(0.56f, 1.0f, 0.8f));
 
         DefaultTreeCellRenderer render = (DefaultTreeCellRenderer) jTree1.getCellRenderer();
@@ -1153,7 +1153,19 @@ public class pantallaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // TODO add your handling code here:
+         // TODO add your handling code here:
+        panelArbol.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jScrollPane2.setOpaque(false);
+
+        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("FincaCert");
+        javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Productores");
+        treeNode1.add(treeNode2);
+        
+        jTree1.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+
+        pintarPanel("fondo");
+        
         //CAMBIAR COLORES BOTOTES
         jButton4.setBackground(Color.getHSBColor(0.56f, 1.0f, 0.8f));
         //QUITAR COLOR

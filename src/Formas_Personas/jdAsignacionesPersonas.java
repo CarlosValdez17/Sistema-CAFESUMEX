@@ -203,6 +203,9 @@ public class jdAsignacionesPersonas extends javax.swing.JDialog {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tablaAsignacionesMouseClicked(evt);
             }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                tablaAsignacionesMouseEntered(evt);
+            }
         });
         tablaAsignaciones.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -375,6 +378,10 @@ public class jdAsignacionesPersonas extends javax.swing.JDialog {
         editarDetalles(asignacion);
 
     }//GEN-LAST:event_jMenuItem2ActionPerformed
+
+    private void tablaAsignacionesMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaAsignacionesMouseEntered
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tablaAsignacionesMouseEntered
 
     /**
      * @param args the command line arguments

@@ -5,6 +5,7 @@
  */
 package Formas_Personas;
 
+import Formas_FincaCert.jpProductores;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import Metodos_Configuraciones.validaConfi;
 import java.awt.Image;
@@ -42,6 +43,7 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
     jdAsignacionesPersonas jdAP;
     jdSociedadesPersonas formSoc;
     jpPersonas1 jpDP;
+    jpProductores jpP;
     validaConfi valiConf;
     private JPanel contentPane;
     String idPersona, tipo, tipoPersona;
@@ -437,7 +439,6 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
             if (!txtRuta.getText().equals("NO")) {
                 try {
                     BufferedImage img = ImageIO.read(new File(fichero.toString()));
-
                     image_string = encodeToString(img);
                 } catch (Exception e) {
                 }

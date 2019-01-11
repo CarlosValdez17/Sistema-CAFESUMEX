@@ -36,6 +36,7 @@ public class jdAsignacionesPersonas extends javax.swing.JDialog {
 
         cn = c;
         this.idPersona = idPersona;
+        //tipoOperacion es el tipo de persona
         this.tipoOperacion = tipoOperacion;
         this.nombrePersona = nombrePersona;
         mdb = new metodosDatosBasicos(cn);
@@ -92,7 +93,7 @@ public class jdAsignacionesPersonas extends javax.swing.JDialog {
         //JOptionPane.showMessageDialog(null, "Entre al case");
         switch (formulario) {
             case "Productor":
-                jdFP = new jdFormularioProductor(null, true, idPersona, nombrePersona, cn);
+                jdFP = new jdFormularioProductor(null, true, idPersona, nombrePersona, tipoOperacion, cn);
                 jdFP.setVisible(true);
                 break;
             case "Socio":
@@ -105,13 +106,27 @@ public class jdAsignacionesPersonas extends javax.swing.JDialog {
     public void editarDetalles(String formulario) {
         switch (formulario) {
             case "Productor":
-                if (mdb.devuelveUnDato("select clave_productor from productor where id_persona=" + idPersona) == null
-                        || mdb.devuelveUnDato("select clave_productor from productor where id_persona=" + idPersona).equals("")) {
-                    jdFormularioProductor jdFPr = new jdFormularioProductor(null, true, idPersona, nombrePersona, cn);
-                    jdFPr.setVisible(true);
-                } else {
-                    jdFormularioParcelas jdFP = new jdFormularioParcelas(null, true, idPersona, cn);
-                    jdFP.setVisible(true);
+                if (tipoOperacion.equals("1")) {
+                    if (mdb.devuelveUnDato("select clave_productor from productor where id_persona=" + idPersona+ " and tipoPersona=1") == null
+                            || mdb.devuelveUnDato("select clave_productor from productor where id_persona=" + idPersona+ " and tipoPersona=1").equals("")) {
+                        jdFormularioProductor jdFPr = new jdFormularioProductor(null, true, idPersona, nombrePersona, tipoOperacion, cn);
+                        jdFPr.setVisible(true);
+                    } else {
+                        jdFormularioParcelas jdFP = new jdFormularioParcelas(null, true, idPersona, tipoOperacion,"", cn);
+                        jdFP.setVisible(true);
+                    }
+                }else{
+                
+                    if (mdb.devuelveUnDato("select clave_productor from productor where id_persona=" + idPersona+ " and tipoPersona=2") == null
+                            || mdb.devuelveUnDato("select clave_productor from productor where id_persona=" + idPersona+ " and tipoPersona=2").equals("")) {
+                        jdFormularioProductor jdFPr = new jdFormularioProductor(null, true, idPersona, nombrePersona, tipoOperacion, cn);
+                        jdFPr.setVisible(true);
+                    } else {
+                        jdFormularioParcelas jdFP = new jdFormularioParcelas(null, true, idPersona, tipoOperacion,"", cn);
+                        jdFP.setVisible(true);
+                    }
+                
+                    
                 }
                 break;
         }

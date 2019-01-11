@@ -20,14 +20,15 @@ public class jdFormularioProductor extends javax.swing.JDialog {
      */
     Connection cn;
     metodosDatosBasicos mdb;
-    String idPersona,nombre;
+    String idPersona,nombre,tipoPersona;
 
-    public jdFormularioProductor(java.awt.Frame parent, boolean modal, String idPersona, String nombre, Connection c) {
+    public jdFormularioProductor(java.awt.Frame parent, boolean modal, String idPersona, String nombre, String tipoPersona, Connection c) {
         super(parent, modal);
         initComponents();
         cn = c;
         mdb = new metodosDatosBasicos(cn);
         this.idPersona = idPersona;
+        this.tipoPersona = tipoPersona;
         this.nombre=nombre;
         
         lblNombre.setText(nombre);
@@ -130,13 +131,13 @@ public class jdFormularioProductor extends javax.swing.JDialog {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        mdb.insertarBasicos("insert into productor values (null, " + idPersona + ", '" + txtClave.getText() + "')");
+        mdb.insertarBasicos("insert into productor values (null, " + idPersona + ", '"+txtClave.getText()+"', "+tipoPersona+" )");
 
         int result = JOptionPane.showConfirmDialog(null, "¿Deseas añadir sus parcelas?",
                 null, JOptionPane.YES_NO_OPTION);
 
         if (result == JOptionPane.YES_OPTION) {
-            jdFormularioParcelas jdFP = new jdFormularioParcelas(null, true, idPersona, cn);
+            jdFormularioParcelas jdFP = new jdFormularioParcelas(null, true, idPersona,tipoPersona,"", cn);
             jdFP.setVisible(true);
         } else {
             JOptionPane.showMessageDialog(null, "Parcelas Pendientes");

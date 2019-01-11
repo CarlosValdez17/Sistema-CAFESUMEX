@@ -677,8 +677,8 @@ public class jpPersonas1 extends javax.swing.JPanel {
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        jdFormularioParcelas jdfp = new jdFormularioParcelas(null, true, "3", cn);
-        jdfp.setVisible(true);
+//        jdFormularioParcelas jdfp = new jdFormularioParcelas(null, true, "3", cn);
+//        jdfp.setVisible(true);
         /*   String sql = "UPDATE actividadesbh SET ID_Situacion=2 where actividad='" + actividad + "'";
         mdb.actualizarBasicos(sql);
         llenaTabla();*/

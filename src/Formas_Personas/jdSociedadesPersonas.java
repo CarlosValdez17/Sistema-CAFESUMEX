@@ -105,7 +105,7 @@ public class jdSociedadesPersonas extends javax.swing.JDialog {
         //JOptionPane.showMessageDialog(null, "Entre al case");
         switch (formulario) {
             case "Productor":
-                jdFP = new jdFormularioProductor(null, true, idPersona, tipoPregunta, cn);
+                jdFP = new jdFormularioProductor(null, true, idPersona, tipoPregunta,tipoPersona, cn);
                 jdFP.setVisible(true);
                 break;
         }

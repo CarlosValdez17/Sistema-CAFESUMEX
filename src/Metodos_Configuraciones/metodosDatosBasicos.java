@@ -27,7 +27,7 @@ public class metodosDatosBasicos {
 
     public void insertarBasicos(String sql) {
         try {
-            System.out.println(sql);
+            //System.out.println(sql);
             PreparedStatement cmd = cn.prepareCall(sql);
             cmd.execute();
             cmd.close();
@@ -39,7 +39,7 @@ public class metodosDatosBasicos {
 
     public void insertarEnCiclo(String sql) {
         try {
-            System.out.println(sql);
+            //System.out.println(sql);
             PreparedStatement cmd = cn.prepareCall(sql);
             cmd.execute();
             cmd.close();
@@ -50,7 +50,7 @@ public class metodosDatosBasicos {
 
     public void actualizarBasicos(String sql) {
         try {
-            System.out.println(sql);
+            //System.out.println(sql);
             PreparedStatement cmd = cn.prepareCall(sql);
             cmd.execute();
             cmd.close();
@@ -83,7 +83,7 @@ public class metodosDatosBasicos {
 
     public void cargarInformacion2(DefaultTableModel modelo, int tamaño, String sql) {
         try {
-            System.out.println(sql);
+            //System.out.println(sql);
             CallableStatement cmd = cn.prepareCall(sql);
             ResultSet rs = cmd.executeQuery();
 
@@ -143,7 +143,7 @@ public class metodosDatosBasicos {
 
     public String cargarDatosFormularioPersonas(String sql, int tamaño) {
         try {
-            System.out.println(sql);
+            System.out.println("-------  "+sql);
             CallableStatement cmd = cn.prepareCall(sql);
             ResultSet rs = cmd.executeQuery();
             String a = "";
@@ -157,7 +157,7 @@ public class metodosDatosBasicos {
                     a += datos[i] + "¬";
                 }
                 //String a = datos[0] + "," + datos[1] + "," + datos[2] + "," + datos[3] + "," + datos[4]+ "," + datos[5] + "," + datos[6] + "," + datos[7] + "," + datos[8]+ "," + datos[9] + "," + datos[10] + "," + datos[11] + "," + datos[12]+ "," + datos[13] + "," + datos[14] + "," + datos[15] + "," + datos[16]+","+datos[17];
-                System.out.println(a);
+                //System.out.println(a);
                 return a;
                 
             }
@@ -350,9 +350,7 @@ public class metodosDatosBasicos {
             CallableStatement cmd = cn.prepareCall(sql);
             ResultSet rs = cmd.executeQuery();
 
-            //System.out.println("antes de while");
             while (rs.next()) {
-                //System.out.println("while");
                 Object[] datos = new Object[2];
                 datos[0] = rs.getString("estad");
                 datos[1] = rs.getString("idventa");
@@ -363,11 +361,7 @@ public class metodosDatosBasicos {
 
             }
 
-            //System.out.println("desps de while");
-
             cmd.close();
-            //    cn.close();
-
         } catch (Exception ex) {
         }
     }

@@ -5,6 +5,7 @@
  */
 package Formas_Personas;
 
+import Formas_FincaCert.jdParcelas;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import Metodos_Configuraciones.validaConfi;
 import java.awt.Color;
@@ -42,21 +43,24 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
      */
     Connection cn;
     metodosDatosBasicos mdb;
+    jdParcelas jdP;
     DefaultTableModel modelo, modeloC, modeloCultivos, modeloV, modeloD;
-    String idPersona;
+    String idPersona, tipoPersona, claveParcela;
     validaConfi valiConf;
 
     String fila = null;
 
     private JPanel contentPane;
 
-    public jdFormularioParcelas(java.awt.Frame parent, boolean modal, String idPersona, Connection c) {
+    public jdFormularioParcelas(java.awt.Frame parent, boolean modal, String idPersona, String tipoPersona, String claveParcela, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
 
         cn = c;
         mdb = new metodosDatosBasicos(cn);
+        this.tipoPersona = tipoPersona;
+        this.claveParcela = claveParcela;
         valiConf = new validaConfi();
 
         modelo = (DefaultTableModel) tablaParcelas.getModel();
@@ -67,10 +71,16 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
 
         this.idPersona = idPersona;
 
-        llenarDatos();
+        JOptionPane.showMessageDialog(null, "Tipo de persona = " + tipoPersona + "\n" + "Id Persona = " + idPersona + "\n" + "Clave Parcela = " + claveParcela);
+
+        if (tipoPersona.equals("1")) {
+            llenarDatosProductorFisica();
+        } else {
+            llenarDatosProductorMoral();
+        }
         llenarTabla();
         rellenarCombos();
-        // datosParcela("17");
+        datosParcela(claveParcela);
     }
 
     public void validarCampos() {
@@ -125,7 +135,7 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
                 + "GROUP BY clave_parcela ASC");
     }
 
-    public void llenarDatos() {
+    public void llenarDatosProductorFisica() {
         String[] datos = mdb.cargarDatosFormularioPersonas("SELECT concat(nombre,' ',apellidopaterno,' ', apellidomaterno) as nombre,"
                 + "identificacionfiscal, registrodepoblacion, direccion, telefono, telefonomovil from personaf where id=" + idPersona, 6).split("¬");
         lblNombre.setText(datos[0]);
@@ -137,6 +147,25 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
 
         lblClave.setText(mdb.devuelveUnDato("select clave_productor from productor where id_persona=" + idPersona));
         //System.out.println("CLAVE DE PRODUCTOR=" + mdb.devuelveUnDato("select clave_productor from productor where id_persona=" + idPersona));
+    }
+
+    public void llenarDatosProductorMoral() {
+
+        String[] datos = mdb.cargarDatosFormularioPersonas("SELECT razonsocial, "
+                + "identificacionfiscal, nombrecorto, direccion, telefono, email from personam where id=" + idPersona, 6).split("¬");
+
+        jLabel16.setText("Nombre Corto");
+        jLabel19.setText("Email");
+
+        lblNombre.setText(datos[0]);
+        lblRFC.setText(datos[1]);
+        lblCURP.setText(datos[2]);
+        lblDireccion.setText(datos[3]);
+        lblTelFijo.setText(datos[4]);
+        lblTelMov.setText(datos[5]);
+
+        lblClave.setText(mdb.devuelveUnDato("select clave_productor from productor where id_persona=" + idPersona));
+        //System.out.println(mdb.devuelveUnDato("select clave_productor from productor where id_persona="+idPersona));
     }
 
     public void datosParcela(String idParcela) {
@@ -155,83 +184,85 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
                 + "where p.id=" + idParcela, 16).split("¬");
          */
 
-        String[] datos = mdb.cargarDatosFormularioPersonas("SELECT clave_parcela, nombre, altura, area, numCafetos, pm.NombreCorto, pa.descripcion,\n"
-                + "	e.descripcion, m.descripcion, l.descripcion, sector, edad, observaciones\n"
-                + "from parcelas p\n"
-                + "inner join personam pm on (p.id_sociedad=pm.ID)\n"
-                + "inner join pais pa on (p.id_pais=pa.ID)\n"
-                + "inner join estado e on (p.id_estado=e.ID)\n"
-                + "inner join municipio m on (p.id_municipio=m.ID)\n"
-                + "inner join localidad l on (p.id_localidad=l.ID)\n"
-                + "where p.id=" + idParcela, 13).split("¬");
+        if (!idParcela.equals("")) {
+            String[] datos = mdb.cargarDatosFormularioPersonas("SELECT clave_parcela, nombre, altura, area, numCafetos, pm.NombreCorto, pa.descripcion,\n"
+                    + "	e.descripcion, m.descripcion, l.descripcion, sector, edad, observaciones\n"
+                    + "from parcelas p\n"
+                    + "inner join personam pm on (p.id_sociedad=pm.ID)\n"
+                    + "inner join pais pa on (p.id_pais=pa.ID)\n"
+                    + "inner join estado e on (p.id_estado=e.ID)\n"
+                    + "inner join municipio m on (p.id_municipio=m.ID)\n"
+                    + "inner join localidad l on (p.id_localidad=l.ID)\n"
+                    + "where p.id=" + idParcela, 13).split("¬");
 
-        //Clave de parcela
-        txtClave.setText(datos[0]);
-        //Nombre parcela
-        txtNombre.setText(datos[1]);
-        //Altura parcela
-        txtAltura.setText(datos[2]);
-        //Area parcela
-        txtArea.setText(datos[3]);
-        //Numero de Cafetos
-        txtCafetos.setText(datos[4]);
-        //Nombre Corto de Sociedad
-        comboSociedades.setSelectedItem(datos[5]);
-        //Pais
-        comboPais.setSelectedItem(datos[6]);
-        //Estado
-        comboEstado.setSelectedItem(datos[7]);
-        //Municipio
-        comboMunicipio.setSelectedItem(datos[8]);
-        //Localidad
-        comboLocalidad.setSelectedItem(datos[9]);
-        //Sector
-        comboSector.setSelectedItem(datos[10]);
-        //Edad
-        txtEdad.setText(datos[11]);
-        //Observaciones
-        txtObservaciones.setText(datos[12]);
+            //Clave de parcela
+            txtClave.setText(datos[0]);
+            //Nombre parcela
+            txtNombre.setText(datos[1]);
+            //Altura parcela
+            txtAltura.setText(datos[2]);
+            //Area parcela
+            txtArea.setText(datos[3]);
+            //Numero de Cafetos
+            txtCafetos.setText(datos[4]);
+            //Nombre Corto de Sociedad
+            comboSociedades.setSelectedItem(datos[5]);
+            //Pais
+            comboPais.setSelectedItem(datos[6]);
+            //Estado
+            comboEstado.setSelectedItem(datos[7]);
+            //Municipio
+            comboMunicipio.setSelectedItem(datos[8]);
+            //Localidad
+            comboLocalidad.setSelectedItem(datos[9]);
+            //Sector
+            comboSector.setSelectedItem(datos[10]);
+            //Edad
+            txtEdad.setText(datos[11]);
+            //Observaciones
+            txtObservaciones.setText(datos[12]);
 
-        //Combos - Consulta Individual
-        //Tipo de Suelo
-        comboSuelo.setSelectedItem(mdb.devuelveUnDato("select ts.descripcion from parcelas p "
-                + "inner join tiposuelo ts on (p.Id_tipoSuelo=ts.ID) "
-                + "where p.id=" + idParcela));
+            //Combos - Consulta Individual
+            //Tipo de Suelo
+            comboSuelo.setSelectedItem(mdb.devuelveUnDato("select ts.descripcion from parcelas p "
+                    + "inner join tiposuelo ts on (p.Id_tipoSuelo=ts.ID) "
+                    + "where p.id=" + idParcela));
 
-        //Tipo de Sombra
-        comboSombra.setSelectedItem(mdb.devuelveUnDato("select ts.descripcion from parcelas p "
-                + "inner join tiposombra ts on (p.id_tiposombra=ts.id) "
-                + "where p.id=" + idParcela));
+            //Tipo de Sombra
+            comboSombra.setSelectedItem(mdb.devuelveUnDato("select ts.descripcion from parcelas p "
+                    + "inner join tiposombra ts on (p.id_tiposombra=ts.id) "
+                    + "where p.id=" + idParcela));
 
-        //Combo Sistema Produccion
-        comboSistemaP.setSelectedItem(mdb.devuelveUnDato("select sp.descripcion from parcelas p "
-                + "inner join tipoproduccion sp on (p.Id_sistemaProduccion=sp.ID) "
-                + "where p.id=" + idParcela));
+            //Combo Sistema Produccion
+            comboSistemaP.setSelectedItem(mdb.devuelveUnDato("select sp.descripcion from parcelas p "
+                    + "inner join tipoproduccion sp on (p.Id_sistemaProduccion=sp.ID) "
+                    + "where p.id=" + idParcela));
 
-        limpiar(tablaCultivos);
-        limpiar(tablaVariedades);
-        limpiar(tablaCertificado);
-        limpiar(tablaDocumentos);
+            limpiar(tablaCultivos);
+            limpiar(tablaVariedades);
+            limpiar(tablaCertificado);
+            limpiar(tablaDocumentos);
 
-        mdb.cargarInformacion2(modeloCultivos, 2, "select c.descripcion, porcentaje "
-                + "from porcentaje_cultivos p "
-                + "inner join cultivos c on (p.id_cultivo=c.id) "
-                + "where id_parcela=" + idParcela);
+            mdb.cargarInformacion2(modeloCultivos, 2, "select c.descripcion, porcentaje "
+                    + "from porcentaje_cultivos p "
+                    + "inner join cultivos c on (p.id_cultivo=c.id) "
+                    + "where id_parcela=" + idParcela);
 
-        mdb.cargarInformacion2(modeloV, 2, "select c.descripcion, porcentaje "
-                + "from porcentaje_variedades p "
-                + "inner join variedadcafe c on (p.id_variedad=c.id) "
-                + "where id_parcela=" + idParcela);
+            mdb.cargarInformacion2(modeloV, 2, "select c.descripcion, porcentaje "
+                    + "from porcentaje_variedades p "
+                    + "inner join variedadcafe c on (p.id_variedad=c.id) "
+                    + "where id_parcela=" + idParcela);
 
-        mdb.cargarInformacion2(modeloC, 1, "select c.clave "
-                + "from certificadosparcelas cp "
-                + "inner join certificado c on (cp.id_certificado=c.id) "
-                + "where id_parcela=" + idParcela);
+            mdb.cargarInformacion2(modeloC, 1, "select c.clave "
+                    + "from certificadosparcelas cp "
+                    + "inner join certificado c on (cp.id_certificado=c.id) "
+                    + "where id_parcela=" + idParcela);
 
-        mdb.cargarInformacion2(modeloD, 3, "select nombre, t.descripcion, ruta "
-                + "from documentosparcelas d "
-                + "inner join categoriadearchivos t on (d.tipoArchivo=t.id) "
-                + "where id_parcela=" + idParcela);
+            mdb.cargarInformacion2(modeloD, 3, "select nombre, t.descripcion, ruta "
+                    + "from documentosparcelas d "
+                    + "inner join categoriadearchivos t on (d.tipoArchivo=t.id) "
+                    + "where id_parcela=" + idParcela);
+        }
     }
 
     public void limpiarCampos() {
@@ -276,7 +307,7 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
 
         datos = mdb.cargarCombos("SELECT descripcion from pais").split("#");
         comboPais.setModel(new DefaultComboBoxModel((Object[]) datos));
-        pais = comboPais.getSelectedItem() + "";                            
+        pais = comboPais.getSelectedItem() + "";
 
         datos = mdb.cargarCombos("SELECT e.descripcion from estado e "
                 + "inner join pais p on(e.id_pais=p.id) "
@@ -1449,6 +1480,7 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
                 + "from localidad m \n"
                 + "inner join municipio e on (m.id_municipio=e.id) \n"
                 + "where e.Descripcion='" + municipio + "'").split("#");
+
         comboLocalidad.setModel(new DefaultComboBoxModel((Object[]) datos));
     }//GEN-LAST:event_comboMunicipioItemStateChanged
 

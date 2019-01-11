@@ -58,6 +58,7 @@ import Formas_Configuraciones_Recepcion.jpTipoEvaluacion;
 import Formas_Configuraciones_Seguridad.jpPerfiles;
 import Formas_Configuraciones_Sociedades.jpPuestos;
 import Formas_Configuraciones_Sociedades.jpRetenciones;
+import Formas_FincaCert.jpProductores;
 import Formas_Personas.jpPersonas;
 import Formas_Personas.jpPersonas1;
 import MetodosGenerales.JComboCheckBox;
@@ -598,6 +599,15 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 jpFP.setLocation(0, 0);
                 panelPrincipal.removeAll();
                 panelPrincipal.add(jpFP);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+            case "Productores":
+                jpProductores jpPro = new jpProductores(cn);
+                jpPro.setSize(size);
+                jpPro.setLocation(0,0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpPro);
                 panelPrincipal.revalidate();
                 panelPrincipal.repaint();
                 break;

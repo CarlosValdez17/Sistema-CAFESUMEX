@@ -401,5 +401,36 @@ public class metodosDatosBasicos {
         }
 
     }
+    public void cargarInformacion4(DefaultTableModel modelo, int tamaño, String sql) {
+        try {
+            //System.out.println(sql);
+            CallableStatement cmd = cn.prepareCall(sql);
+            ResultSet rs = cmd.executeQuery();
+
+            while (rs.next()) {
+                String [] datos = new String[10];
+                
+                for (int i = 0; i < tamaño; i++) {
+                    datos[i] = rs.getString(i + 1);
+                    if (i==0) {
+                        int b,b2;
+                        String[] c1= datos[0].split(",");  
+      
+                         b=Integer.parseInt(c1[0]);
+                         b2=Integer.parseInt(c1[1]);   
+                         char digit1 = (char) b;
+                         char digit2 = (char) b2;
+                         datos[0]=digit1+""+digit2; 
+                         
+                    }
+                }
+                modelo.addRow(datos);
+            }
+            cmd.close();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Excepcion - Error Cargar Info 4" + ex);
+        }
+
+    }
 
 }

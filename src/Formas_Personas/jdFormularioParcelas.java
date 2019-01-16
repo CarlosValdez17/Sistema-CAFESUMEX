@@ -109,6 +109,9 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
 
     public void llenarTabla() {
         limpiar(tablaParcelas);
+        /*
+            CONSULTA CON CONCATENACION DE REGISTROS
+        
         mdb.cargarInformacion2(modelo, 8, "SELECT s.razonsocial, p.nombre, \n"
                 + "    p.clave_parcela,\n"
                 + "    GROUP_CONCAT(\n"
@@ -132,7 +135,43 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
                 + "    (p.id_localidad=l.id)"
                 + "WHERE\n"
                 + "    id_persona =" + idPersona + "  \n"
+                + "GROUP BY clave_parcela ASC"); */
+
+        mdb.cargarInformacion2(modelo, 8, "SELECT s.razonsocial, p.nombre, \n"
+                + "    p.clave_parcela,\n"
+                + " 	c.codigo, c.alcance,\n"
+                + "    l.descripcion,    altura,\n"
+                + "    AREA,\n"
+                + "    numCafetos\n"
+                + "FROM\n"
+                + "    parcelas p\n"
+                + "INNER JOIN certificadosparcelas cp ON\n"
+                + "    (cp.id_parcela = p.id)\n"
+                + "INNER JOIN codigo_relacion c ON\n"
+                + "    (c.ID = cp.id_certificado)\n"
+                + "INNER JOIN personam s ON\n"
+                + "    (p.id_sociedad = s.id)\n"
+                + "INNER JOIN localidad l ON\n"
+                + "    (p.id_localidad=l.id)WHERE\n"
+                + "    id_persona =" + idPersona + "  \n"
                 + "GROUP BY clave_parcela ASC");
+
+        int c1, c2;
+        for (int i = 0; i < tablaParcelas.getRowCount(); i++) {
+            String cod = tablaParcelas.getValueAt(i, 3) + "";
+            //JOptionPane.showMessageDialog(null,cod);
+
+            String[] cod2 = cod.split(",");
+            c1 = Integer.parseInt(cod2[0]);
+            c2 = Integer.parseInt(cod2[1]);
+
+            char letra1 = (char) c1;
+            char letra2 = (char) c2;
+
+            String codigo = letra1 + "" + letra2;
+            //System.out.println(codigo);
+            tablaParcelas.setValueAt(codigo, i, 3);
+        }
     }
 
     public void llenarDatosProductorFisica() {
@@ -150,7 +189,6 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
     }
 
     public void llenarDatosProductorMoral() {
-
         String[] datos = mdb.cargarDatosFormularioPersonas("SELECT razonsocial, "
                 + "identificacionfiscal, nombrecorto, direccion, telefono, email from personam where id=" + idPersona, 6).split("¬");
 
@@ -335,8 +373,25 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
                 + "where e.Descripcion='" + localidad + "'").split("#");
         comboColonia.setModel(new DefaultComboBoxModel((Object[]) datos));
          */
-        String[] datosC = mdb.cargarCombos("select clave from certificado").split("#");
+ /*        String[] datosC = mdb.cargarCombos("select clave from certificado").split("#");
         comboCertificado.setModel(new DefaultComboBoxModel((Object[]) datosC));
+         */
+        int c1, c2;
+        String[] codigos = mdb.cargarCombos("select codigo from codigo_relacion").split("#");
+        for (int i = 1; i < codigos.length; i++) {
+            String[] cod = codigos[i].split(",");
+
+            c1 = Integer.parseInt(cod[0]);
+            c2 = Integer.parseInt(cod[1]);
+
+            char letra1 = (char) c1;
+            char letra2 = (char) c2;
+
+            String codigo = letra1 + "" + letra2;
+            comboCertificado.addItem(codigo);
+        }
+
+        JOptionPane.showMessageDialog(null, "El ascii 66 es igual a -> " + Character.toString((char) 66));
 
         String[] datosS = mdb.cargarCombos("select p.nombrecorto from personam p \n"
                 + "inner join sociedadespersona s on (p.id=s.id_asociado)\n"
@@ -627,17 +682,17 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
 
         tablaParcelas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Sociedad", "Nombre", "Clave Parcela", "Certificado", "Localidad", "Altura", "Area (HA)", "Numero de Cafetos"
+                "Sociedad", "Nombre", "Clave Parcela", "Certificado", "Alcances", "Localidad", "Altura", "Area (HA)", "Numero de Cafetos"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -901,11 +956,11 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
 
             },
             new String [] {
-                "Certificado"
+                "Certificado", "Certificadora", "Alcances"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false
+                false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -920,6 +975,8 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
         jScrollPane4.setViewportView(tablaCertificado);
         if (tablaCertificado.getColumnModel().getColumnCount() > 0) {
             tablaCertificado.getColumnModel().getColumn(0).setResizable(false);
+            tablaCertificado.getColumnModel().getColumn(1).setResizable(false);
+            tablaCertificado.getColumnModel().getColumn(2).setResizable(false);
         }
 
         jButton2.setText("Añadir");
@@ -991,7 +1048,7 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(86, Short.MAX_VALUE))
+                .addContainerGap(80, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Datos Basicos", jPanel4);
@@ -1486,11 +1543,21 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        String tipoSuelo = "", tipoSombra = "", tipoProduccion = "";
+
+        String letras = comboCertificado.getSelectedItem() + "";
+
+        char letra1 = letras.charAt(0);
+        char letra2 = letras.charAt(1);
+
+        int ascii = (int) letra1;
+        int ascii2 = (int) letra2;
+
+        String tipoSuelo = "", tipoSombra = "", tipoProduccion = "", codigoCertificado = "";
 
         tipoSuelo = mdb.devuelveId("select id from tiposuelo where descripcion='" + comboSuelo.getSelectedItem() + "'");
         tipoSombra = mdb.devuelveId("select id from tiposombra where descripcion='" + comboSombra.getSelectedItem() + "'");
         tipoProduccion = mdb.devuelveId("select id from tipoproduccion where descripcion='" + comboSistemaP.getSelectedItem() + "'");
+        codigoCertificado = mdb.devuelveId("select id from codigo_relacion where codigo='" + ascii + "," + ascii2 + "' ");
 
         if (tipoSuelo == null || tipoSuelo.equals("")) {
             tipoSuelo = "0";
@@ -1530,11 +1597,12 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
                 if (mdb.devuelveId("select id from parcelas where clave_parcela='" + txtClave.getText() + "'").equals("")) {
                     JOptionPane.showMessageDialog(null, "No existe la parcela");
                 } else {
+
                     for (int i = 0; i < modeloC.getRowCount(); i++) {
                         String certificados = modeloC.getValueAt(i, 0).toString();
                         mdb.insertarEnCiclo("insert into certificadosparcelas values (null, "
                                 + " " + mdb.devuelveId("select id from parcelas where clave_parcela='" + txtClave.getText() + "' ") + ", "
-                                + " " + mdb.devuelveId("select id from certificado where clave='" + certificados + "' ") + ","
+                                + " " + mdb.devuelveId("select id from codigo_relacion where codigo='" + ascii + "," + ascii2 + "' ") + ","
                                 + " 1,1,current_date(),current_time(),1,1,1,1) ");
                     }
 
@@ -1585,9 +1653,17 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
 
     private void comboCertificadoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboCertificadoItemStateChanged
         // TODO add your handling code here:
+        String letras = comboCertificado.getSelectedItem() + "";
+
+        char letra1 = letras.charAt(0);
+        char letra2 = letras.charAt(1);
+
+        int ascii = (int) letra1;
+        int ascii2 = (int) letra2;
+
         comboCertificado.setToolTipText(
-                mdb.devuelveUnDato("select descripcion from certificado "
-                        + "where clave='" + comboCertificado.getSelectedItem() + "' "));
+                mdb.devuelveUnDato("select alcance from codigo_relacion "
+                        + "where codigo='" + ascii + "," + ascii2 + "' "));
     }//GEN-LAST:event_comboCertificadoItemStateChanged
 
     private void comboCertificadoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_comboCertificadoFocusGained
@@ -1600,6 +1676,7 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
 
     private void comboSociedadesItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSociedadesItemStateChanged
         // TODO add your handling code here:
+
         comboSociedades.setToolTipText(
                 mdb.devuelveUnDato("select razonsocial from personam "
                         + "where nombrecorto='" + comboSociedades.getSelectedItem() + "' "));
@@ -1676,8 +1753,25 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        modeloC.addRow(new Object[]{comboCertificado.getSelectedItem() + ""});
+        String letras = comboCertificado.getSelectedItem() + "";
+
+        char letra1 = letras.charAt(0);
+        char letra2 = letras.charAt(1);
+
+        int ascii = (int) letra1;
+        int ascii2 = (int) letra2;
+
+        System.out.println(ascii + "," + ascii2);
+
+        modeloC.addRow(new Object[]{
+            mdb.devuelveUnDato("select certificado from codigo_relacion "
+            + "where codigo='" + ascii + "," + ascii2 + "' "),
+            mdb.devuelveUnDato("select certificadora from codigo_relacion "
+            + "where codigo='" + ascii + "," + ascii2 + "' "),
+            mdb.devuelveUnDato("select alcance from codigo_relacion "
+            + "where codigo='" + ascii + "," + ascii2 + "' ") + ""});
     }//GEN-LAST:event_jButton2ActionPerformed
+
     int porcentajeMaximo = 0, sumaPorcentajes = 0;
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         //Suma y Comparación de porcentajes para obtener y/o no sobrepasar el 100% entre 

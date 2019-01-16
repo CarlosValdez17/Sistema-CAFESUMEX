@@ -136,7 +136,6 @@ public class jpProductores extends javax.swing.JPanel {
                     + "from productor pr\n"
                     + "inner join personam pm on(pr.id_persona=pm.ID) where tipoPersona=2" + tipoPer + tipoGen + tipoBusqueda + Busqueda;
             mdb.cargarInformacion2(modelo, 5, sql);
-
         }
         System.out.println(sql);
         //limpiar(tablaProductores);
@@ -520,7 +519,7 @@ String estatus = "2";
     private void comboGeneroItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboGeneroItemStateChanged
         llenarTabla();
     }//GEN-LAST:event_comboGeneroItemStateChanged
-    String nom = "", app = "", apm = "", id, rsocial = "";
+    String nom = "", app = "", apm = "", id="", rsocial = "";
     String tipoGenero = "", tipoBusqueda = "", tipoAsignacion = "", tipoCPersona = "";
     private void txtBusquedaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBusquedaKeyReleased
         llenarTabla();
@@ -547,8 +546,7 @@ String estatus = "2";
 
         if (evt.getClickCount() == 2) {
             if (!nom.equals("")) {
-                //Abrir detalle para persona fisica = 1
-
+                //Para abrir detalle de persona fisica = 1   /      Persona Fisica = 1
                 id = mdb.comprobarExistencia("select id from personaf "
                         + "where (nombre='" + nom + "' and apellidoPaterno='" + app + "' and apellidoMaterno='" + apm + "' ) ");
                 tipoPersona = "Fisica";
@@ -556,7 +554,7 @@ String estatus = "2";
                 jd.setVisible(true);
 
             } else if (nom.equals("") && !rsocial.equals("")) {
-                //Abrir detalle para persona moral = 2
+                //Abrir detalle para persona moral = 2    /    Persona Moral = 2
 
                 id = mdb.comprobarExistencia("select id from personam "
                         + "where razonsocial='" + rsocial + "'");
@@ -584,6 +582,12 @@ String estatus = "2";
         if (nom.equals("") && rsocial.equals("")) {
             JOptionPane.showMessageDialog(null, "Selecciona productor");
         } else {
+
+            if (tipoPersona.equals("1")) {
+                tipoPersona = "Fisica";
+            } else if (tipoPersona.equals("2")) {
+                tipoPersona = "Moral";
+            }
             jdParcelas jd = new jdParcelas(null, true, cn, id, tipoPersona);
             jd.setVisible(true);
         }
@@ -591,15 +595,19 @@ String estatus = "2";
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
-        if (tipoPersona.equals("Fisica")) {
-            tipoPersona = "1";
-        } else if (tipoPersona.equals("Moral")) {
-            tipoPersona = "2";
+        if (id.equals("")) {
+            JOptionPane.showMessageDialog(null, "Seleccione Productor");
+        } else {
+
+            if (tipoPersona.equals("Fisica")) {
+                tipoPersona = "1";
+            } else if (tipoPersona.equals("Moral")) {
+                tipoPersona = "2";
+            }
+            
+            jdFormularioParcelas jdF = new jdFormularioParcelas(null, true, id, tipoPersona, "", cn);
+            jdF.setVisible(true);
         }
-
-        jdFormularioParcelas jdF = new jdFormularioParcelas(null, true, id, tipoPersona, "", cn);
-        jdF.setVisible(true);
-
     }//GEN-LAST:event_jButton6ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

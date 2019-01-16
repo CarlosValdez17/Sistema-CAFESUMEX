@@ -21,6 +21,7 @@ import Formas_Configuraciones_DatosBasicos.jpGiroEmpresa;
 import Formas_Configuraciones_DatosBasicos.jpLocalidad;
 import Formas_Configuraciones_DatosBasicos.jpMunicipio;
 import Formas_Configuraciones_DatosBasicos.jpPais;
+import Formas_Configuraciones_FincaCert.Certificados.CodComb;
 import Formas_Configuraciones_FincaCert.Certificados.jpCertificado;
 import Formas_Configuraciones_FincaCert.Certificados.jpCertificador;
 import Formas_Configuraciones_FincaCert.jpActividadesParcela;
@@ -611,6 +612,15 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 panelPrincipal.revalidate();
                 panelPrincipal.repaint();
                 break;
+            case "Codigos":
+                CodComb jpCodC = new CodComb(cn);
+                jpCodC.setSize(size);
+                jpCodC.setLocation(0,0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpCodC);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;    
             default:
                 jpFondo jpF = new jpFondo();
                 jpF.setSize(size);
@@ -814,6 +824,8 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("Certificador");
         treeNode3.add(treeNode4);
         treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("Tipo de Certificaciones");
+        treeNode3.add(treeNode4);
+        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("Codigos");
         treeNode3.add(treeNode4);
         treeNode2.add(treeNode3);
         treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Variedad de Café");
@@ -1077,6 +1089,8 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("Certificador");
         treeNode3.add(treeNode4);
         treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("Tipo de Certificaciones");
+        treeNode3.add(treeNode4);
+        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("Codigos");
         treeNode3.add(treeNode4);
         treeNode2.add(treeNode3);
         treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Variedad de Café");

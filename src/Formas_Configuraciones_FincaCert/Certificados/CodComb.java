@@ -22,27 +22,30 @@ import javax.swing.table.DefaultTableModel;
  * @author dell telmex
  */
 public class CodComb extends javax.swing.JPanel {
-  metodosDatosBasicos mdb;
-     DefaultTableModel modelo, modelo2;
-         Connection cn;
+
+    metodosDatosBasicos mdb;
+    DefaultTableModel modelo, modelo2;
+    Connection cn;
+
     /**
      * Creates new form CodComb
      */
     public CodComb(Connection c) {
         initComponents();
-         cn = c;
+        cn = c;
         mdb = new metodosDatosBasicos(cn);
         modelo = (DefaultTableModel) Tabla.getModel();
         activarB();
         llenarcombos();
         llenarTabla();
     }
-     public void cargarCombo() {
+
+    public void cargarCombo() {
         String[] datos = mdb.cargarCombos("SELECT descripcion from puestos").split("#");
         comb1.setModel(new DefaultComboBoxModel((Object[]) datos));
-        
-        
+
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -168,6 +171,11 @@ public class CodComb extends javax.swing.JPanel {
         });
 
         jButton5.setText("Cerrar");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
@@ -209,7 +217,6 @@ public class CodComb extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSeparator1)
             .addGroup(layout.createSequentialGroup()
                 .addGap(24, 24, 24)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -244,6 +251,7 @@ public class CodComb extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jSeparator1)
                     .addComponent(jScrollPane1)
                     .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
@@ -278,10 +286,11 @@ public class CodComb extends javax.swing.JPanel {
 
     private void comboSituacionItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionItemStateChanged
         if (comboSituacion.getSelectedItem().equals("Inactivo")) {
-            estatus="1";
+            estatus = "1";
             jButton4.setText("Activar");
-        }else{jButton4.setText("Desactivar");
-            estatus="2";
+        } else {
+            jButton4.setText("Desactivar");
+            estatus = "2";
         }  // TODO add your handling code here:
         // TODO add your handling code here:
         // busqueda();
@@ -289,193 +298,194 @@ public class CodComb extends javax.swing.JPanel {
     }//GEN-LAST:event_comboSituacionItemStateChanged
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-generarcodigo();
+        generarcodigo();
 
-        
         /* TODO add your handling code here:
         jdDP = new jdDetallePersona1(null, true, "1", "", "", cn);
         jdDP.jpDP = this;
         jdDP.setVisible(true);**/
     }//GEN-LAST:event_jButton2ActionPerformed
-     int v=0,b,b2;
-    public  void generarcodigo(){
-      String sql="";
-    
-   sql="select codigo from codigo_relacion order by codigo desc limit 1";
- 
- if (mdb.comprobarExistencia("select codigo from codigo_relacion order by codigo desc limit 1") != null){ 
-      String sql1 = "";
-    sql1="SELECT certificado,certificadora,alcance,codigo FROM codigo_relacion";
-        String []datos = new String [4];
-      try {
-            Statement st = cn.createStatement();
-            ResultSet rs =st.executeQuery(sql1);
-            while(rs.next()){
-                datos[0] = rs.getString(1);
-                datos[1] = rs.getString(2);
-                datos[2] = rs.getString(3);
-                datos[3] = rs.getString(4);
-                if ( datos[0].equals(comb1.getSelectedItem())) {
-                    if (datos[1].equals(comb2.getSelectedItem())) {
-                        if (datos[2].equals(comb3.getSelectedItem())&&add1.isSelected()==false&&add2.isSelected()==false) {
-                            v=1;
-                             String[] c1= datos[3].split(",");
-                             b=Integer.parseInt(c1[0]);
-                             b2=Integer.parseInt(c1[1]);
-                               char digit1 = (char) b;
+    int v = 0, b, b2;
+
+    public void generarcodigo() {
+        String sql = "";
+
+        sql = "select codigo from codigo_relacion order by codigo desc limit 1";
+
+        if (mdb.comprobarExistencia("select codigo from codigo_relacion order by codigo desc limit 1") != null) {
+            String sql1 = "";
+            sql1 = "SELECT certificado,certificadora,alcance,codigo FROM codigo_relacion";
+            String[] datos = new String[4];
+            try {
+                Statement st = cn.createStatement();
+                ResultSet rs = st.executeQuery(sql1);
+                while (rs.next()) {
+                    datos[0] = rs.getString(1);
+                    datos[1] = rs.getString(2);
+                    datos[2] = rs.getString(3);
+                    datos[3] = rs.getString(4);
+                    if (datos[0].equals(comb1.getSelectedItem())) {
+                        if (datos[1].equals(comb2.getSelectedItem())) {
+                            if (datos[2].equals(comb3.getSelectedItem()) && add1.isSelected() == false && add2.isSelected() == false) {
+                                v = 1;
+                                String[] c1 = datos[3].split(",");
+                                b = Integer.parseInt(c1[0]);
+                                b2 = Integer.parseInt(c1[1]);
+                                char digit1 = (char) b;
                                 char digit2 = (char) b2;
-                         JOptionPane.showMessageDialog(null,"La combinacion que intentas hacer ya existe con el codigo:"+digit1+""+digit2);
-                            break;   
-                        }
-                        if (datos[2].equals(comb3.getSelectedItem()+","+comb4.getSelectedItem())&&add1.isSelected()==true&&add2.isSelected()==false) {
-                            v=1;
-                             String[] c1= datos[3].split(",");
-                             b=Integer.parseInt(c1[0]);
-                             b2=Integer.parseInt(c1[1]);
-                               char digit1 = (char) b;
-                               char digit2 = (char) b2;
-                         JOptionPane.showMessageDialog(null,"La combinacion que intentas hacer ya existe con el codigo:"+digit1+""+digit2);
-                            break;   
-                        }
-                                  if (datos[2].equals(comb3.getSelectedItem()+","+comb4.getSelectedItem()+","+comb5.getSelectedItem())&&add1.isSelected()==true&&add2.isSelected()==true) {
-                            v=1;
-                             String[] c1= datos[3].split(",");
-                             b=Integer.parseInt(c1[0]);
-                             b2=Integer.parseInt(c1[1]);
-                               char digit1 = (char) b;
+                                JOptionPane.showMessageDialog(null, "La combinacion que intentas hacer ya existe con el codigo:" + digit1 + "" + digit2);
+                                break;
+                            }
+                            if (datos[2].equals(comb3.getSelectedItem() + "," + comb4.getSelectedItem()) && add1.isSelected() == true && add2.isSelected() == false) {
+                                v = 1;
+                                String[] c1 = datos[3].split(",");
+                                b = Integer.parseInt(c1[0]);
+                                b2 = Integer.parseInt(c1[1]);
+                                char digit1 = (char) b;
                                 char digit2 = (char) b2;
-                         JOptionPane.showMessageDialog(null,"La combinacion que intentas hacer ya existe con el codigo:"+digit1+""+digit2);
-                            break;   
+                                JOptionPane.showMessageDialog(null, "La combinacion que intentas hacer ya existe con el codigo:" + digit1 + "" + digit2);
+                                break;
+                            }
+                            if (datos[2].equals(comb3.getSelectedItem() + "," + comb4.getSelectedItem() + "," + comb5.getSelectedItem()) && add1.isSelected() == true && add2.isSelected() == true) {
+                                v = 1;
+                                String[] c1 = datos[3].split(",");
+                                b = Integer.parseInt(c1[0]);
+                                b2 = Integer.parseInt(c1[1]);
+                                char digit1 = (char) b;
+                                char digit2 = (char) b2;
+                                JOptionPane.showMessageDialog(null, "La combinacion que intentas hacer ya existe con el codigo:" + digit1 + "" + digit2);
+                                break;
+                            }
                         }
                     }
+                };
+
+            } catch (SQLException ex) {
+//            Logger.getLogger(login.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            if (v == 0) {
+                String co;
+                co = mdb.comprobarExistencia(sql);
+                String[] c1 = co.split(",");
+                String codigo = "", alcance;
+                b = Integer.parseInt(c1[0]);
+                b2 = Integer.parseInt(c1[1]);
+                char digit1 = (char) b;
+                char digit2 = (char) b2;
+                codgen.setText(digit1 + "" + digit2);
+                //b2=b2+25;
+                if (b2 == 90) {
+                    b = b + 1;
+                    b2 = 65;
+                    alcance = comb3.getSelectedItem() + "";
+                    if (add1.isSelected() == true) {
+                        alcance = alcance + "," + comb4.getSelectedItem();
+                    }
+                    if (add2.isSelected() == true) {
+                        alcance = alcance + "," + comb5.getSelectedItem();
+                    }
+                    codigo = String.valueOf(b) + "," + String.valueOf(b2);
+                    sql = "INSERT INTO codigo_relacion VALUES(null,'" + codigo + "','" + comb1.getSelectedItem() + "','" + comb2.getSelectedItem() + "','" + alcance + "', '1', '1',current_date()"
+                            + ", current_time(), 1, 1, '1', '1')";
+                    mdb.insertarBasicos(sql);
+                    llenarTabla();
+                } else {
+
+                    b2 = b2 + 1;
+
+                    alcance = comb3.getSelectedItem() + "";
+                    if (add1.isSelected() == true) {
+                        alcance = alcance + "," + comb4.getSelectedItem();
+                    }
+                    if (add2.isSelected() == true) {
+                        alcance = alcance + "," + comb5.getSelectedItem();
+                    }
+                    codigo = String.valueOf(b) + "," + String.valueOf(b2);
+
+                    sql = "INSERT INTO codigo_relacion VALUES(null,'" + codigo + "','" + comb1.getSelectedItem() + "','" + comb2.getSelectedItem() + "','" + alcance + "', '1', '1',current_date()"
+                            + ", current_time(), 1, 1, '1', '1')";
+                    mdb.insertarBasicos(sql);
                 }
-            };  
-          
-         
-            
-        } catch (SQLException ex) {
-            Logger.getLogger(login.class.getName()).log(Level.SEVERE, null, ex);
-        } 
- 
- 
- 
-   if (v==0) {
-       String co;
-      co=mdb.comprobarExistencia(sql);
-      String[] c1= co.split(",");  
-      String codigo="",alcance;
-      b=Integer.parseInt(c1[0]);
-     b2=Integer.parseInt(c1[1]);   
- char digit1 = (char) b;
-         char digit2 = (char) b2;
-      codgen.setText(digit1+""+digit2);
-     //b2=b2+25;
-     if (b2==90) {
-        b=b+1;
-        b2=65;
-        alcance=comb3.getSelectedItem()+"";
-         if (add1.isSelected()==true) {
-           alcance=alcance+","+comb4.getSelectedItem();
-         }
-         if (add2.isSelected()==true) {
-           alcance=alcance+","+comb5.getSelectedItem();
-         }
-        codigo=String.valueOf(b)+","+String.valueOf(b2);
-               sql = "INSERT INTO codigo_relacion VALUES(null,'"+codigo+"','"+comb1.getSelectedItem()+"','"+comb2.getSelectedItem()+"','"+alcance+ "', '1', '1',current_date()"
-                     + ", current_time(), 1, 1, '1', '1')";
-                mdb.insertarBasicos(sql);
-           llenarTabla();
-     }else{
-         
-       b2=b2+1;  
-   
-     alcance=comb3.getSelectedItem()+"";
-         if (add1.isSelected()==true) {
-           alcance=alcance+","+comb4.getSelectedItem();
-         }
-         if (add2.isSelected()==true) {
-           alcance=alcance+","+comb5.getSelectedItem();
-         }
-        codigo=String.valueOf(b)+","+String.valueOf(b2);
-        
-               sql = "INSERT INTO codigo_relacion VALUES(null,'"+codigo+"','"+comb1.getSelectedItem()+"','"+comb2.getSelectedItem()+"','"+alcance+ "', '1', '1',current_date()"
-                     + ", current_time(), 1, 1, '1', '1')";
-                mdb.insertarBasicos(sql); }
-              llenarTabla();
-          }}else{
-   
-               sql = "INSERT INTO codigo_relacion VALUES(null,'65,65','NO','NO','NO', '1', '1',current_date()"
-                        + ", current_time(), 1, 1, '1', '1')";
-                mdb.insertarBasicos(sql);
-                  llenarTabla();
+                llenarTabla();
+            }
+        } else {
+
+            sql = "INSERT INTO codigo_relacion VALUES(null,'65,65','NO','NO','NO', '1', '1',current_date()"
+                    + ", current_time(), 1, 1, '1', '1')";
+            mdb.insertarBasicos(sql);
+            llenarTabla();
 //sql="insert into prueba values(null,'65,65')";
-  //  mdb.insertarBasicos(sql);
-  }
+            //  mdb.insertarBasicos(sql);
+        }
     }
-    public void llenarcombos(){
-    String[] datos;
-    datos = mdb.cargarCombos("SELECT descripcion \n"
+
+    public void llenarcombos() {
+        String[] datos;
+        datos = mdb.cargarCombos("SELECT descripcion \n"
                 + "from certificado  \n"
                 + "").split("#");
         comb1.setModel(new DefaultComboBoxModel((Object[]) datos));
-     datos = mdb.cargarCombos("SELECT descripcion \n"
+        datos = mdb.cargarCombos("SELECT descripcion \n"
                 + "from certificadora  \n"
                 + "").split("#");
         comb2.setModel(new DefaultComboBoxModel((Object[]) datos));
-            datos = mdb.cargarCombos("SELECT descripcion \n"
+        datos = mdb.cargarCombos("SELECT descripcion \n"
                 + "from estandarescert  \n"
                 + "").split("#");
         comb3.setModel(new DefaultComboBoxModel((Object[]) datos));
-            datos = mdb.cargarCombos("SELECT descripcion \n"
+        datos = mdb.cargarCombos("SELECT descripcion \n"
                 + "from estandarescert  \n"
                 + "").split("#");
         comb4.setModel(new DefaultComboBoxModel((Object[]) datos));
-            datos = mdb.cargarCombos("SELECT descripcion \n"
+        datos = mdb.cargarCombos("SELECT descripcion \n"
                 + "from estandarescert  \n"
                 + "").split("#");
         comb5.setModel(new DefaultComboBoxModel((Object[]) datos));
-            
+
     }
-    String estatus="2";
+    String estatus = "2";
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        String sql="",sql1="select id from codigo_relacion where certificado='"+cert1+"' and certificadora='"+cert2+"' and alcance='"+alc+"' ";
-String co;
+        String sql = "", sql1 = "select id from codigo_relacion where certificado='" + cert1 + "' and certificadora='" + cert2 + "' and alcance='" + alc + "' ";
+        String co;
         System.out.println(sql1);
-      co=mdb.comprobarExistencia(sql1);
+        co = mdb.comprobarExistencia(sql1);
         if (estatus.equals("2")) {
-             
-          
+
             sql = "UPDATE codigo_relacion SET ID_Situacion=2 where id=" + co + "";
-             System.out.println(sql);
-        }else if(estatus.equals("1")){
+            System.out.println(sql);
+        } else if (estatus.equals("1")) {
             sql = "UPDATE codigo_relacion SET ID_Situacion=1 where id=" + co + "";
-              System.out.println(sql);
+            System.out.println(sql);
         }
 
         mdb.actualizarBasicos(sql);
         llenarTabla();
     }//GEN-LAST:event_jButton4ActionPerformed
- public void llenarTabla() {
-    String situacion = "";     
-       
-String where = "";
- situacion = comboSituacion.getSelectedItem() + "";
+
+    public void llenarTabla() {
+        String situacion = "";
+
+        String where = "";
+        situacion = comboSituacion.getSelectedItem() + "";
         if (situacion.equals("Inactivo")) {
             situacion = "2";
-            
-        }else if(situacion.equals("Activo")){
-            situacion="1";}
+
+        } else if (situacion.equals("Activo")) {
+            situacion = "1";
+        }
         String sql;
-          if (situacion.equals("Todos")) {
+        if (situacion.equals("Todos")) {
             sql = "SELECT codigo, certificado,certificadora,alcance FROM codigo_relacion where ID_Situacion<>3";
         } else {
-            sql = "SELECT codigo, certificado,certificadora,alcance FROM codigo_relacion WHERE ID_Situacion="+situacion;
+            sql = "SELECT codigo, certificado,certificadora,alcance FROM codigo_relacion WHERE ID_Situacion=" + situacion;
         }
         System.out.println(sql);
-          limpiar(Tabla);
-        mdb.cargarInformacion4(modelo,4, sql);
-}
-  private void limpiar(JTable tabla) {
+        limpiar(Tabla);
+        mdb.cargarInformacion4(modelo, 4, sql);
+    }
+
+    private void limpiar(JTable tabla) {
         while (tabla.getRowCount() > 0) {
             ((DefaultTableModel) tabla.getModel()).removeRow(0);
         }
@@ -490,39 +500,42 @@ String where = "";
 
     private void add1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_add1KeyPressed
 
-
         // TODO add your handling code here:
     }//GEN-LAST:event_add1KeyPressed
 
     private void add1ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_add1ItemStateChanged
-activarB();        // TODO add your handling code here:
+        activarB();        // TODO add your handling code here:
     }//GEN-LAST:event_add1ItemStateChanged
 
     private void add2ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_add2ItemStateChanged
-activarB();        // TODO add your handling code here:
+        activarB();        // TODO add your handling code here:
     }//GEN-LAST:event_add2ItemStateChanged
-String cert1="",cert2="",alc="";
+    String cert1 = "", cert2 = "", alc = "";
     private void TablaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TablaMouseClicked
-cert1 = modelo.getValueAt(Tabla.getSelectedRow(), 1) + ""; 
-cert2 = modelo.getValueAt(Tabla.getSelectedRow(), 2) + ""; 
-alc = modelo.getValueAt(Tabla.getSelectedRow(), 3) + ""; 
+        cert1 = modelo.getValueAt(Tabla.getSelectedRow(), 1) + "";
+        cert2 = modelo.getValueAt(Tabla.getSelectedRow(), 2) + "";
+        alc = modelo.getValueAt(Tabla.getSelectedRow(), 3) + "";
 // TODO add your handling code here:
     }//GEN-LAST:event_TablaMouseClicked
 
- private void activarB(){
-if (add1.isSelected() ) {
-      
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void activarB() {
+        if (add1.isSelected()) {
+
             comb4.setEnabled(true);
-        }else{
+        } else {
             comb4.setEnabled(false);
         }
-if (add2.isSelected() ) {
-      
+        if (add2.isSelected()) {
+
             comb5.setEnabled(true);
-        }else{
+        } else {
             comb5.setEnabled(false);
         }
-}
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable Tabla;
     private javax.swing.JCheckBox add1;

@@ -83,7 +83,7 @@ public class metodosDatosBasicos {
 
     public void cargarInformacion2(DefaultTableModel modelo, int tamaño, String sql) {
         try {
-            //System.out.println(sql);
+            System.out.println(sql);
             CallableStatement cmd = cn.prepareCall(sql);
             ResultSet rs = cmd.executeQuery();
 

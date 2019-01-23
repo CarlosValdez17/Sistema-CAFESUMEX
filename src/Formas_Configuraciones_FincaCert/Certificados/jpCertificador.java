@@ -37,37 +37,34 @@ public class jpCertificador extends javax.swing.JPanel {
         modelo = (DefaultTableModel) tabla.getModel();
         tabla.setRowSorter(new TableRowSorter(modelo));
 
-   
         llenaTabla();
     }
 
     public void llenaTabla() {
         limpiar(tabla);
         mdb = new metodosDatosBasicos(cn);
-        mdb.cargarInformacion2(modelo,2,"select Clave,Descripcion from Certificadora where ID_Situacion=1");
+        mdb.cargarInformacion2(modelo, 2, "select Clave,Descripcion from Certificadora where ID_Situacion=1");
     }
 
     public void busqueda() {
         String tipoP = "";
-        String tipoK="";
+        String tipoK = "";
         String situacion = "";
         String where = "";
 
         situacion = comboSituacion.getSelectedItem() + "";
         if (situacion.equals("Inactivo")) {
             situacion = "2";
-        }else if(situacion.equals("Activo")){
-            situacion="1";
-            
+        } else if (situacion.equals("Activo")) {
+            situacion = "1";
         }
-
         if (txtBusquedaP.getText().length() > 0) {
             tipoP = " AND Clave like '%" + txtBusquedaP.getText() + "%'";
         }
         if (txtBusquedaK.getText().length() > 0) {
             tipoK = " AND descripcion like '%" + txtBusquedaK.getText() + "%'";
         }
-       /* if (txtBusquedaUE.getText().length() > 0) {
+        /* if (txtBusquedaUE.getText().length() > 0) {
             tipoUE = "AND UE like '" + txtBusquedaUE.getText() + "%'";
         }
         if (txtBusquedaISO.getText().length() > 0) {
@@ -76,14 +73,13 @@ public class jpCertificador extends javax.swing.JPanel {
         String sql;
         System.out.println("SITUACION: " + situacion);
         if (situacion.equals("Todos")) {
-            sql = "SELECT Clave,Descripcion from Certificadora WHERE ID_Situacion<>3 "+tipoP+tipoK;
+            sql = "SELECT Clave,Descripcion from Certificadora WHERE ID_Situacion<>3 " + tipoP + tipoK;
         } else {
-            sql = "SELECT Clave,Descripcion  from Certificadora WHERE ID_Situacion=" + situacion+tipoP+tipoK;
+            sql = "SELECT Clave,Descripcion  from Certificadora WHERE ID_Situacion=" + situacion + tipoP + tipoK;
         }
         //System.out.println(sql);
         limpiar(tabla);
-        mdb.cargarInformacion2(modelo,2, sql);
-
+        mdb.cargarInformacion2(modelo, 2, sql);
     }
 
     private void limpiar(JTable tabla) {
@@ -344,31 +340,28 @@ public class jpCertificador extends javax.swing.JPanel {
         jdR = new jdCertificador(null, true, "1", Clave, TxTvar, cn);
         jdR.jp = this;
         jdR.setVisible(true);
-
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
         if (Clave.equals("")) {
-            JOptionPane.showMessageDialog(null,"selecciona un registro");
-        }else{
-             jdR = new jdCertificador(null, true, "2",Clave, TxTvar ,cn);
-        jdR.jp = this;
-        jdR.setVisible(true);
+            JOptionPane.showMessageDialog(null, "selecciona un registro");
+        } else {
+            jdR = new jdCertificador(null, true, "2", Clave, TxTvar, cn);
+            jdR.jp = this;
+            jdR.setVisible(true);
         }
-
     }//GEN-LAST:event_jButton3ActionPerformed
     String Clave = "";
-    String TxTvar="";
+    String TxTvar = "";
     private void tablaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaMouseClicked
         // TODO add your handling code here: Retenciones
         Clave = modelo.getValueAt(tabla.getSelectedRow(), 0) + "";  //
-        TxTvar=modelo.getValueAt(tabla.getSelectedRow(), 1) + "";
+        TxTvar = modelo.getValueAt(tabla.getSelectedRow(), 1) + "";
         if (evt.getClickCount() == 1) {
             System.out.println("1 Clic");
         }
         if (evt.getClickCount() == 2) {
-            
             jdR = new jdCertificador(null, true, "2", Clave, TxTvar, cn);
             jdR.jp = this;
             jdR.setVisible(true);
@@ -397,7 +390,7 @@ public class jpCertificador extends javax.swing.JPanel {
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        String sql = "UPDATE Certificadora SET ID_Situacion=2 where Clave='" + Clave+ "'";
+        String sql = "UPDATE Certificadora SET ID_Situacion=2 where Clave='" + Clave + "'";
         mdb.actualizarBasicos(sql);
         llenaTabla();
     }//GEN-LAST:event_jButton4ActionPerformed
@@ -415,9 +408,8 @@ public class jpCertificador extends javax.swing.JPanel {
     }//GEN-LAST:event_txtBusquedaKActionPerformed
 
     private void txtBusquedaKKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBusquedaKKeyReleased
-         busqueda(); // TODO add your handling code here:
+        busqueda(); // TODO add your handling code here:
     }//GEN-LAST:event_txtBusquedaKKeyReleased
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JComboBox<String> comboSituacion;

@@ -62,6 +62,8 @@ import Formas_Configuraciones_Sociedades.jpRetenciones;
 import Formas_FincaCert.jpProductores;
 import Formas_Personas.jpPersonas;
 import Formas_Personas.jpPersonas1;
+import Formas_Recepcion.jdRecibos2;
+import Formas_Recepcion.jpRecibos;
 import MetodosGenerales.JComboCheckBox;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -107,7 +109,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         setContentPane(image);*/
         //jButton3.setVisible(false);
         //jButton4.setVisible(false);
-        jButton5.setVisible(false);
+        //jButton5.setVisible(false);
         jButton6.setVisible(false);
         jButton7.setVisible(false);
 
@@ -606,7 +608,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
             case "Productores":
                 jpProductores jpPro = new jpProductores(cn);
                 jpPro.setSize(size);
-                jpPro.setLocation(0,0);
+                jpPro.setLocation(0, 0);
                 panelPrincipal.removeAll();
                 panelPrincipal.add(jpPro);
                 panelPrincipal.revalidate();
@@ -615,12 +617,21 @@ public class pantallaPrincipal extends javax.swing.JFrame {
             case "Codigos":
                 CodComb jpCodC = new CodComb(cn);
                 jpCodC.setSize(size);
-                jpCodC.setLocation(0,0);
+                jpCodC.setLocation(0, 0);
                 panelPrincipal.removeAll();
                 panelPrincipal.add(jpCodC);
                 panelPrincipal.revalidate();
                 panelPrincipal.repaint();
-                break;    
+                break;
+            case "Recibos":
+                jpRecibos jpRec = new jpRecibos(cn);
+                jpRec.setSize(size);
+                jpRec.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpRec);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
             default:
                 jpFondo jpF = new jpFondo();
                 jpF.setSize(size);
@@ -1177,7 +1188,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-         // TODO add your handling code here:
+        // TODO add your handling code here:
         panelArbol.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         jScrollPane2.setOpaque(false);
@@ -1185,11 +1196,11 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("FincaCert");
         javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Productores");
         treeNode1.add(treeNode2);
-        
+
         jTree1.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
 
         pintarPanel("fondo");
-        
+
         //CAMBIAR COLORES BOTOTES
         jButton4.setBackground(Color.getHSBColor(0.56f, 1.0f, 0.8f));
         //QUITAR COLOR
@@ -1202,6 +1213,16 @@ public class pantallaPrincipal extends javax.swing.JFrame {
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
+        panelArbol.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jScrollPane2.setOpaque(false);
+
+        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Recepcion");
+        javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Recibos");
+        treeNode1.add(treeNode2);
+
+        jTree1.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+
         //CAMBIAR COLORES BOTOTES
         jButton5.setBackground(Color.getHSBColor(0.56f, 1.0f, 0.8f));
         //QUITAR COLOR
@@ -1210,6 +1231,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         jButton2.setBackground(Color.getColor("FFFFFF"));
         jButton6.setBackground(Color.getColor("FFFFFF"));
         jButton7.setBackground(Color.getColor("FFFFFF"));
+        
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed

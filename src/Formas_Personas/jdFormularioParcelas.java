@@ -206,7 +206,7 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
         //System.out.println(mdb.devuelveUnDato("select clave_productor from productor where id_persona="+idPersona));
     }
 
-    public void datosParcela(String idParcela) {
+    public void datosParcela(String idParcela){
         /*    ----- CONSULTA COMPLETA -----  
         String[] datos = mdb.cargarDatosFormularioPersonas("SELECT clave_parcela, nombre, altura, area, numCafetos, pm.NombreCorto, pa.descripcion,\n"
                 + "	e.descripcion, m.descripcion, l.descripcion, ts.descripcion, tsom.descripcion, sp.descripcion, sector, edad, observaciones\n"
@@ -389,6 +389,8 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
 
             String codigo = letra1 + "" + letra2;
             comboCertificado.addItem(codigo);
+            
+            
         }
 
         JOptionPane.showMessageDialog(null, "El ascii 66 es igual a -> " + Character.toString((char) 66));

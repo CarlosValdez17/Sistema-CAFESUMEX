@@ -48,6 +48,8 @@ public class jpProductores extends javax.swing.JPanel {
         tablaProductores.setRowSorter(new TableRowSorter(modelo));
         txtBusqueda.setEnabled(false);
         comboGenero.setEnabled(true);
+        
+        JOptionPane.showMessageDialog(null, "Prueba para push maquina nueva");
     }
 
     //✘ ✓

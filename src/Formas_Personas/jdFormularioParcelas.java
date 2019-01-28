@@ -71,7 +71,7 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
 
         this.idPersona = idPersona;
 
-        JOptionPane.showMessageDialog(null, "Tipo de persona = " + tipoPersona + "\n" + "Id Persona = " + idPersona + "\n" + "Clave Parcela = " + claveParcela);
+        //JOptionPane.showMessageDialog(null, "Tipo de persona = " + tipoPersona + "\n" + "Id Persona = " + idPersona + "\n" + "Clave Parcela = " + claveParcela);
 
         if (tipoPersona.equals("1")) {
             llenarDatosProductorFisica();
@@ -139,16 +139,12 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
 
         mdb.cargarInformacion2(modelo, 8, "SELECT s.razonsocial, p.nombre, \n"
                 + "    p.clave_parcela,\n"
-                + " 	c.codigo, c.alcance,\n"
+                + " 	clave_certificacion, \n"
                 + "    l.descripcion,    altura,\n"
                 + "    AREA,\n"
                 + "    numCafetos\n"
                 + "FROM\n"
                 + "    parcelas p\n"
-                + "INNER JOIN certificadosparcelas cp ON\n"
-                + "    (cp.id_parcela = p.id)\n"
-                + "INNER JOIN codigo_relacion c ON\n"
-                + "    (c.ID = cp.id_certificado)\n"
                 + "INNER JOIN personam s ON\n"
                 + "    (p.id_sociedad = s.id)\n"
                 + "INNER JOIN localidad l ON\n"
@@ -156,7 +152,7 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
                 + "    id_persona =" + idPersona + "  \n"
                 + "GROUP BY clave_parcela ASC");
 
-        int c1, c2;
+    /*    int c1, c2;
         for (int i = 0; i < tablaParcelas.getRowCount(); i++) {
             String cod = tablaParcelas.getValueAt(i, 3) + "";
             //JOptionPane.showMessageDialog(null,cod);
@@ -171,7 +167,7 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
             String codigo = letra1 + "" + letra2;
             //System.out.println(codigo);
             tablaParcelas.setValueAt(codigo, i, 3);
-        }
+        }*/
     }
 
     public void llenarDatosProductorFisica() {
@@ -206,7 +202,7 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
         //System.out.println(mdb.devuelveUnDato("select clave_productor from productor where id_persona="+idPersona));
     }
 
-    public void datosParcela(String idParcela){
+    public void datosParcela(String idParcela) {
         /*    ----- CONSULTA COMPLETA -----  
         String[] datos = mdb.cargarDatosFormularioPersonas("SELECT clave_parcela, nombre, altura, area, numCafetos, pm.NombreCorto, pa.descripcion,\n"
                 + "	e.descripcion, m.descripcion, l.descripcion, ts.descripcion, tsom.descripcion, sp.descripcion, sector, edad, observaciones\n"
@@ -224,14 +220,14 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
 
         if (!idParcela.equals("")) {
             String[] datos = mdb.cargarDatosFormularioPersonas("SELECT clave_parcela, nombre, altura, area, numCafetos, pm.NombreCorto, pa.descripcion,\n"
-                    + "	e.descripcion, m.descripcion, l.descripcion, sector, edad, observaciones\n"
+                    + "	e.descripcion, m.descripcion, l.descripcion, sector, edad, observaciones, longitud,latitud\n"
                     + "from parcelas p\n"
                     + "inner join personam pm on (p.id_sociedad=pm.ID)\n"
                     + "inner join pais pa on (p.id_pais=pa.ID)\n"
                     + "inner join estado e on (p.id_estado=e.ID)\n"
                     + "inner join municipio m on (p.id_municipio=m.ID)\n"
                     + "inner join localidad l on (p.id_localidad=l.ID)\n"
-                    + "where p.id=" + idParcela, 13).split("¬");
+                    + "where p.id=" + idParcela, 15).split("¬");
 
             //Clave de parcela
             txtClave.setText(datos[0]);
@@ -259,7 +255,11 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
             txtEdad.setText(datos[11]);
             //Observaciones
             txtObservaciones.setText(datos[12]);
-
+            //Longitud
+            txtLongitud.setText(datos[13]);
+            //Latitud
+            txtLatitud.setText(datos[14]);
+            
             //Combos - Consulta Individual
             //Tipo de Suelo
             comboSuelo.setSelectedItem(mdb.devuelveUnDato("select ts.descripcion from parcelas p "
@@ -291,10 +291,10 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
                     + "inner join variedadcafe c on (p.id_variedad=c.id) "
                     + "where id_parcela=" + idParcela);
 
-            mdb.cargarInformacion2(modeloC, 1, "select c.clave "
-                    + "from certificadosparcelas cp "
-                    + "inner join certificado c on (cp.id_certificado=c.id) "
-                    + "where id_parcela=" + idParcela);
+            mdb.cargarInformacion2(modeloC, 3, "select certificado, certificadora,alcance "
+                    + "from parcelas p "
+                    + "inner join codigo_relacion c on (p.clave_certificacion=c.codigo) "
+                    + "where p.id=" + idParcela);
 
             mdb.cargarInformacion2(modeloD, 3, "select nombre, t.descripcion, ruta "
                     + "from documentosparcelas d "
@@ -376,7 +376,7 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
  /*        String[] datosC = mdb.cargarCombos("select clave from certificado").split("#");
         comboCertificado.setModel(new DefaultComboBoxModel((Object[]) datosC));
          */
-        int c1, c2;
+ /*       int c1, c2;
         String[] codigos = mdb.cargarCombos("select codigo from codigo_relacion").split("#");
         for (int i = 1; i < codigos.length; i++) {
             String[] cod = codigos[i].split(",");
@@ -394,6 +394,9 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
         }
 
         JOptionPane.showMessageDialog(null, "El ascii 66 es igual a -> " + Character.toString((char) 66));
+         */
+        String[] datosCodC = mdb.cargarCombos("select concat (codigo,' - ',nombre) from codigos_certificacion").split("#");
+        comboCertificado.setModel(new DefaultComboBoxModel((Object[]) datosCodC));
 
         String[] datosS = mdb.cargarCombos("select p.nombrecorto from personam p \n"
                 + "inner join sociedadespersona s on (p.id=s.id_asociado)\n"
@@ -513,8 +516,6 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
         comboCertificado = new javax.swing.JComboBox<>();
         jScrollPane4 = new javax.swing.JScrollPane();
         tablaCertificado = new javax.swing.JTable();
-        jButton2 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
         jPanel6 = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
@@ -684,17 +685,17 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
 
         tablaParcelas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Sociedad", "Nombre", "Clave Parcela", "Certificado", "Alcances", "Localidad", "Altura", "Area (HA)", "Numero de Cafetos"
+                "Sociedad", "Nombre", "Clave Parcela", "Certificado", "Localidad", "Altura", "Area (HA)", "Numero de Cafetos"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -935,7 +936,7 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtLatitud, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtLongitud, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(26, Short.MAX_VALUE))
         );
 
         jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder("Certificados"));
@@ -981,33 +982,19 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
             tablaCertificado.getColumnModel().getColumn(2).setResizable(false);
         }
 
-        jButton2.setText("Añadir");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
-
-        jButton5.setText("Eliminar");
-        jButton5.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton5ActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
         jPanel7Layout.setHorizontalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel6)
-                    .addComponent(comboCertificado, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, 188, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 342, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane4)
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel6)
+                            .addComponent(comboCertificado, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel7Layout.setVerticalGroup(
@@ -1016,15 +1003,10 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel7Layout.createSequentialGroup()
-                        .addComponent(comboCertificado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton5))
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(19, Short.MAX_VALUE))
+                .addComponent(comboCertificado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
@@ -1050,7 +1032,7 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(80, Short.MAX_VALUE))
+                .addContainerGap(86, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Datos Basicos", jPanel4);
@@ -1550,17 +1532,14 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
 
         char letra1 = letras.charAt(0);
         char letra2 = letras.charAt(1);
-
-        int ascii = (int) letra1;
-        int ascii2 = (int) letra2;
-
-        String tipoSuelo = "", tipoSombra = "", tipoProduccion = "", codigoCertificado = "";
+        String codigoCertificado = letra1 + "" + letra2;
+        
+        String tipoSuelo = "", tipoSombra = "", tipoProduccion = "";
 
         tipoSuelo = mdb.devuelveId("select id from tiposuelo where descripcion='" + comboSuelo.getSelectedItem() + "'");
         tipoSombra = mdb.devuelveId("select id from tiposombra where descripcion='" + comboSombra.getSelectedItem() + "'");
         tipoProduccion = mdb.devuelveId("select id from tipoproduccion where descripcion='" + comboSistemaP.getSelectedItem() + "'");
-        codigoCertificado = mdb.devuelveId("select id from codigo_relacion where codigo='" + ascii + "," + ascii2 + "' ");
-
+        
         if (tipoSuelo == null || tipoSuelo.equals("")) {
             tipoSuelo = "0";
         }
@@ -1583,7 +1562,7 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
             if (mdb.devuelveUnDato("select clave_parcela from parcelas where clave_parcela='" + txtClave.getText() + "'").equals(txtClave.getText())) {
                 JOptionPane.showMessageDialog(null, "Error: Clave Duplicada");
             } else {
-                mdb.insertarBasicos("insert into parcelas values (null, " + idPersona + ", '" + txtClave.getText() + "', '" + txtNombre.getText() + "', "
+                mdb.insertarBasicos("insert into parcelas values (null, " + idPersona + ", '" + txtClave.getText() + "', '"+codigoCertificado+"', '" + txtNombre.getText() + "', "
                         + "'" + txtAltura.getText() + "', '" + txtArea.getText() + "', " + txtCafetos.getText() + ", "
                         + "" + mdb.devuelveId("select id from pais where descripcion='" + comboPais.getSelectedItem() + "'") + ", "
                         + "" + mdb.devuelveId("select id from estado where descripcion='" + comboEstado.getSelectedItem() + "'") + ", "
@@ -1599,14 +1578,6 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
                 if (mdb.devuelveId("select id from parcelas where clave_parcela='" + txtClave.getText() + "'").equals("")) {
                     JOptionPane.showMessageDialog(null, "No existe la parcela");
                 } else {
-
-                    for (int i = 0; i < modeloC.getRowCount(); i++) {
-                        String certificados = modeloC.getValueAt(i, 0).toString();
-                        mdb.insertarEnCiclo("insert into certificadosparcelas values (null, "
-                                + " " + mdb.devuelveId("select id from parcelas where clave_parcela='" + txtClave.getText() + "' ") + ", "
-                                + " " + mdb.devuelveId("select id from codigo_relacion where codigo='" + ascii + "," + ascii2 + "' ") + ","
-                                + " 1,1,current_date(),current_time(),1,1,1,1) ");
-                    }
 
                     for (int i = 0; i < modeloCultivos.getRowCount(); i++) {
                         String cultivo = modeloCultivos.getValueAt(i, 0).toString();
@@ -1655,17 +1626,18 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
 
     private void comboCertificadoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboCertificadoItemStateChanged
         // TODO add your handling code here:
-        String letras = comboCertificado.getSelectedItem() + "";
+        limpiar(tablaCertificado);
+        String codigo = comboCertificado.getSelectedItem() + "";
 
-        char letra1 = letras.charAt(0);
-        char letra2 = letras.charAt(1);
+        char cod1, cod2;
+        cod1 = (char) codigo.charAt(0);
+        cod2 = (char) codigo.charAt(1);
 
-        int ascii = (int) letra1;
-        int ascii2 = (int) letra2;
+        String codFinal = cod1 + "" + cod2;
 
-        comboCertificado.setToolTipText(
-                mdb.devuelveUnDato("select alcance from codigo_relacion "
-                        + "where codigo='" + ascii + "," + ascii2 + "' "));
+        mdb.cargarInformacion2(modeloC, 3, "select certificado,certificadora,alcance from codigo_relacion where "
+                + "codigo= '" + codFinal + "'");
+
     }//GEN-LAST:event_comboCertificadoItemStateChanged
 
     private void comboCertificadoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_comboCertificadoFocusGained
@@ -1753,27 +1725,6 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
         localidad = comboLocalidad.getSelectedItem() + "";
     }//GEN-LAST:event_comboPaisItemStateChanged
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-        String letras = comboCertificado.getSelectedItem() + "";
-
-        char letra1 = letras.charAt(0);
-        char letra2 = letras.charAt(1);
-
-        int ascii = (int) letra1;
-        int ascii2 = (int) letra2;
-
-        System.out.println(ascii + "," + ascii2);
-
-        modeloC.addRow(new Object[]{
-            mdb.devuelveUnDato("select certificado from codigo_relacion "
-            + "where codigo='" + ascii + "," + ascii2 + "' "),
-            mdb.devuelveUnDato("select certificadora from codigo_relacion "
-            + "where codigo='" + ascii + "," + ascii2 + "' "),
-            mdb.devuelveUnDato("select alcance from codigo_relacion "
-            + "where codigo='" + ascii + "," + ascii2 + "' ") + ""});
-    }//GEN-LAST:event_jButton2ActionPerformed
-
     int porcentajeMaximo = 0, sumaPorcentajes = 0;
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         //Suma y Comparación de porcentajes para obtener y/o no sobrepasar el 100% entre 
@@ -1844,15 +1795,6 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
         // TODO add your handling code here:
         modeloD.addRow(new Object[]{txtNombreArchivo.getText(), comboArchivos.getSelectedItem(), txtRuta.getText()});
     }//GEN-LAST:event_jButton10ActionPerformed
-
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        // TODO add your handling code here:
-        if (fila == null) {
-        } else {
-            modeloC.removeRow(Integer.parseInt(fila));
-            fila = null;
-        }
-    }//GEN-LAST:event_jButton5ActionPerformed
 
     private void tablaCertificadoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaCertificadoMouseClicked
         // TODO add your handling code here:
@@ -1996,10 +1938,8 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
     private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton12;
     private javax.swing.JButton jButton13;
-    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;

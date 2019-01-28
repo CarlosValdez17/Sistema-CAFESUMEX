@@ -24,6 +24,7 @@ import Formas_Configuraciones_DatosBasicos.jpPais;
 import Formas_Configuraciones_FincaCert.Certificados.CodComb;
 import Formas_Configuraciones_FincaCert.Certificados.jpCertificado;
 import Formas_Configuraciones_FincaCert.Certificados.jpCertificador;
+import Formas_Configuraciones_FincaCert.Certificados.jpCodigosCertificados;
 import Formas_Configuraciones_FincaCert.jpActividadesParcela;
 import Formas_Configuraciones_FincaCert.jpCalidadSombra;
 import Formas_Configuraciones_FincaCert.jpCultivos;
@@ -615,7 +616,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 panelPrincipal.repaint();
                 break;
             case "Codigos":
-                CodComb jpCodC = new CodComb(cn);
+                jpCodigosCertificados jpCodC = new jpCodigosCertificados(cn);
                 jpCodC.setSize(size);
                 jpCodC.setLocation(0, 0);
                 panelPrincipal.removeAll();

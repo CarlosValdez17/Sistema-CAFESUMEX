@@ -8,6 +8,7 @@ package Formas_Recepcion;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.Connection;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -40,9 +41,8 @@ public class jdRecibos2 extends javax.swing.JDialog {
         String[] d = datos3.split("#");
         //System.out.println(datos3);
         
-
         comboProductor.setModel(new DefaultComboBoxModel((Object[]) d));
-        comboProductor.insertItemAt("item inicial prueba", 0);
+        comboProductor.insertItemAt("(0)Seleccione..", 0);
         comboProductor.setSelectedIndex(0);
     }
 
@@ -571,7 +571,7 @@ public class jdRecibos2 extends javax.swing.JDialog {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        String sociedad = "", folio = "", nombreProductor = "", claveProductor = "",
+        String  sociedad = "", folio = "", nombreProductor = "", claveProductor = "",
                 nombreParcela = "", claveParcela = "", certificacion = "", sacos = "", kgRecibidos = "",
                 totalBruto = "", retencion = "", total = "", verdes = "", inmaduros = "", brocados = "", calificacion = "",
                 idLote = "", personaEntrego = "", observaciones = "", idProductor, idParcela;
@@ -599,6 +599,8 @@ public class jdRecibos2 extends javax.swing.JDialog {
         idProductor = mdb.devuelveId("select id from productor where clave_productor='" + claveProductor + "' ");
         idParcela = mdb.devuelveId("select id from parcelas where clave_parcela='" + claveParcela + "' ");
 
+        JOptionPane.showMessageDialog(this, "Punto de Partida");
+        
         mdb.insertarBasicos("INSERT INTO recibos VALUES(null, " + idLote + ", " + idProductor + ", " + idParcela + ", '" + sacos + "', "
                 + "'" + kgRecibidos + "', '" + totalBruto + "', '" + retencion + "', '" + total + "', '" + verdes + "', '" + inmaduros + "', "
                 + "'" + brocados + "', '" + calificacion + "', '" + personaEntrego + "', '" + observaciones + "') ");

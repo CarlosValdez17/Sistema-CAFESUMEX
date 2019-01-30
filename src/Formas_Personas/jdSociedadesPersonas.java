@@ -101,7 +101,7 @@ public class jdSociedadesPersonas extends javax.swing.JDialog {
         }
     }
 
-    public void abrirFormulario(String formulario) {
+/*    public void abrirFormulario(String formulario) {
         //JOptionPane.showMessageDialog(null, "Entre al case");
         switch (formulario) {
             case "Productor":
@@ -110,7 +110,7 @@ public class jdSociedadesPersonas extends javax.swing.JDialog {
                 break;
         }
     }
-
+*/
     public void tipoOperacion() {
     DefaultTableModel modelo = (DefaultTableModel) tablaSociedades.getModel();
 

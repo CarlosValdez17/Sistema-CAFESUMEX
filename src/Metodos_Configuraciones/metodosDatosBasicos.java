@@ -271,7 +271,7 @@ public class metodosDatosBasicos {
 
     public String devuelveUnDato(String sql) {
         try {
-           // System.out.println(sql);
+            System.out.println(sql);
             CallableStatement cmd = cn.prepareCall(sql);
             ResultSet rs = cmd.executeQuery();
             String a = "";
@@ -281,6 +281,7 @@ public class metodosDatosBasicos {
                     datos[i] = rs.getString(i + 1);
                 }
                 a = datos[0] + "";
+                System.out.println(a);
             }
             cmd.close();
             return a;

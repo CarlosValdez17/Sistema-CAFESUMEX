@@ -23,21 +23,21 @@ public class jdAsignacionesPersonas extends javax.swing.JDialog {
      * Creates new form jdFormaProceso
      */
     Connection cn;
-    String tipoOperacion, nombrePersona, idPersona;
+    String tipoPersona, nombrePersona, idPersona;
     metodosDatosBasicos mdb;
     jpEvaluaciones jpE;
     jdSociedadesPersonas formSoc;
     jdFormularioProductor jdFP;
 
-    public jdAsignacionesPersonas(java.awt.Frame parent, boolean modal, String tipoOperacion, String nombrePersona, String idPersona, Connection c) {
+    public jdAsignacionesPersonas(java.awt.Frame parent, boolean modal, String tipoPersona, String nombrePersona, String idPersona, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
 
         cn = c;
         this.idPersona = idPersona;
-        //tipoOperacion es el tipo de persona
-        this.tipoOperacion = tipoOperacion;
+        //tipoPersona es el tipo de persona
+        this.tipoPersona = tipoPersona;
         this.nombrePersona = nombrePersona;
         mdb = new metodosDatosBasicos(cn);
 
@@ -89,45 +89,72 @@ public class jdAsignacionesPersonas extends javax.swing.JDialog {
         }
     }
 
-    public void abrirFormulario(String formulario) {
+   /* public void abrirFormulario(String formulario) {
         //JOptionPane.showMessageDialog(null, "Entre al case");
         switch (formulario) {
             case "Productor":
-                jdFP = new jdFormularioProductor(null, true, idPersona, nombrePersona, tipoOperacion, cn);
+                jdFP = new jdFormularioProductor(null, true, idPersona, nombrePersona, tipoPersona, cn);
                 jdFP.setVisible(true);
                 break;
             case "Socio":
-                formSoc = new jdSociedadesPersonas(null, true, "1", tipoOperacion, nombrePersona, idPersona, cn);
+                formSoc = new jdSociedadesPersonas(null, true, "1", tipoPersona, nombrePersona, idPersona, cn);
                 formSoc.setVisible(true);
                 break;
         }
-    }
+    }*/
 
-    public void editarDetalles(String formulario) {
+    public void editarDetalles(String formulario, String item) {
         switch (formulario) {
             case "Productor":
-                if (tipoOperacion.equals("1")) {
+                switch (item) {
+                    case "Detalles Asignacion":
+
+                        if (mdb.devuelveUnDato("select clave_productor from productor where id_persona=" + idPersona + " and tipoPersona='"+tipoPersona+"' ") == null
+                                || mdb.devuelveUnDato("select clave_productor from productor where id_persona=" + idPersona + " and tipoPersona='"+tipoPersona+"'").equals("")) {
+                            jdFormularioProductor jdFPr = new jdFormularioProductor(null, true, idPersona, nombrePersona, tipoPersona,"NO", cn);
+                            jdFPr.setVisible(true);
+                        } else {
+                            jdFormularioProductor jdFPr = new jdFormularioProductor(null, true, idPersona, nombrePersona, tipoPersona, "SI", cn);
+                            jdFPr.setVisible(true);
+                        }
+
+                        break;
+
+                    case "Parcelas":
+
+                        if (mdb.devuelveUnDato("select clave_productor from productor where id_persona=" + idPersona + " and tipoPersona='"+tipoPersona+"'") == null
+                                || mdb.devuelveUnDato("select clave_productor from productor where id_persona=" + idPersona + " and tipoPersona='"+tipoPersona+"'").equals("")) {
+                            jdFormularioProductor jdFPr = new jdFormularioProductor(null, true, idPersona, nombrePersona, tipoPersona,"NO", cn);
+                            jdFPr.setVisible(true);
+                        } else {
+                            jdFormularioParcelas jdFP = new jdFormularioParcelas(null, true, idPersona, tipoPersona, "", cn);
+                            jdFP.setVisible(true);
+                        }
+
+                        break;
+                }
+                /*if (tipoPersona.equals("1")) {
                     if (mdb.devuelveUnDato("select clave_productor from productor where id_persona=" + idPersona+ " and tipoPersona=1") == null
                             || mdb.devuelveUnDato("select clave_productor from productor where id_persona=" + idPersona+ " and tipoPersona=1").equals("")) {
-                        jdFormularioProductor jdFPr = new jdFormularioProductor(null, true, idPersona, nombrePersona, tipoOperacion, cn);
+                        jdFormularioProductor jdFPr = new jdFormularioProductor(null, true, idPersona, nombrePersona, tipoPersona, cn);
                         jdFPr.setVisible(true);
                     } else {
-                        jdFormularioParcelas jdFP = new jdFormularioParcelas(null, true, idPersona, tipoOperacion,"", cn);
-                        jdFP.setVisible(true);
+                        jdFormularioProductor jdFPr = new jdFormularioProductor(null, true, idPersona, nombrePersona, tipoPersona, cn);
+                        jdFPr.setVisible(true);
+                        //jdFormularioParcelas jdFP = new jdFormularioParcelas(null, true, idPersona, tipoPersona,"", cn);
+                        //jdFP.setVisible(true);
                     }
                 }else{
                 
                     if (mdb.devuelveUnDato("select clave_productor from productor where id_persona=" + idPersona+ " and tipoPersona=2") == null
                             || mdb.devuelveUnDato("select clave_productor from productor where id_persona=" + idPersona+ " and tipoPersona=2").equals("")) {
-                        jdFormularioProductor jdFPr = new jdFormularioProductor(null, true, idPersona, nombrePersona, tipoOperacion, cn);
+                        jdFormularioProductor jdFPr = new jdFormularioProductor(null, true, idPersona, nombrePersona, tipoPersona, cn);
                         jdFPr.setVisible(true);
                     } else {
-                        jdFormularioParcelas jdFP = new jdFormularioParcelas(null, true, idPersona, tipoOperacion,"", cn);
+                        jdFormularioParcelas jdFP = new jdFormularioParcelas(null, true, idPersona, tipoPersona,"", cn);
                         jdFP.setVisible(true);
                     }
-                
-                    
-                }
+                }*/
                 break;
         }
     }
@@ -158,18 +185,7 @@ public class jdAsignacionesPersonas extends javax.swing.JDialog {
         jLabel2 = new javax.swing.JLabel();
         labelPersona = new javax.swing.JLabel();
 
-        jPopupMenu1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jPopupMenu1MouseClicked(evt);
-            }
-        });
-
         jMenuItem1.setText("Detalles Asignacion");
-        jMenuItem1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jMenuItem1MouseClicked(evt);
-            }
-        });
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem1ActionPerformed(evt);
@@ -358,11 +374,11 @@ public class jdAsignacionesPersonas extends javax.swing.JDialog {
                 mdb.insertarBasicos("insert into asignacionespersona "
                         + "values (null," + idPersona + ", " + mdb.devuelveId("select id from puestos where descripcion='" + asignacion + "'") + ")");
 
-                int result = JOptionPane.showConfirmDialog(null, "¿Deseas añadir la información de '" + asignacion + "' ?",
+                int result = JOptionPane.showConfirmDialog(null, "¿Deseas añadir la información de '"+asignacion+"' ?",
                         null, JOptionPane.YES_NO_OPTION);
 
                 if (result == JOptionPane.YES_OPTION) {
-                    abrirFormulario(asignacion);
+//                    abrirFormulario(asignacion);
                 } else {
                     JOptionPane.showMessageDialog(null, "Información Pendiente");
                 }
@@ -375,23 +391,14 @@ public class jdAsignacionesPersonas extends javax.swing.JDialog {
         this.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
 
-    private void jMenuItem1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuItem1MouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jMenuItem1MouseClicked
-
-    private void jPopupMenu1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPopupMenu1MouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jPopupMenu1MouseClicked
-
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         // TODO add your handling code here:
-        editarDetalles(asignacion);
+        editarDetalles(asignacion, "Detalles Asignacion");
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
         // TODO add your handling code here:
-        editarDetalles(asignacion);
-
+        editarDetalles(asignacion, "Parcelas");
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     private void tablaAsignacionesMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaAsignacionesMouseEntered

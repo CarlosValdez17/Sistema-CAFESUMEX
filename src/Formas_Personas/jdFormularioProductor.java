@@ -20,20 +20,27 @@ public class jdFormularioProductor extends javax.swing.JDialog {
      */
     Connection cn;
     metodosDatosBasicos mdb;
-    String idPersona,nombre,tipoPersona;
+    String idPersona, nombre, tipoPersona;
 
-    public jdFormularioProductor(java.awt.Frame parent, boolean modal, String idPersona, String nombre, String tipoPersona, Connection c) {
+    public jdFormularioProductor(java.awt.Frame parent, boolean modal, String idPersona, String nombre, String tipoPersona, String existencia, Connection c) {
         super(parent, modal);
         initComponents();
+        setLocationRelativeTo(null);
+
         cn = c;
         mdb = new metodosDatosBasicos(cn);
         this.idPersona = idPersona;
         this.tipoPersona = tipoPersona;
-        this.nombre=nombre;
-        
+        this.nombre = nombre;
+
         lblNombre.setText(nombre);
-        
-        setLocationRelativeTo(null);
+
+        if (existencia.equals("SI")) {
+            txtClave.setText(mdb.devuelveUnDato("select clave_productor from productor where id_persona='" + idPersona + "' and tipoPersona='" + tipoPersona + "'"));
+            txtClave.setEnabled(false);
+            jButton1.setVisible(false);
+        }
+
     }
 
     /**
@@ -131,19 +138,21 @@ public class jdFormularioProductor extends javax.swing.JDialog {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        mdb.insertarBasicos("insert into productor values (null, " + idPersona + ", '"+txtClave.getText()+"', "+tipoPersona+" )");
-
-        int result = JOptionPane.showConfirmDialog(null, "¿Deseas añadir sus parcelas?",
-                null, JOptionPane.YES_NO_OPTION);
-
-        if (result == JOptionPane.YES_OPTION) {
-            jdFormularioParcelas jdFP = new jdFormularioParcelas(null, true, idPersona,tipoPersona,"", cn);
-            jdFP.setVisible(true);
+        if (txtClave.getText().equals("")) {
+            JOptionPane.showMessageDialog(null, "Ingrese Clave Productor");
         } else {
-            JOptionPane.showMessageDialog(null, "Parcelas Pendientes");
-        }
+            mdb.insertarBasicos("insert into productor values (null, " + idPersona + ", '" + txtClave.getText() + "', " + tipoPersona + " )");
+            int result = JOptionPane.showConfirmDialog(null, "¿Deseas añadir sus parcelas?",
+                    null, JOptionPane.YES_NO_OPTION);
 
-        this.dispose();
+            if (result == JOptionPane.YES_OPTION) {
+                jdFormularioParcelas jdFP = new jdFormularioParcelas(null, true, idPersona, tipoPersona, "", cn);
+                jdFP.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(null, "Parcelas Pendientes");
+            }
+            this.dispose();
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void txtClaveKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtClaveKeyReleased

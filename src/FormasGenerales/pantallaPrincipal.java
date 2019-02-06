@@ -63,7 +63,7 @@ import Formas_Configuraciones_Sociedades.jpRetenciones;
 import Formas_FincaCert.jpProductores;
 import Formas_Personas.jpPersonas;
 import Formas_Personas.jpPersonas1;
-import Formas_Recepcion.jdRecibos2;
+import Formas_Recepcion.jdRecibos;
 import Formas_Recepcion.jpRecibos;
 import MetodosGenerales.JComboCheckBox;
 import java.awt.BorderLayout;

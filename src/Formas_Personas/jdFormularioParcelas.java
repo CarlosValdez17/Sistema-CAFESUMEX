@@ -72,7 +72,6 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
         this.idPersona = idPersona;
 
         //JOptionPane.showMessageDialog(null, "Tipo de persona = " + tipoPersona + "\n" + "Id Persona = " + idPersona + "\n" + "Clave Parcela = " + claveParcela);
-
         if (tipoPersona.equals("1")) {
             llenarDatosProductorFisica();
         } else {
@@ -136,23 +135,40 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
                 + "WHERE\n"
                 + "    id_persona =" + idPersona + "  \n"
                 + "GROUP BY clave_parcela ASC"); */
+        if (tipoPersona.equals("1")) {
+            mdb.cargarInformacion2(modelo, 8, "SELECT s.razonsocial, p.nombre, \n"
+                    + "    p.clave_parcela,\n"
+                    + " 	clave_certificacion, \n"
+                    + "    l.descripcion,    altura,\n"
+                    + "    AREA,\n"
+                    + "    numCafetos\n"
+                    + "FROM\n"
+                    + "    parcelas p\n"
+                    + "INNER JOIN personam s ON\n"
+                    + "    (p.id_sociedad = s.id)\n"
+                    + "INNER JOIN localidad l ON\n"
+                    + "    (p.id_localidad=l.id)WHERE\n"
+                    + "    id_persona =" + idPersona + " and tipoPersona=1  \n"
+                    + "GROUP BY clave_parcela ASC");
+        } else if (tipoPersona.equals("2")) {
+            mdb.cargarInformacion2(modelo, 8, "SELECT s.razonsocial, p.nombre, \n"
+                    + "    p.clave_parcela,\n"
+                    + " 	clave_certificacion, \n"
+                    + "    l.descripcion,    altura,\n"
+                    + "    AREA,\n"
+                    + "    numCafetos\n"
+                    + "FROM\n"
+                    + "    parcelas p\n"
+                    + "INNER JOIN personam s ON\n"
+                    + "    (p.id_sociedad = s.id)\n"
+                    + "INNER JOIN localidad l ON\n"
+                    + "    (p.id_localidad=l.id)WHERE\n"
+                    + "    id_persona =" + idPersona + " and tipoPersona=2  \n"
+                    + "GROUP BY clave_parcela ASC");
 
-        mdb.cargarInformacion2(modelo, 8, "SELECT s.razonsocial, p.nombre, \n"
-                + "    p.clave_parcela,\n"
-                + " 	clave_certificacion, \n"
-                + "    l.descripcion,    altura,\n"
-                + "    AREA,\n"
-                + "    numCafetos\n"
-                + "FROM\n"
-                + "    parcelas p\n"
-                + "INNER JOIN personam s ON\n"
-                + "    (p.id_sociedad = s.id)\n"
-                + "INNER JOIN localidad l ON\n"
-                + "    (p.id_localidad=l.id)WHERE\n"
-                + "    id_persona =" + idPersona + "  \n"
-                + "GROUP BY clave_parcela ASC");
+        }
 
-    /*    int c1, c2;
+        /*    int c1, c2;
         for (int i = 0; i < tablaParcelas.getRowCount(); i++) {
             String cod = tablaParcelas.getValueAt(i, 3) + "";
             //JOptionPane.showMessageDialog(null,cod);
@@ -180,7 +196,7 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
         lblTelFijo.setText(datos[4]);
         lblTelMov.setText(datos[5]);
 
-        lblClave.setText(mdb.devuelveUnDato("select clave_productor from productor where id_persona=" + idPersona));
+        lblClave.setText(mdb.devuelveUnDato("select clave_productor from productor where id_persona=" + idPersona+ " and tipoPersona=1"));
         //System.out.println("CLAVE DE PRODUCTOR=" + mdb.devuelveUnDato("select clave_productor from productor where id_persona=" + idPersona));
     }
 
@@ -198,7 +214,7 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
         lblTelFijo.setText(datos[4]);
         lblTelMov.setText(datos[5]);
 
-        lblClave.setText(mdb.devuelveUnDato("select clave_productor from productor where id_persona=" + idPersona));
+        lblClave.setText(mdb.devuelveUnDato("select clave_productor from productor where id_persona=" + idPersona+ " and tipoPersona=2"));
         //System.out.println(mdb.devuelveUnDato("select clave_productor from productor where id_persona="+idPersona));
     }
 
@@ -259,7 +275,7 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
             txtLongitud.setText(datos[13]);
             //Latitud
             txtLatitud.setText(datos[14]);
-            
+
             //Combos - Consulta Individual
             //Tipo de Suelo
             comboSuelo.setSelectedItem(mdb.devuelveUnDato("select ts.descripcion from parcelas p "
@@ -1533,13 +1549,13 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
         char letra1 = letras.charAt(0);
         char letra2 = letras.charAt(1);
         String codigoCertificado = letra1 + "" + letra2;
-        
+
         String tipoSuelo = "", tipoSombra = "", tipoProduccion = "";
 
         tipoSuelo = mdb.devuelveId("select id from tiposuelo where descripcion='" + comboSuelo.getSelectedItem() + "'");
         tipoSombra = mdb.devuelveId("select id from tiposombra where descripcion='" + comboSombra.getSelectedItem() + "'");
         tipoProduccion = mdb.devuelveId("select id from tipoproduccion where descripcion='" + comboSistemaP.getSelectedItem() + "'");
-        
+
         if (tipoSuelo == null || tipoSuelo.equals("")) {
             tipoSuelo = "0";
         }
@@ -1562,7 +1578,7 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
             if (mdb.devuelveUnDato("select clave_parcela from parcelas where clave_parcela='" + txtClave.getText() + "'").equals(txtClave.getText())) {
                 JOptionPane.showMessageDialog(null, "Error: Clave Duplicada");
             } else {
-                mdb.insertarBasicos("insert into parcelas values (null, " + idPersona + ", '" + txtClave.getText() + "', '"+codigoCertificado+"', '" + txtNombre.getText() + "', "
+                mdb.insertarBasicos("insert into parcelas values (null, " + idPersona + ", '" + tipoPersona + "', '" + txtClave.getText() + "', '" + codigoCertificado + "', '" + txtNombre.getText() + "', "
                         + "'" + txtAltura.getText() + "', '" + txtArea.getText() + "', " + txtCafetos.getText() + ", "
                         + "" + mdb.devuelveId("select id from pais where descripcion='" + comboPais.getSelectedItem() + "'") + ", "
                         + "" + mdb.devuelveId("select id from estado where descripcion='" + comboEstado.getSelectedItem() + "'") + ", "

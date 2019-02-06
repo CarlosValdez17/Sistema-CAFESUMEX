@@ -1,4 +1,4 @@
-    /*
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -56,7 +56,7 @@ public class jdParcelas extends javax.swing.JDialog {
             lblTelFijo.setText(datos[4]);
             lblTelMov.setText(datos[5]);
 
-            lblClave.setText(mdb.devuelveUnDato("select clave_productor from productor where id_persona=" + idPersona));
+            lblClave.setText(mdb.devuelveUnDato("select clave_productor from productor where id_persona=" + idPersona + " and tipoPersona=1"));
             //System.out.println("CLAVE DE PRODUCTOR=" + mdb.devuelveUnDato("select clave_productor from productor where id_persona=" + idPersona));
 
         } else if (tipoPersona.equals("Moral")) {
@@ -74,7 +74,7 @@ public class jdParcelas extends javax.swing.JDialog {
             lblTelFijo.setText(datos[4]);
             lblTelMov.setText(datos[5]);
 
-            lblClave.setText(mdb.devuelveUnDato("select clave_productor from productor where id_persona=" + idPersona));
+            lblClave.setText(mdb.devuelveUnDato("select clave_productor from productor where id_persona=" + idPersona + " and tipoPersona=2"));
             //System.out.println(mdb.devuelveUnDato("select clave_productor from productor where id_persona="+idPersona));
         } else {
             JOptionPane.showMessageDialog(null, "Error, seleccione productor");
@@ -84,20 +84,38 @@ public class jdParcelas extends javax.swing.JDialog {
     public void llenarTabla() {
         limpiar(tablaParcelas);
 
-        mdb.cargarInformacion2(modelo, 8, "SELECT s.razonsocial, p.nombre, \n"
-                + "    p.clave_parcela,\n"
-                + " 	clave_certificacion, \n"
-                + "    l.descripcion,    altura,\n"
-                + "    AREA,\n"
-                + "    numCafetos\n"
-                + "FROM\n"
-                + "    parcelas p\n"
-                + "INNER JOIN personam s ON\n"
-                + "    (p.id_sociedad = s.id)\n"
-                + "INNER JOIN localidad l ON\n"
-                + "    (p.id_localidad=l.id)WHERE\n"
-                + "    id_persona =" + idPersona + "  \n"
-                + "GROUP BY clave_parcela ASC");
+        if (tipoPersona.equals("Fisica")) {
+            mdb.cargarInformacion2(modelo, 8, "SELECT s.razonsocial, p.nombre, \n"
+                    + "    p.clave_parcela,\n"
+                    + " 	clave_certificacion, \n"
+                    + "    l.descripcion,    altura,\n"
+                    + "    AREA,\n"
+                    + "    numCafetos\n"
+                    + "FROM\n"
+                    + "    parcelas p\n"
+                    + "INNER JOIN personam s ON\n"
+                    + "    (p.id_sociedad = s.id)\n"
+                    + "INNER JOIN localidad l ON\n"
+                    + "    (p.id_localidad=l.id)WHERE\n"
+                    + "    id_persona =" + idPersona + " and tipoPersona=1  \n"
+                    + "GROUP BY clave_parcela ASC");
+        } else if (tipoPersona.equals("Moral")) {
+            mdb.cargarInformacion2(modelo, 8, "SELECT s.razonsocial, p.nombre, \n"
+                    + "    p.clave_parcela,\n"
+                    + " 	clave_certificacion, \n"
+                    + "    l.descripcion,    altura,\n"
+                    + "    AREA,\n"
+                    + "    numCafetos\n"
+                    + "FROM\n"
+                    + "    parcelas p\n"
+                    + "INNER JOIN personam s ON\n"
+                    + "    (p.id_sociedad = s.id)\n"
+                    + "INNER JOIN localidad l ON\n"
+                    + "    (p.id_localidad=l.id)WHERE\n"
+                    + "    id_persona =" + idPersona + " and tipoPersona=2  \n"
+                    + "GROUP BY clave_parcela ASC");
+
+        }
     }
 
     private void limpiar(JTable tabla) {

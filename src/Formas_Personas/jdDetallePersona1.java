@@ -63,6 +63,7 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
         this.tipo = tipo;
         //pFisica.setSelected(true);
 
+        rellenarCombos();
         rellenarInformacion();
     }
 
@@ -81,9 +82,37 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
 
                 lblSociedades.setText("Sociedad: " + ds);
 
-                String[] datos = mdb.cargarDatosFormularioPersonas("select nombre, apellidopaterno, apellidomaterno, "
-                        + "registrodepoblacion, identificacionfiscal, id_genero,telefono, telefonomovil, direccion, codigopostal, "
-                        + "id_pais, id_estado, id_municipio, id_localidad, id_ejidocolonia, foto from personaf where id=" + idPersona, 16).split("¬");
+                String[] datos = mdb.cargarDatosFormularioPersonas("SELECT\n"
+                        + "    nombre,\n"
+                        + "    apellidopaterno,\n"
+                        + "    apellidomaterno,\n"
+                        + "    registrodepoblacion,\n"
+                        + "    identificacionfiscal,\n"
+                        + "    id_genero,\n"
+                        + "    telefono,\n"
+                        + "    telefonomovil,\n"
+                        + "    direccion,\n"
+                        + "    codigopostal,\n"
+                        + "    p.Descripcion,\n"
+                        + "    e.Descripcion,\n"
+                        + "    m.Descripcion,\n"
+                        + "    l.Descripcion,\n"
+                        + "    c.Descripcion,\n"
+                        + "    foto\n"
+                        + "FROM\n"
+                        + "    personaf x\n"
+                        + "INNER JOIN pais p ON\n"
+                        + "    (X.ID_Pais = p.ID)\n"
+                        + "INNER JOIN estado e ON\n"
+                        + "    (X.ID_Estado = e.ID)\n"
+                        + "INNER JOIN municipio m ON\n"
+                        + "    (X.ID_Municipio = m.ID)\n"
+                        + "INNER JOIN localidad l ON\n"
+                        + "    (X.ID_Localidad = l.ID)\n"
+                        + "INNER JOIN ejidocolonia c ON\n"
+                        + "    (X.ID_EjidoColonia = c.ID)\n"
+                        + "WHERE\n"
+                        + "    x.id = " + idPersona, 16).split("¬");
 
                 /*   System.out.println("DATOOOOOOOOOOOOOOOOS HERE AQUI VEEELOS PRRO \n" + mdb.cargarDatosFormularioPersonas("select nombre, apellidopaterno, apellidomaterno, "
                         + "registrodepoblacion, identificacionfiscal, id_genero,telefono, telefonomovil, direccion, codigopostal, "
@@ -110,6 +139,12 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
                 txtTelefono1.setText(datos[7]);
                 txtDireccion.setText(datos[8]);
                 txtCP.setText(datos[9]);
+
+                comboPais.setSelectedItem(datos[10]);
+                comboEstado.setSelectedItem(datos[11]);
+                comboMunicipio.setSelectedItem(datos[12]);
+                comboLocalidad.setSelectedItem(datos[13]);
+                comboColonia.setSelectedItem(datos[14]);
 
                 txtRuta.setText(datos[15]);
 
@@ -142,14 +177,37 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
             } //Tipo de persona moral = 2
             else if (tipoPersona.equals("2")) {
 
-                String[] datos = mdb.cargarDatosFormularioPersonas("select razonsocial, nombrecorto, clavecorte, "
-                        + "identificacionFiscal,telefono, direccion,email,paginaweb, codigopostal, "
-                        + "id_pais, id_estado, id_municipio, id_localidad, id_ejidocolonia, foto from personam where id=" + idPersona, 15).split("¬");
+                String[] datos = mdb.cargarDatosFormularioPersonas("SELECT\n"
+                        + "    razonsocial,\n"
+                        + "    nombrecorto,\n"
+                        + "    clavecorte,\n"
+                        + "    identificacionFiscal,\n"
+                        + "    telefono,\n"
+                        + "    direccion,\n"
+                        + "    email,\n"
+                        + "    paginaweb,\n"
+                        + "    codigopostal,\n"
+                        + "    p.Descripcion,\n"
+                        + "    e.Descripcion,\n"
+                        + "    m.Descripcion,\n"
+                        + "    l.Descripcion,\n"
+                        + "    c.Descripcion,\n"
+                        + "    foto\n"
+                        + "FROM\n"
+                        + "    personam x\n"
+                        + "INNER JOIN pais p ON\n"
+                        + "    (X.ID_Pais = p.ID)\n"
+                        + "INNER JOIN estado e ON\n"
+                        + "    (X.ID_Estado = e.ID)\n"
+                        + "INNER JOIN municipio m ON\n"
+                        + "    (X.ID_Municipio = m.ID)\n"
+                        + "INNER JOIN localidad l ON\n"
+                        + "    (X.ID_Localidad = l.ID)\n"
+                        + "INNER JOIN ejidocolonia c ON\n"
+                        + "    (X.ID_EjidoColonia = c.ID)\n"
+                        + "WHERE\n"
+                        + "    x.id =" + idPersona, 15).split("¬");
 
-                /*                System.out.println(mdb.cargarDatosFormularioPersonas("select razonsocial, nombrecorto, clavecorte, "
-                        + "identificacionFiscal,telefono, direccion,email,paginaweb, codigopostal, "
-                        + "id_pais, id_estado, id_municipio, id_localidad, id_ejidocolonia, foto from personam where id=" + idPersona, 15));
-                 */
                 pFisica.setSelected(false);
                 pMoral.setSelected(true);
 
@@ -163,17 +221,24 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
                 txtCURP.setText(datos[7]);
                 txtCP.setText(datos[8]);
 
+                comboPais.setSelectedItem(datos[9]);
+                comboEstado.setSelectedItem(datos[10]);
+                comboMunicipio.setSelectedItem(datos[11]);
+                comboLocalidad.setSelectedItem(datos[12]);
+                comboColonia.setSelectedItem(datos[13]);
+
                 txtRuta.setText(datos[14]);
-
-                if (!txtRuta.getText().equals("NO") || datos[14].equals("")) {
-                    BufferedImage img = null;
-                    img = decodeToImage(datos[14]);
-                    ImageIcon icon = new ImageIcon(img);
-                    Icon icono = new ImageIcon(icon.getImage().getScaledInstance(lbFoto.getWidth(), lbFoto.getHeight(), Image.SCALE_DEFAULT));
-                    lbFoto.setText(null);
-                    lbFoto.setIcon(icono);
+                try {
+                    if (!txtRuta.getText().equals("NO") || datos[14].equals("")) {
+                        BufferedImage img = null;
+                        img = decodeToImage(datos[14]);
+                        ImageIcon icon = new ImageIcon(img);
+                        Icon icono = new ImageIcon(icon.getImage().getScaledInstance(lbFoto.getWidth(), lbFoto.getHeight(), Image.SCALE_DEFAULT));
+                        lbFoto.setText(null);
+                        lbFoto.setIcon(icono);
+                    }
+                } catch (Exception e) {
                 }
-
                 if (mdb.devuelveId("select a.id from asignacionespersona a\n "
                         + "inner join puestos p on (a.id_puesto=p.ID)\n "
                         + "where a.id_persona=" + idPersona + " and p.Descripcion='Productor' ").equals("")) {
@@ -199,7 +264,7 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
         } else {
             pFisica.setSelected(true);
         }
-        rellenarCombos();
+
         //  } catch (Exception e) {
         //  }
     }
@@ -547,11 +612,12 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
             } else {
                 //AQUI METODOS PARA ACTUALIZACION DE DATOS
                 if (tipoPersona.equals("1")) {
+                    JOptionPane.showMessageDialog(null,"Actualizar Fisica");
                     mdb.actualizarBasicos("UPDATE personaf SET nombre='" + txtNombre.getText() + "' , "
                             + "apellidoPaterno='" + txtApPat.getText() + "', apellidoMaterno='" + txtApMat.getText() + "',  "
                             + " id_genero=" + genero + ", telefono='" + txtTelefono.getText() + "', telefonoMovil='" + txtTelefono1.getText() + "',"
                             + " direccion='" + txtDireccion.getText() + "', codigopostal='" + txtCP.getText() + "', "
-                            + "identificacionfiscal='" + txtRFC.getText() + "', paginaweb='" + txtCURP.getText() + "', "
+                            + "identificacionfiscal='" + txtRFC.getText() + "', registrodepoblacion='" + txtCURP.getText() + "', "
                             + " id_pais='" + mdb.devuelveId("select id from pais where descripcion='" + comboPais.getSelectedItem() + "' ") + "',"
                             + " id_estado='" + mdb.devuelveId("select id from estado where descripcion='" + comboEstado.getSelectedItem() + "' ") + "',"
                             + " id_municipio='" + mdb.devuelveId("select id from municipio where descripcion='" + comboMunicipio.getSelectedItem() + "' ") + "',"
@@ -560,6 +626,7 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
                             + " foto='" + image_string + "' "
                             + " where id=" + idPersona);
                 } else {
+                    JOptionPane.showMessageDialog(null,"Actualizar Moral");
                     mdb.actualizarBasicos("UPDATE personam SET razonsocial='" + txtNombre.getText() + "',  "
                             + "nombrecorto='" + txtApPat.getText() + "', clavecorte='" + txtApMat.getText() + "', "
                             + "identificacionfiscal='" + txtRFC.getText() + "', paginaweb='" + txtCURP.getText() + "', "
@@ -1308,7 +1375,9 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+
         if (validarCampos() == true) {
+
             tipoProceso();
         }
     }//GEN-LAST:event_jButton1ActionPerformed

@@ -50,7 +50,7 @@ public class metodosDatosBasicos {
 
     public void actualizarBasicos(String sql) {
         try {
-            //System.out.println(sql);
+            System.out.println(sql);
             PreparedStatement cmd = cn.prepareCall(sql);
             cmd.execute();
             cmd.close();
@@ -103,6 +103,7 @@ public class metodosDatosBasicos {
 
     public void cargarInformacionPruebaArray(DefaultTableModel modelo, int tamaño, String sql, ArrayList<String> array) {
         try {
+            System.out.println(sql);
             CallableStatement cmd = cn.prepareCall(sql);
             ResultSet rs = cmd.executeQuery();
 
@@ -143,7 +144,7 @@ public class metodosDatosBasicos {
 
     public String cargarDatosFormularioPersonas(String sql, int tamaño) {
         try {
-            System.out.println("-------  "+sql);
+            System.out.println("--------------------------------------\n"+sql);
             CallableStatement cmd = cn.prepareCall(sql);
             ResultSet rs = cmd.executeQuery();
             String a = "";
@@ -211,7 +212,7 @@ public class metodosDatosBasicos {
 
     public String generadorStrings(String sql) {
         try {
-            //System.out.println(sql + "\n");
+            System.out.println(sql + "\n");
             CallableStatement cmd = cn.prepareCall(sql);
             ResultSet rs = cmd.executeQuery();
             String a = "";
@@ -254,6 +255,7 @@ public class metodosDatosBasicos {
 
     public String devuelveId(String sql) {
         try {
+            System.out.println(sql);
             CallableStatement cmd = cn.prepareCall(sql);
             ResultSet rs = cmd.executeQuery();
             String id="";

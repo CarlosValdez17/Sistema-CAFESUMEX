@@ -5,6 +5,7 @@
  */
 package Formas_Personas;
 
+import Formas_FincaCert.jdFormularioProductor;
 import Formas_Configuraciones_Recepcion.*;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.Connection;
@@ -41,7 +42,7 @@ public class jdSociedadesPersonas extends javax.swing.JDialog {
         mdb = new metodosDatosBasicos(cn);
 
         llenarTabla();
-        lblPregunta.setText(tipoPregunta);
+        //lblPregunta.setText(tipoPregunta);
         setTitle("Sociedades");
 
         if(tipoOperacion.equals("1")){
@@ -76,14 +77,14 @@ public class jdSociedadesPersonas extends javax.swing.JDialog {
                     + "inner join personam p on (a.ID_asociado=p.ID)\n "
                     + "where a.id_persona= " + idPersona + " and a.tipoPersona=1 order by p.razonsocial asc").split("#");
 
-            labelPersona.setText(mdb.devuelveUnDato("select concat(nombre,' ',apellidomaterno,' ',apellidopaterno) as nombre from personaf where id=" + idPersona));
+            //labelPersona.setText(mdb.devuelveUnDato("select concat(nombre,' ',apellidomaterno,' ',apellidopaterno) as nombre from personaf where id=" + idPersona));
         } else {
             datos = mdb.generadorStrings("select p.razonsocial \n"
                     + "from sociedadespersona a\n "
                     + "inner join personam p on (a.ID_asociado=p.ID)\n "
                     + "where a.id_persona= " + idPersona + " and a.tipoPersona=2 order by p.razonsocial asc").split("#");
 
-            labelPersona.setText(mdb.devuelveUnDato("select razonsocial from personam where id=" + idPersona));
+            //labelPersona.setText(mdb.devuelveUnDato("select razonsocial from personam where id=" + idPersona));
         }
         int e = 0;
         //System.out.println("Tamaño datos= " + datos.length);
@@ -309,6 +310,7 @@ public class jdSociedadesPersonas extends javax.swing.JDialog {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         tipoOperacion();
+        this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void tablaSociedadesKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tablaSociedadesKeyReleased

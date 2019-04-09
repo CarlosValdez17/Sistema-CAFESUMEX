@@ -5,9 +5,8 @@
  */
 package Formas_FincaCert;
 
-import Formas_Personas.jdDetallePersona1;
+import Formas_Personas.jdFormularioPersonas;
 import Formas_Personas.jdFormularioParcelas;
-import Formas_Personas.jdFormularioProductor;
 //import Metodos_Configuraciones.JComboCheckBox;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.awt.Checkbox;
@@ -32,7 +31,7 @@ public class jpProductores extends javax.swing.JPanel {
     metodosDatosBasicos mdb;
     DefaultTableModel modelo, modelo2;
     jdFormularioProductor jdFP;
-    jdDetallePersona1 jdDP;
+    jdFormularioPersonas jdDP;
     ArrayList<String> array = new ArrayList<String>();
 
     public jpProductores(Connection c) {
@@ -43,12 +42,11 @@ public class jpProductores extends javax.swing.JPanel {
         mdb = new metodosDatosBasicos(cn);
         modelo = (DefaultTableModel) tablaProductores.getModel();
         //  AutoCompleteDecorator.decorate(comboPersona);
-
-        llenarTabla();
+         llenarTabla();
         tablaProductores.setRowSorter(new TableRowSorter(modelo));
-        txtBusqueda.setEnabled(false);
+
         comboGenero.setEnabled(true);
-        
+
         //JOptionPane.showMessageDialog(null, "Prueba para push maquina nueva");
     }
 
@@ -63,27 +61,29 @@ public class jpProductores extends javax.swing.JPanel {
         String where = "";
         situacion = comboSituacion.getSelectedItem() + "";
 
+        
         if (situacion.equals("Inactivo")) {
             situacion = "2";
         } else if (situacion.equals("Activo")) {
             situacion = "1";
+        } else if (situacion.equals("Todos")) {
+            situacion = "3";
         }
         if (tipoGen.equals("Todos")) {
             tipoGen = "";
         }
         if (tipoGen.equals("Masculino")) {
-            tipoGen = " And genero='masculino'";
+            tipoGen = " And pf.id_genero=1";
         } else if (tipoGen.equals("Femenino")) {
-            tipoGen = " And genero='femenino'";
+            tipoGen = " And pf.id_genero=2";
         }
         if (tipoPer.equals("Todos")) {
             tipoPer = "";
         }
         if (tipoPer.equals("Fisica")) {
-            tipoPer = " and tipopersona=\"fisica\"";
+            tipoPer = " and tipopersona=1";
         } else if (tipoPer.equals("Moral")) {
-            tipoPer = " and tipopersona=\"moral\"";
-
+            tipoPer = " and tipopersona=2";
         }
         if (txtBusqueda.getText().equals("")) {
 
@@ -93,19 +93,22 @@ public class jpProductores extends javax.swing.JPanel {
             String p = comboBusqueda.getSelectedItem() + "";
             switch (p) {
                 case "Nombre":
-                    tipoBusqueda = " and nombre like ";
+                    tipoBusqueda = " and pf.nombre like ";
                     break;
                 case "Apellido Paterno":
-                    tipoBusqueda = " and apellidop like ";
+                    tipoBusqueda = " and pf.apellidopaterno like ";
                     break;
                 case "Apellido Materno":
-                    tipoBusqueda = " and apellidom like ";
+                    tipoBusqueda = " and pf.apellidomaterno like ";
                     break;
                 case "Clave Productor":
-                    tipoBusqueda = " and claveP like ";
+                    tipoBusqueda = " and clave_productor like ";
                     break;
                 case "Numero De Parcelas":
                     tipoBusqueda = " and numparcelas like ";
+                    break;
+                case "Razon Social":
+                    tipoBusqueda = " and pm.razonsocial like";
                     break;
             }
             if (txtBusqueda.getText().length() > 0) {
@@ -114,57 +117,62 @@ public class jpProductores extends javax.swing.JPanel {
         }
 
         String sql;
-        if (situacion.equals("Todos")) {
+        if (comboPersona.getSelectedItem().equals("Todos")) {
+            //JOptionPane.showMessageDialog(null, "Esoty en todos");
+
+            if (situacion.equals("3")) {
+
+                sql = "select '' as rz, pf.Nombre, pf.ApellidoPaterno, pf.ApellidoMaterno, pr.clave_productor\n"
+                        + "from productor pr\n"
+                        + "inner join personaf pf on(pr.id_persona=pf.ID) where pr.id_situacion <> 3 and tipoPersona=1" + tipoPer + tipoGen + tipoBusqueda + Busqueda;
+                mdb.cargarInformacion2(modelo, 5, sql);
+
+                sql = "select pm.razonsocial, '' as nombre, '' as appat, '' as apmat, pr.clave_productor\n"
+                        + "from productor pr\n"
+                        + "inner join personam pm on(pr.id_persona=pm.ID) where pr.id_situacion <> 3 and tipoPersona=2" + tipoPer + tipoBusqueda + Busqueda;
+                mdb.cargarInformacion2(modelo, 5, sql);
+            }
             sql = "select '' as rz, pf.Nombre, pf.ApellidoPaterno, pf.ApellidoMaterno, pr.clave_productor\n"
                     + "from productor pr\n"
-                    + "inner join personaf pf on(pr.id_persona=pf.ID) where tipoPersona=1" + tipoPer + tipoGen + tipoBusqueda + Busqueda;
+                    + "inner join personaf pf on(pr.id_persona=pf.ID) where pr.id_situacion=" + situacion + " and tipoPersona=1" + tipoPer + tipoGen + tipoBusqueda + Busqueda;
             mdb.cargarInformacion2(modelo, 5, sql);
 
             sql = "select pm.razonsocial, '' as nombre, '' as appat, '' as apmat, pr.clave_productor\n"
                     + "from productor pr\n"
-                    + "inner join personam pm on(pr.id_persona=pm.ID) where tipoPersona=2" + tipoPer + tipoGen + tipoBusqueda + Busqueda;
+                    + "inner join personam pm on(pr.id_persona=pm.ID) where pr.id_situacion=" + situacion + " and tipoPersona=2" + tipoPer + tipoBusqueda + Busqueda;
             mdb.cargarInformacion2(modelo, 5, sql);
-        } else {
-            //  sql = "select pf.Nombre, pf.ApellidoPaterno, pf.ApellidoMaterno, pr.clave_productor\n"
-            //          + "from productor pr\n"
-            //          + "inner join personaf pf on(pr.id_persona=pf.ID)";// + situacion + tipoPer + tipoGen + tipoBusqueda + Busqueda;
+        } else if (comboPersona.getSelectedItem().equals("Fisica")) {
+
+            if (situacion.equals("3")) {
+                sql = "select '' as rz, pf.Nombre, pf.ApellidoPaterno, pf.ApellidoMaterno, pr.clave_productor\n"
+                        + "from productor pr\n"
+                        + "inner join personaf pf on(pr.id_persona=pf.ID)where pr.id_situacion <> 3 and tipoPersona=1" + tipoPer + tipoGen + tipoBusqueda + Busqueda;
+                mdb.cargarInformacion2(modelo, 5, sql);
+            }
 
             sql = "select '' as rz, pf.Nombre, pf.ApellidoPaterno, pf.ApellidoMaterno, pr.clave_productor\n"
                     + "from productor pr\n"
-                    + "inner join personaf pf on(pr.id_persona=pf.ID)where tipoPersona=1" + tipoPer + tipoGen + tipoBusqueda + Busqueda;
+                    + "inner join personaf pf on(pr.id_persona=pf.ID)where pr.id_situacion=" + situacion + " and tipoPersona=1" + tipoPer + tipoGen + tipoBusqueda + Busqueda;
             mdb.cargarInformacion2(modelo, 5, sql);
+
+        } else if (comboPersona.getSelectedItem().equals("Moral")) {
+
+            if (situacion.equals("3")) {
+                sql = "select pm.razonsocial, '' as nombre, '' as apellido, '' as apmat, pr.clave_productor\n"
+                        + "from productor pr\n"
+                        + "inner join personam pm on(pr.id_persona=pm.ID) where pr.id_situacion <> 3 and tipoPersona=2" + tipoPer + tipoBusqueda + Busqueda;
+                mdb.cargarInformacion2(modelo, 5, sql);
+            }
 
             sql = "select pm.razonsocial, '' as nombre, '' as apellido, '' as apmat, pr.clave_productor\n"
                     + "from productor pr\n"
-                    + "inner join personam pm on(pr.id_persona=pm.ID) where tipoPersona=2" + tipoPer + tipoGen + tipoBusqueda + Busqueda;
+                    + "inner join personam pm on(pr.id_persona=pm.ID) where pr.id_situacion=" + situacion + " and tipoPersona=2" + tipoPer + tipoBusqueda + Busqueda;
             mdb.cargarInformacion2(modelo, 5, sql);
         }
-        System.out.println(sql);
+
+        //System.out.println(sql);
         //limpiar(tablaProductores);
         // mdb.cargarInformacion2(modelo, 4, sql);
-    }
-
-    /* for (int i = 0;
-                i < modelo.getRowCount();
-                i++) {
-            if (modelo.getValueAt(i, 4).equals("1")) {
-                modelo.setValueAt("✓", i, 4);
-            } else {
-                modelo.setValueAt("✘", i, 4);
-            }
-
-            if (modelo.getValueAt(i, 5).equals("1")) {
-                modelo.setValueAt("✓", i, 5);
-            } else {
-                modelo.setValueAt("✘", i, 5);
-            }
-        }*/
-    private void activarB() {
-        if (comboBusqueda.getSelectedItem().equals("Seleccione..")) {
-            txtBusqueda.setEnabled(false);
-        } else {
-            txtBusqueda.setEnabled(true);
-        }
     }
 
     private void limpiar(JTable tabla) {
@@ -200,8 +208,6 @@ public class jpProductores extends javax.swing.JPanel {
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tablaProductores = new javax.swing.JTable();
 
@@ -328,20 +334,6 @@ public class jpProductores extends javax.swing.JPanel {
 
         jButton1.setText("Cerrar");
 
-        jButton5.setText("Ver Parcelas");
-        jButton5.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton5ActionPerformed(evt);
-            }
-        });
-
-        jButton6.setText("Ver Parcelas 2");
-        jButton6.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton6ActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
         jPanel8Layout.setHorizontalGroup(
@@ -352,10 +344,6 @@ public class jpProductores extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(comboSituacion, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton6)
-                .addGap(110, 110, 110)
                 .addComponent(jButton2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton3)
@@ -375,9 +363,7 @@ public class jpProductores extends javax.swing.JPanel {
                     .addComponent(jButton4)
                     .addComponent(comboSituacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel10)
-                    .addComponent(jButton1)
-                    .addComponent(jButton5)
-                    .addComponent(jButton6))
+                    .addComponent(jButton1))
                 .addContainerGap())
         );
 
@@ -477,58 +463,95 @@ String estatus = "2";
         } else {
             jButton4.setText("Desactivar");
             estatus = "2";
-        }  // TODO add your handling code here:
-        // TODO add your handling code here:
-        // busqueda();
+        }
         llenarTabla();
     }//GEN-LAST:event_comboSituacionItemStateChanged
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         //TODO add your handling code here:
-        jdDetallePersona1 jpP = new jdDetallePersona1(null, true, "1", "", "", cn);
+        jdFormularioPersonas jpP = new jdFormularioPersonas(null, true, "1", "", "", cn);
         jpP.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
-        /*  if (nom.equals("")) {
-            JOptionPane.showMessageDialog(null, "Seleccione un registro");
-        } else {
-            jdDP = new jdDetallePersona1(null, true, "2", id, "", cn);
-            //jdDP.jpABH = this;
-            jdDP.setVisible(true);
-        }**/
+        if (!nom.equals("")) {
+            jdFP = new jdFormularioProductor(null, true, id, nom + " " + app + " " + apm, "1", "SI", cn);
+            jdFP.jpP = this;
+            jdFP.setVisible(true);
+        } else if (nom.equals("") && !rsocial.equals("")) {
+            jdFP = new jdFormularioProductor(null, true, id, rsocial, "2", "SI", cn);
+            jdFP.setVisible(true);
+        }
+
+
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        String sql = "";
-        /*
-        if (estatus.equals("2")) {
-             sql = "UPDATE retenciones SET ID_Situacion=2 where descripcion='" + Retenciones + "'";
-       
-        }else if(estatus.equals("1")){
-             sql = "UPDATE retenciones SET ID_Situacion=1 where descripcion='" + Retenciones + "'";
+
+        if (tipoPersona.equals("Fisica")) {
+            tipoPersona = "1";
+        } else if (tipoPersona.equals("Moral")) {
+            tipoPersona = "2";
         }
-        
-     mdb.actualizarBasicos(sql);
-            llenarTabla();*/
+
+        if (comboSituacion.getSelectedItem().equals("Activo")) {
+            mdb.actualizarBasicos("update productor set id_situacion=2 where id_persona=" + id + " and tipoPersona=" + tipoPersona + " ");
+
+        } else if (comboSituacion.getSelectedItem().equals("Inactivo")) {
+            mdb.actualizarBasicos("update productor set id_situacion=1 where id_persona=" + id + " and tipoPersona=" + tipoPersona + " ");
+        }
+        llenarTabla();
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void comboPersonaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboPersonaItemStateChanged
+
+        switch (comboPersona.getSelectedItem() + "") {
+            case "Fisica":
+                comboGenero.setEnabled(true);
+                comboBusqueda.removeAllItems();
+                comboBusqueda.addItem("Seleccione..");
+                comboBusqueda.addItem("Nombre");
+                comboBusqueda.addItem("Apellido Paterno");
+                comboBusqueda.addItem("Apellido Materno");
+                comboBusqueda.addItem("Clave Productor");
+                break;
+            case "Moral":
+                comboGenero.setEnabled(false);
+                comboBusqueda.removeAllItems();
+                comboBusqueda.addItem("Seleccione..");
+                comboBusqueda.addItem("Razon Social");
+                comboBusqueda.addItem("Clave Productor");
+                break;
+            case "Todos":
+                comboGenero.setEnabled(false);
+                comboBusqueda.removeAllItems();
+                comboBusqueda.addItem("Seleccione..");
+                comboBusqueda.addItem("Nombre");
+                comboBusqueda.addItem("Razon Social");
+                comboBusqueda.addItem("Clave Productor");
+                comboBusqueda.addItem("Apellido Paterno");
+                comboBusqueda.addItem("Apellido Materno");
+                comboBusqueda.addItem("Direccion");
+                break;
+            default:
+                break;
+        }
+
         llenarTabla();
+
     }//GEN-LAST:event_comboPersonaItemStateChanged
 
     private void comboGeneroItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboGeneroItemStateChanged
         llenarTabla();
     }//GEN-LAST:event_comboGeneroItemStateChanged
-    String nom = "", app = "", apm = "", id="", rsocial = "";
+    String nom = "", app = "", apm = "", id = "", rsocial = "";
     String tipoGenero = "", tipoBusqueda = "", tipoAsignacion = "", tipoCPersona = "";
     private void txtBusquedaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBusquedaKeyReleased
         llenarTabla();
     }//GEN-LAST:event_txtBusquedaKeyReleased
 
     private void comboBusquedaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboBusquedaItemStateChanged
-        activarB();
+
     }//GEN-LAST:event_comboBusquedaItemStateChanged
 
     private void comboGeneroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboGeneroActionPerformed
@@ -547,22 +570,18 @@ String estatus = "2";
         rsocial = tablaProductores.getValueAt(tablaProductores.getSelectedRow(), 0) + "";
 
         if (evt.getClickCount() == 2) {
-            if (!nom.equals("")) {
-                //Para abrir detalle de persona fisica = 1   /      Persona Fisica = 1
-                id = mdb.comprobarExistencia("select id from personaf "
-                        + "where (nombre='" + nom + "' and apellidoPaterno='" + app + "' and apellidoMaterno='" + apm + "' ) ");
-                tipoPersona = "Fisica";
-                jdParcelas jd = new jdParcelas(null, true, cn, id, tipoPersona);
-                jd.setVisible(true);
+            if (id.equals("")) {
+                JOptionPane.showMessageDialog(null, "Seleccione Productor");
+            } else {
 
-            } else if (nom.equals("") && !rsocial.equals("")) {
-                //Abrir detalle para persona moral = 2    /    Persona Moral = 2
+                if (tipoPersona.equals("Fisica")) {
+                    tipoPersona = "1";
+                } else if (tipoPersona.equals("Moral")) {
+                    tipoPersona = "2";
+                }
 
-                id = mdb.comprobarExistencia("select id from personam "
-                        + "where razonsocial='" + rsocial + "'");
-                tipoPersona = "Moral";
-                jdParcelas jd = new jdParcelas(null, true, cn, id, tipoPersona);
-                jd.setVisible(true);
+                jdFormularioParcelas jdF = new jdFormularioParcelas(null, true, id, tipoPersona, "", cn);
+                jdF.setVisible(true);
             }
         } else {
             if (!nom.equals("")) {
@@ -579,39 +598,6 @@ String estatus = "2";
         }
     }//GEN-LAST:event_tablaProductoresMouseClicked
 
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        // TODO add your handling code here:
-        if (nom.equals("") && rsocial.equals("")) {
-            JOptionPane.showMessageDialog(null, "Selecciona productor");
-        } else {
-
-            if (tipoPersona.equals("1")) {
-                tipoPersona = "Fisica";
-            } else if (tipoPersona.equals("2")) {
-                tipoPersona = "Moral";
-            }
-            jdParcelas jd = new jdParcelas(null, true, cn, id, tipoPersona);
-            jd.setVisible(true);
-        }
-    }//GEN-LAST:event_jButton5ActionPerformed
-
-    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-        // TODO add your handling code here:
-        if (id.equals("")) {
-            JOptionPane.showMessageDialog(null, "Seleccione Productor");
-        } else {
-
-            if (tipoPersona.equals("Fisica")) {
-                tipoPersona = "1";
-            } else if (tipoPersona.equals("Moral")) {
-                tipoPersona = "2";
-            }
-            
-            jdFormularioParcelas jdF = new jdFormularioParcelas(null, true, id, tipoPersona, "", cn);
-            jdF.setVisible(true);
-        }
-    }//GEN-LAST:event_jButton6ActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> comboBusqueda;
     private javax.swing.JComboBox<String> comboGenero;
@@ -621,8 +607,6 @@ String estatus = "2";
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;

@@ -70,7 +70,6 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
         modeloD = (DefaultTableModel) tablaDocumentos.getModel();
 
         this.idPersona = idPersona;
-
         //JOptionPane.showMessageDialog(null, "Tipo de persona = " + tipoPersona + "\n" + "Id Persona = " + idPersona + "\n" + "Clave Parcela = " + claveParcela);
         if (tipoPersona.equals("1")) {
             llenarDatosProductorFisica();
@@ -196,7 +195,7 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
         lblTelFijo.setText(datos[4]);
         lblTelMov.setText(datos[5]);
 
-        lblClave.setText(mdb.devuelveUnDato("select clave_productor from productor where id_persona=" + idPersona+ " and tipoPersona=1"));
+        lblClave.setText(mdb.devuelveUnDato("select clave_productor from productor where id_persona=" + idPersona + " and tipoPersona=1"));
         //System.out.println("CLAVE DE PRODUCTOR=" + mdb.devuelveUnDato("select clave_productor from productor where id_persona=" + idPersona));
     }
 
@@ -214,7 +213,7 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
         lblTelFijo.setText(datos[4]);
         lblTelMov.setText(datos[5]);
 
-        lblClave.setText(mdb.devuelveUnDato("select clave_productor from productor where id_persona=" + idPersona+ " and tipoPersona=2"));
+        lblClave.setText(mdb.devuelveUnDato("select clave_productor from productor where id_persona=" + idPersona + " and tipoPersona=2"));
         //System.out.println(mdb.devuelveUnDato("select clave_productor from productor where id_persona="+idPersona));
     }
 
@@ -466,6 +465,135 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
         }
     }
 
+    public void insertarParcela() {
+
+        String letras = comboCertificado.getSelectedItem() + "";
+
+        char letra1 = letras.charAt(0);
+        char letra2 = letras.charAt(1);
+        String codigoCertificado = letra1 + "" + letra2;
+
+        String tipoSuelo = "", tipoSombra = "", tipoProduccion = "";
+
+        tipoSuelo = mdb.devuelveId("select id from tiposuelo where descripcion='" + comboSuelo.getSelectedItem() + "'");
+        tipoSombra = mdb.devuelveId("select id from tiposombra where descripcion='" + comboSombra.getSelectedItem() + "'");
+        tipoProduccion = mdb.devuelveId("select id from tipoproduccion where descripcion='" + comboSistemaP.getSelectedItem() + "'");
+
+        if (tipoSuelo == null || tipoSuelo.equals("")) {
+            tipoSuelo = "0";
+        }
+
+        if (tipoSombra == null || tipoSombra.equals("")) {
+            tipoSombra = "0";
+        }
+
+        if (tipoProduccion == null || tipoProduccion.equals("")) {
+            tipoProduccion = "0";
+        }
+
+        if (txtClave.getText().length() == 0 || txtNombre.getText().length() == 0 || txtAltura.getText().length() == 0
+                || txtArea.getText().length() == 0 || txtCafetos.getText().length() == 0 || txtLatitud.getText().length() == 0
+                || txtLongitud.getText().length() == 0) {
+            validarCampos();
+            JOptionPane.showMessageDialog(null, "Existen Campos Vacios");
+        }//Fin del if
+        else {
+            if (mdb.devuelveUnDato("select clave_parcela from parcelas where clave_parcela='" + txtClave.getText() + "'").equals(txtClave.getText())) {
+                JOptionPane.showMessageDialog(null, "Error: Clave Duplicada");
+            } else {
+                mdb.insertarBasicos("insert into parcelas values (null, " + idPersona + ", '" + tipoPersona + "', '" + txtClave.getText() + "', '" + codigoCertificado + "', '" + txtNombre.getText() + "', "
+                        + "'" + txtAltura.getText() + "', '" + txtArea.getText() + "', " + txtCafetos.getText() + ", "
+                        + "" + mdb.devuelveId("select id from pais where descripcion='" + comboPais.getSelectedItem() + "'") + ", "
+                        + "" + mdb.devuelveId("select id from estado where descripcion='" + comboEstado.getSelectedItem() + "'") + ", "
+                        + "" + mdb.devuelveId("select id from municipio where descripcion='" + comboMunicipio.getSelectedItem() + "' ") + ","
+                        + "" + mdb.devuelveId("select id from localidad where descripcion='" + comboLocalidad.getSelectedItem() + "' ") + ", "
+                        + "" + mdb.devuelveId("select id from personam where nombrecorto='" + comboSociedades.getSelectedItem() + "'  ") + ", "
+                        + "" + tipoSuelo + ", "
+                        + "" + tipoSombra + ", "
+                        + " '" + comboSector.getSelectedItem() + "', "
+                        + "" + tipoProduccion + ","
+                        + " '" + txtEdad.getText() + "', '" + txtLongitud.getText() + "', '" + txtLatitud.getText() + "', '" + txtObservaciones.getText() + "',1,1,current_date(),current_time(),1,1,1,1) ");
+
+                if (mdb.devuelveId("select id from parcelas where clave_parcela='" + txtClave.getText() + "'").equals("")) {
+                    JOptionPane.showMessageDialog(null, "No existe la parcela");
+                } else {
+
+                    for (int i = 0; i < modeloCultivos.getRowCount(); i++) {
+                        String cultivo = modeloCultivos.getValueAt(i, 0).toString();
+                        String porcentaje = modeloCultivos.getValueAt(i, 1).toString();
+
+                        cultivo = mdb.devuelveId("select id from cultivos where descripcion='" + cultivo + "'");
+
+                        mdb.insertarEnCiclo("insert into porcentaje_cultivos values (null, "
+                                + " " + mdb.devuelveId("select id from parcelas where clave_parcela='" + txtClave.getText() + "' ") + ", "
+                                + " " + cultivo + ", " + porcentaje + ", "
+                                + " 1,1,current_date(),current_time(),1,1,1,1) ");
+                    }
+
+                    for (int i = 0; i < modeloV.getRowCount(); i++) {
+                        String variedad = modeloV.getValueAt(i, 0).toString();
+                        String porcentaje = modeloV.getValueAt(i, 1).toString();
+
+                        variedad = mdb.devuelveId("select id from variedadcafe where descripcion='" + variedad + "'");
+
+                        mdb.insertarEnCiclo("insert into porcentaje_variedades values (null, "
+                                + " " + mdb.devuelveId("select id from parcelas where clave_parcela='" + txtClave.getText() + "' ") + ", "
+                                + " " + variedad + ", " + porcentaje + ", "
+                                + " 1,1,current_date(),current_time(),1,1,1,1) ");
+                    }
+
+                    for (int i = 0; i < modeloD.getRowCount(); i++) {
+                        String nombre = modeloD.getValueAt(i, 0).toString();
+                        String tipoDoc
+                                = mdb.devuelveUnDato("select id from categoriadearchivos where descripcion= '" + modeloD.getValueAt(i, 1).toString() + "'");
+                        String ruta = modeloD.getValueAt(i, 2).toString();
+                        try {
+                            mdb.insertarEnCiclo("insert into documentosparcelas values (null," + mdb.devuelveId("select id from parcelas where clave_parcela='" + txtClave.getText() + "' ") + " , "
+                                    + "" + tipoDoc + ", '" + nombre + "','" + ruta + "', '" + code(ruta) + "' )");
+                        } catch (IOException ex) {
+                            Logger.getLogger(jdFormularioParcelas.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (SQLException ex) {
+                            Logger.getLogger(jdFormularioParcelas.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                    limpiarCampos();
+                }
+            }
+            llenarTabla();
+        }
+
+    }
+
+    public void modificarParcela() {
+
+        String letras = comboCertificado.getSelectedItem() + "";
+
+        char letra1 = letras.charAt(0);
+        char letra2 = letras.charAt(1);
+        String codigoCertificado = letra1 + "" + letra2;
+
+        String tipoSuelo = "", tipoSombra = "", tipoProduccion = "";
+
+        tipoSuelo = mdb.devuelveId("select id from tiposuelo where descripcion='" + comboSuelo.getSelectedItem() + "'");
+        tipoSombra = mdb.devuelveId("select id from tiposombra where descripcion='" + comboSombra.getSelectedItem() + "'");
+        tipoProduccion = mdb.devuelveId("select id from tipoproduccion where descripcion='" + comboSistemaP.getSelectedItem() + "'");
+
+        mdb.actualizarBasicos(""
+                + "update parcelas set clave_parcela= '" + txtClave.getText() + "', clave_certificacion='" + codigoCertificado + "', nombre='" + txtNombre.getText() + "', "
+                + " altura='" + txtAltura.getText() + "', area='" + txtArea.getText() + "', numCafetos=" + txtCafetos.getText() + ", "
+                + " id_pais=" + mdb.devuelveId("select id from pais where descripcion='" + comboPais.getSelectedItem() + "'") + ", "
+                + " id_estado=" + mdb.devuelveId("select id from estado where descripcion='" + comboEstado.getSelectedItem() + "'") + ", "
+                + " id_municipio=" + mdb.devuelveId("select id from municipio where descripcion='" + comboMunicipio.getSelectedItem() + "' ") + ","
+                + " id_localidad=" + mdb.devuelveId("select id from localidad where descripcion='" + comboLocalidad.getSelectedItem() + "' ") + ", "
+                + " id_sociedad" + mdb.devuelveId("select id from personam where nombrecorto='" + comboSociedades.getSelectedItem() + "'  ") + ", "
+                + " id_tiposuelo=" + tipoSuelo + ", "
+                + " id_tiposombra" + tipoSombra + ", "
+                + " sector='" + comboSector.getSelectedItem() + "', "
+                + " id_sistemaproduccion=" + tipoProduccion + ","
+                + " edad='" + txtEdad.getText() + "', longitud='" + txtLongitud.getText() + "', latitud='" + txtLatitud.getText() + "', observaciones='" + txtObservaciones.getText() + "' ");
+
+    }
+
     private void limpiar(JTable tabla) {
         while (tabla.getRowCount() > 0) {
             ((DefaultTableModel) tabla.getModel()).removeRow(0);
@@ -498,7 +626,7 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
         lblTelMov = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tablaParcelas = new javax.swing.JTable();
-        jButton1 = new javax.swing.JButton();
+        botonAgregar = new javax.swing.JButton();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel4 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
@@ -581,6 +709,7 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
         jButton12 = new javax.swing.JButton();
         jButton11 = new javax.swing.JButton();
         jButton13 = new javax.swing.JButton();
+        botonModificar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Añadir Parcelas");
@@ -725,10 +854,10 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
         });
         jScrollPane1.setViewportView(tablaParcelas);
 
-        jButton1.setText("Agregar");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        botonAgregar.setText("Agregar");
+        botonAgregar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                botonAgregarActionPerformed(evt);
             }
         });
 
@@ -1350,7 +1479,15 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
             new String [] {
                 "Nombre del Archivo", "Tipo de Documento", "Ruta"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         tablaDocumentos.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tablaDocumentosMouseClicked(evt);
@@ -1466,6 +1603,13 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
             }
         });
 
+        botonModificar.setText("Modificar");
+        botonModificar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonModificarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -1476,10 +1620,12 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jButton13)
-                        .addGap(343, 343, 343)
+                        .addGap(386, 386, 386)
                         .addComponent(jButton11)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(botonAgregar, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(botonModificar))
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jTabbedPane1)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING))
@@ -1496,9 +1642,10 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
+                    .addComponent(botonAgregar)
                     .addComponent(jButton11)
-                    .addComponent(jButton13))
+                    .addComponent(jButton13)
+                    .addComponent(botonModificar))
                 .addContainerGap())
         );
 
@@ -1541,104 +1688,10 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
         comboLocalidad.setModel(new DefaultComboBoxModel((Object[]) datos));
     }//GEN-LAST:event_comboMunicipioItemStateChanged
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void botonAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAgregarActionPerformed
         // TODO add your handling code here:
-
-        String letras = comboCertificado.getSelectedItem() + "";
-
-        char letra1 = letras.charAt(0);
-        char letra2 = letras.charAt(1);
-        String codigoCertificado = letra1 + "" + letra2;
-
-        String tipoSuelo = "", tipoSombra = "", tipoProduccion = "";
-
-        tipoSuelo = mdb.devuelveId("select id from tiposuelo where descripcion='" + comboSuelo.getSelectedItem() + "'");
-        tipoSombra = mdb.devuelveId("select id from tiposombra where descripcion='" + comboSombra.getSelectedItem() + "'");
-        tipoProduccion = mdb.devuelveId("select id from tipoproduccion where descripcion='" + comboSistemaP.getSelectedItem() + "'");
-
-        if (tipoSuelo == null || tipoSuelo.equals("")) {
-            tipoSuelo = "0";
-        }
-
-        if (tipoSombra == null || tipoSombra.equals("")) {
-            tipoSombra = "0";
-        }
-
-        if (tipoProduccion == null || tipoProduccion.equals("")) {
-            tipoProduccion = "0";
-        }
-
-        if (txtClave.getText().length() == 0 || txtNombre.getText().length() == 0 || txtAltura.getText().length() == 0
-                || txtArea.getText().length() == 0 || txtCafetos.getText().length() == 0 || txtLatitud.getText().length() == 0
-                || txtLongitud.getText().length() == 0) {
-            validarCampos();
-            JOptionPane.showMessageDialog(null, "Existen Campos Vacios");
-        }//Fin del if
-        else {
-            if (mdb.devuelveUnDato("select clave_parcela from parcelas where clave_parcela='" + txtClave.getText() + "'").equals(txtClave.getText())) {
-                JOptionPane.showMessageDialog(null, "Error: Clave Duplicada");
-            } else {
-                mdb.insertarBasicos("insert into parcelas values (null, " + idPersona + ", '" + tipoPersona + "', '" + txtClave.getText() + "', '" + codigoCertificado + "', '" + txtNombre.getText() + "', "
-                        + "'" + txtAltura.getText() + "', '" + txtArea.getText() + "', " + txtCafetos.getText() + ", "
-                        + "" + mdb.devuelveId("select id from pais where descripcion='" + comboPais.getSelectedItem() + "'") + ", "
-                        + "" + mdb.devuelveId("select id from estado where descripcion='" + comboEstado.getSelectedItem() + "'") + ", "
-                        + "" + mdb.devuelveId("select id from municipio where descripcion='" + comboMunicipio.getSelectedItem() + "' ") + ","
-                        + "" + mdb.devuelveId("select id from localidad where descripcion='" + comboLocalidad.getSelectedItem() + "' ") + ", "
-                        + "" + mdb.devuelveId("select id from personam where nombrecorto='" + comboSociedades.getSelectedItem() + "'  ") + ", "
-                        + "" + tipoSuelo + ", "
-                        + "" + tipoSombra + ", "
-                        + " '" + comboSector.getSelectedItem() + "', "
-                        + "" + tipoProduccion + ","
-                        + " '" + txtEdad.getText() + "', '" + txtLongitud.getText() + "', '" + txtLatitud.getText() + "', '" + txtObservaciones.getText() + "',1,1,current_date(),current_time(),1,1,1,1) ");
-
-                if (mdb.devuelveId("select id from parcelas where clave_parcela='" + txtClave.getText() + "'").equals("")) {
-                    JOptionPane.showMessageDialog(null, "No existe la parcela");
-                } else {
-
-                    for (int i = 0; i < modeloCultivos.getRowCount(); i++) {
-                        String cultivo = modeloCultivos.getValueAt(i, 0).toString();
-                        String porcentaje = modeloCultivos.getValueAt(i, 1).toString();
-
-                        cultivo = mdb.devuelveId("select id from cultivos where descripcion='" + cultivo + "'");
-
-                        mdb.insertarEnCiclo("insert into porcentaje_cultivos values (null, "
-                                + " " + mdb.devuelveId("select id from parcelas where clave_parcela='" + txtClave.getText() + "' ") + ", "
-                                + " " + cultivo + ", " + porcentaje + ", "
-                                + " 1,1,current_date(),current_time(),1,1,1,1) ");
-                    }
-
-                    for (int i = 0; i < modeloV.getRowCount(); i++) {
-                        String variedad = modeloV.getValueAt(i, 0).toString();
-                        String porcentaje = modeloV.getValueAt(i, 1).toString();
-
-                        variedad = mdb.devuelveId("select id from variedadcafe where descripcion='" + variedad + "'");
-
-                        mdb.insertarEnCiclo("insert into porcentaje_variedades values (null, "
-                                + " " + mdb.devuelveId("select id from parcelas where clave_parcela='" + txtClave.getText() + "' ") + ", "
-                                + " " + variedad + ", " + porcentaje + ", "
-                                + " 1,1,current_date(),current_time(),1,1,1,1) ");
-                    }
-
-                    for (int i = 0; i < modeloD.getRowCount(); i++) {
-                        String nombre = modeloD.getValueAt(i, 0).toString();
-                        String tipoDoc
-                                = mdb.devuelveUnDato("select id from categoriadearchivos where descripcion= '" + modeloD.getValueAt(i, 1).toString() + "'");
-                        String ruta = modeloD.getValueAt(i, 2).toString();
-                        try {
-                            mdb.insertarEnCiclo("insert into documentosparcelas values (null," + mdb.devuelveId("select id from parcelas where clave_parcela='" + txtClave.getText() + "' ") + " , "
-                                    + "" + tipoDoc + ", '" + nombre + "','" + ruta + "', '" + code(ruta) + "' )");
-                        } catch (IOException ex) {
-                            Logger.getLogger(jdFormularioParcelas.class.getName()).log(Level.SEVERE, null, ex);
-                        } catch (SQLException ex) {
-                            Logger.getLogger(jdFormularioParcelas.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                    }
-                    limpiarCampos();
-                }
-            }
-            llenarTabla();
-        }
-    }//GEN-LAST:event_jButton1ActionPerformed
+        insertarParcela();
+    }//GEN-LAST:event_botonAgregarActionPerformed
 
     private void comboCertificadoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboCertificadoItemStateChanged
         // TODO add your handling code here:
@@ -1897,6 +1950,12 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
         JOptionPane.showMessageDialog(null, "Dato es = " + dato);
     }//GEN-LAST:event_jButton13ActionPerformed
 
+    private void botonModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonModificarActionPerformed
+        // TODO add your handling code here:
+
+
+    }//GEN-LAST:event_botonModificarActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1936,6 +1995,8 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton botonAgregar;
+    private javax.swing.JButton botonModificar;
     private javax.swing.JComboBox<String> comboArchivos;
     private javax.swing.JComboBox<String> comboCertificado;
     private javax.swing.JComboBox<String> comboCultivos;
@@ -1949,7 +2010,6 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
     private javax.swing.JComboBox<String> comboSombra;
     private javax.swing.JComboBox<String> comboSuelo;
     private javax.swing.JComboBox<String> comboVariedad;
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton12;

@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Formas_Personas;
+package Formas_FincaCert;
 
+import Formas_Personas.jdFormularioParcelas;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.Connection;
 import javax.swing.JOptionPane;
@@ -21,6 +22,7 @@ public class jdFormularioProductor extends javax.swing.JDialog {
     Connection cn;
     metodosDatosBasicos mdb;
     String idPersona, nombre, tipoPersona;
+    jpProductores jpP;
 
     public jdFormularioProductor(java.awt.Frame parent, boolean modal, String idPersona, String nombre, String tipoPersona, String existencia, Connection c) {
         super(parent, modal);
@@ -33,12 +35,17 @@ public class jdFormularioProductor extends javax.swing.JDialog {
         this.tipoPersona = tipoPersona;
         this.nombre = nombre;
 
+        //JOptionPane.showMessageDialog(null, "idPersona =" + idPersona + "\n" + "tipo =" + tipoPersona + "\n nombre =" + nombre);
+
         lblNombre.setText(nombre);
 
         if (existencia.equals("SI")) {
             txtClave.setText(mdb.devuelveUnDato("select clave_productor from productor where id_persona='" + idPersona + "' and tipoPersona='" + tipoPersona + "'"));
-            txtClave.setEnabled(false);
-            jButton1.setVisible(false);
+            btnGuardar.setVisible(false);
+            btnModificar.setVisible(true);
+        } else {
+            btnGuardar.setVisible(true);
+            btnModificar.setVisible(false);
         }
 
     }
@@ -55,9 +62,10 @@ public class jdFormularioProductor extends javax.swing.JDialog {
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         txtClave = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        btnGuardar = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         lblNombre = new javax.swing.JLabel();
+        btnModificar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -71,16 +79,23 @@ public class jdFormularioProductor extends javax.swing.JDialog {
             }
         });
 
-        jButton1.setText("Guardar");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnGuardar.setText("Guardar");
+        btnGuardar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnGuardarActionPerformed(evt);
             }
         });
 
         jLabel2.setText("Nombre");
 
         lblNombre.setText("jLabel3");
+
+        btnModificar.setText("Modificar");
+        btnModificar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnModificarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -90,9 +105,11 @@ public class jdFormularioProductor extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(txtClave, javax.swing.GroupLayout.DEFAULT_SIZE, 271, Short.MAX_VALUE)
+                        .addComponent(txtClave, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton1))
+                        .addComponent(btnGuardar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnModificar))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
@@ -112,7 +129,8 @@ public class jdFormularioProductor extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtClave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
+                    .addComponent(btnGuardar)
+                    .addComponent(btnModificar))
                 .addContainerGap())
         );
 
@@ -136,12 +154,12 @@ public class jdFormularioProductor extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
         // TODO add your handling code here:
         if (txtClave.getText().equals("")) {
             JOptionPane.showMessageDialog(null, "Ingrese Clave Productor");
         } else {
-            mdb.insertarBasicos("insert into productor values (null, " + idPersona + ", '" + txtClave.getText() + "', " + tipoPersona + " )");
+            mdb.insertarBasicos("insert into productor values (null, " + idPersona + ", '" + txtClave.getText() + "', " + tipoPersona + ",1 )");
             int result = JOptionPane.showConfirmDialog(null, "¿Deseas añadir sus parcelas?",
                     null, JOptionPane.YES_NO_OPTION);
 
@@ -153,12 +171,19 @@ public class jdFormularioProductor extends javax.swing.JDialog {
             }
             this.dispose();
         }
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_btnGuardarActionPerformed
 
     private void txtClaveKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtClaveKeyReleased
         // TODO add your handling code here:
         txtClave.setText(txtClave.getText().toUpperCase());
     }//GEN-LAST:event_txtClaveKeyReleased
+
+    private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
+        // TODO add your handling code here:
+        mdb.actualizarBasicos("update productor set clave_productor='"+txtClave.getText()+"' where id_persona="+idPersona);
+        jpP.llenarTabla();
+        this.dispose();
+    }//GEN-LAST:event_btnModificarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -203,7 +228,8 @@ public class jdFormularioProductor extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton btnGuardar;
+    private javax.swing.JButton btnModificar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;

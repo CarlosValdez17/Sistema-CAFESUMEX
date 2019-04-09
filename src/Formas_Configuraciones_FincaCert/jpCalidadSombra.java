@@ -8,7 +8,10 @@ package Formas_Configuraciones_FincaCert;
 import FormasGenerales.pantallaPrincipal;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.Connection;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
@@ -466,8 +469,12 @@ public class jpCalidadSombra extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        // TODO add your handling code here:
-        pp.pintarPanel("fondo");
+        try {
+            // TODO add your handling code here:
+            pp.pintarPanel("fondo");
+        } catch (ParseException ex) {
+            Logger.getLogger(jpCalidadSombra.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_jButton5ActionPerformed
 
 

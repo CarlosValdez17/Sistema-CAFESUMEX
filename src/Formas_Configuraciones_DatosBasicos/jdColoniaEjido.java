@@ -219,6 +219,11 @@ public class jdColoniaEjido extends javax.swing.JDialog {
                 comboMunicipioMouseClicked(evt);
             }
         });
+        comboMunicipio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboMunicipioActionPerformed(evt);
+            }
+        });
 
         jLabel5.setText("Localidad");
 
@@ -345,10 +350,12 @@ public class jdColoniaEjido extends javax.swing.JDialog {
                 + "inner join estado e on (m.id_estado=e.id) \n"
                 + "where e.Descripcion='" + comboEstado.getSelectedItem() + "" + "'").split("#");
         comboMunicipio.setModel(new DefaultComboBoxModel((Object[]) datos));
+        
     }//GEN-LAST:event_comboPaisItemStateChanged
 
     private void comboMunicipioItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboMunicipioItemStateChanged
         // TODO add your handling code here:
+        
     }//GEN-LAST:event_comboMunicipioItemStateChanged
 
     private void comboMunicipioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_comboMunicipioMouseClicked
@@ -376,6 +383,10 @@ public class jdColoniaEjido extends javax.swing.JDialog {
             evt.consume();
         }
     }//GEN-LAST:event_txtColoniaKeyTyped
+
+    private void comboMunicipioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboMunicipioActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_comboMunicipioActionPerformed
 
     /**
      * @param args the command line arguments

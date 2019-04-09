@@ -5,6 +5,7 @@
  */
 package Formas_Personas;
 
+import Formas_FincaCert.jdFormularioProductor;
 import Formas_FincaCert.jpProductores;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import Metodos_Configuraciones.validaConfi;
@@ -33,7 +34,7 @@ import sun.misc.BASE64Encoder;
  *
  * @author Carlos Valdez
  */
-public class jdDetallePersona1 extends javax.swing.JDialog {
+public class jdFormularioPersonas extends javax.swing.JDialog {
 
     /**
      * Creates new form jdDetallePersona1
@@ -42,7 +43,7 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
     jdFormularioProductor formProd;
     jdAsignacionesPersonas jdAP;
     jdSociedadesPersonas formSoc;
-    jpPersonas1 jpDP;
+    jpPersonas jpDP;
     jpProductores jpP;
     validaConfi valiConf;
     private JPanel contentPane;
@@ -50,7 +51,7 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
     File fichero = null;
     Connection cn;
 
-    public jdDetallePersona1(java.awt.Frame parent, boolean modal, String tipo, String idPersona, String tipoPersona, Connection c) {
+    public jdFormularioPersonas(java.awt.Frame parent, boolean modal, String tipo, String idPersona, String tipoPersona, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
@@ -74,7 +75,6 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
         if (tipo.equals("2")) {
             //Comparacion de tipo de persona para realizar consulta en su tabla especifica.
             if (tipoPersona.equals("1")) {
-
                 String ds = mdb.generadorStrings("select p.nombrecorto \n"
                         + "from sociedadespersona a\n "
                         + "inner join personam p on (a.ID_asociado=p.ID)\n "
@@ -148,22 +148,22 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
 
                 txtRuta.setText(datos[15]);
 
-                if (mdb.devuelveId("select a.id from asignacionespersona a\n "
+              /*  if (mdb.devuelveId("select a.id from asignacionespersona a\n "
                         + "inner join puestos p on (a.id_puesto=p.ID)\n "
                         + "where a.id_persona=" + idPersona + " and p.Descripcion='Productor' ").equals("")) {
                     tProductor.setSelected(false);
                 } else {
                     tProductor.setSelected(true);
-                }
+                }*/
 
-                if (mdb.devuelveId("select a.id from asignacionespersona a\n "
+                /*if (mdb.devuelveId("select a.id from asignacionespersona a\n "
                         + "inner join puestos p on (a.id_puesto=p.ID)\n "
                         + "where a.id_persona=" + idPersona + " and p.Descripcion='Socio' ").equals("")) {
                     tSocio.setSelected(false);
                 } else {
                     tSocio.setSelected(true);
                     jButton6.setEnabled(true);
-                }
+                }*/
 
                 if (!txtRuta.getText().equals("NO") || datos[15].equals("")) {
                     BufferedImage img = null;
@@ -239,7 +239,7 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
                     }
                 } catch (Exception e) {
                 }
-                if (mdb.devuelveId("select a.id from asignacionespersona a\n "
+               /* if (mdb.devuelveId("select a.id from asignacionespersona a\n "
                         + "inner join puestos p on (a.id_puesto=p.ID)\n "
                         + "where a.id_persona=" + idPersona + " and p.Descripcion='Productor' ").equals("")) {
                     tProductor.setSelected(false);
@@ -254,7 +254,7 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
                     tSocio.setSelected(false);
                 } else {
                     tSocio.setSelected(true);
-                }
+                }*/
                 apagarCampos();
             }
             /*else {
@@ -276,7 +276,7 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
         txtApMat.setEnabled(false);
         radioM.setEnabled(false);
         pFisica.setEnabled(false);
-        tSocio.setEnabled(false);
+//        tSocio.setEnabled(false);
         txtDireccion.setEnabled(false);
         txtCP.setEnabled(false);
         txtTelefono.setEnabled(false);
@@ -287,11 +287,12 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
         comboEstado.setEnabled(false);
         comboColonia.setEnabled(false);
         radioF.setEnabled(false);
-        tProductor.setEnabled(false);
+//        tProductor.setEnabled(false);
         pMoral.setEnabled(false);
         txtRuta.setEnabled(false);
         jButton4.setEnabled(false);
         jButton1.setEnabled(false);
+        jButton7.setEnabled(false);
         txtRFC.setEnabled(false);
         txtCURP.setEnabled(false);
     }
@@ -378,8 +379,8 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
             txtTelefono1.setEnabled(true);
             pMoral.setEnabled(true);
             pFisica.setEnabled(true);
-            tSocio.setEnabled(true);
-            tProductor.setEnabled(true);
+//            tSocio.setEnabled(true);
+ //           tProductor.setEnabled(true);
             comboPais.setEnabled(true);
             comboEstado.setEnabled(true);
             comboMunicipio.setEnabled(true);
@@ -404,7 +405,7 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
             txtApMat.setEnabled(true);
             radioM.setEnabled(true);
             pFisica.setEnabled(true);
-            tSocio.setEnabled(true);
+//            tSocio.setEnabled(true);
             txtDireccion.setEnabled(true);
             txtCP.setEnabled(true);
             txtTelefono.setEnabled(true);
@@ -417,7 +418,7 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
             comboEstado.setEnabled(true);
             comboColonia.setEnabled(true);
             radioF.setEnabled(true);
-            tProductor.setEnabled(true);
+//            tProductor.setEnabled(true);
             pMoral.setEnabled(true);
             txtRuta.setEnabled(true);
             jButton4.setEnabled(true);
@@ -462,12 +463,12 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
     public Boolean validarCampos() {
         Boolean valor = null;
 
-        if (!tSocio.isSelected() && !tProductor.isSelected()) {
+    /*    if (!tSocio.isSelected() && !tProductor.isSelected()) {
             JOptionPane.showMessageDialog(null, "Seleccione Socio o Productor");
             return false;
         } else {
             valor = true;
-        }
+        }*/
 
         if (txtNombre.getText().length() == 0 || txtApPat.getText().length() == 0 || txtApMat.getText().length() == 0
                 || txtDireccion.getText().length() == 0 || txtRFC.getText().length() == 0 || txtCURP.getText().length() == 0
@@ -478,11 +479,13 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
             valor = true;
         }
 
-        if (!radioM.isSelected() && !radioF.isSelected()) {
-            JOptionPane.showMessageDialog(null, "Seleccione un Genero");
-            return false;
-        } else {
-            valor = true;
+        if (tipoPersona.equals("1")) {
+            if (!radioM.isSelected() && !radioF.isSelected()) {
+                JOptionPane.showMessageDialog(null, "Seleccione un Genero");
+                return false;
+            } else {
+                valor = true;
+            }
         }
 
         if (comboPais.getSelectedItem().equals("Seleccione..")
@@ -510,7 +513,7 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
             }
 
             String estadoSocio = "0";
-            if (tSocio.isSelected() && tProductor.isSelected()) {
+/*            if (tSocio.isSelected() && tProductor.isSelected()) {
                 //Preguntar y Añadir Sociedad
                 estadoSocio = "1";
             } else if (!tSocio.isSelected() && tProductor.isSelected()) {
@@ -519,7 +522,7 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
             } else if (tSocio.isSelected() && !tProductor.isSelected()) {
                 //Preguntar y añadir Sociedad
                 estadoSocio = "1";
-            }
+            }*/
 
             if (pFisica.isSelected()) {
                 tipoPersona = "1";
@@ -527,14 +530,14 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
                 tipoPersona = "2";
             }
 
-            if (tSocio.isSelected()) {
+         /*   if (tSocio.isSelected()) {
                 atributoS = "1";
                 asignacion = "Socio";
             }
             if (tProductor.isSelected()) {
                 atributoP = "1";
                 asignacion = "Productor";
-            }
+            }*/
 
             if (radioM.isSelected()) {
                 genero = "1";
@@ -553,11 +556,11 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
                             + "'" + mdb.devuelveId("select id from municipio where descripcion='" + comboMunicipio.getSelectedItem() + "' ") + "',"
                             + "'" + mdb.devuelveId("select id from localidad where descripcion='" + comboLocalidad.getSelectedItem() + "' ") + "',"
                             + "'" + mdb.devuelveId("select id from ejidocolonia where descripcion='" + comboColonia.getSelectedItem() + "' ") + "',"
-                            + " '" + image_string + "', 1,1,current_date(),current_time(),1,1,1,1," + estadoSocio + ") ");
+                            + " '" + image_string + "', 1,1,current_date(),current_time(),1,1,1,1,0) ");
 
                     idPersona = mdb.devuelveId("SELECT id FROM personaf ORDER BY id DESC LIMIT 1");
 
-                    if (tSocio.isSelected()) {
+                    /*   if (tSocio.isSelected()) {
                         //atributoS = "1";
                         asignacion = "Socio";
                         mdb.insertarBasicos("insert into asignacionespersona "
@@ -568,7 +571,7 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
                         asignacion = "Productor";
                         mdb.insertarBasicos("insert into asignacionespersona "
                                 + "values (null, " + idPersona + ", " + mdb.devuelveId("select id from puestos where descripcion='" + asignacion + "'") + ")");
-                    }
+                    }*/
                     detalleAsignaciones(idPersona, "1");
                     tipo = "2";
                 } else {
@@ -581,23 +584,22 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
                             + "'" + mdb.devuelveId("select id from municipio where descripcion='" + comboMunicipio.getSelectedItem() + "' ") + "',"
                             + "'" + mdb.devuelveId("select id from localidad where descripcion='" + comboLocalidad.getSelectedItem() + "' ") + "',"
                             + "'" + mdb.devuelveId("select id from ejidocolonia where descripcion='" + comboColonia.getSelectedItem() + "' ") + "',"
-                            + " '" + image_string + "', 1,1,current_date(),current_time(),1,1,1,1," + estadoSocio + ")");
+                            + " '" + image_string + "', 1,1,current_date(),current_time(),1,1,1,1,0)");
 
                     idPersona = mdb.devuelveId("SELECT id FROM personam ORDER BY id DESC LIMIT 1");
                     tipo = "2";
-                    if (tSocio.isSelected()) {
+                    /*if (tSocio.isSelected()) {
                         //atributoS = "1";
                         asignacion = "Socio";
                         mdb.insertarBasicos("insert into asignacionespersona "
                                 + "values (null," + idPersona + ", " + mdb.devuelveId("select id from puestos where descripcion='" + asignacion + "'") + ")");
-
                     }
                     if (tProductor.isSelected()) {
                         //atributoP = "1";
                         asignacion = "Productor";
                         mdb.insertarBasicos("insert into asignacionespersona "
                                 + "values (null," + idPersona + ", " + mdb.devuelveId("select id from puestos where descripcion='" + asignacion + "'") + ")");
-                    }
+                    }*/
                     detalleAsignaciones(idPersona, "2");
                 }
                 /*if (mdb.comprobarExistencia("select id from persona "
@@ -612,7 +614,7 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
             } else {
                 //AQUI METODOS PARA ACTUALIZACION DE DATOS
                 if (tipoPersona.equals("1")) {
-                    JOptionPane.showMessageDialog(null,"Actualizar Fisica");
+                    //JOptionPane.showMessageDialog(null, "Actualizar Fisica");
                     mdb.actualizarBasicos("UPDATE personaf SET nombre='" + txtNombre.getText() + "' , "
                             + "apellidoPaterno='" + txtApPat.getText() + "', apellidoMaterno='" + txtApMat.getText() + "',  "
                             + " id_genero=" + genero + ", telefono='" + txtTelefono.getText() + "', telefonoMovil='" + txtTelefono1.getText() + "',"
@@ -626,7 +628,7 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
                             + " foto='" + image_string + "' "
                             + " where id=" + idPersona);
                 } else {
-                    JOptionPane.showMessageDialog(null,"Actualizar Moral");
+                    //JOptionPane.showMessageDialog(null, "Actualizar Moral");
                     mdb.actualizarBasicos("UPDATE personam SET razonsocial='" + txtNombre.getText() + "',  "
                             + "nombrecorto='" + txtApPat.getText() + "', clavecorte='" + txtApMat.getText() + "', "
                             + "identificacionfiscal='" + txtRFC.getText() + "', paginaweb='" + txtCURP.getText() + "', "
@@ -649,8 +651,7 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
 
     public void detalleAsignaciones(String id, String tipoP) {
         String nombre = "";
-
-        if (tSocio.isSelected() && tProductor.isSelected()) {
+/*        if (tSocio.isSelected() && tProductor.isSelected()) {
             //Preguntar y Añadir Sociedad
             formSoc = new jdSociedadesPersonas(null, true, "1", tipoP, "¿A que sociedad perteneces?", id, cn);
             formSoc.setVisible(true);
@@ -662,7 +663,7 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
             //Preguntar y añadir Sociedad
             formSoc = new jdSociedadesPersonas(null, true, "1", tipoP, "¿A que sociedad perteneces?", id, cn);
             formSoc.setVisible(true);
-        }
+        }*/
         /*if (tSocio.isSelected()) {
             int result = JOptionPane.showConfirmDialog(null, "¿Deseas añadir la información de 'Sociedades' ?",
                     null, JOptionPane.YES_NO_OPTION);
@@ -745,20 +746,17 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
         jLabel12 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
         comboColonia = new javax.swing.JComboBox<>();
-        jPanel6 = new javax.swing.JPanel();
-        tProductor = new javax.swing.JCheckBox();
-        tSocio = new javax.swing.JCheckBox();
-        pFisica = new javax.swing.JRadioButton();
-        pMoral = new javax.swing.JRadioButton();
-        jSeparator1 = new javax.swing.JSeparator();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
+        jButton7 = new javax.swing.JButton();
         jPanel8 = new javax.swing.JPanel();
         jButton5 = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
+        jPanel6 = new javax.swing.JPanel();
+        pFisica = new javax.swing.JRadioButton();
+        pMoral = new javax.swing.JRadioButton();
         lblSociedades = new javax.swing.JLabel();
-        jButton7 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Personas");
@@ -794,13 +792,12 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lbFoto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel17)
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(txtRuta, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jButton4)))
-                        .addGap(0, 8, Short.MAX_VALUE)))
+                        .addComponent(jLabel17)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(txtRuta, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -1123,72 +1120,6 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder("Atributos"));
-
-        tProductor.setText("Productor");
-
-        tSocio.setText("Socio");
-        tSocio.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                tSocioItemStateChanged(evt);
-            }
-        });
-
-        buttonGroup1.add(pFisica);
-        pFisica.setText("Persona Fisica");
-        pFisica.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                pFisicaItemStateChanged(evt);
-            }
-        });
-
-        buttonGroup1.add(pMoral);
-        pMoral.setText("Persona Moral");
-        pMoral.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                pMoralItemStateChanged(evt);
-            }
-        });
-
-        jSeparator1.setOrientation(javax.swing.SwingConstants.VERTICAL);
-
-        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
-        jPanel6.setLayout(jPanel6Layout);
-        jPanel6Layout.setHorizontalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pFisica)
-                    .addComponent(pMoral))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(tSocio)
-                    .addComponent(tProductor))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        jPanel6Layout.setVerticalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-            .addGroup(jPanel6Layout.createSequentialGroup()
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(pFisica)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(pMoral)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel6Layout.createSequentialGroup()
-                                .addComponent(tSocio)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(tProductor))
-                            .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(4, 4, 4))
-        );
-
         jButton1.setText("Guardar");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1210,6 +1141,13 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
             }
         });
 
+        jButton7.setText("Limpiar");
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton7ActionPerformed(evt);
+            }
+        });
+
         jPanel8.setBorder(javax.swing.BorderFactory.createTitledBorder("Opciones"));
 
         jButton5.setText("Asignaciones");
@@ -1228,39 +1166,58 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
             }
         });
 
-        lblSociedades.setText("-");
-
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
         jPanel8Layout.setHorizontalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel8Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel8Layout.createSequentialGroup()
-                        .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(lblSociedades))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel8Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton5)
-                    .addComponent(jButton6))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(lblSociedades))
+                .addComponent(jButton5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton6))
         );
 
-        jButton7.setText("Limpiar");
-        jButton7.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton7ActionPerformed(evt);
+        jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder("Atributos"));
+
+        buttonGroup1.add(pFisica);
+        pFisica.setText("Persona Fisica");
+        pFisica.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                pFisicaItemStateChanged(evt);
             }
         });
+
+        buttonGroup1.add(pMoral);
+        pMoral.setText("Persona Moral");
+        pMoral.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                pMoralItemStateChanged(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(pFisica)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(pMoral)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+            .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(pFisica)
+                .addComponent(pMoral))
+        );
+
+        lblSociedades.setText("-");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -1270,26 +1227,28 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())))
+                                .addComponent(lblSociedades)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1297,26 +1256,27 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jPanel8, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addComponent(lblSociedades, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 2, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jButton2)
-                            .addComponent(jButton1))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jButton3)
-                            .addComponent(jButton7))
-                        .addGap(24, 24, 24))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1)
+                    .addComponent(jButton2)
+                    .addComponent(jButton3)
+                    .addComponent(jButton7))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -1344,7 +1304,7 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -1376,10 +1336,9 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 
-        if (validarCampos() == true) {
-
-            tipoProceso();
-        }
+//        if (validarCampos() == true) {
+        tipoProceso();
+        //      }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void pMoralItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_pMoralItemStateChanged
@@ -1391,10 +1350,6 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
         // TODO add your handling code here:
         tipoFormulario();
     }//GEN-LAST:event_pFisicaItemStateChanged
-
-    private void tSocioItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_tSocioItemStateChanged
-
-    }//GEN-LAST:event_tSocioItemStateChanged
 
     private void comboLocalidadItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboLocalidadItemStateChanged
         // TODO add your handling code here:
@@ -1513,7 +1468,7 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
         JFileChooser file = new JFileChooser();
-        FileNameExtensionFilter filtro = new FileNameExtensionFilter("*.pdf", "pdf");
+        FileNameExtensionFilter filtro = new FileNameExtensionFilter("*.jpg", "jpg");
         file.setFileFilter(filtro);
 
         int seleccion = file.showOpenDialog(contentPane);
@@ -1561,7 +1516,7 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
         txtApMat.setEnabled(true);
         radioM.setEnabled(true);
         pFisica.setEnabled(true);
-        tSocio.setEnabled(true);
+//        tSocio.setEnabled(true);
         txtDireccion.setEnabled(true);
         txtCP.setEnabled(true);
         txtTelefono.setEnabled(true);
@@ -1574,7 +1529,7 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
         comboEstado.setEnabled(true);
         comboColonia.setEnabled(true);
         radioF.setEnabled(true);
-        tProductor.setEnabled(true);
+//      Productor.setEnabled(true);
         pMoral.setEnabled(true);
         txtRuta.setEnabled(true);
         jButton4.setEnabled(true);
@@ -1594,8 +1549,8 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
         txtRFC.setText("");
         txtRuta.setText("");
 
-        tSocio.setSelected(false);
-        tProductor.setSelected(false);
+//        tSocio.setSelected(false);
+//        tProductor.setSelected(false);
 
         idPersona = "";
         tipo = "";
@@ -1714,14 +1669,28 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(jdDetallePersona1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(jdFormularioPersonas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(jdDetallePersona1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(jdFormularioPersonas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(jdDetallePersona1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(jdFormularioPersonas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(jdDetallePersona1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(jdFormularioPersonas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+
+        /* Create and display the dialog */
+ /*        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                jdDetallePersona1 dialog = new jdDetallePersona1(new javax.swing.JFrame(), true);
+                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                    @Override
+                    public void windowClosing(java.awt.event.WindowEvent e) {
+                        System.exit(0);
+                    }
+                });
+                dialog.setVisible(true);
+            }
         //</editor-fold>
 
         /* Create and display the dialog */
@@ -1777,15 +1746,12 @@ public class jdDetallePersona1 extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel8;
-    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JLabel lbFoto;
     private javax.swing.JLabel lblSociedades;
     private javax.swing.JRadioButton pFisica;
     private javax.swing.JRadioButton pMoral;
     private javax.swing.JRadioButton radioF;
     private javax.swing.JRadioButton radioM;
-    private javax.swing.JCheckBox tProductor;
-    private javax.swing.JCheckBox tSocio;
     private javax.swing.JTextField txtApMat;
     private javax.swing.JTextField txtApPat;
     private javax.swing.JTextField txtCP;

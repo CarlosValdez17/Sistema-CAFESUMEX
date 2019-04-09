@@ -379,8 +379,13 @@ public class jdParcelas extends javax.swing.JDialog {
             tipoPersona = "2";
         }
 
-        jdF = new jdFormularioParcelas(null, true, idPersona, tipoPersona, mdb.devuelveId("select id from parcelas where clave_parcela='" + clave_parcela + "'"), cn);
+        /*JOptionPane.showMessageDialog(null,"Tipo de Persona = "+tipoPersona+" \n"
+                + " "+ mdb.devuelveId("select id from parcelas where clave_parcela='" + clave_parcela + "'"));
+        */
+        jdF = new jdFormularioParcelas(null, true, idPersona, tipoPersona, "", cn);
         jdF.setVisible(true);
+        
+       
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed

@@ -62,9 +62,18 @@ import Formas_Configuraciones_Sociedades.jpPuestos;
 import Formas_Configuraciones_Sociedades.jpRetenciones;
 import Formas_FincaCert.jpProductores;
 import Formas_Personas.jpPersonas;
-import Formas_Personas.jpPersonas1;
+import Formas_Personas.jpPersonas;
 import Formas_Recepcion.jdRecibos;
+import Formas_Recepcion.jdSeleccionRecepcion;
+import Formas_Recepcion.jpLotesDelDia;
+import Formas_Recepcion.jpLotesDelDia;
+import Formas_Recepcion.jpLotesEnviados;
 import Formas_Recepcion.jpRecibos;
+import Formas_Sociedades.jpAlmacenes;
+import Formas_Sociedades.jpBeneficiosH;
+import Formas_Sociedades.jpCatalogoSociedades;
+import Formas_Sociedades.jpLocalidadesSociedades;
+import Formas_Sociedades.jpRecepcion;
 import MetodosGenerales.JComboCheckBox;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -75,10 +84,14 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.sql.Connection;
-import java.util.Vector;
+import java.text.ParseException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -98,51 +111,51 @@ public class pantallaPrincipal extends javax.swing.JFrame {
     panelPrueba pP;
     jpTipoSombra jpTS;
 
-    public pantallaPrincipal() {
+    public pantallaPrincipal() throws ParseException {
         initComponents();
         setLocationRelativeTo(null);
-        //cn=c;
         cn = (new Conexion()).conectar();
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        //pintarPanel("fondo");
-        /*  ImageFondo image=new ImageFondo();
-        image.setImage("/Imagenes/FondoPantalla.png");
-        setContentPane(image);*/
+
         //jButton3.setVisible(false);
         //jButton4.setVisible(false);
         //jButton5.setVisible(false);
         jButton6.setVisible(false);
         jButton7.setVisible(false);
 
-        jButton2.setToolTipText("Configurador");
-
-        jButton2.setBackground(Color.getHSBColor(0.56f, 1.0f, 0.8f));
-
+        jButton2.setBackground(new Color(26,66,21));
+        
         DefaultTreeCellRenderer render = (DefaultTreeCellRenderer) jTree1.getCellRenderer();
         //render.setLeafIcon(new ImageIcon(this.getClass().getResource("../Imagenes/database.png")));
         //render.setOpenIcon(new ImageIcon(this.getClass().getResource("../Imagenes/database.png")));
         //render.setClosedIcon(new ImageIcon(this.getClass().getResource("../Imagenes/database.png")));
+
     }
 
-    /* public void paintComponent(Graphics g) {
-        Dimension tamanio = getSize();
-        ImageIcon fondo = new ImageIcon(getClass().getResource("Imagenes/FondoPantalla.png"));
-        g.drawImage(fondo.getImage(), 0, 0, tamanio.width, tamanio.height, null);
-        //panelPrincipal.setOpaque(false);
-        panelPrincipal.paintComponents(g);// paint(g);
-    }
 
-  @Override
-    public Image getIconImage() {
-        Image retValue = Toolkit.getDefaultToolkit().
-                getImage(ClassLoader.getSystemResource("Imagenes/frmLogin.jpg"));
-
-        return retValue;
-    }**/
-    public void pintarPanel(String tipo) {
+    public void pintarPanel(String tipo) throws ParseException {
         Dimension size = panelPrincipal.getSize();
         //Tamaño Manual = 830, 570
         switch (tipo) {
+            case "Sociedades":
+                jpCatalogoSociedades jpCPre = new jpCatalogoSociedades(cn);
+                jpCPre.setSize(size);
+                jpCPre.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpCPre);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+
+            case "Localidades":
+                jpLocalidadesSociedades jpLS = new jpLocalidadesSociedades(cn);
+                jpLS.setSize(size);
+                jpLS.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpLS);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
             case "Pais":
                 jpPais jpP = new jpPais(cn);
                 jpP.setSize(size);
@@ -382,7 +395,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 panelPrincipal.repaint();
                 break;
             case "Personas":
-                jpPersonas1 jpPer1 = new jpPersonas1(cn);
+                jpPersonas jpPer1 = new jpPersonas(cn);
                 jpPer1.setSize(size);
                 jpPer1.setLocation(0, 0);
                 panelPrincipal.removeAll();
@@ -625,7 +638,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 panelPrincipal.repaint();
                 break;
             case "Recibos":
-                jpRecibos jpRec = new jpRecibos(cn);
+                jpRecibos jpRec = new jpRecibos(cn, recepcion);
                 jpRec.setSize(size);
                 jpRec.setLocation(0, 0);
                 panelPrincipal.removeAll();
@@ -633,16 +646,101 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 panelPrincipal.revalidate();
                 panelPrincipal.repaint();
                 break;
-            default:
-                jpFondo jpF = new jpFondo();
-                jpF.setSize(size);
-                jpF.setLocation(-5, -35);
+            case "Cortes del día":
+                jpLotesDelDia jpLot = new jpLotesDelDia(cn, recepcion);
+                jpLot.setSize(size);
+                jpLot.setLocation(0, 0);
                 panelPrincipal.removeAll();
-                panelPrincipal.add(jpF);
+                panelPrincipal.add(jpLot);
                 panelPrincipal.revalidate();
                 panelPrincipal.repaint();
                 break;
+            case "Cortes Enviados":
+                jpLotesEnviados jpLotE = new jpLotesEnviados(cn, recepcion);
+                jpLotE.setSize(size);
+                jpLotE.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpLotE);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+            case "Recepcion":
+                jpRecepcion jpRece = new jpRecepcion(cn);
+                jpRece.setSize(size);
+                jpRece.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpRece);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+            case "Beneficios Humedos":
+                jpBeneficiosH jpBH = new jpBeneficiosH(cn);
+                jpBH.setSize(size);
+                jpBH.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpBH);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+            case "Almacenes":
+                jpAlmacenes jpAlm = new jpAlmacenes(cn);
+                jpAlm.setSize(size);
+                jpAlm.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpAlm);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+            default:
+                JLabel lbl = new JLabel();
+                lbl.setSize(panelPrincipal.getWidth(), panelPrincipal.getHeight());
+                ImageIcon fot = new ImageIcon("C:\\Users\\USUARIO\\Documents\\NetBeansProjects\\Sistema-CAFESUMEX\\src\\Imagenes\\granos fondo.jpg");
+                Icon icono = new ImageIcon(fot.getImage().getScaledInstance(lbl.getWidth(), lbl.getHeight(), Image.SCALE_DEFAULT));
+                lbl.setIcon(icono);
+                //jpFondo jpF = new jpFondo();
+                //jpF.setSize(size);
+                //.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(lbl);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+
+                break;
         }
+    }
+
+    public void recepcion(String recepcion) {
+        this.recepcion = recepcion;
+        
+        try {
+            pintarPanel("fondo");
+        } catch (ParseException ex) {
+            Logger.getLogger(pantallaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        panelArbol.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jScrollPane2.setOpaque(false);
+
+        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Recepcion");
+        javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Recibos");
+        javax.swing.tree.DefaultMutableTreeNode treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Cortes del día");
+        javax.swing.tree.DefaultMutableTreeNode treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("Cortes Enviados");
+        treeNode1.add(treeNode2);
+        treeNode1.add(treeNode3);
+        treeNode1.add(treeNode4);
+
+        jTree1.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+
+        //CAMBIAR COLORES BOTOTES
+        jButton5.setBackground(new Color(26,66,21));
+        //QUITAR COLOR
+        jButton1.setBackground(Color.getColor("FFFFFF"));
+        jButton3.setBackground(Color.getColor("FFFFFF"));
+        jButton4.setBackground(Color.getColor("FFFFFF"));
+        jButton2.setBackground(Color.getColor("FFFFFF"));
+        jButton6.setBackground(Color.getColor("FFFFFF"));
+        jButton7.setBackground(Color.getColor("FFFFFF"));
     }
 
     /*
@@ -673,10 +771,14 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         jButton5 = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
         jButton7 = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
         panelArbol = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTree1 = new javax.swing.JTree();
         panelPrincipal = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
 
         jMenu1.setText("jMenu1");
 
@@ -689,8 +791,11 @@ public class pantallaPrincipal extends javax.swing.JFrame {
 
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/database(2).png"))); // NOI18N
         jButton2.setText("Configurador");
+        jButton2.setToolTipText("");
         jButton2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButton2.setFocusPainted(false);
         jButton2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton2.setOpaque(false);
         jButton2.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -700,7 +805,9 @@ public class pantallaPrincipal extends javax.swing.JFrame {
 
         jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/group(1).png"))); // NOI18N
         jButton3.setText("Personas");
+        jButton3.setToolTipText("Modulo Personas");
         jButton3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButton3.setFocusPainted(false);
         jButton3.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButton3.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jButton3.addActionListener(new java.awt.event.ActionListener() {
@@ -712,6 +819,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/avatar.png"))); // NOI18N
         jButton4.setText("FincaCert");
         jButton4.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButton4.setFocusPainted(false);
         jButton4.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButton4.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jButton4.addActionListener(new java.awt.event.ActionListener() {
@@ -723,6 +831,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/cash.png"))); // NOI18N
         jButton5.setText("Recepcion");
         jButton5.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButton5.setFocusPainted(false);
         jButton5.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButton5.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jButton5.addActionListener(new java.awt.event.ActionListener() {
@@ -734,6 +843,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/machinery.png"))); // NOI18N
         jButton6.setText("B Humedo");
         jButton6.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButton6.setFocusPainted(false);
         jButton6.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButton6.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jButton6.addActionListener(new java.awt.event.ActionListener() {
@@ -745,11 +855,24 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         jButton7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/breakfast.png"))); // NOI18N
         jButton7.setText("Laboratorio");
         jButton7.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButton7.setFocusPainted(false);
         jButton7.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButton7.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jButton7.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton7ActionPerformed(evt);
+            }
+        });
+
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/network.png"))); // NOI18N
+        jButton1.setText("Sociedades");
+        jButton1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButton1.setFocusPainted(false);
+        jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
             }
         });
 
@@ -770,19 +893,22 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 .addComponent(jButton6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButton7)
-                .addContainerGap(484, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton1)
+                .addContainerGap(391, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jButton7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton7, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -927,15 +1053,45 @@ public class pantallaPrincipal extends javax.swing.JFrame {
 
         panelPrincipal.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("¡ BIENVENIDO A FINCALAB !");
+        jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+
         javax.swing.GroupLayout panelPrincipalLayout = new javax.swing.GroupLayout(panelPrincipal);
         panelPrincipal.setLayout(panelPrincipalLayout);
         panelPrincipalLayout.setHorizontalGroup(
             panelPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGroup(panelPrincipalLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 810, Short.MAX_VALUE)
+                .addContainerGap())
         );
         panelPrincipalLayout.setVerticalGroup(
             panelPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGroup(panelPrincipalLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        jLabel2.setText("jLabel2");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel2)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel2)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout panelArbolLayout = new javax.swing.GroupLayout(panelArbol);
@@ -943,17 +1099,26 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         panelArbolLayout.setHorizontalGroup(
             panelArbolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelArbolLayout.createSequentialGroup()
-                .addGap(2, 2, 2)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(panelPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(panelArbolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelArbolLayout.createSequentialGroup()
+                        .addGap(2, 2, 2)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(panelPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(panelArbolLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         panelArbolLayout.setVerticalGroup(
             panelArbolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panelPrincipal, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(panelArbolLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 572, Short.MAX_VALUE)
+                .addGroup(panelArbolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 520, Short.MAX_VALUE)
+                    .addComponent(panelPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -974,7 +1139,8 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(panelArbol, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(panelArbol, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
@@ -989,7 +1155,11 @@ public class pantallaPrincipal extends javax.swing.JFrame {
 
         if (tp != null) {
             System.out.println(jTree1.getLastSelectedPathComponent());//tp.toString()+ "COUNT: "+c);
-            pintarPanel(tipoPanel);
+            try {
+                pintarPanel(tipoPanel);
+            } catch (ParseException ex) {
+                Logger.getLogger(pantallaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
         /* if(compara.equals("Pais")){
@@ -1017,11 +1187,17 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         treeNode1.add(treeNode2);
         jTree1.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
 
-        pintarPanel("fondo");
+        try {
+            pintarPanel("fondo");
+        } catch (ParseException ex) {
+            Logger.getLogger(pantallaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
+        
         //CAMBIAR COLORES BOTOTES
-        jButton3.setBackground(Color.getHSBColor(0.56f, 1.0f, 0.8f));
+        jButton3.setBackground(new Color(26,66,21));
         //QUITAR COLOR
+        jButton1.setBackground(Color.getColor("FFFFFF"));
         jButton2.setBackground(Color.getColor("FFFFFF"));
         jButton4.setBackground(Color.getColor("FFFFFF"));
         jButton5.setBackground(Color.getColor("FFFFFF"));
@@ -1039,8 +1215,12 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         if (tp != null) {
             char car = (char) evt.getKeyCode();
             if (car == evt.VK_ENTER) {
-                pintarPanel(tipoPanel);
-                //this.botonIngresarActionPerformed(null);
+                try {
+                    pintarPanel(tipoPanel);
+                    //this.botonIngresarActionPerformed(null);
+                } catch (ParseException ex) {
+                    Logger.getLogger(pantallaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
     }//GEN-LAST:event_jTree1KeyReleased
@@ -1173,14 +1353,20 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         jTree1.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
 
         //CAMBIAR COLORES BOTOTES
-        jButton2.setBackground(Color.getHSBColor(0.56f, 1.0f, 0.8f));
+        jButton2.setBackground(new Color(26,66,21));
         //QUITAR COLOR
+        jButton1.setBackground(Color.getColor("FFFFFF"));
         jButton3.setBackground(Color.getColor("FFFFFF"));
         jButton4.setBackground(Color.getColor("FFFFFF"));
         jButton5.setBackground(Color.getColor("FFFFFF"));
         jButton6.setBackground(Color.getColor("FFFFFF"));
         jButton7.setBackground(Color.getColor("FFFFFF"));
 
+        try {
+            pintarPanel("fondo");
+        } catch (ParseException ex) {
+            Logger.getLogger(pantallaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -1196,39 +1382,28 @@ public class pantallaPrincipal extends javax.swing.JFrame {
 
         jTree1.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
 
-        pintarPanel("fondo");
+        try {
+            pintarPanel("fondo");
+        } catch (ParseException ex) {
+            Logger.getLogger(pantallaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         //CAMBIAR COLORES BOTOTES
-        jButton4.setBackground(Color.getHSBColor(0.56f, 1.0f, 0.8f));
+        jButton4.setBackground(new Color(26,66,21));
         //QUITAR COLOR
+        jButton1.setBackground(Color.getColor("FFFFFF"));
         jButton3.setBackground(Color.getColor("FFFFFF"));
         jButton2.setBackground(Color.getColor("FFFFFF"));
         jButton5.setBackground(Color.getColor("FFFFFF"));
         jButton6.setBackground(Color.getColor("FFFFFF"));
         jButton7.setBackground(Color.getColor("FFFFFF"));
     }//GEN-LAST:event_jButton4ActionPerformed
-
+    String recepcion = "";
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
-        panelArbol.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
-        jScrollPane2.setOpaque(false);
-
-        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Recepcion");
-        javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Recibos");
-        treeNode1.add(treeNode2);
-
-        jTree1.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
-
-        //CAMBIAR COLORES BOTOTES
-        jButton5.setBackground(Color.getHSBColor(0.56f, 1.0f, 0.8f));
-        //QUITAR COLOR
-        jButton3.setBackground(Color.getColor("FFFFFF"));
-        jButton4.setBackground(Color.getColor("FFFFFF"));
-        jButton2.setBackground(Color.getColor("FFFFFF"));
-        jButton6.setBackground(Color.getColor("FFFFFF"));
-        jButton7.setBackground(Color.getColor("FFFFFF"));
-        
+        jdSeleccionRecepcion jdSRecepcion = new jdSeleccionRecepcion(null, true, cn);
+        jdSRecepcion.pPrin = this;
+        jdSRecepcion.setVisible(true);
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
@@ -1236,6 +1411,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         //CAMBIAR COLORES BOTOTES
         jButton6.setBackground(Color.getHSBColor(0.56f, 1.0f, 0.8f));
         //QUITAR COLOR
+        jButton1.setBackground(Color.getColor("FFFFFF"));
         jButton3.setBackground(Color.getColor("FFFFFF"));
         jButton4.setBackground(Color.getColor("FFFFFF"));
         jButton5.setBackground(Color.getColor("FFFFFF"));
@@ -1248,12 +1424,49 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         //CAMBIAR COLORES BOTOTES
         jButton7.setBackground(Color.getHSBColor(0.56f, 1.0f, 0.8f));
         //QUITAR COLOR
+        jButton1.setBackground(Color.getColor("FFFFFF"));
         jButton3.setBackground(Color.getColor("FFFFFF"));
         jButton4.setBackground(Color.getColor("FFFFFF"));
         jButton5.setBackground(Color.getColor("FFFFFF"));
         jButton6.setBackground(Color.getColor("FFFFFF"));
         jButton2.setBackground(Color.getColor("FFFFFF"));
     }//GEN-LAST:event_jButton7ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        panelArbol.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jScrollPane2.setOpaque(false);
+
+        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Modulo Sociedades");
+        javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Sociedades");
+        javax.swing.tree.DefaultMutableTreeNode treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Localidades");
+        javax.swing.tree.DefaultMutableTreeNode treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("Recepcion");
+        javax.swing.tree.DefaultMutableTreeNode treeNode5 = new javax.swing.tree.DefaultMutableTreeNode("Beneficios Humedos");
+        javax.swing.tree.DefaultMutableTreeNode treeNode6 = new javax.swing.tree.DefaultMutableTreeNode("Almacenes");
+        treeNode1.add(treeNode2);
+        treeNode1.add(treeNode3);
+        treeNode1.add(treeNode4);
+        treeNode1.add(treeNode5);
+        treeNode1.add(treeNode6);
+
+        jTree1.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+
+        try {
+            pintarPanel("fondo");
+        } catch (ParseException ex) {
+            Logger.getLogger(pantallaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        //CAMBIAR COLORES BOTOTES
+        jButton1.setBackground(new Color(26,66,21));
+        //QUITAR COLOR
+        jButton5.setBackground(Color.getColor("FFFFFF"));
+        jButton3.setBackground(Color.getColor("FFFFFF"));
+        jButton4.setBackground(Color.getColor("FFFFFF"));
+        jButton2.setBackground(Color.getColor("FFFFFF"));
+        jButton6.setBackground(Color.getColor("FFFFFF"));
+        jButton7.setBackground(Color.getColor("FFFFFF"));
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1295,20 +1508,28 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new pantallaPrincipal().setVisible(true);
+                try {
+                    new pantallaPrincipal().setVisible(true);
+                } catch (ParseException ex) {
+                    Logger.getLogger(pantallaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTree jTree1;
     private javax.swing.JPanel panelArbol;

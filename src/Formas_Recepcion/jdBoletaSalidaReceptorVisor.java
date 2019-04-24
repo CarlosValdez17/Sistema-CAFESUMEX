@@ -8,11 +8,14 @@ package Formas_Recepcion;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import Reportes.creacionPDF;
 import com.itextpdf.text.DocumentException;
+import java.awt.Desktop;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,7 +28,7 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author USUARIO
  */
-public class jdBoletaSalidaReceptor extends javax.swing.JDialog {
+public class jdBoletaSalidaReceptorVisor extends javax.swing.JDialog {
 
     /**
      * Creates new form jdBoletaSalidaReceptor
@@ -33,108 +36,63 @@ public class jdBoletaSalidaReceptor extends javax.swing.JDialog {
     Connection cn;
     metodosDatosBasicos mdb;
     DefaultTableModel modelo;
-    String cadenaIdsCortes, sociedad, idSociedad;
+    String idBoleta;
     jpCortesDelDia jpL;
 
-    public jdBoletaSalidaReceptor(java.awt.Frame parent, boolean modal, String cadenaIdsCortes, String sociedad, String recepcion, Connection cn) {
+    public jdBoletaSalidaReceptorVisor(java.awt.Frame parent, boolean modal, String idBoleta, Connection cn) throws ParseException {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
 
         this.cn = cn;
         mdb = new metodosDatosBasicos(cn);
-        this.cadenaIdsCortes = cadenaIdsCortes;
         modelo = (DefaultTableModel) jTable1.getModel();
 
-        jDateChooser1.setDate(GregorianCalendar.getInstance().getTime());
+        this.idBoleta = idBoleta;
 
-        this.sociedad = sociedad;
-
-        lblSociedad.setText(sociedad);
-        lblRecepcion.setText(recepcion);
-
-        idSociedad = mdb.devuelveUnDato("select idSociedad from recepciones where idRecepcion='" + recepcion + "' ");
-
-        //String ultimoIdBoleta = mdb.devuelveUnDato("select idBoleta from boletasalidareceptor where idSociedad="+idSociedad+" order by id desc limit 1");
-        //JOptionPane.showMessageDialog(null, "Ultimo id de la sociedad "+sociedad+ " ="+ultimoIdBoleta);
-        llenarTablaIdCortes();
-        llenarCombos();
+        llenarDatos();
     }
 
-    public void llenarTablaIdCortes() {
+    public void llenarDatos() throws ParseException {
+        String[] datos = mdb.devolverLineaDatos("SELECT origen, destino, fecha, fechaBoletaManual, "
+                + "idBoletaManual, idBoleta, totalSacos, totalKg, descripcion, "
+                + "transporteLimpio, v.Nombre, v.Placas, v.Responsable\n"
+                + "FROM boletasalidareceptor b\n"
+                + "inner join vehiculo v on (v.ID=b.idTransporte)\n"
+                + "where idBoleta ='" + idBoleta + "' group by idBoleta ", 13).split("¬");
+
+        SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
+        Date fechaDate = null;
+        
+        fechaDate = formato.parse(datos[2]);
+        jDateChooser1.setDate(fechaDate);
+        
+        fechaDate = formato.parse(datos[3]);
+        jDateChooser2.setDate(fechaDate);
+
+        lblSociedad.setText(datos[0]);
+        lblDestino.setText(datos[1]);
+        txtBoletaManual.setText(datos[4]);
+        lblIdBoleta.setText(datos[5]);
+        txtTotalSacos.setText(datos[6]);
+        txtTotalKg.setText(datos[7]);
+        txtObserva.setText(datos[8]);
+        //Transporte Limpio o No
+        if(datos[9].equals("1")){
+            valorL.setSelected(true);
+        }else{
+            valorL.setSelected(false);
+        }
+        txtVehiculo.setText(datos[10]);
+        txtPlacas.setText(datos[11]);
+        txtChofer.setText(datos[12]);
+
         limpiar(jTable1);
-        String[] cadena = cadenaIdsCortes.split("¬");
-        int totalSacos = 0;
-        float totalKg = 0;
-
-        for (int i = 0; i < cadena.length; i++) {
-            mdb.cargarInformacion2(modelo, 5, "select idLote, certificacion, formaCafe, sacos, kg from cortesdeldia where idLote='" + cadena[i] + "'");
-        }
-
-        for (int i = 0; i < modelo.getRowCount(); i++) {
-            totalSacos = totalSacos + Integer.parseInt(modelo.getValueAt(i, 3) + "");
-            totalKg = totalKg + Float.parseFloat(modelo.getValueAt(i, 4) + "");
-        }
-
-        txtTotalSacos.setText(totalSacos + "");
-        txtTotalKg.setText(totalKg + "");
-    }
-
-    public void llenarCombos() {
-        String[] sociedades = mdb.cargarCombos("select nombrecorto from personam").split("#");
-        comboSociedades.setModel(new DefaultComboBoxModel((Object[]) sociedades));
-    }
-
-    public void datosTransporte(String vehiculo, String placas, String chofer) {
-        txtVehiculo.setText(vehiculo);
-        txtPlacas.setText(placas);
-        txtChofer.setText(chofer);
-    }
-
-    public void procesoCombos() {
-        String datos[];
-
-        String idSociedad = mdb.devuelveId("select id from personam where nombrecorto='" + comboSociedades.getSelectedItem() + "'");
-
-        switch (comboTipoDestino.getSelectedItem() + "") {
-            case "Beneficio Humedo":
-                datos = mdb.cargarCombos("select nombre from beneficioshumedos where idSociedad=" + idSociedad + " ").split("#");
-                comboDestino.setModel(new DefaultComboBoxModel((Object[]) datos));
-                break;
-            case "Almacen":
-                datos = mdb.cargarCombos("select nombrealmacen from almacenes where idSociedad=" + idSociedad + " ").split("#");
-                comboDestino.setModel(new DefaultComboBoxModel((Object[]) datos));
-                break;
-        }
-    }
-
-    public String idBoletaSalida() {
-
-        String ultimoIdBoleta = mdb.devuelveUnDato("select idBoleta from boletasalidareceptor where idSociedad=" + idSociedad + " order by id desc limit 1");
-        int numeroConsecutivo = 0;
-
-        if (ultimoIdBoleta.equals("") || ultimoIdBoleta.equals("null")) {
-            numeroConsecutivo = 1;
-        } else {
-            String[] datos = ultimoIdBoleta.split("-");
-            numeroConsecutivo = Integer.parseInt(datos[4]) + 1;
-        }
-
-        return "BOL-" + mdb.devuelveUnDato("select clavecorte from personam where nombrecorto='" + sociedad + "'") + "-0-0-" + numeroConsecutivo;
-    }
-
-    public Boolean validar() {
-
-        if (comboSociedades.getSelectedItem().equals("Seleccione..") || comboTipoDestino.getSelectedItem().equals("Seleccione..")
-                || comboDestino.getSelectedItem().equals("Seleccione..")) {
-            JOptionPane.showMessageDialog(null, "Seleccione Destino");
-            return false;
-        } else if (txtVehiculo.getText().length() <= 0 || txtPlacas.getText().length() <= 0 || txtChofer.getText().length() <= 0) {
-            JOptionPane.showMessageDialog(null, "Seleccione Transporte");
-            return false;
-        } else {
-            return true;
-        }
+        mdb.cargarInformacion2(modelo, 5,
+                "SELECT c.idLote, c.certificacion, c.formaCafe, c.sacos, c.kg\n"
+                + "from cortesdeldia c\n"
+                + "inner join boletasalidareceptor b on (c.idLote=b.idLote)\n"
+                + "where b.idBoleta='" + idBoleta + "'");
     }
 
     public Object[][] obtenerContenidoTabla(DefaultTableModel modelo) {
@@ -166,10 +124,6 @@ public class jdBoletaSalidaReceptor extends javax.swing.JDialog {
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        jLabel1 = new javax.swing.JLabel();
-        comboSociedades = new javax.swing.JComboBox<>();
-        comboTipoDestino = new javax.swing.JComboBox<>();
-        comboDestino = new javax.swing.JComboBox<>();
         jLabel2 = new javax.swing.JLabel();
         jDateChooser1 = new com.toedter.calendar.JDateChooser();
         jLabel3 = new javax.swing.JLabel();
@@ -197,7 +151,8 @@ public class jdBoletaSalidaReceptor extends javax.swing.JDialog {
         jLabel11 = new javax.swing.JLabel();
         lblSociedad = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
-        lblRecepcion = new javax.swing.JLabel();
+        lblDestino = new javax.swing.JLabel();
+        lblIdBoleta = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Boleta de Salida Receptor");
@@ -226,29 +181,21 @@ public class jdBoletaSalidaReceptor extends javax.swing.JDialog {
         });
         jScrollPane1.setViewportView(jTable1);
 
-        jLabel1.setText("Destino");
-
-        comboSociedades.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        comboSociedades.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                comboSociedadesItemStateChanged(evt);
-            }
-        });
-
-        comboTipoDestino.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione..", "Beneficio Humedo", "Almacen" }));
-        comboTipoDestino.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                comboTipoDestinoItemStateChanged(evt);
-            }
-        });
-
         jLabel2.setText("Fecha");
 
         jDateChooser1.setEnabled(false);
 
         jLabel3.setText("Boleta Manual");
 
+        txtBoletaManual.setEnabled(false);
+
+        jDateChooser2.setEnabled(false);
+
         jLabel4.setText("Fecha");
+
+        txtTotalSacos.setEnabled(false);
+
+        txtTotalKg.setEnabled(false);
 
         jLabel5.setText("Total Sacos");
 
@@ -258,11 +205,18 @@ public class jdBoletaSalidaReceptor extends javax.swing.JDialog {
 
         jLabel7.setText("Transporte");
 
+        txtVehiculo.setEnabled(false);
+
+        txtPlacas.setEnabled(false);
+
         jLabel8.setText("Numero de Placas");
 
         jLabel9.setText("Nombre del Chofer");
 
+        txtChofer.setEnabled(false);
+
         jButton1.setText("...");
+        jButton1.setEnabled(false);
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -273,9 +227,11 @@ public class jdBoletaSalidaReceptor extends javax.swing.JDialog {
 
         txtObserva.setColumns(20);
         txtObserva.setRows(5);
+        txtObserva.setEnabled(false);
         jScrollPane2.setViewportView(txtObserva);
 
         valorL.setText("Transporte Limpio");
+        valorL.setEnabled(false);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -330,14 +286,19 @@ public class jdBoletaSalidaReceptor extends javax.swing.JDialog {
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
         );
 
-        jButton2.setText("Aceptar");
+        jButton2.setText("Abrir PDF");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
             }
         });
 
-        jButton3.setText("Cancelar");
+        jButton3.setText("Cerrar");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jLabel11.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel11.setText("Origen");
@@ -346,10 +307,13 @@ public class jdBoletaSalidaReceptor extends javax.swing.JDialog {
         lblSociedad.setText("jLabel12");
 
         jLabel12.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel12.setText("Recepción");
+        jLabel12.setText("Destino");
 
-        lblRecepcion.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        lblRecepcion.setText("lblRecepcion");
+        lblDestino.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        lblDestino.setText("lblDestino");
+
+        lblIdBoleta.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lblIdBoleta.setText("jLabel1");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -362,13 +326,32 @@ public class jdBoletaSalidaReceptor extends javax.swing.JDialog {
                     .addComponent(jScrollPane1)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtBoletaManual, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jDateChooser2, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel4))
+                        .addGap(273, 273, 273)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtTotalSacos, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel6)
+                            .addComponent(txtTotalKg, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(comboSociedades, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(comboTipoDestino, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(comboDestino, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jLabel1))
+                                .addComponent(lblSociedad)
+                                .addGap(119, 119, 119)
+                                .addComponent(lblIdBoleta))
+                            .addComponent(lblDestino))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -377,80 +360,55 @@ public class jdBoletaSalidaReceptor extends javax.swing.JDialog {
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jButton2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton3))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtBoletaManual, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel3))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jDateChooser2, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel4))
-                                .addGap(273, 273, 273)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtTotalSacos, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel5))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel6)
-                                    .addComponent(txtTotalKg, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel11)
-                                .addGap(18, 18, 18)
-                                .addComponent(lblSociedad)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel12)
-                                .addGap(18, 18, 18)
-                                .addComponent(lblRecepcion)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addComponent(jButton3)
+                        .addGap(11, 11, 11)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel11)
-                    .addComponent(lblSociedad)
-                    .addComponent(jLabel12)
-                    .addComponent(lblRecepcion))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(comboSociedades, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(comboTipoDestino, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(comboDestino, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel11)
+                            .addComponent(lblSociedad)
+                            .addComponent(lblIdBoleta))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel12)
+                            .addComponent(lblDestino)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(17, 17, 17)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(txtTotalSacos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(txtTotalKg, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel4))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtBoletaManual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jDateChooser2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel1Layout.createSequentialGroup()
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jLabel3)
-                                .addComponent(jLabel4)
                                 .addComponent(jLabel5)
                                 .addComponent(jLabel6))
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(txtBoletaManual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addComponent(jDateChooser2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGap(26, 26, 26))
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txtTotalSacos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtTotalKg, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3))
-                .addContainerGap())
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton3)
+                    .addComponent(jButton2))
+                .addGap(12, 12, 12))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -464,9 +422,9 @@ public class jdBoletaSalidaReceptor extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -475,82 +433,37 @@ public class jdBoletaSalidaReceptor extends javax.swing.JDialog {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        jdTransporteBoletaSalida jdT = new jdTransporteBoletaSalida(null, true, cn);
-        jdT.jdB = this;
-        jdT.setVisible(true);
+
     }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void comboTipoDestinoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboTipoDestinoItemStateChanged
-        // TODO add your handling code here:
-        procesoCombos();
-    }//GEN-LAST:event_comboTipoDestinoItemStateChanged
-
-    private void comboSociedadesItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSociedadesItemStateChanged
-        // TODO add your handling code here:
-        procesoCombos();
-    }//GEN-LAST:event_comboSociedadesItemStateChanged
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        String idTransporte = mdb.devuelveUnDato("select id from vehiculo where nombre='" + txtVehiculo.getText() + "' and placas = '" + txtPlacas.getText() + "' and responsable='" + txtChofer.getText() + "'  ");
 
-        String fechaBoleta = new SimpleDateFormat("yyyy-MM-dd").format(jDateChooser1.getDate());
-        String fechaBoletaManual ="";
-        String origen = lblSociedad.getText() + " - " + jLabel12.getText() + " - " + lblRecepcion.getText();
-        String destino = comboSociedades.getSelectedItem() + " - " + comboTipoDestino.getSelectedItem() + " - " + comboDestino.getSelectedItem();
-        String valorLimpio = "", idBoletaSalida = idBoletaSalida();
-        String boletaManual = "";
+        Object[][] contenido = obtenerContenidoTabla(modelo);
 
-        if (txtBoletaManual.getText().equals("")) {
-            boletaManual = "0";
-        } else {
-            boletaManual = txtBoletaManual.getText();
-            fechaBoletaManual=new SimpleDateFormat("yyyy-MM-dd").format(jDateChooser2.getDate());
+        creacionPDF pdf = new creacionPDF(cn);
+        try {
+            pdf.pdfBoletaSalidaRecepcion(idBoleta, contenido);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(jdBoletaSalidaReceptorVisor.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (DocumentException ex) {
+            Logger.getLogger(jdBoletaSalidaReceptorVisor.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(jdBoletaSalidaReceptorVisor.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        if (valorL.isSelected()) {
-            //Está limpio
-            valorLimpio = "1";
-        } else {
-            //Sucio
-            valorLimpio = "0";
+        Desktop desktop = Desktop.getDesktop();
+        try {
+            desktop.open(new java.io.File("C:\\Users\\USUARIO\\Desktop\\pruebaBoleta.pdf"));
+        } catch (IOException ex) {
+            Logger.getLogger(jdRecibos.class.getName()).log(Level.SEVERE, null, ex);
         }
-        if (validar()) {
-            for (int i = 0; i < modelo.getRowCount(); i++) {
-                String idLote = modelo.getValueAt(i, 0) + "";
-                // JOptionPane.showMessageDialog(null, "Lote "+idLote);
-                mdb.insertarEnCiclo("insert into boletasalidareceptor values (null, " + idSociedad + ", '" + idBoletaSalida + "', '" + idLote + "', " + boletaManual + ", "
-                        + "" + idTransporte + ", '" + fechaBoleta + "', '" + fechaBoletaManual + "', '" + txtTotalSacos.getText() + "', '" + txtTotalKg.getText() + "', "
-                        + "'" + origen + "', '" + destino + "', '" + txtObserva.getText() + "', " + valorLimpio + ", "
-                        + "'" + modelo.getValueAt(i, 3) + "', '" + modelo.getValueAt(i, 4) + "', 'Enviado desde Receptor' )");
-                mdb.actualizarEnCiclo("update cortesdeldia set estatus='Inactivo' where idLote='" + idLote + "'");
-            }
-
-            JOptionPane.showMessageDialog(null, "Id Boleta Asignado = " + idBoletaSalida);
-
-            try {
-                jpL.llenarTabla();
-            } catch (ParseException ex) {
-                Logger.getLogger(jdBoletaSalidaReceptor.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            this.dispose();
-            Object[][] contenido = obtenerContenidoTabla(modelo);
-
-            creacionPDF pdf = new creacionPDF(cn);
-            try {
-                pdf.pdfBoletaSalidaRecepcion(mdb.devuelveUnDato("select idBoleta from boletasalidareceptor order by id desc limit 1"), contenido);
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(jdBoletaSalidaReceptor.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (DocumentException ex) {
-                Logger.getLogger(jdBoletaSalidaReceptor.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (SQLException ex) {
-                Logger.getLogger(jdBoletaSalidaReceptor.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } else {
-
-        }
-
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        this.dispose();
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -569,14 +482,28 @@ public class jdBoletaSalidaReceptor extends javax.swing.JDialog {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(jdBoletaSalidaReceptor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(jdBoletaSalidaReceptorVisor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(jdBoletaSalidaReceptor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(jdBoletaSalidaReceptorVisor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(jdBoletaSalidaReceptor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(jdBoletaSalidaReceptorVisor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(jdBoletaSalidaReceptor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(jdBoletaSalidaReceptorVisor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+
+        /* Create and display the dialog */
+ /* java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                jdBoletaSalidaReceptor dialog = new jdBoletaSalidaReceptor(new javax.swing.JFrame(), true);
+                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                    @Override
+                    public void windowClosing(java.awt.event.WindowEvent e) {
+                        System.exit(0);
+                    }
+                });
+                dialog.setVisible(true);
+            }
         //</editor-fold>
 
         /* Create and display the dialog */
@@ -595,15 +522,11 @@ public class jdBoletaSalidaReceptor extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox<String> comboDestino;
-    private javax.swing.JComboBox<String> comboSociedades;
-    private javax.swing.JComboBox<String> comboTipoDestino;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private com.toedter.calendar.JDateChooser jDateChooser1;
     private com.toedter.calendar.JDateChooser jDateChooser2;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
@@ -620,7 +543,8 @@ public class jdBoletaSalidaReceptor extends javax.swing.JDialog {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable1;
-    private javax.swing.JLabel lblRecepcion;
+    private javax.swing.JLabel lblDestino;
+    private javax.swing.JLabel lblIdBoleta;
     private javax.swing.JLabel lblSociedad;
     private javax.swing.JTextField txtBoletaManual;
     private javax.swing.JTextField txtChofer;

@@ -6,6 +6,13 @@
 package Formas_Recepcion;
 
 import Metodos_Configuraciones.metodosDatosBasicos;
+import Metodos_Configuraciones.metodosRecepcion;
+import Reportes.creacionPDF;
+import Visual.Visual;
+import Visual.jdVisual;
+import com.itextpdf.text.DocumentException;
+import java.awt.Desktop;
+import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
 import java.text.DecimalFormat;
@@ -32,7 +39,8 @@ public class jdRecibos extends javax.swing.JDialog {
     /**
      * Creates new form jdRecibos
      */
-    metodosDatosBasicos mdb;
+    metodosRecepcion mr;
+
     jpRecibos jpR;
     Connection cn;
     String idRecibo, tipoOperacion, idSociedad;
@@ -43,11 +51,11 @@ public class jdRecibos extends javax.swing.JDialog {
         setLocationRelativeTo(null);
 
         cn = c;
-        mdb = new metodosDatosBasicos(cn);
+        mr = new metodosRecepcion(cn);
         this.idRecibo = idRecibo;
         this.tipoOperacion = tipoOperacion;
         this.idSociedad = idSociedad;
-        txtSociedad.setText(mdb.devuelveUnDato("select nombrecorto from personam where id=" + idSociedad + " "));
+        txtSociedad.setText(mr.devuelveUnDato("select nombrecorto from personam where id=" + idSociedad + " "));
 
         if (!idRecibo.equals("")) {
             //JOptionPane.showMessageDialog(null, "Entre al if");
@@ -55,7 +63,8 @@ public class jdRecibos extends javax.swing.JDialog {
             bloquear();
         } else {
             //JOptionPane.showMessageDialog(null, "Entre al else");
-            String datos[] = mdb.cargarCombos("select f.descripcion \n"
+            jButton2.setVisible(false);
+            String datos[] = mr.cargarCombos("select f.descripcion \n"
                     + "from preciocafesociedad p \n"
                     + "inner join formacafe f on (p.id_formaCafe=f.id) "
                     + "inner join personam pm on (p.id_sociedad=pm.id)"
@@ -73,11 +82,11 @@ public class jdRecibos extends javax.swing.JDialog {
     public void combos() {
 
         if (radioFisica.isSelected()) {
-            String datos[] = mdb.cargarCombos("select CONCAT(pf.Nombre, ', ', pf.apellidoPaterno, ', ', pf.apellidoMaterno) from productor p inner join personaf pf on (p.id_persona=pf.ID) where tipoPersona=1").split("#");
+            String datos[] = mr.cargarCombos("select CONCAT(pf.Nombre, ', ', pf.apellidoPaterno, ', ', pf.apellidoMaterno) from productor p inner join personaf pf on (p.id_persona=pf.ID) where tipoPersona=1").split("#");
             comboProductor.setModel(new DefaultComboBoxModel((Object[]) datos));
             tipoPersona = "1";
         } else if (radioMoral.isSelected()) {
-            String datos[] = mdb.cargarCombos("select pf.razonsocial from productor p inner join personam pf on (p.id_persona=pf.ID) where tipoPersona=2").split("#");
+            String datos[] = mr.cargarCombos("select pf.razonsocial from productor p inner join personam pf on (p.id_persona=pf.ID) where tipoPersona=2").split("#");
             comboProductor.setModel(new DefaultComboBoxModel((Object[]) datos));
             tipoPersona = "2";
         }
@@ -100,13 +109,13 @@ public class jdRecibos extends javax.swing.JDialog {
                 nombre = datos[0].trim();
                 ap = datos[1].trim();
                 am = datos[2].trim();
-                idPersona = mdb.devuelveId("select id from personaf where nombre='" + nombre + "' and apellidopaterno ='" + ap + "' and apellidomaterno='" + am + "' ");
-                return mdb.devuelveUnDato("select clave_productor from productor where id_persona =" + idPersona + " and tipoPersona=1");
+                idPersona = mr.devuelveId("select id from personaf where nombre='" + nombre + "' and apellidopaterno ='" + ap + "' and apellidomaterno='" + am + "' ");
+                return mr.devuelveUnDato("select clave_productor from productor where id_persona =" + idPersona + " and tipoPersona=1");
 
             } else if (radioMoral.isSelected()) {
 
-                idPersona = mdb.devuelveId("select id from personam where razonsocial='" + nombre + "'");
-                return mdb.devuelveUnDato("select clave_productor from productor where id_persona =" + idPersona + " and tipoPersona=2");
+                idPersona = mr.devuelveId("select id from personam where razonsocial='" + nombre + "'");
+                return mr.devuelveUnDato("select clave_productor from productor where id_persona =" + idPersona + " and tipoPersona=2");
 
             }
         }
@@ -119,14 +128,14 @@ public class jdRecibos extends javax.swing.JDialog {
 
         } else {
             if (radioFisica.isSelected()) {
-                String idParcela = mdb.devuelveUnDato("select id from parcelas where id_persona=" + idPersona + " and nombre='" + comboParcela.getSelectedItem() + "' and tipoPersona=1");
-                String datos[] = mdb.devuelveUnDato("select concat(clave_parcela,'#', clave_certificacion) from parcelas where id=" + idParcela + " and tipoPersona=1").split("#");
+                String idParcela = mr.devuelveUnDato("select id from parcelas where id_persona=" + idPersona + " and nombre='" + comboParcela.getSelectedItem() + "' and tipoPersona=1");
+                String datos[] = mr.devuelveUnDato("select concat(clave_parcela,'#', clave_certificacion) from parcelas where id=" + idParcela + " and tipoPersona=1").split("#");
 
                 txtClaveParcela.setText(datos[0]);
                 txtCertificacion.setText(datos[1]);
             } else if (radioMoral.isSelected()) {
-                String idParcela = mdb.devuelveUnDato("select id from parcelas where id_persona=" + idPersona + " and nombre='" + comboParcela.getSelectedItem() + "' and tipoPersona=2");
-                String datos[] = mdb.devuelveUnDato("select concat(clave_parcela,'#', clave_certificacion) from parcelas where id=" + idParcela + " and tipoPersona=2").split("#");
+                String idParcela = mr.devuelveUnDato("select id from parcelas where id_persona=" + idPersona + " and nombre='" + comboParcela.getSelectedItem() + "' and tipoPersona=2");
+                String datos[] = mr.devuelveUnDato("select concat(clave_parcela,'#', clave_certificacion) from parcelas where id=" + idParcela + " and tipoPersona=2").split("#");
                 txtClaveParcela.setText(datos[0]);
                 txtCertificacion.setText(datos[1]);
             }
@@ -136,7 +145,7 @@ public class jdRecibos extends javax.swing.JDialog {
     public void cargarDatosRecibos() {
         try {
             String[] datos
-                    = mdb.devolverLineaDatos("SELECT concat(pf.Nombre,' ', pf.ApellidoPaterno,' ', pf.ApellidoMaterno), pm.nombrecorto,\n"
+                    = mr.devolverLineaDatos("SELECT concat(pf.Nombre,' ', pf.ApellidoPaterno,' ', pf.ApellidoMaterno), pm.nombrecorto,\n"
                             + "r.fechaRecepcion, p.clave_productor, pa.nombre, pa.clave_parcela, pa.clave_certificacion,\n"
                             + "r.folioManual,r.idLote,r.personaEntrego,r.sacos,r.kgRecibidos,r.totalBruto,r.retencion,r.total,r.verdes,r.inmaduros,r.brocados,r.calificacion,r.observaciones, r.formaCafe, r.precioBrutoKgSociedad, r.precioNetoKgSociedad, r.retencionKgSociedad\n"
                             + "from recibos r\n"
@@ -144,7 +153,7 @@ public class jdRecibos extends javax.swing.JDialog {
                             + "inner join personam pm on(pm.ID=r.idSociedad)\n"
                             + "inner join productor p on(p.id_persona=pf.ID)\n"
                             + "inner join parcelas pa on(pa.id=r.idParcela)\n"
-                            + "where r.id=" + idRecibo + " and p.tipoPersona=1", 24).split("#");
+                            + "where r.id=" + idRecibo + " and p.tipoPersona=1", 24).split("¬");
 
             comboProductor.addItem(datos[0]);
             comboProductor.setSelectedItem(datos[0]);
@@ -212,7 +221,7 @@ public class jdRecibos extends javax.swing.JDialog {
     String idCorte = "";
 
     public void generarIdCorte() {
-        String clavecorte = mdb.devuelveUnDato("select clavecorte from personam where nombrecorto='" + txtSociedad.getText() + "' ");
+        String clavecorte = mr.devuelveUnDato("select clavecorte from personam where nombrecorto='" + txtSociedad.getText() + "' ");
 
         Date fecha = new Date();
         String anio = new SimpleDateFormat("yy").format(fecha);
@@ -227,40 +236,44 @@ public class jdRecibos extends javax.swing.JDialog {
     }
 
     public void calcularCalificacion() {
-        String formula = "", id_evaluacion;
-        ScriptEngineManager manager = new ScriptEngineManager();
-        ScriptEngine engine = manager.getEngineByName("js");
+        try {
+            String formula = "", id_evaluacion;
+            ScriptEngineManager manager = new ScriptEngineManager();
+            ScriptEngine engine = manager.getEngineByName("js");
 
-        if (comboForma.getSelectedItem().equals("Seleccione..")) {
-            JOptionPane.showMessageDialog(null, "Seleccione forma de cafe");
-        } else {
-            id_evaluacion = mdb.devuelveId("select id from formacafe where descripcion='" + comboForma.getSelectedItem() + "' ") + "";
+            if (comboForma.getSelectedItem().equals("Seleccione..")) {
+                JOptionPane.showMessageDialog(null, "Seleccione forma de cafe");
+            } else {
+                id_evaluacion = mr.devuelveId("select id from formacafe where descripcion='" + comboForma.getSelectedItem() + "' ") + "";
 
-            formula = mdb.devuelveUnDato("SELECT te.Formula\n"
-                    + "from formaevaluacion fe\n"
-                    + "inner join tipoevaluacion te on (fe.ID_Evaluacion=te.ID)\n"
-                    + "where fe.id_forma=" + id_evaluacion);
-        }
+                formula = mr.devuelveUnDato("SELECT te.Formula\n"
+                        + "from formaevaluacion fe\n"
+                        + "inner join tipoevaluacion te on (fe.ID_Evaluacion=te.ID)\n"
+                        + "where fe.id_forma=" + id_evaluacion);
+            }
 
-        switch (comboForma.getSelectedItem() + "") {
+            switch (comboForma.getSelectedItem() + "") {
 
-            case "Cereza":
+                case "Cereza":
 
-                String valores = formula.replace("v", txtVerdes.getText());
-                valores = valores.replace("b", txtBrocados.getText());
-                valores = valores.replace("i", txtInmaduros.getText());
-                valores = valores.substring(2);
+                    String valores = formula.replace("v", txtVerdes.getText());
+                    valores = valores.replace("b", txtBrocados.getText());
+                    valores = valores.replace("i", txtInmaduros.getText());
+                    valores = valores.substring(2);
 
-                try {
-                    Object result = engine.eval(valores);
-                    int valor = (int) result;
-                    //JOptionPane.showMessageDialog(null, "Resultado: " + valor);
-                    txtCalificacion.setText(mdb.devolverCalificacion(valor));
-                } catch (ScriptException ex) {
-                    Logger.getLogger(jdRecibos.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                    try {
+                        Object result = engine.eval(valores);
+                        int valor = (int) result;
+                        //JOptionPane.showMessageDialog(null, "Resultado: " + valor);
+                        txtCalificacion.setText(mr.devolverCalificacion(valor));
+                    } catch (ScriptException ex) {
+                        Logger.getLogger(jdRecibos.class.getName()).log(Level.SEVERE, null, ex);
+                    }
 
-                break;
+                    break;
+            }
+        } catch (Exception e) {
+
         }
     }
 
@@ -279,6 +292,26 @@ public class jdRecibos extends javax.swing.JDialog {
         } catch (Exception e) {
 
         }
+    }
+
+    public Boolean validar() {
+
+        if (comboProductor.getSelectedItem().equals("Seleccione..")) {
+            JOptionPane.showMessageDialog(null, "Seleccione Productor");
+            return false;
+        } else if (comboParcela.getSelectedItem().equals("Seleccione..")) {
+            JOptionPane.showMessageDialog(null, "Seleccion Parcela");
+            return false;
+        } else if (comboForma.getSelectedItem().equals("Seleccione..")) {
+            JOptionPane.showMessageDialog(null, "Seleccione Forma de Café");
+            return false;
+        } else if (txtEntrego.getText().length() <= 0 || txtSacos.getText().length() <= 0 || txtKgRecibidos.getText().length() <= 0) {
+            JOptionPane.showMessageDialog(null, "Existen Campos Vacios");
+            return false;
+        } else {
+            return true;
+        }
+
     }
 
     /*    public void crearPdf(String idRecibo) throws JRException {
@@ -317,17 +350,17 @@ where r.id = 43 and prod.tipoPersona=1
         String fechaCreacion = new SimpleDateFormat("yyyy-MM-dd").format(jDateChooser1.getDate());
 
         //jDateChooser1.
-        if (mdb.devuelveId("select id from cortesdeldia where idLote= '" + txtIdCorte.getText() + "'") == null
-                || mdb.devuelveId("select id from cortesdeldia where idLote= '" + txtIdCorte.getText() + "'").equals("")) {
+        if (mr.devuelveId("select id from cortesdeldia where idLote= '" + txtIdCorte.getText() + "'") == null
+                || mr.devuelveId("select id from cortesdeldia where idLote= '" + txtIdCorte.getText() + "'").equals("")) {
 
-            JOptionPane.showMessageDialog(null, "No existe");
-            mdb.insertarBasicos("insert into cortesdeldia values(null, '" + fechaCreacion + "', '" + julianDateString + "', "
+            //JOptionPane.showMessageDialog(null, "No existe");
+            mr.insertarCorte("insert into cortesdeldia values(null, '" + fechaCreacion + "', '" + julianDateString + "', "
                     + " '" + txtIdCorte.getText() + "', '" + txtSociedad.getText() + "', '" + comboForma.getSelectedItem() + "', '" + txtSacos.getText() + "',"
                     + " '" + txtKgRecibidos.getText() + "', '" + txtTotal.getText() + "', 'Activo', '" + txtCalificacion.getText() + "', '" + txtCertificacion.getText() + "' )");
 
         } else {
-            JOptionPane.showMessageDialog(null, "Si existe");
-            mdb.actualizarBasicos("update cortesdeldia set sacos = (sacos + " + txtSacos.getText() + "), kg= (kg + " + txtKgRecibidos.getText() + "), costoAcumulado = (costoAcumulado+" + txtTotal.getText() + ") where idLote='" + txtIdCorte.getText() + "' ");
+            //JOptionPane.showMessageDialog(null, "Si existe");
+            mr.actualizarCorte("update cortesdeldia set sacos = (sacos + " + txtSacos.getText() + "), kg= (kg + " + txtKgRecibidos.getText() + "), costoAcumulado = (costoAcumulado+" + txtTotal.getText() + ") where idLote='" + txtIdCorte.getText() + "' ");
 
         }
     }
@@ -341,11 +374,11 @@ where r.id = 43 and prod.tipoPersona=1
             txtPrecioNeto.setText("0.00");
         } else {
 
-            String[] datos = mdb.devolverLineaDatos("select p.precioKg, r.importe "
+            String[] datos = mr.devolverLineaDatos("select p.precioKg, r.importe "
                     + "from preciocafesociedad p "
                     + "inner join retenciones r on (p.id_retencion=r.id) "
-                    + "where id_sociedad=" + mdb.devuelveId("select id from personam where nombrecorto='" + txtSociedad.getText() + "'") + " and "
-                    + "id_formaCafe=" + mdb.devuelveId("select id from formaCafe where descripcion='" + comboForma.getSelectedItem() + "'") + " ", 2).split("#");
+                    + "where id_sociedad=" + mr.devuelveId("select id from personam where nombrecorto='" + txtSociedad.getText() + "'") + " and "
+                    + "id_formaCafe=" + mr.devuelveId("select id from formaCafe where descripcion='" + comboForma.getSelectedItem() + "'") + " ", 2).split("¬");
 
             float precioBruto = Float.parseFloat(datos[0]);
             float retencion = Float.parseFloat(datos[1]) / 100;
@@ -436,6 +469,7 @@ where r.id = 43 and prod.tipoPersona=1
         txtFolio = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jDateChooser1 = new com.toedter.calendar.JDateChooser();
+        jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Nuevo Recibo");
@@ -448,9 +482,9 @@ where r.id = 43 and prod.tipoPersona=1
 
         comboProductor.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione.." }));
         comboProductor.setToolTipText("");
-        comboProductor.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                comboProductorItemStateChanged(evt);
+        comboProductor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboProductorActionPerformed(evt);
             }
         });
 
@@ -469,9 +503,9 @@ where r.id = 43 and prod.tipoPersona=1
 
         comboParcela.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione.." }));
         comboParcela.setToolTipText("");
-        comboParcela.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                comboParcelaItemStateChanged(evt);
+        comboParcela.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboParcelaActionPerformed(evt);
             }
         });
 
@@ -590,6 +624,7 @@ where r.id = 43 and prod.tipoPersona=1
 
         jLabel6.setText("Sociedad");
 
+        txtSociedad.setEditable(false);
         txtSociedad.setText("Riviera");
 
         jPanel3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -695,13 +730,21 @@ where r.id = 43 and prod.tipoPersona=1
 
         jLabel17.setText("Verdes");
 
+        txtVerdes.setEnabled(false);
         txtVerdes.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtVerdesKeyReleased(evt);
+            }
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txtVerdesKeyTyped(evt);
             }
         });
 
+        txtInmaduros.setEnabled(false);
         txtInmaduros.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtInmadurosKeyReleased(evt);
+            }
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txtInmadurosKeyTyped(evt);
             }
@@ -711,6 +754,7 @@ where r.id = 43 and prod.tipoPersona=1
 
         jLabel19.setText("Brocados");
 
+        txtBrocados.setEnabled(false);
         txtBrocados.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtBrocadosKeyReleased(evt);
@@ -874,9 +918,9 @@ where r.id = 43 and prod.tipoPersona=1
 
         jPanel6.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        comboForma.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                comboFormaItemStateChanged(evt);
+        comboForma.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboFormaActionPerformed(evt);
             }
         });
 
@@ -941,6 +985,13 @@ where r.id = 43 and prod.tipoPersona=1
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jButton2.setText("Abrir PDF");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -960,8 +1011,9 @@ where r.id = 43 and prod.tipoPersona=1
                     .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jButton1)
-                        .addGap(244, 244, 244)))
+                        .addComponent(jButton2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton1)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -982,7 +1034,9 @@ where r.id = 43 and prod.tipoPersona=1
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1)
+                    .addComponent(jButton2))
                 .addContainerGap())
         );
 
@@ -1008,7 +1062,7 @@ where r.id = 43 and prod.tipoPersona=1
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-              String sociedad = "", folio = "", nombreProductor = "", claveProductor = "",
+        String sociedad = "", folio = "", nombreProductor = "", claveProductor = "",
                 nombreParcela = "", claveParcela = "", certificacion = "", sacos = "", kgRecibidos = "",
                 totalBruto = "", retencion = "", total = "", verdes = "", inmaduros = "", brocados = "", calificacion = "",
                 idLote = "", personaEntrego = "", observaciones = "", idProductor, idParcela, idSociedad;
@@ -1018,8 +1072,7 @@ where r.id = 43 and prod.tipoPersona=1
         Date date = new Date();
         String fechaActual = new SimpleDateFormat("yyyy-MM-dd").format(date);
 
-        JOptionPane.showMessageDialog(null, "Fecha actual = " + fechaActual);
-
+        //JOptionPane.showMessageDialog(null, "Fecha actual = " + fechaActual);
         sociedad = txtSociedad.getText();
         folio = txtFolio.getText();
         nombreProductor = comboProductor.getSelectedItem() + "";
@@ -1040,26 +1093,43 @@ where r.id = 43 and prod.tipoPersona=1
         personaEntrego = txtEntrego.getText();
         observaciones = txtObservaciones.getText();
 
-        idProductor = mdb.devuelveId("select id from productor where clave_productor='" + claveProductor + "' ");
-        idParcela = mdb.devuelveId("select id from parcelas where clave_parcela='" + claveParcela + "' ");
-        idSociedad = mdb.devuelveId("select id from personam where nombrecorto='" + sociedad + "'");
+        idProductor = mr.devuelveId("select id from productor where clave_productor='" + claveProductor + "' ");
+        idParcela = mr.devuelveId("select id from parcelas where clave_parcela='" + claveParcela + "' ");
+        idSociedad = mr.devuelveId("select id from personam where nombrecorto='" + sociedad + "'");
 
         //JOptionPane.showMessageDialog(null, "Punto de partida");
-        mdb.insertarBasicos("INSERT INTO recibos VALUES(null, '" + idLote + "', " + idPersona + ", " + idParcela + ", " + idSociedad + ", '" + folio + "', "
-                + "'" + comboForma.getSelectedItem() + "','" + sacos + "', "
-                + "'" + kgRecibidos + "', '" + totalBruto + "', '" + retencion + "', '" + total + "', '" + txtPrecioNeto.getText() + "',  '" + verdes + "', '" + inmaduros + "', "
-                + "'" + brocados + "', '" + calificacion + "', '" + personaEntrego + "', '" + observaciones + "','" + fechaRecibo + "', '" + fechaActual + "', "
-                + "'" + txtPrecioBruto.getText() + "', '" + txtPrecioNeto.getText() + "', '" + txtRetencionKg.getText() + "' ) ");
+        if (validar()) {
+            mr.insertarRecibo("INSERT INTO recibos VALUES(null, '" + idLote + "', " + idPersona + ", " + idParcela + ", " + idSociedad + ", '" + folio + "', "
+                    + "'" + comboForma.getSelectedItem() + "','" + sacos + "', "
+                    + "'" + kgRecibidos + "', '" + totalBruto + "', '" + retencion + "', '" + total + "', '" + txtPrecioNeto.getText() + "',  '" + verdes + "', '" + inmaduros + "', "
+                    + "'" + brocados + "', '" + calificacion + "', '" + personaEntrego + "', '" + observaciones + "','" + fechaRecibo + "', '" + fechaActual + "', "
+                    + "'" + txtPrecioBruto.getText() + "', '" + txtPrecioNeto.getText() + "', '" + txtRetencionKg.getText() + "' ) ");
 
-        validarCorte();
-    /*    try {
-            crearPdf(mdb.devuelveUnDato("select id from recibos order by id desc limit 1"));
-        } catch (JRException ex) {
-            Logger.getLogger(jdRecibos.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, "Error al crear archivo \n" + ex.getMessage());
-        }*/
-        this.dispose();
-        jpR.llenarTabla();
+            validarCorte();
+
+            creacionPDF pdf = new creacionPDF(cn);
+
+            try {
+                pdf.pdfRecibo(mr.devuelveUnDato("select id from recibos order by id desc limit 1"));
+            } catch (DocumentException ex) {
+                Logger.getLogger(jdRecibos.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(jdRecibos.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            Desktop desktop = Desktop.getDesktop();
+            try {
+                desktop.open(new java.io.File("C:\\Users\\USUARIO\\Desktop\\prueba2.pdf"));
+            } catch (IOException ex) {
+                Logger.getLogger(jdRecibos.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            this.dispose();
+            jpR.llenarTabla();
+        } else {
+
+        }
+
     }//GEN-LAST:event_jButton1ActionPerformed
     String tipoPersona = "";
     private void radioFisicaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_radioFisicaItemStateChanged
@@ -1071,39 +1141,6 @@ where r.id = 43 and prod.tipoPersona=1
         // TODO add your handling code here:
         combos();
     }//GEN-LAST:event_radioMoralItemStateChanged
-
-    private void comboProductorItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboProductorItemStateChanged
-        // TODO add your handling code here:                
-        String persona = comboProductor.getSelectedItem() + "";
-
-        if (tipoOperacion.equals("1")) {
-
-            txtClaveProductor.setText(claveProductor());
-            if (radioFisica.isSelected()) {
-                String datos[] = mdb.cargarCombos("select nombre from parcelas where id_persona=" + idPersona + " and tipoPersona=1").split("#");
-                comboParcela.setModel(new DefaultComboBoxModel((Object[]) datos));
-                txtEntrego.setText(persona.replace(",", ""));
-            } else if (radioMoral.isSelected()) {
-                String datos[] = mdb.cargarCombos("select nombre from parcelas where id_persona=" + idPersona + " and tipoPersona=2").split("#");
-                comboParcela.setModel(new DefaultComboBoxModel((Object[]) datos));
-            }
-
-            txtClaveParcela.setText("");
-            txtCertificacion.setText("");
-        }
-    }//GEN-LAST:event_comboProductorItemStateChanged
-
-    private void comboParcelaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboParcelaItemStateChanged
-        // TODO add your handling code here
-        if (tipoOperacion.equals("1")) {
-            datosParcelas();
-        }
-    }//GEN-LAST:event_comboParcelaItemStateChanged
-
-    private void comboFormaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboFormaItemStateChanged
-        // TODO add your handling code here:
-        calcularRetencion();
-    }//GEN-LAST:event_comboFormaItemStateChanged
 
     private void txtBrocadosKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBrocadosKeyReleased
         // TODO add your handling code here:
@@ -1169,6 +1206,88 @@ where r.id = 43 and prod.tipoPersona=1
         }
     }//GEN-LAST:event_txtSacosKeyTyped
 
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        creacionPDF pdf = new creacionPDF(cn);
+        try {
+            pdf.pdfRecibo(idRecibo);
+        } catch (DocumentException ex) {
+            Logger.getLogger(jdRecibos.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(jdRecibos.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+      /*  Desktop desktop = Desktop.getDesktop();
+        try {
+            desktop.open(new java.io.File("C:\\Users\\USUARIO\\Desktop\\prueba2.pdf"));
+        } catch (IOException ex) {
+            Logger.getLogger(jdRecibos.class.getName()).log(Level.SEVERE, null, ex);
+        }*/
+        
+        jdVisual v = new jdVisual(null,true, "C:\\Users\\USUARIO\\Desktop\\prueba2.pdf");
+        v.setVisible(true);
+       // this.dispose();
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void comboFormaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboFormaActionPerformed
+        // TODO add your handling code here:
+        switch (comboForma.getSelectedItem() + "") {
+            case "Cereza":
+                txtVerdes.setEnabled(true);
+                txtInmaduros.setEnabled(true);
+                txtBrocados.setEnabled(true);
+                break;
+            default:
+                JOptionPane.showMessageDialog(null, "Evaluacions No Disponibles Momentaneamente");
+                txtVerdes.setEnabled(false);
+                txtInmaduros.setEnabled(false);
+                txtBrocados.setEnabled(false);
+                break;
+        }
+        calcularRetencion();
+    }//GEN-LAST:event_comboFormaActionPerformed
+
+    private void comboProductorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboProductorActionPerformed
+        // TODO add your handling code here:
+        String persona = comboProductor.getSelectedItem() + "";
+
+        if (tipoOperacion.equals("1")) {
+
+            txtClaveProductor.setText(claveProductor());
+            if (radioFisica.isSelected()) {
+                String datos[] = mr.cargarCombos("select nombre from parcelas where id_persona=" + idPersona + " and tipoPersona=1").split("#");
+                comboParcela.setModel(new DefaultComboBoxModel((Object[]) datos));
+                txtEntrego.setText(persona.replace(",", ""));
+            } else if (radioMoral.isSelected()) {
+                String datos[] = mr.cargarCombos("select nombre from parcelas where id_persona=" + idPersona + " and tipoPersona=2").split("#");
+                comboParcela.setModel(new DefaultComboBoxModel((Object[]) datos));
+            }
+
+            txtClaveParcela.setText("");
+            txtCertificacion.setText("");
+        }
+    }//GEN-LAST:event_comboProductorActionPerformed
+
+    private void comboParcelaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboParcelaActionPerformed
+        // TODO add your handling code here:
+        if (tipoOperacion.equals("1")) {
+            datosParcelas();
+            generarIdCorte();
+        }
+    }//GEN-LAST:event_comboParcelaActionPerformed
+
+    private void txtInmadurosKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtInmadurosKeyReleased
+        // TODO add your handling code here:
+        calcularCalificacion();
+        generarIdCorte();
+    }//GEN-LAST:event_txtInmadurosKeyReleased
+
+    private void txtVerdesKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtVerdesKeyReleased
+        // TODO add your handling code here:
+        calcularCalificacion();
+        generarIdCorte();
+    }//GEN-LAST:event_txtVerdesKeyReleased
+
     /**
      * @param args the command line arguments
      */
@@ -1231,6 +1350,7 @@ where r.id = 43 and prod.tipoPersona=1
     private javax.swing.JComboBox<String> comboParcela;
     private javax.swing.JComboBox<String> comboProductor;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private com.toedter.calendar.JDateChooser jDateChooser1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;

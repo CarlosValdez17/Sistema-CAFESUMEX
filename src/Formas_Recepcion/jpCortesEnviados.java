@@ -10,6 +10,8 @@ import java.sql.Connection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
@@ -18,7 +20,7 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author Carlos Valdez
  */
-public class jpLotesEnviados extends javax.swing.JPanel {
+public class jpCortesEnviados extends javax.swing.JPanel {
 
     /**
      * Creates new form jpRecibos
@@ -28,8 +30,9 @@ public class jpLotesEnviados extends javax.swing.JPanel {
     DefaultTableModel modelo, modelo2;
     jdRecibos jdR;
     String recepcion, idSociedad;
+    String idRecibo = "", idLote = "";
 
-    public jpLotesEnviados(Connection cn, String recepcion) throws ParseException {
+    public jpCortesEnviados(Connection cn, String recepcion) throws ParseException {
         initComponents();
 
         this.cn = cn;
@@ -46,120 +49,136 @@ public class jpLotesEnviados extends javax.swing.JPanel {
     public void llenarTabla() throws ParseException {
         limpiar(tablaCortes);
 
-        mdb.cargarInformacion2(modelo, 15,
-                "SELECT b.idLote, b.fecha, b.origen, b.destino, c.formaCafe, c.sacos, c.kg, c.costoAcumulado, b.idBoleta, b.idBoletaManual, b.fechaBoletaManual, sacosEnviados, kilosEnviados, b.estatus, false\n"
+        mdb.cargarInformacion2(modelo, 12,
+                "SELECT\n"
+                + " b.idBoleta,\n"
+                + "    b.fecha,\n"
+                + "    b.origen,\n"
+                + "    b.destino,\n"
+                + "    c.formaCafe,\n"
+                + " b.totalSacos,"
+                + " b.totalKg,"
+                + "    c.costoAcumulado,\n"
+                + "    b.idBoletaManual,\n"
+                + "    b.fechaBoletaManual,\n"
+                + "    b.estatus,\n"
+                + "    FALSE\n"
                 + "FROM boletasalidareceptor b \n"
                 + "INNER JOIN cortesdeldia c on (c.idLote=b.idLote) "
-                + "WHERE idSociedad=" + idSociedad + " order by b.id");
+                + "WHERE idSociedad=" + idSociedad + " group by b.idBoleta order by b.id");
         cambiarMesLetra(tablaCortes);
     }
 
     public void cambiarMesLetra(JTable tabla) {
-        for (int i = 0; i < tabla.getRowCount(); i++) {
+        try {
+            for (int i = 0; i < tabla.getRowCount(); i++) {
 
-            String fecha = tabla.getValueAt(i, 1) + "";
-            String fechaBoleta = tabla.getValueAt(i, 10) + "";
+                String fecha = tabla.getValueAt(i, 1) + "";
+                String fechaBoleta = tabla.getValueAt(i, 10) + "";
 
-            String[] fecha2 = fecha.split("-");
-            String[] fecha2B = fechaBoleta.split("-");
+                String[] fecha2 = fecha.split("-");
+                String[] fecha2B = fechaBoleta.split("-");
 
-            String año = fecha2[0];
-            String mes = fecha2[1];
-            String dia = fecha2[2];
+                String año = fecha2[0];
+                String mes = fecha2[1];
+                String dia = fecha2[2];
 
-            String añoB = fecha2B[0];
-            String mesB = fecha2B[1];
-            String diaB = fecha2B[2];
+                String añoB = fecha2B[0];
+                String mesB = fecha2B[1];
+                String diaB = fecha2B[2];
 
-            switch (mes) {
-                case "01":
-                    mes = "Ene";
-                    break;
-                case "02":
-                    mes = "Feb";
-                    break;
-                case "03":
-                    mes = "Mar";
-                    break;
-                case "04":
-                    mes = "Abr";
-                    break;
-                case "05":
-                    mes = "May";
-                    break;
-                case "06":
-                    mes = "Jun";
-                    break;
-                case "07":
-                    mes = "Jul";
-                    break;
-                case "08":
-                    mes = "Ago";
-                    break;
-                case "09":
-                    mes = "Sep";
-                    break;
-                case "10":
-                    mes = "Oct";
-                    break;
-                case "11":
-                    mes = "Nov";
-                    break;
-                case "12":
-                    mes = "Dic";
-                    break;
-                default:
-                    mes = "Invalid month";
-                    break;
+                switch (mes) {
+                    case "01":
+                        mes = "Ene";
+                        break;
+                    case "02":
+                        mes = "Feb";
+                        break;
+                    case "03":
+                        mes = "Mar";
+                        break;
+                    case "04":
+                        mes = "Abr";
+                        break;
+                    case "05":
+                        mes = "May";
+                        break;
+                    case "06":
+                        mes = "Jun";
+                        break;
+                    case "07":
+                        mes = "Jul";
+                        break;
+                    case "08":
+                        mes = "Ago";
+                        break;
+                    case "09":
+                        mes = "Sep";
+                        break;
+                    case "10":
+                        mes = "Oct";
+                        break;
+                    case "11":
+                        mes = "Nov";
+                        break;
+                    case "12":
+                        mes = "Dic";
+                        break;
+                    default:
+                        mes = "Invalid month";
+                        break;
+                }
+
+                switch (mesB) {
+                    case "01":
+                        mesB = "Ene";
+                        break;
+                    case "02":
+                        mesB = "Feb";
+                        break;
+                    case "03":
+                        mesB = "Mar";
+                        break;
+                    case "04":
+                        mesB = "Abr";
+                        break;
+                    case "05":
+                        mesB = "May";
+                        break;
+                    case "06":
+                        mesB = "Jun";
+                        break;
+                    case "07":
+                        mesB = "Jul";
+                        break;
+                    case "08":
+                        mesB = "Ago";
+                        break;
+                    case "09":
+                        mesB = "Sep";
+                        break;
+                    case "10":
+                        mesB = "Oct";
+                        break;
+                    case "11":
+                        mesB = "Nov";
+                        break;
+                    case "12":
+                        mesB = "Dic";
+                        break;
+                    default:
+                        mesB = "Invalid month";
+                        break;
+                }
+
+                fechaBoleta = añoB + "-" + mesB + "-" + diaB;
+                tabla.setValueAt(fechaBoleta, i, 10);
+
+                fecha = año + "-" + mes + "-" + dia;
+                tabla.setValueAt(fecha, i, 1);
             }
+        } catch (Exception e) {
 
-            switch (mesB) {
-                case "01":
-                    mesB = "Ene";
-                    break;
-                case "02":
-                    mesB = "Feb";
-                    break;
-                case "03":
-                    mesB = "Mar";
-                    break;
-                case "04":
-                    mesB = "Abr";
-                    break;
-                case "05":
-                    mesB = "May";
-                    break;
-                case "06":
-                    mesB = "Jun";
-                    break;
-                case "07":
-                    mesB = "Jul";
-                    break;
-                case "08":
-                    mesB = "Ago";
-                    break;
-                case "09":
-                    mesB = "Sep";
-                    break;
-                case "10":
-                    mesB = "Oct";
-                    break;
-                case "11":
-                    mesB = "Nov";
-                    break;
-                case "12":
-                    mesB = "Dic";
-                    break;
-                default:
-                    mesB = "Invalid month";
-                    break;
-            }
-
-            fechaBoleta = añoB + "-" + mesB + "-" + diaB;
-            tabla.setValueAt(fechaBoleta, i, 10);
-
-            fecha = año + "-" + mes + "-" + dia;
-            tabla.setValueAt(fecha, i, 1);
         }
     }
 
@@ -169,8 +188,8 @@ public class jpLotesEnviados extends javax.swing.JPanel {
         contadorProductores.setText(tablaRecibos.getRowCount() + "");
 
         for (int i = 0; i < tablaRecibos.getRowCount(); i++) {
-            contadorKg = contadorKg + Float.parseFloat(tablaRecibos.getValueAt(i, 10) + "");
-            contadorSacos = contadorSacos + Float.parseFloat(tablaRecibos.getValueAt(i, 11) + "");
+            contadorSacos = contadorSacos + Float.parseFloat(tablaRecibos.getValueAt(i, 3) + "");
+            contadorKg = contadorKg + Float.parseFloat(tablaRecibos.getValueAt(i, 4) + "");
         }
         this.contadorKg.setText(contadorKg + "");
         this.contadorSacos.setText(contadorSacos + "");
@@ -224,31 +243,24 @@ public class jpLotesEnviados extends javax.swing.JPanel {
 
         tablaCortes.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Id Corte", "Fecha", "Origen", "Destino", "Forma de Café", "Sacos", "Kg Neto", "Costo Acumulado", "Boleta", "Boleta Manual", "Fecha Boleta Manual", "Sacos Enviados", "Kilos Enviados", "Estado", "Dividido"
+                "Boleta", "Fecha", "Origen", "Destino", "Forma de Café", "Total Sacos", "Total Kg", "Costo Acumulado", "Boleta Manual", "Fecha Boleta Manual", "Estado", "Dividido"
             }
         ) {
-            Class[] types = new Class [] {
-                java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
-            };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false, false, false, false, false, true
+                false, false, false, false, false, false, false, false, false, false, false, false
             };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        tablaCortes.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        tablaCortes.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         tablaCortes.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tablaCortesMouseClicked(evt);
@@ -348,7 +360,7 @@ public class jpLotesEnviados extends javax.swing.JPanel {
 
         contadorProductores.setText("-");
 
-        jLabel8.setText("Total Recibos");
+        jLabel8.setText("Total Cortes");
 
         jLabel9.setText("Total Sacos");
 
@@ -363,18 +375,18 @@ public class jpLotesEnviados extends javax.swing.JPanel {
 
             },
             new String [] {
-                "Folio", "Folio Manual", "Id Lote", "Fecha de Recepcion", "Nombre", "Apellido Paterno", "Apellido Materno", "Sociedad", "Parcela", "Forma Cafe", "Sacos", "Kg Recibidos", "Total Bruto", "Retencion", "Total", "Verdes", "Inmaduros", "Brocados", "Calificacion", "Entregó", "Observaciones"
+                "Id Corte", "Fecha", "Forma de Café", "Sacos", "Kg Neto", "Costo Acumulado", "Sacos Enviados", "Kilos Enviados"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        tablaRecibos.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        tablaRecibos.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         tablaRecibos.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tablaRecibosMouseClicked(evt);
@@ -383,10 +395,10 @@ public class jpLotesEnviados extends javax.swing.JPanel {
         jScrollPane2.setViewportView(tablaRecibos);
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jLabel3.setText("Recibos del Corte");
+        jLabel3.setText("Cortes de la Boleta");
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jLabel4.setText("Cortes Enviados");
+        jLabel4.setText("Boletas");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -419,7 +431,7 @@ public class jpLotesEnviados extends javax.swing.JPanel {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel10)
                             .addComponent(contadorKg))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 371, Short.MAX_VALUE)
                         .addComponent(jButton1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton4)))
@@ -503,20 +515,29 @@ public class jpLotesEnviados extends javax.swing.JPanel {
                 + "WHERE idSociedad=" + idSociedad + " and b.idBoleta like '" + txtBoleta.getText() + "%' order by b.id");
         cambiarMesLetra(tablaCortes);
     }//GEN-LAST:event_txtBoletaKeyReleased
-    String idRecibo = "", idLote="";
+    String idBoleta;
     private void tablaCortesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaCortesMouseClicked
         // TODO add your handling code here:
         limpiar(tablaRecibos);
         modelo2 = (DefaultTableModel) tablaRecibos.getModel();
         //idLote = idCorte
-        idLote = tablaCortes.getValueAt(tablaCortes.getSelectedRow(), 0) + "";
-        mdb.cargarInformacion2(modelo2, 21, "select r.id, r.folioManual,r.idLote, r.fechaRecepcion, pf.Nombre, pf.ApellidoPaterno, pf.ApellidoMaterno,\n"
-                + "pm.RazonSocial, p.nombre, r.formaCafe, r.sacos, r.kgRecibidos, r.totalBruto, r.retencion, r.total, r.verdes, r.inmaduros, r.brocados, r.calificacion, r.personaEntrego, r.observaciones\n"
-                + "from recibos r\n"
-                + "inner join personam pm on ( pm.ID=r.idSociedad)\n"
-                + "inner join personaf pf on ( pf.ID=r.idPersona)\n"
-                + "inner join parcelas p on ( p.id=r.idParcela) "
-                + "where r.idLote='" + idLote + "'");
+        //idLote = tablaCortes.getValueAt(tablaCortes.getSelectedRow(), 0) + "";
+        idBoleta = tablaCortes.getValueAt(tablaCortes.getSelectedRow(), 0) + "";
+        mdb.cargarInformacion2(modelo2, 8, "SELECT c.idLote, c.fechaCreacion, c.formaCafe, c.sacos, c.kg, c.costoAcumulado, b.sacosEnviados, b.kilosEnviados\n"
+                + "from cortesdeldia c\n"
+                + "inner join boletasalidareceptor b on(c.idLote=b.idLote)\n"
+                + "where b.idBoleta='"+idBoleta+"' ");
+
+        if (evt.getClickCount() == 2) {
+            jdBoletaSalidaReceptorVisor jdBSV;
+            try {
+                jdBSV = new jdBoletaSalidaReceptorVisor(null, true, idBoleta, cn);
+                jdBSV.setVisible(true);
+            } catch (ParseException ex) {
+                Logger.getLogger(jpCortesEnviados.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }
 
         sumarColumnas();
         idRecibo = "";

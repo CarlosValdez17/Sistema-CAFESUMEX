@@ -48,7 +48,7 @@ public class jdPrecioCafeSociedad extends javax.swing.JDialog {
         String[] datos2 = mdb.cargarCombos("select descripcion from retenciones").split("#");
         comboRetencion.setModel(new DefaultComboBoxModel((Object[]) datos2));
 
-        String[] datos3 = mdb.devolverLineaDatos("select razonsocial, nombrecorto, identificacionfiscal from personam where clavecorte='" + claveSociedad + "'", 3).split("#");
+        String[] datos3 = mdb.devolverLineaDatos("select razonsocial, nombrecorto, identificacionfiscal from personam where clavecorte='" + claveSociedad + "'", 3).split("¬");
 
         lblSociedad.setText(datos3[0]);
         lblNC.setText(datos3[1]);

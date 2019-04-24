@@ -18,7 +18,7 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author Carlos Valdez
  */
-public class jpLotesDelDia extends javax.swing.JPanel {
+public class jpCortesDelDia extends javax.swing.JPanel {
 
     /**
      * Creates new form jpRecibos
@@ -29,7 +29,7 @@ public class jpLotesDelDia extends javax.swing.JPanel {
     jdRecibos jdR;
     String idSociedad, sociedad, recepcion;
 
-    public jpLotesDelDia(Connection cn, String recepcion) throws ParseException {
+    public jpCortesDelDia(Connection cn, String recepcion) throws ParseException {
         initComponents();
 
         this.cn = cn;
@@ -264,7 +264,7 @@ public class jpLotesDelDia extends javax.swing.JPanel {
         jLabel3.setText("Recibos del Corte");
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jLabel4.setText("Cortes Enviados");
+        jLabel4.setText("Cortes del Día");
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Filtros"));
 

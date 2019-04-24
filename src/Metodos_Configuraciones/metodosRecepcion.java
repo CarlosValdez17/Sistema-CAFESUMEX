@@ -17,25 +17,40 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author Carlos Valdez
  */
-public class metodosDatosBasicos {
+public class metodosRecepcion {
     
     Connection cn;
     
-    public metodosDatosBasicos(Connection c) {
+    public metodosRecepcion(Connection c) {
         cn = c;
     }
     
-    public void insertarBasicos(String sql) {
+    public void insertarRecibo(String sql) {
         try {
-            System.out.println(sql);
+           // System.out.println(sql);
             PreparedStatement cmd = cn.prepareCall(sql);
             cmd.execute();
             cmd.close();
-            JOptionPane.showMessageDialog(null, "Inserción Exitosa");
+            JOptionPane.showMessageDialog(null, "Recibo Almacenado");
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Error al Insertar\n" + ex);
+            JOptionPane.showMessageDialog(null, "Error, recibo fallido.\n" + ex);
         }
     }
+    
+    public void insertarCorte(String sql) {
+        try {
+            //System.out.println(sql);
+            PreparedStatement cmd = cn.prepareCall(sql);
+            cmd.execute();
+            cmd.close();
+            JOptionPane.showMessageDialog(null, "Corte Almacenado");
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Error, corte fallido.\n" + ex);
+        }
+    }
+    
+    
+    
     
     public void insertarEnCiclo(String sql) {
         try {
@@ -59,15 +74,15 @@ public class metodosDatosBasicos {
         }
     }
     
-    public void actualizarBasicos(String sql) {
+    public void actualizarCorte(String sql) {
         try {
-            System.out.println(sql);
+            //System.out.println(sql);
             PreparedStatement cmd = cn.prepareCall(sql);
             cmd.execute();
             cmd.close();
-            JOptionPane.showMessageDialog(null, "Dato Actualizado");
+            JOptionPane.showMessageDialog(null, "Corte Actualizado");
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Error al Actualizar \n" + ex);
+            JOptionPane.showMessageDialog(null, "Error, Actualizar Corte \n" + ex);
         }
     }
     

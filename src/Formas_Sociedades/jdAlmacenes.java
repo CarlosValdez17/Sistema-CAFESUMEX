@@ -122,6 +122,7 @@ public class jdAlmacenes extends javax.swing.JDialog {
         checkExterno = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Formulario Almacenes");
         setResizable(false);
 
         jLabel1.setText("Nombre");
@@ -189,6 +190,11 @@ public class jdAlmacenes extends javax.swing.JDialog {
         });
 
         jButton2.setText("Cancelar");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         checkExterno.setText("Externo");
 
@@ -390,6 +396,11 @@ public class jdAlmacenes extends javax.swing.JDialog {
         // TODO add your handling code here:
        // JOptionPane.showMessageDialog(null, "Clave here - "+claveResponsable());
     }//GEN-LAST:event_comboResponsableItemStateChanged
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        this.dispose();
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments

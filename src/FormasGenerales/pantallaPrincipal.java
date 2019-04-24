@@ -65,9 +65,9 @@ import Formas_Personas.jpPersonas;
 import Formas_Personas.jpPersonas;
 import Formas_Recepcion.jdRecibos;
 import Formas_Recepcion.jdSeleccionRecepcion;
-import Formas_Recepcion.jpLotesDelDia;
-import Formas_Recepcion.jpLotesDelDia;
-import Formas_Recepcion.jpLotesEnviados;
+import Formas_Recepcion.jpCortesDelDia;
+import Formas_Recepcion.jpCortesDelDia;
+import Formas_Recepcion.jpCortesEnviados;
 import Formas_Recepcion.jpRecibos;
 import Formas_Sociedades.jpAlmacenes;
 import Formas_Sociedades.jpBeneficiosH;
@@ -647,7 +647,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 panelPrincipal.repaint();
                 break;
             case "Cortes del día":
-                jpLotesDelDia jpLot = new jpLotesDelDia(cn, recepcion);
+                jpCortesDelDia jpLot = new jpCortesDelDia(cn, recepcion);
                 jpLot.setSize(size);
                 jpLot.setLocation(0, 0);
                 panelPrincipal.removeAll();
@@ -656,7 +656,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 panelPrincipal.repaint();
                 break;
             case "Cortes Enviados":
-                jpLotesEnviados jpLotE = new jpLotesEnviados(cn, recepcion);
+                jpCortesEnviados jpLotE = new jpCortesEnviados(cn, recepcion);
                 jpLotE.setSize(size);
                 jpLotE.setLocation(0, 0);
                 panelPrincipal.removeAll();

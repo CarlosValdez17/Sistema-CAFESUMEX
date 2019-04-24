@@ -145,7 +145,7 @@ public class jpRecibos extends javax.swing.JPanel {
             tabla.setValueAt(fecha, i, 3);
         }
     }
-    
+
     public void sumarColumnas() {
 
         float contadorKg = 0, contadorSacos = 0;
@@ -153,8 +153,8 @@ public class jpRecibos extends javax.swing.JPanel {
         contadorProductores.setText(tablaRecibos.getRowCount() + "");
 
         for (int i = 0; i < tablaRecibos.getRowCount(); i++) {
-            contadorKg = contadorKg + Float.parseFloat(tablaRecibos.getValueAt(i, 10) + "");
-            contadorSacos = contadorSacos + Float.parseFloat(tablaRecibos.getValueAt(i, 11) + "");
+            contadorSacos = contadorSacos + Float.parseFloat(tablaRecibos.getValueAt(i, 10) + "");
+            contadorKg = contadorKg + Float.parseFloat(tablaRecibos.getValueAt(i, 11) + "");
         }
 
         this.contadorKg.setText(contadorKg + "");

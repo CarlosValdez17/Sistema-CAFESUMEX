@@ -38,13 +38,13 @@ public class jdCodigosCertificados extends javax.swing.JFrame {
     public void rellenarCombos() {
         String[] datos;
 
-        datos = mdb.cargarCombos("SELECT descripcion from certificado").split("#");
+        datos = mdb.cargarCombos("SELECT descripcion from certificado").split("¬");
         comboCertificado.setModel(new DefaultComboBoxModel((Object[]) datos));
 
-        datos = mdb.cargarCombos("SELECT descripcion from certificadora").split("#");
+        datos = mdb.cargarCombos("SELECT descripcion from certificadora").split("¬");
         comboCertificadora.setModel(new DefaultComboBoxModel((Object[]) datos));
 
-        datos = mdb.cargarCombos("SELECT descripcion from estandarescert").split("#");
+        datos = mdb.cargarCombos("SELECT descripcion from estandarescert").split("¬");
         comboAlcances.setModel(new DefaultComboBoxModel((Object[]) datos));
     }
 

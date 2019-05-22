@@ -7,6 +7,7 @@ package Formas_Sociedades;
 
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.Connection;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
@@ -28,16 +29,35 @@ public class jpLocalidadesSociedades extends javax.swing.JPanel {
 
         this.cn = cn;
         mdb = new metodosDatosBasicos(cn);
-        modelo = (DefaultTableModel) jTable1.getModel();
+        modelo = (DefaultTableModel) tablaLocalidades.getModel();
         llenarTabla();
     }
 
     public void llenarTabla() {
-        limpiar(jTable1);
-        mdb.tablaDetallesLocalidad(modelo, 9, "SELECT l.descripcion, clave, fechaFundacion, latitud, longitud, mayorAltitudCultivo, menorAltitudCultivo, altitudPromedioCultivo, evaluacionSuelo \n"
+        limpiar(tablaLocalidades);
+        mdb.tablaDetallesLocalidad(modelo, 10, "SELECT l.descripcion, clave, fechaFundacion, latitud, longitud, mayorAltitudCultivo, menorAltitudCultivo, altitudPromedioCultivo, evaluacionSuelo,idSociedades \n"
                 + "FROM detalles_localidad d\n"
                 + "INNER JOIN localidad l on(d.idLocalidad=l.ID)"
         );
+        cambiarSociedades();
+    }
+
+    public void cambiarSociedades() {
+
+        for (int i = 0; i < tablaLocalidades.getRowCount(); i++) {
+            String listaSociedades = tablaLocalidades.getValueAt(i, 9) + "";
+            String[] cadena = listaSociedades.split(",");
+            String sociedades = "";
+            if (listaSociedades.equals("")) {
+
+            } else {
+                for (int x = 0; x < cadena.length; x++) {
+                    String dato = mdb.devuelveUnDato("select nombrecorto from personam where id=" + cadena[x]);
+                    sociedades += dato + ", ";
+                }
+                tablaLocalidades.setValueAt(sociedades.substring(0,sociedades.length()-1), i, 9);
+            }
+        }
     }
 
     private void limpiar(JTable tabla) {
@@ -57,7 +77,7 @@ public class jpLocalidadesSociedades extends javax.swing.JPanel {
 
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tablaLocalidades = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
@@ -69,10 +89,11 @@ public class jpLocalidadesSociedades extends javax.swing.JPanel {
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tablaLocalidades.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null, null, null},
@@ -98,7 +119,12 @@ public class jpLocalidadesSociedades extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        tablaLocalidades.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tablaLocalidadesMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tablaLocalidades);
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Filtros"));
 
@@ -156,6 +182,13 @@ public class jpLocalidadesSociedades extends javax.swing.JPanel {
 
         jButton5.setText("Cerrar");
 
+        jButton1.setText("Sociedades");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -166,7 +199,8 @@ public class jpLocalidadesSociedades extends javax.swing.JPanel {
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jScrollPane1)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButton2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButton3)
@@ -188,7 +222,8 @@ public class jpLocalidadesSociedades extends javax.swing.JPanel {
                     .addComponent(jButton2)
                     .addComponent(jButton3)
                     .addComponent(jButton4)
-                    .addComponent(jButton5))
+                    .addComponent(jButton5)
+                    .addComponent(jButton1))
                 .addContainerGap())
         );
 
@@ -216,8 +251,25 @@ public class jpLocalidadesSociedades extends javax.swing.JPanel {
         jpL.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        if(idLocalidad.equals("")){
+            JOptionPane.showMessageDialog(null,"Seleccione Localidad");
+        }else{
+        jdSociedades jdS = new jdSociedades(null, true, idLocalidad, cn);
+        jdS.setVisible(true);
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+    String idLocalidad="";
+    private void tablaLocalidadesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaLocalidadesMouseClicked
+        // TODO add your handling code here:
+        String nombreLocalidad = tablaLocalidades.getValueAt(tablaLocalidades.getSelectedRow(), 0) + "";
+        idLocalidad = mdb.devuelveUnDato("select id from localidad where descripcion='" + nombreLocalidad + "'");
+    }//GEN-LAST:event_tablaLocalidadesMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
@@ -228,9 +280,9 @@ public class jpLocalidadesSociedades extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
+    private javax.swing.JTable tablaLocalidades;
     // End of variables declaration//GEN-END:variables
 }

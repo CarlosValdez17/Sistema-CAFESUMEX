@@ -41,7 +41,7 @@ public class CodComb extends javax.swing.JPanel {
     }
 
     public void cargarCombo() {
-        String[] datos = mdb.cargarCombos("SELECT descripcion from puestos").split("#");
+        String[] datos = mdb.cargarCombos("SELECT descripcion from puestos").split("¬");
         comb1.setModel(new DefaultComboBoxModel((Object[]) datos));
 
     }
@@ -424,23 +424,23 @@ public class CodComb extends javax.swing.JPanel {
         String[] datos;
         datos = mdb.cargarCombos("SELECT descripcion \n"
                 + "from certificado  \n"
-                + "").split("#");
+                + "").split("¬");
         comb1.setModel(new DefaultComboBoxModel((Object[]) datos));
         datos = mdb.cargarCombos("SELECT descripcion \n"
                 + "from certificadora  \n"
-                + "").split("#");
+                + "").split("¬");
         comb2.setModel(new DefaultComboBoxModel((Object[]) datos));
         datos = mdb.cargarCombos("SELECT descripcion \n"
                 + "from estandarescert  \n"
-                + "").split("#");
+                + "").split("¬");
         comb3.setModel(new DefaultComboBoxModel((Object[]) datos));
         datos = mdb.cargarCombos("SELECT descripcion \n"
                 + "from estandarescert  \n"
-                + "").split("#");
+                + "").split("¬");
         comb4.setModel(new DefaultComboBoxModel((Object[]) datos));
         datos = mdb.cargarCombos("SELECT descripcion \n"
                 + "from estandarescert  \n"
-                + "").split("#");
+                + "").split("¬");
         comb5.setModel(new DefaultComboBoxModel((Object[]) datos));
 
     }

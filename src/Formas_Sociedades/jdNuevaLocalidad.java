@@ -35,7 +35,7 @@ public class jdNuevaLocalidad extends javax.swing.JDialog {
     }
 
     public void llenarCombo() {
-        String[] datos = mdb.cargarCombos("select descripcion from localidad").split("#");
+        String[] datos = mdb.cargarCombos("select descripcion from localidad").split("¬");
         comboLocalidades.setModel(new DefaultComboBoxModel((Object[]) datos));
     }
 
@@ -281,7 +281,7 @@ public class jdNuevaLocalidad extends javax.swing.JDialog {
 
         mdb.insertarBasicos("insert into detalles_localidad values(" + idLocalidad + ", '" + txtClave.getText() + "', '" + fechaF + "', '" + txtPoblacion.getText() + "', "
                 + "'" + txtAltitud.getText() + "', '" + txtMayorAltitud.getText() + "', '" + txtMenorAltitud.getText() + "', '" + txtAltitudPromedio.getText() + "', "
-                + "'" + txtLatitud.getText() + "', '" + txtLongitud.getText() + "', " + evaluacion + ", '" + txtDescripcion.getText() + "' ) "
+                + "'" + txtLatitud.getText() + "', '" + txtLongitud.getText() + "', " + evaluacion + ", '" + txtDescripcion.getText() + "','' ) "
         );
     }//GEN-LAST:event_jButton1ActionPerformed
 

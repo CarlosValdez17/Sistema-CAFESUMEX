@@ -80,7 +80,7 @@ public class jdColoniaEjido extends javax.swing.JDialog {
     public void rellenarCombos() {
         String pais, estado, municipio;
 
-        datos = mdb.cargarCombos("SELECT descripcion from pais").split("#");
+        datos = mdb.cargarCombos("SELECT descripcion from pais").split("¬");
         comboPais.setModel(new DefaultComboBoxModel((Object[]) datos));
 
         pais = comboPais.getSelectedItem() + "";
@@ -88,7 +88,7 @@ public class jdColoniaEjido extends javax.swing.JDialog {
         datos = mdb.cargarCombos("SELECT e.descripcion \n"
                 + "from estado e \n"
                 + "inner join pais p on (e.id_pais=p.id) \n"
-                + "where p.Descripcion='" + pais + "'").split("#");
+                + "where p.Descripcion='" + pais + "'").split("¬");
         comboEstado.setModel(new DefaultComboBoxModel((Object[]) datos));
 
         estado = comboEstado.getSelectedItem() + "";
@@ -96,7 +96,7 @@ public class jdColoniaEjido extends javax.swing.JDialog {
         datos = mdb.cargarCombos("SELECT m.descripcion \n"
                 + "from municipio m \n"
                 + "inner join estado e on (m.id_estado=e.id) \n"
-                + "where e.Descripcion='" + estado + "'").split("#");
+                + "where e.Descripcion='" + estado + "'").split("¬");
         comboMunicipio.setModel(new DefaultComboBoxModel((Object[]) datos));
 
         municipio = comboMunicipio.getSelectedItem() + "";
@@ -104,7 +104,7 @@ public class jdColoniaEjido extends javax.swing.JDialog {
         datos = mdb.cargarCombos("SELECT l.descripcion \n"
                 + "from localidad l \n"
                 + "inner join municipio m on (l.ID_Municipio=m.ID) \n"
-                + "where m.Descripcion='" + municipio + "' ").split("#");
+                + "where m.Descripcion='" + municipio + "' ").split("¬");
         comboLocalidad.setModel(new DefaultComboBoxModel((Object[]) datos));
 
         //comboMunicipio.setSelectedItem(m);
@@ -328,7 +328,7 @@ public class jdColoniaEjido extends javax.swing.JDialog {
         datos = mdb.cargarCombos("SELECT m.descripcion \n"
                 + "from municipio m \n"
                 + "inner join estado e on (m.id_estado=e.id) \n"
-                + "where e.Descripcion='" + comboEstado.getSelectedItem() + "" + "'").split("#");
+                + "where e.Descripcion='" + comboEstado.getSelectedItem() + "" + "'").split("¬");
         comboMunicipio.setModel(new DefaultComboBoxModel((Object[]) datos));
     }//GEN-LAST:event_comboEstadoItemStateChanged
 
@@ -342,13 +342,13 @@ public class jdColoniaEjido extends javax.swing.JDialog {
         datos = mdb.cargarCombos("SELECT e.descripcion \n"
                 + "from estado e \n"
                 + "inner join pais p on (e.id_pais=p.id) \n"
-                + "where p.Descripcion='" + p + "'").split("#");
+                + "where p.Descripcion='" + p + "'").split("¬");
         comboEstado.setModel(new DefaultComboBoxModel((Object[]) datos));
 
         datos = mdb.cargarCombos("SELECT m.descripcion \n"
                 + "from municipio m \n"
                 + "inner join estado e on (m.id_estado=e.id) \n"
-                + "where e.Descripcion='" + comboEstado.getSelectedItem() + "" + "'").split("#");
+                + "where e.Descripcion='" + comboEstado.getSelectedItem() + "" + "'").split("¬");
         comboMunicipio.setModel(new DefaultComboBoxModel((Object[]) datos));
         
     }//GEN-LAST:event_comboPaisItemStateChanged

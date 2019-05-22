@@ -58,6 +58,7 @@ public class jdSociedadesPersonas extends javax.swing.JDialog {
         
         //JOptionPane.showMessageDialog(null, "Tipo Operacion=" + tipoOperacion + " - Tipo Persona=" + tipoPersona + " - id=" + idPersona);
         rellenar();
+        
     }
 
     public void llenarTabla() {
@@ -75,14 +76,14 @@ public class jdSociedadesPersonas extends javax.swing.JDialog {
             datos = mdb.generadorStrings("select p.razonsocial \n"
                     + "from sociedadespersona a\n "
                     + "inner join personam p on (a.ID_asociado=p.ID)\n "
-                    + "where a.id_persona= " + idPersona + " and a.tipoPersona=1 order by p.razonsocial asc").split("#");
+                    + "where a.id_persona= " + idPersona + " and a.tipoPersona=1 order by p.razonsocial asc").split("¬");
 
             //labelPersona.setText(mdb.devuelveUnDato("select concat(nombre,' ',apellidomaterno,' ',apellidopaterno) as nombre from personaf where id=" + idPersona));
         } else {
             datos = mdb.generadorStrings("select p.razonsocial \n"
                     + "from sociedadespersona a\n "
                     + "inner join personam p on (a.ID_asociado=p.ID)\n "
-                    + "where a.id_persona= " + idPersona + " and a.tipoPersona=2 order by p.razonsocial asc").split("#");
+                    + "where a.id_persona= " + idPersona + " and a.tipoPersona=2 order by p.razonsocial asc").split("¬");
 
             //labelPersona.setText(mdb.devuelveUnDato("select razonsocial from personam where id=" + idPersona));
         }
@@ -116,7 +117,7 @@ public class jdSociedadesPersonas extends javax.swing.JDialog {
     DefaultTableModel modelo = (DefaultTableModel) tablaSociedades.getModel();
 
         if (tipoOperacion.equals("1")) {
-
+            
             if (tipoPersona.equals("1")) {
                 for (int i = 0; i < modelo.getRowCount(); i++) {
                     String desc = modelo.getValueAt(i, 0) + "";

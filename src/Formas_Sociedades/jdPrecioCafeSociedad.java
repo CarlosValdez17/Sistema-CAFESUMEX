@@ -7,6 +7,9 @@ package Formas_Sociedades;
 
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.Connection;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -42,10 +45,10 @@ public class jdPrecioCafeSociedad extends javax.swing.JDialog {
 
     public void rellenarCombos() {
 
-        String[] datos1 = mdb.cargarCombos("select descripcion from formacafe").split("#");
+        String[] datos1 = mdb.cargarCombos("select descripcion from formacafe").split("¬");
         comboForma.setModel(new DefaultComboBoxModel((Object[]) datos1));
 
-        String[] datos2 = mdb.cargarCombos("select descripcion from retenciones").split("#");
+        String[] datos2 = mdb.cargarCombos("select descripcion from retenciones").split("¬");
         comboRetencion.setModel(new DefaultComboBoxModel((Object[]) datos2));
 
         String[] datos3 = mdb.devolverLineaDatos("select razonsocial, nombrecorto, identificacionfiscal from personam where clavecorte='" + claveSociedad + "'", 3).split("¬");
@@ -99,9 +102,11 @@ public class jdPrecioCafeSociedad extends javax.swing.JDialog {
         lblNC = new javax.swing.JLabel();
         lblRFC = new javax.swing.JLabel();
         jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Precio De Café Por Sociedad");
+        setResizable(false);
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -181,6 +186,8 @@ public class jdPrecioCafeSociedad extends javax.swing.JDialog {
             }
         });
 
+        jButton3.setText("Ver Historal");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -206,12 +213,7 @@ public class jdPrecioCafeSociedad extends javax.swing.JDialog {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel4)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(txtCentavos, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(jButton1)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jButton2))))
+                                    .addComponent(txtCentavos, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel5)
@@ -224,7 +226,14 @@ public class jdPrecioCafeSociedad extends javax.swing.JDialog {
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(lblRFC)
                                     .addComponent(jLabel7))))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 154, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton3)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -255,12 +264,14 @@ public class jdPrecioCafeSociedad extends javax.swing.JDialog {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(comboRetencion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtPrecioKg, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtCentavos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jButton1)
-                        .addComponent(jButton2)))
+                            .addComponent(txtCentavos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 229, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1)
+                    .addComponent(jButton2)
+                    .addComponent(jButton3))
                 .addContainerGap())
         );
 
@@ -295,9 +306,19 @@ public class jdPrecioCafeSociedad extends javax.swing.JDialog {
         String idRetencion = mdb.devuelveId("select id from retenciones where descripcion='" + comboRetencion.getSelectedItem() + "' ");
         String idSociedad = mdb.devuelveId("select id from personam where clavecorte='" + claveSociedad + "'");
 
-        mdb.insertarBasicos("insert into preciocafesociedad values (null, " + idSociedad + ", " + idForma + ", " + idRetencion + ", '" + txtPrecioKg.getText() + "' )");
-        llenarTabla();
+        Date date = new Date();
+        String fechaActual = new SimpleDateFormat("yyyy-MM-dd").format(date);
 
+        DateFormat hourFormat = new SimpleDateFormat("HH:mm:ss");
+        String horaActual = hourFormat.format(date);
+
+        if (mdb.insertarBasicosComprobacion("insert into preciocafesociedad values (null, " + idSociedad + ", " + idForma + ", " + idRetencion + ", '" + txtPrecioKg.getText() + "' )")) {
+            mdb.insertarBasicos("insert into historialPrecioCafeSociedad ( null, " + idSociedad + ", " + idForma + ", "
+                    + "" + idRetencion + ", '" + txtPrecioKg.getText() + "', 'Usuario Modificacion', '" + fechaActual + "', '" + horaActual + "'  )");
+        } else {
+            JOptionPane.showMessageDialog(null, "Error, Verificar.");
+        }
+        llenarTabla();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void txtPrecioKgKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPrecioKgKeyReleased
@@ -386,6 +407,7 @@ public class jdPrecioCafeSociedad extends javax.swing.JDialog {
     private javax.swing.JComboBox<String> comboRetencion;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

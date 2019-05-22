@@ -7,6 +7,7 @@ package Formas_Sociedades;
 
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.Connection;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
@@ -22,6 +23,8 @@ public class jpAlmacenes extends javax.swing.JPanel {
     Connection cn;
     DefaultTableModel modelo;
     metodosDatosBasicos mdb;
+    jdAlmacenes jdAl;
+    String estado = "=1";
 
     public jpAlmacenes(Connection cn) {
         initComponents();
@@ -34,13 +37,14 @@ public class jpAlmacenes extends javax.swing.JPanel {
 
     public void llenarTabla() {
         limpiar(jTable1);
-        mdb.tablaDetallesLocalidad(modelo, 9, "select nombreAlmacen, CONCAT(pf.Nombre, ' ', pf.apellidoPaterno, ' ', pf.apellidoMaterno), domicilio, a.telefono, e.descripcion, m.descripcion, l.descripcion, pm.nombrecorto, externo\n"
+        mdb.tablaDetallesLocalidad(modelo, 10, "select nombreAlmacen, CONCAT(pf.Nombre, ' ', pf.apellidoPaterno, ' ', pf.apellidoMaterno),CONCAT(pf2.Nombre, ' ', pf2.apellidoPaterno, ' ', pf2.apellidoMaterno), domicilio, a.telefono, e.descripcion, m.descripcion, l.descripcion, pm.nombrecorto, externo\n"
                 + "from almacenes a\n"
-                + "inner join personaf pf on (a.idResponsable=pf.ID)\n"
-                + " inner join localidad l on (a.idLocalidad=l.ID)\n"
-                + "  inner join municipio m on (l.ID_Municipio=m.ID)\n"
-                + "  inner join estado e on (m.ID_Estado=e.ID)\n"
-                + "inner join personam pm on (a.idSociedad=pm.ID)"
+                + "left join personaf pf on (a.idResponsable=pf.ID)\n"
+                + "left join personaf pf2 on (a.idCapturista=pf2.ID)\n"
+                + "left join localidad l on (a.idLocalidad=l.ID)\n"
+                + "left join municipio m on (l.ID_Municipio=m.ID)\n"
+                + "left join estado e on (m.ID_Estado=e.ID)\n"
+                + "left join personam pm on (a.idSociedad=pm.ID) where idEstado" + estado
         );
     }
 
@@ -75,25 +79,26 @@ public class jpAlmacenes extends javax.swing.JPanel {
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
+        comboEstado = new javax.swing.JComboBox<>();
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Almacén", "Responsable", "Domicilio", "Telefono", "Estado", "Municipio", "Localidad", "Sociedad", "Externo"
+                "Almacén", "Responsable", "Capturista", "Domicilio", "Telefono", "Estado", "Municipio", "Localidad", "Sociedad", "Externo"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Boolean.class
+                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -171,6 +176,18 @@ public class jpAlmacenes extends javax.swing.JPanel {
         jButton4.setText("Editar");
 
         jButton5.setText("Desactivar");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
+
+        comboEstado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Activos", "Inactivos", "Todos" }));
+        comboEstado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboEstadoActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -182,7 +199,8 @@ public class jpAlmacenes extends javax.swing.JPanel {
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jScrollPane1)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(comboEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButton2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton3)
@@ -204,7 +222,8 @@ public class jpAlmacenes extends javax.swing.JPanel {
                     .addComponent(jButton2)
                     .addComponent(jButton3)
                     .addComponent(jButton4)
-                    .addComponent(jButton5))
+                    .addComponent(jButton5)
+                    .addComponent(comboEstado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -228,11 +247,45 @@ public class jpAlmacenes extends javax.swing.JPanel {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        jdAlmacenes jdBH = new jdAlmacenes(null, true, cn);
-        jdBH.setVisible(true);
+        jdAl = new jdAlmacenes(null, true, cn);
+        jdAl.jpAl = this;
+        jdAl.setVisible(true);
     }//GEN-LAST:event_jButton3ActionPerformed
 
+    private void comboEstadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboEstadoActionPerformed
+        // TODO add your handling code here:
+        switch (comboEstado.getSelectedItem() + "") {
+            case "Activos":
+                estado = "=1";
+                jButton5.setText("Activar");
+                llenarTabla();
+                break;
+            case "Inactivos":
+                estado = "=2";
+                jButton5.setText("Desactivar");
+                llenarTabla();
+                break;
+            case "Todos":
+                estado = " <> 3";
+                llenarTabla();
+                break;
+        }
+    }//GEN-LAST:event_comboEstadoActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        // TODO add your handling code here:
+        if (estado.equals("=1")) {
+            mdb.actualizarBasicos("update almacenes set idEstado=2 where nombreAlmacen='" + jTable1.getValueAt(jTable1.getSelectedRow(), 0) + "'");
+        } else if (estado.equals("=2")) {
+            mdb.actualizarBasicos("update almacenes set idEstado=1 where nombreAlmacen='" + jTable1.getValueAt(jTable1.getSelectedRow(), 0) + "'");
+        }else{
+            JOptionPane.showMessageDialog(null,"Opcion No Permitida");
+        }
+        llenarTabla();
+    }//GEN-LAST:event_jButton5ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> comboEstado;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;

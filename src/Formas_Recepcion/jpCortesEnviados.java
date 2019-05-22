@@ -37,7 +37,7 @@ public class jpCortesEnviados extends javax.swing.JPanel {
 
         this.cn = cn;
         mdb = new metodosDatosBasicos(cn);
-        modelo = (DefaultTableModel) tablaCortes.getModel();
+        modelo = (DefaultTableModel) tablaBoletas.getModel();
 
         this.recepcion = recepcion;
         idSociedad = mdb.devuelveUnDato("select idSociedad from recepciones where idRecepcion='" + recepcion + "' ");
@@ -47,7 +47,7 @@ public class jpCortesEnviados extends javax.swing.JPanel {
     }
 
     public void llenarTabla() throws ParseException {
-        limpiar(tablaCortes);
+        limpiar(tablaBoletas);
 
         mdb.cargarInformacion2(modelo, 12,
                 "SELECT\n"
@@ -65,8 +65,9 @@ public class jpCortesEnviados extends javax.swing.JPanel {
                 + "    FALSE\n"
                 + "FROM boletasalidareceptor b \n"
                 + "INNER JOIN cortesdeldia c on (c.idLote=b.idLote) "
-                + "WHERE idSociedad=" + idSociedad + " group by b.idBoleta order by b.id");
-        cambiarMesLetra(tablaCortes);
+                + "INNER JOIN recepciones re on (b.idRecepcion=re.id) "
+                + "WHERE re.idRecepcion='" + recepcion + "' group by b.idBoleta order by b.id");
+        cambiarMesLetra(tablaBoletas);
     }
 
     public void cambiarMesLetra(JTable tabla) {
@@ -185,11 +186,11 @@ public class jpCortesEnviados extends javax.swing.JPanel {
     public void sumarColumnas() {
 
         float contadorKg = 0, contadorSacos = 0;
-        contadorProductores.setText(tablaRecibos.getRowCount() + "");
+        contadorProductores.setText(tablaCortes.getRowCount() + "");
 
-        for (int i = 0; i < tablaRecibos.getRowCount(); i++) {
-            contadorSacos = contadorSacos + Float.parseFloat(tablaRecibos.getValueAt(i, 3) + "");
-            contadorKg = contadorKg + Float.parseFloat(tablaRecibos.getValueAt(i, 4) + "");
+        for (int i = 0; i < tablaCortes.getRowCount(); i++) {
+            contadorSacos = contadorSacos + Float.parseFloat(tablaCortes.getValueAt(i, 3) + "");
+            contadorKg = contadorKg + Float.parseFloat(tablaCortes.getValueAt(i, 4) + "");
         }
         this.contadorKg.setText(contadorKg + "");
         this.contadorSacos.setText(contadorSacos + "");
@@ -210,9 +211,13 @@ public class jpCortesEnviados extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPopupMenu1 = new javax.swing.JPopupMenu();
+        reciboItem = new javax.swing.JMenuItem();
+        jPopupMenu2 = new javax.swing.JPopupMenu();
+        boletaItem = new javax.swing.JMenuItem();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tablaCortes = new javax.swing.JTable();
+        tablaBoletas = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         txtIdCorte = new javax.swing.JTextField();
@@ -235,13 +240,29 @@ public class jpCortesEnviados extends javax.swing.JPanel {
         contadorSacos = new javax.swing.JLabel();
         contadorKg = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        tablaRecibos = new javax.swing.JTable();
+        tablaCortes = new javax.swing.JTable();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
 
+        reciboItem.setText("Recibos");
+        reciboItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                reciboItemActionPerformed(evt);
+            }
+        });
+        jPopupMenu1.add(reciboItem);
+
+        boletaItem.setText("Abrir Boleta");
+        boletaItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                boletaItemActionPerformed(evt);
+            }
+        });
+        jPopupMenu2.add(boletaItem);
+
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        tablaCortes.setModel(new javax.swing.table.DefaultTableModel(
+        tablaBoletas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null, null, null, null, null},
@@ -260,13 +281,14 @@ public class jpCortesEnviados extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
-        tablaCortes.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
-        tablaCortes.addMouseListener(new java.awt.event.MouseAdapter() {
+        tablaBoletas.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
+        tablaBoletas.setComponentPopupMenu(jPopupMenu2);
+        tablaBoletas.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tablaCortesMouseClicked(evt);
+                tablaBoletasMouseClicked(evt);
             }
         });
-        jScrollPane1.setViewportView(tablaCortes);
+        jScrollPane1.setViewportView(tablaBoletas);
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Filtros"));
 
@@ -370,7 +392,7 @@ public class jpCortesEnviados extends javax.swing.JPanel {
 
         contadorKg.setText("-");
 
-        tablaRecibos.setModel(new javax.swing.table.DefaultTableModel(
+        tablaCortes.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -386,13 +408,14 @@ public class jpCortesEnviados extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
-        tablaRecibos.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
-        tablaRecibos.addMouseListener(new java.awt.event.MouseAdapter() {
+        tablaCortes.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
+        tablaCortes.setComponentPopupMenu(jPopupMenu1);
+        tablaCortes.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tablaRecibosMouseClicked(evt);
+                tablaCortesMouseClicked(evt);
             }
         });
-        jScrollPane2.setViewportView(tablaRecibos);
+        jScrollPane2.setViewportView(tablaCortes);
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel3.setText("Cortes de la Boleta");
@@ -496,37 +519,37 @@ public class jpCortesEnviados extends javax.swing.JPanel {
 
     private void txtIdCorteKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtIdCorteKeyReleased
         // TODO add your handling code here:
-        limpiar(tablaCortes);
+        limpiar(tablaBoletas);
         mdb.cargarInformacion2(modelo, 15,
                 "SELECT b.idLote, b.fecha, b.origen, b.destino, c.formaCafe, c.sacos, c.kg, c.costoAcumulado, b.idBoleta, b.idBoletaManual, b.fechaBoletaManual, sacosEnviados, kilosEnviados, b.estatus, false\n"
                 + "FROM boletasalidareceptor b \n"
                 + "INNER JOIN cortesdeldia c on (c.idLote=b.idLote) "
                 + "WHERE idSociedad=" + idSociedad + " and b.idLote like '" + txtIdCorte.getText() + "%' order by b.id");
-        cambiarMesLetra(tablaCortes);
+        cambiarMesLetra(tablaBoletas);
     }//GEN-LAST:event_txtIdCorteKeyReleased
 
     private void txtBoletaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBoletaKeyReleased
         // TODO add your handling code here:
-        limpiar(tablaCortes);
+        limpiar(tablaBoletas);
         mdb.cargarInformacion2(modelo, 15,
                 "SELECT b.idLote, b.fecha, b.origen, b.destino, c.formaCafe, c.sacos, c.kg, c.costoAcumulado, b.idBoleta, b.idBoletaManual, b.fechaBoletaManual, sacosEnviados, kilosEnviados, b.estatus, false\n"
                 + "FROM boletasalidareceptor b \n"
                 + "INNER JOIN cortesdeldia c on (c.idLote=b.idLote) "
                 + "WHERE idSociedad=" + idSociedad + " and b.idBoleta like '" + txtBoleta.getText() + "%' order by b.id");
-        cambiarMesLetra(tablaCortes);
+        cambiarMesLetra(tablaBoletas);
     }//GEN-LAST:event_txtBoletaKeyReleased
     String idBoleta;
-    private void tablaCortesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaCortesMouseClicked
+    private void tablaBoletasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaBoletasMouseClicked
         // TODO add your handling code here:
-        limpiar(tablaRecibos);
-        modelo2 = (DefaultTableModel) tablaRecibos.getModel();
+        limpiar(tablaCortes);
+        modelo2 = (DefaultTableModel) tablaCortes.getModel();
         //idLote = idCorte
         //idLote = tablaCortes.getValueAt(tablaCortes.getSelectedRow(), 0) + "";
-        idBoleta = tablaCortes.getValueAt(tablaCortes.getSelectedRow(), 0) + "";
+        idBoleta = tablaBoletas.getValueAt(tablaBoletas.getSelectedRow(), 0) + "";
         mdb.cargarInformacion2(modelo2, 8, "SELECT c.idLote, c.fechaCreacion, c.formaCafe, c.sacos, c.kg, c.costoAcumulado, b.sacosEnviados, b.kilosEnviados\n"
                 + "from cortesdeldia c\n"
                 + "inner join boletasalidareceptor b on(c.idLote=b.idLote)\n"
-                + "where b.idBoleta='"+idBoleta+"' ");
+                + "where b.idBoleta='" + idBoleta + "' ");
 
         if (evt.getClickCount() == 2) {
             jdBoletaSalidaReceptorVisor jdBSV;
@@ -541,34 +564,53 @@ public class jpCortesEnviados extends javax.swing.JPanel {
 
         sumarColumnas();
         idRecibo = "";
-    }//GEN-LAST:event_tablaCortesMouseClicked
+    }//GEN-LAST:event_tablaBoletasMouseClicked
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
         String fecha1 = new SimpleDateFormat("yyyy-MM-dd").format(jdFecha1.getDate());
         String fecha2 = new SimpleDateFormat("yyyy-MM-dd").format(jdFecha2.getDate());
-        limpiar(tablaCortes);
+        limpiar(tablaBoletas);
 
         mdb.cargarInformacion2(modelo, 15,
                 "SELECT b.idLote, b.fecha, b.origen, b.destino, c.formaCafe, c.sacos, c.kg, c.costoAcumulado, b.idBoleta, b.idBoletaManual, b.fechaBoletaManual, sacosEnviados, kilosEnviados, b.estatus, false\n"
                 + "FROM boletasalidareceptor b \n"
                 + "INNER JOIN cortesdeldia c on (c.idLote=b.idLote) "
                 + "WHERE idSociedad=" + idSociedad + " and b.fecha between '" + fecha1 + "' and '" + fecha2 + "' order by b.id");
-        cambiarMesLetra(tablaCortes);
+        cambiarMesLetra(tablaBoletas);
     }//GEN-LAST:event_jButton6ActionPerformed
-
-    private void tablaRecibosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaRecibosMouseClicked
+    String idCorte = "";
+    private void tablaCortesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaCortesMouseClicked
         // TODO add your handling code here:
-        idRecibo = tablaRecibos.getValueAt(tablaRecibos.getSelectedRow(), 0) + "";
+        idCorte = tablaCortes.getValueAt(tablaCortes.getSelectedRow(), 0) + "";
 
         if (evt.getClickCount() == 2) {
-            jdR = new jdRecibos(null, true, idRecibo, "2", idSociedad, cn);
-            jdR.setVisible(true);
+            jdRecibosDelCorte jdRDC = new jdRecibosDelCorte(null, true, idCorte, cn);
+            jdRDC.setVisible(true);
         }
-    }//GEN-LAST:event_tablaRecibosMouseClicked
+    }//GEN-LAST:event_tablaCortesMouseClicked
+
+    private void reciboItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reciboItemActionPerformed
+        // TODO add your handling code here:
+        jdRecibosDelCorte jdRDC = new jdRecibosDelCorte(null, true, idCorte, cn);
+        jdRDC.setVisible(true);
+    }//GEN-LAST:event_reciboItemActionPerformed
+
+    private void boletaItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boletaItemActionPerformed
+        // TODO add your handling code here:
+        jdBoletaSalidaReceptorVisor jdBSV;
+        try {
+            jdBSV = new jdBoletaSalidaReceptorVisor(null, true, idBoleta, cn);
+            jdBSV.setVisible(true);
+        } catch (ParseException ex) {
+            Logger.getLogger(jpCortesEnviados.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }//GEN-LAST:event_boletaItemActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem boletaItem;
     private javax.swing.JLabel contadorKg;
     private javax.swing.JLabel contadorProductores;
     private javax.swing.JLabel contadorSacos;
@@ -588,13 +630,16 @@ public class jpCortesEnviados extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPopupMenu jPopupMenu1;
+    private javax.swing.JPopupMenu jPopupMenu2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
     private com.toedter.calendar.JDateChooser jdFecha1;
     private com.toedter.calendar.JDateChooser jdFecha2;
+    private javax.swing.JMenuItem reciboItem;
+    private javax.swing.JTable tablaBoletas;
     private javax.swing.JTable tablaCortes;
-    private javax.swing.JTable tablaRecibos;
     private javax.swing.JTextField txtBoleta;
     private javax.swing.JTextField txtIdCorte;
     // End of variables declaration//GEN-END:variables

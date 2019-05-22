@@ -62,7 +62,7 @@ public class jdFormaProceso extends javax.swing.JDialog {
                 + "from formaproceso fe\n "
                 + "inner join procesocafe te on (fe.ID_Proceso=te.ID)\n"
                 + "where fe.id_forma= "
-                + mdb.devuelveId("select id from formacafe where descripcion='" + valor + "'")).split("#");
+                + mdb.devuelveId("select id from formacafe where descripcion='" + valor + "'")).split("¬");
         int e = 0;
         for (int i = 0; i < modelo.getRowCount(); i++) {
 
@@ -78,7 +78,7 @@ public class jdFormaProceso extends javax.swing.JDialog {
     }
 
     public void llenarCombo() {
-        String[] datos = mdb.cargarCombos("SELECT descripcion from formacafe").split("#");
+        String[] datos = mdb.cargarCombos("SELECT descripcion from formacafe").split("¬");
         comboFormas.setModel(new DefaultComboBoxModel((Object[]) datos));
     }
 

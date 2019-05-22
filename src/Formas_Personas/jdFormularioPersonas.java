@@ -78,9 +78,9 @@ public class jdFormularioPersonas extends javax.swing.JDialog {
                 String ds = mdb.generadorStrings("select p.nombrecorto \n"
                         + "from sociedadespersona a\n "
                         + "inner join personam p on (a.ID_asociado=p.ID)\n "
-                        + "where a.id_persona= " + idPersona + " and a.tipoPersona=1 order by p.razonsocial asc").replace("#", ", ");
+                        + "where a.id_persona= " + idPersona + " and a.tipoPersona=1 order by p.razonsocial asc").replace("¬", ", ");
 
-                lblSociedades.setText("Sociedad: " + ds);
+                lblSociedades.setText(ds);
 
                 String[] datos = mdb.cargarDatosFormularioPersonas("SELECT\n"
                         + "    nombre,\n"
@@ -148,7 +148,7 @@ public class jdFormularioPersonas extends javax.swing.JDialog {
 
                 txtRuta.setText(datos[15]);
 
-              /*  if (mdb.devuelveId("select a.id from asignacionespersona a\n "
+                /*  if (mdb.devuelveId("select a.id from asignacionespersona a\n "
                         + "inner join puestos p on (a.id_puesto=p.ID)\n "
                         + "where a.id_persona=" + idPersona + " and p.Descripcion='Productor' ").equals("")) {
                     tProductor.setSelected(false);
@@ -156,7 +156,7 @@ public class jdFormularioPersonas extends javax.swing.JDialog {
                     tProductor.setSelected(true);
                 }*/
 
-                /*if (mdb.devuelveId("select a.id from asignacionespersona a\n "
+ /*if (mdb.devuelveId("select a.id from asignacionespersona a\n "
                         + "inner join puestos p on (a.id_puesto=p.ID)\n "
                         + "where a.id_persona=" + idPersona + " and p.Descripcion='Socio' ").equals("")) {
                     tSocio.setSelected(false);
@@ -164,7 +164,6 @@ public class jdFormularioPersonas extends javax.swing.JDialog {
                     tSocio.setSelected(true);
                     jButton6.setEnabled(true);
                 }*/
-
                 if (!txtRuta.getText().equals("NO") || datos[15].equals("")) {
                     BufferedImage img = null;
                     img = decodeToImage(datos[15]);
@@ -239,7 +238,7 @@ public class jdFormularioPersonas extends javax.swing.JDialog {
                     }
                 } catch (Exception e) {
                 }
-               /* if (mdb.devuelveId("select a.id from asignacionespersona a\n "
+                /* if (mdb.devuelveId("select a.id from asignacionespersona a\n "
                         + "inner join puestos p on (a.id_puesto=p.ID)\n "
                         + "where a.id_persona=" + idPersona + " and p.Descripcion='Productor' ").equals("")) {
                     tProductor.setSelected(false);
@@ -301,35 +300,35 @@ public class jdFormularioPersonas extends javax.swing.JDialog {
         String pais, estado, municipio, localidad, colonia;
         String[] datos;
 
-        datos = mdb.cargarCombos("SELECT descripcion from pais").split("#");
+        datos = mdb.cargarCombos("SELECT descripcion from pais").split("¬");
         comboPais.setModel(new DefaultComboBoxModel((Object[]) datos));
         pais = comboPais.getSelectedItem() + "";
 
         datos = mdb.cargarCombos("SELECT e.descripcion \n"
                 + "from estado e \n"
                 + "inner join pais p on (e.id_pais=p.id) \n"
-                + "where p.Descripcion='" + pais + "'").split("#");
+                + "where p.Descripcion='" + pais + "'").split("¬");
         comboEstado.setModel(new DefaultComboBoxModel((Object[]) datos));
         estado = comboEstado.getSelectedItem() + "";
 
         datos = mdb.cargarCombos("SELECT m.descripcion \n"
                 + "from municipio m \n"
                 + "inner join estado e on (m.id_estado=e.id) \n"
-                + "where e.Descripcion='" + estado + "'").split("#");
+                + "where e.Descripcion='" + estado + "'").split("¬");
         comboMunicipio.setModel(new DefaultComboBoxModel((Object[]) datos));
         municipio = comboMunicipio.getSelectedItem() + "";
 
         datos = mdb.cargarCombos("SELECT m.descripcion \n"
                 + "from localidad m \n"
                 + "inner join municipio e on (m.id_municipio=e.id) \n"
-                + "where e.Descripcion='" + municipio + "'").split("#");
+                + "where e.Descripcion='" + municipio + "'").split("¬");
         comboLocalidad.setModel(new DefaultComboBoxModel((Object[]) datos));
         localidad = comboLocalidad.getSelectedItem() + "";
 
         datos = mdb.cargarCombos("SELECT m.descripcion \n"
                 + "from ejidocolonia m \n"
                 + "inner join localidad e on (m.id_localidad=e.id) \n"
-                + "where e.Descripcion='" + localidad + "'").split("#");
+                + "where e.Descripcion='" + localidad + "'").split("¬");
         comboColonia.setModel(new DefaultComboBoxModel((Object[]) datos));
     }
 
@@ -380,7 +379,7 @@ public class jdFormularioPersonas extends javax.swing.JDialog {
             pMoral.setEnabled(true);
             pFisica.setEnabled(true);
 //            tSocio.setEnabled(true);
- //           tProductor.setEnabled(true);
+            //           tProductor.setEnabled(true);
             comboPais.setEnabled(true);
             comboEstado.setEnabled(true);
             comboMunicipio.setEnabled(true);
@@ -463,13 +462,12 @@ public class jdFormularioPersonas extends javax.swing.JDialog {
     public Boolean validarCampos() {
         Boolean valor = null;
 
-    /*    if (!tSocio.isSelected() && !tProductor.isSelected()) {
+        /*    if (!tSocio.isSelected() && !tProductor.isSelected()) {
             JOptionPane.showMessageDialog(null, "Seleccione Socio o Productor");
             return false;
         } else {
             valor = true;
         }*/
-
         if (txtNombre.getText().length() == 0 || txtApPat.getText().length() == 0 || txtApMat.getText().length() == 0
                 || txtDireccion.getText().length() == 0 || txtRFC.getText().length() == 0 || txtCURP.getText().length() == 0
                 || txtTelefono.getText().length() == 0 || txtTelefono1.getText().length() == 0) {
@@ -513,7 +511,7 @@ public class jdFormularioPersonas extends javax.swing.JDialog {
             }
 
             String estadoSocio = "0";
-/*            if (tSocio.isSelected() && tProductor.isSelected()) {
+            /*            if (tSocio.isSelected() && tProductor.isSelected()) {
                 //Preguntar y Añadir Sociedad
                 estadoSocio = "1";
             } else if (!tSocio.isSelected() && tProductor.isSelected()) {
@@ -530,7 +528,7 @@ public class jdFormularioPersonas extends javax.swing.JDialog {
                 tipoPersona = "2";
             }
 
-         /*   if (tSocio.isSelected()) {
+            /*   if (tSocio.isSelected()) {
                 atributoS = "1";
                 asignacion = "Socio";
             }
@@ -538,7 +536,6 @@ public class jdFormularioPersonas extends javax.swing.JDialog {
                 atributoP = "1";
                 asignacion = "Productor";
             }*/
-
             if (radioM.isSelected()) {
                 genero = "1";
             } else {
@@ -575,7 +572,7 @@ public class jdFormularioPersonas extends javax.swing.JDialog {
                     detalleAsignaciones(idPersona, "1");
                     tipo = "2";
                 } else {
-                    mdb.insertarBasicos("INSERT INTO personam VALUES(null,  "
+                    if (mdb.insertarBasicosComprobacion("INSERT INTO personam VALUES(null,  "
                             + "'" + txtNombre.getText() + "', '" + txtApPat.getText() + "', '" + txtApMat.getText() + "','" + txtRFC.getText() + "', "
                             + "'" + txtTelefono.getText() + "','" + txtTelefono1.getText() + "','" + txtCURP.getText() + "', "
                             + "'" + txtDireccion.getText() + "', '" + txtCP.getText() + "', "
@@ -584,11 +581,11 @@ public class jdFormularioPersonas extends javax.swing.JDialog {
                             + "'" + mdb.devuelveId("select id from municipio where descripcion='" + comboMunicipio.getSelectedItem() + "' ") + "',"
                             + "'" + mdb.devuelveId("select id from localidad where descripcion='" + comboLocalidad.getSelectedItem() + "' ") + "',"
                             + "'" + mdb.devuelveId("select id from ejidocolonia where descripcion='" + comboColonia.getSelectedItem() + "' ") + "',"
-                            + " '" + image_string + "', 1,1,current_date(),current_time(),1,1,1,1,0)");
+                            + " '" + image_string + "', 1,1,current_date(),current_time(),1,1,1,1,0)")) {
 
-                    idPersona = mdb.devuelveId("SELECT id FROM personam ORDER BY id DESC LIMIT 1");
-                    tipo = "2";
-                    /*if (tSocio.isSelected()) {
+                        idPersona = mdb.devuelveId("SELECT id FROM personam ORDER BY id DESC LIMIT 1");
+                        tipo = "2";
+                        /*if (tSocio.isSelected()) {
                         //atributoS = "1";
                         asignacion = "Socio";
                         mdb.insertarBasicos("insert into asignacionespersona "
@@ -600,7 +597,8 @@ public class jdFormularioPersonas extends javax.swing.JDialog {
                         mdb.insertarBasicos("insert into asignacionespersona "
                                 + "values (null," + idPersona + ", " + mdb.devuelveId("select id from puestos where descripcion='" + asignacion + "'") + ")");
                     }*/
-                    detalleAsignaciones(idPersona, "2");
+                        detalleAsignaciones(idPersona, "2");
+                    }
                 }
                 /*if (mdb.comprobarExistencia("select id from persona "
                         + "where (nombre='" + txtNombre.getText() + "' and apellidoPaterno='" + txtApPat.getText() + "' and apellidoMaterno='" + txtApMat.getText() + "' ) "
@@ -651,7 +649,7 @@ public class jdFormularioPersonas extends javax.swing.JDialog {
 
     public void detalleAsignaciones(String id, String tipoP) {
         String nombre = "";
-/*        if (tSocio.isSelected() && tProductor.isSelected()) {
+        /*        if (tSocio.isSelected() && tProductor.isSelected()) {
             //Preguntar y Añadir Sociedad
             formSoc = new jdSociedadesPersonas(null, true, "1", tipoP, "¿A que sociedad perteneces?", id, cn);
             formSoc.setVisible(true);
@@ -664,7 +662,7 @@ public class jdFormularioPersonas extends javax.swing.JDialog {
             formSoc = new jdSociedadesPersonas(null, true, "1", tipoP, "¿A que sociedad perteneces?", id, cn);
             formSoc.setVisible(true);
         }*/
-        /*if (tSocio.isSelected()) {
+ /*if (tSocio.isSelected()) {
             int result = JOptionPane.showConfirmDialog(null, "¿Deseas añadir la información de 'Sociedades' ?",
                     null, JOptionPane.YES_NO_OPTION);
 
@@ -757,6 +755,7 @@ public class jdFormularioPersonas extends javax.swing.JDialog {
         pFisica = new javax.swing.JRadioButton();
         pMoral = new javax.swing.JRadioButton();
         lblSociedades = new javax.swing.JLabel();
+        jLabel14 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Personas");
@@ -1219,6 +1218,9 @@ public class jdFormularioPersonas extends javax.swing.JDialog {
 
         lblSociedades.setText("-");
 
+        jLabel14.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel14.setText("Sociedades:");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -1232,7 +1234,9 @@ public class jdFormularioPersonas extends javax.swing.JDialog {
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lblSociedades)))
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lblSociedades)
+                                    .addComponent(jLabel14))))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
@@ -1257,13 +1261,12 @@ public class jdFormularioPersonas extends javax.swing.JDialog {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(18, 18, 18)
-                                .addComponent(lblSociedades, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 2, Short.MAX_VALUE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel14)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblSociedades)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1320,7 +1323,7 @@ public class jdFormularioPersonas extends javax.swing.JDialog {
             id = mdb.comprobarExistencia("select id from personam "
                     + "where (razonsocial='" + txtNombre.getText() + "')");
         }
-        jdAP = new jdAsignacionesPersonas(null, true, tipoPersona, txtNombre.getText() + " " + txtApPat.getText() + " " + txtApMat.getText(), idPersona, cn);
+        jdAP = new jdAsignacionesPersonas(null, true, tipo, tipoPersona, txtNombre.getText() + " " + txtApPat.getText() + " " + txtApMat.getText(), idPersona, cn);
         jdAP.setVisible(true);
     }//GEN-LAST:event_jButton5ActionPerformed
 
@@ -1361,7 +1364,7 @@ public class jdFormularioPersonas extends javax.swing.JDialog {
         datos = mdb.cargarCombos("SELECT m.descripcion \n"
                 + "from ejidocolonia m \n"
                 + "inner join localidad e on (m.id_localidad=e.id) \n"
-                + "where e.Descripcion='" + localidad + "'").split("#");
+                + "where e.Descripcion='" + localidad + "'").split("¬");
         comboColonia.setModel(new DefaultComboBoxModel((Object[]) datos));
     }//GEN-LAST:event_comboLocalidadItemStateChanged
 
@@ -1375,14 +1378,14 @@ public class jdFormularioPersonas extends javax.swing.JDialog {
         datos = mdb.cargarCombos("SELECT m.descripcion \n"
                 + "from localidad m \n"
                 + "inner join municipio e on (m.id_municipio=e.id) \n"
-                + "where e.Descripcion='" + municipio + "'").split("#");
+                + "where e.Descripcion='" + municipio + "'").split("¬");
         comboLocalidad.setModel(new DefaultComboBoxModel((Object[]) datos));
         localidad = comboLocalidad.getSelectedItem() + "";
 
         datos = mdb.cargarCombos("SELECT m.descripcion \n"
                 + "from ejidocolonia m \n"
                 + "inner join localidad e on (m.id_localidad=e.id) \n"
-                + "where e.Descripcion='" + localidad + "'").split("#");
+                + "where e.Descripcion='" + localidad + "'").split("¬");
         comboColonia.setModel(new DefaultComboBoxModel((Object[]) datos));
     }//GEN-LAST:event_comboMunicipioItemStateChanged
 
@@ -1396,21 +1399,21 @@ public class jdFormularioPersonas extends javax.swing.JDialog {
         datos = mdb.cargarCombos("SELECT m.descripcion \n"
                 + "from municipio m \n"
                 + "inner join estado e on (m.id_estado=e.id) \n"
-                + "where e.Descripcion='" + estado + "'").split("#");
+                + "where e.Descripcion='" + estado + "'").split("¬");
         comboMunicipio.setModel(new DefaultComboBoxModel((Object[]) datos));
         municipio = comboMunicipio.getSelectedItem() + "";
 
         datos = mdb.cargarCombos("SELECT m.descripcion \n"
                 + "from localidad m \n"
                 + "inner join municipio e on (m.id_municipio=e.id) \n"
-                + "where e.Descripcion='" + municipio + "'").split("#");
+                + "where e.Descripcion='" + municipio + "'").split("¬");
         comboLocalidad.setModel(new DefaultComboBoxModel((Object[]) datos));
         localidad = comboLocalidad.getSelectedItem() + "";
 
         datos = mdb.cargarCombos("SELECT m.descripcion \n"
                 + "from ejidocolonia m \n"
                 + "inner join localidad e on (m.id_localidad=e.id) \n"
-                + "where e.Descripcion='" + localidad + "'").split("#");
+                + "where e.Descripcion='" + localidad + "'").split("¬");
         comboColonia.setModel(new DefaultComboBoxModel((Object[]) datos));
     }//GEN-LAST:event_comboEstadoItemStateChanged
 
@@ -1424,28 +1427,28 @@ public class jdFormularioPersonas extends javax.swing.JDialog {
         datos = mdb.cargarCombos("SELECT e.descripcion \n"
                 + "from estado e \n"
                 + "inner join pais p on (e.id_pais=p.id) \n"
-                + "where p.Descripcion='" + pais + "'").split("#");
+                + "where p.Descripcion='" + pais + "'").split("¬");
         comboEstado.setModel(new DefaultComboBoxModel((Object[]) datos));
         estado = comboEstado.getSelectedItem() + "";
 
         datos = mdb.cargarCombos("SELECT m.descripcion \n"
                 + "from municipio m \n"
                 + "inner join estado e on (m.id_estado=e.id) \n"
-                + "where e.Descripcion='" + estado + "'").split("#");
+                + "where e.Descripcion='" + estado + "'").split("¬");
         comboMunicipio.setModel(new DefaultComboBoxModel((Object[]) datos));
         municipio = comboMunicipio.getSelectedItem() + "";
 
         datos = mdb.cargarCombos("SELECT m.descripcion \n"
                 + "from localidad m \n"
                 + "inner join municipio e on (m.id_municipio=e.id) \n"
-                + "where e.Descripcion='" + municipio + "'").split("#");
+                + "where e.Descripcion='" + municipio + "'").split("¬");
         comboLocalidad.setModel(new DefaultComboBoxModel((Object[]) datos));
         localidad = comboLocalidad.getSelectedItem() + "";
 
         datos = mdb.cargarCombos("SELECT m.descripcion \n"
                 + "from ejidocolonia m \n"
                 + "inner join localidad e on (m.id_localidad=e.id) \n"
-                + "where e.Descripcion='" + localidad + "'").split("#");
+                + "where e.Descripcion='" + localidad + "'").split("¬");
         comboColonia.setModel(new DefaultComboBoxModel((Object[]) datos));
     }//GEN-LAST:event_comboPaisItemStateChanged
 
@@ -1551,7 +1554,6 @@ public class jdFormularioPersonas extends javax.swing.JDialog {
 
 //        tSocio.setSelected(false);
 //        tProductor.setSelected(false);
-
         idPersona = "";
         tipo = "";
 
@@ -1728,6 +1730,7 @@ public class jdFormularioPersonas extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;

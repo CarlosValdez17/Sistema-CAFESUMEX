@@ -461,7 +461,7 @@ public class jpCortesDelDia extends javax.swing.JPanel {
         idRecibo = tablaRecibos.getValueAt(tablaRecibos.getSelectedRow(), 0) + "";
 
         if (evt.getClickCount() == 2) {
-            jdR = new jdRecibos(null, true, idRecibo, "2", idSociedad, cn);
+            jdR = new jdRecibos(null, true, idRecibo, "2", recepcion, idSociedad, cn);
             jdR.setVisible(true);
         }
     }//GEN-LAST:event_tablaRecibosMouseClicked
@@ -517,7 +517,7 @@ public class jpCortesDelDia extends javax.swing.JPanel {
         if (idRecibo.equals("")) {
             JOptionPane.showMessageDialog(null, "Selecciona Recibo");
         } else {
-            jdR = new jdRecibos(null, true, idRecibo, "2", idSociedad, cn);
+            jdR = new jdRecibos(null, true, idRecibo, "2", recepcion, idSociedad, cn);
             jdR.setVisible(true);
         }        // TODO add your handling code here:
     }//GEN-LAST:event_jButton5ActionPerformed

@@ -15,6 +15,7 @@ import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -43,9 +44,9 @@ public class jdRecibos extends javax.swing.JDialog {
 
     jpRecibos jpR;
     Connection cn;
-    String idRecibo, tipoOperacion, idSociedad;
+    String idRecibo, tipoOperacion, idSociedad, recepcion, idRecepcion;
 
-    public jdRecibos(java.awt.Frame parent, boolean modal, String idRecibo, String tipoOperacion, String idSociedad, Connection c) {
+    public jdRecibos(java.awt.Frame parent, boolean modal, String idRecibo, String tipoOperacion, String recepcion, String idSociedad, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
@@ -55,38 +56,38 @@ public class jdRecibos extends javax.swing.JDialog {
         this.idRecibo = idRecibo;
         this.tipoOperacion = tipoOperacion;
         this.idSociedad = idSociedad;
+        this.recepcion = recepcion;
+        labelRecepcion.setText(recepcion);
         txtSociedad.setText(mr.devuelveUnDato("select nombrecorto from personam where id=" + idSociedad + " "));
 
+        idRecepcion = mr.devuelveUnDato("select id from recepciones where idRecepcion='" + recepcion + "'");
+
         if (!idRecibo.equals("")) {
-            //JOptionPane.showMessageDialog(null, "Entre al if");
             cargarDatosRecibos();
             bloquear();
         } else {
-            //JOptionPane.showMessageDialog(null, "Entre al else");
             jButton2.setVisible(false);
             String datos[] = mr.cargarCombos("select f.descripcion \n"
                     + "from preciocafesociedad p \n"
                     + "inner join formacafe f on (p.id_formaCafe=f.id) "
                     + "inner join personam pm on (p.id_sociedad=pm.id)"
-                    + "where pm.nombrecorto='" + txtSociedad.getText() + "'").split("#");
+                    + "where pm.nombrecorto='" + txtSociedad.getText() + "'").split("¬");
             comboForma.setModel(new DefaultComboBoxModel((Object[]) datos));
 
             jDateChooser1.setDate(GregorianCalendar.getInstance().getTime());
 
             combos();
-
         }
-
     }
 
     public void combos() {
 
         if (radioFisica.isSelected()) {
-            String datos[] = mr.cargarCombos("select CONCAT(pf.Nombre, ', ', pf.apellidoPaterno, ', ', pf.apellidoMaterno) from productor p inner join personaf pf on (p.id_persona=pf.ID) where tipoPersona=1").split("#");
+            String datos[] = mr.cargarCombos("select CONCAT(pf.Nombre, ', ', pf.apellidoPaterno, ', ', pf.apellidoMaterno) from productor p inner join personaf pf on (p.id_persona=pf.ID) where tipoPersona=1").split("¬");
             comboProductor.setModel(new DefaultComboBoxModel((Object[]) datos));
             tipoPersona = "1";
         } else if (radioMoral.isSelected()) {
-            String datos[] = mr.cargarCombos("select pf.razonsocial from productor p inner join personam pf on (p.id_persona=pf.ID) where tipoPersona=2").split("#");
+            String datos[] = mr.cargarCombos("select pf.razonsocial from productor p inner join personam pf on (p.id_persona=pf.ID) where tipoPersona=2").split("¬");
             comboProductor.setModel(new DefaultComboBoxModel((Object[]) datos));
             tipoPersona = "2";
         }
@@ -129,13 +130,13 @@ public class jdRecibos extends javax.swing.JDialog {
         } else {
             if (radioFisica.isSelected()) {
                 String idParcela = mr.devuelveUnDato("select id from parcelas where id_persona=" + idPersona + " and nombre='" + comboParcela.getSelectedItem() + "' and tipoPersona=1");
-                String datos[] = mr.devuelveUnDato("select concat(clave_parcela,'#', clave_certificacion) from parcelas where id=" + idParcela + " and tipoPersona=1").split("#");
+                String datos[] = mr.devuelveUnDato("select concat(clave_parcela,'¬', clave_certificacion) from parcelas where id=" + idParcela + " and tipoPersona=1").split("¬");
 
                 txtClaveParcela.setText(datos[0]);
                 txtCertificacion.setText(datos[1]);
             } else if (radioMoral.isSelected()) {
                 String idParcela = mr.devuelveUnDato("select id from parcelas where id_persona=" + idPersona + " and nombre='" + comboParcela.getSelectedItem() + "' and tipoPersona=2");
-                String datos[] = mr.devuelveUnDato("select concat(clave_parcela,'#', clave_certificacion) from parcelas where id=" + idParcela + " and tipoPersona=2").split("#");
+                String datos[] = mr.devuelveUnDato("select concat(clave_parcela,'¬', clave_certificacion) from parcelas where id=" + idParcela + " and tipoPersona=2").split("¬");
                 txtClaveParcela.setText(datos[0]);
                 txtCertificacion.setText(datos[1]);
             }
@@ -217,6 +218,7 @@ public class jdRecibos extends javax.swing.JDialog {
         radioMoral.setEnabled(false);
         jDateChooser1.setEnabled(false);
         comboForma.setEnabled(false);
+        jCheckBox1.setEnabled(false);
     }
     String idCorte = "";
 
@@ -226,7 +228,6 @@ public class jdRecibos extends javax.swing.JDialog {
         Date fecha = new Date();
         String anio = new SimpleDateFormat("yy").format(fecha);
 
-        Date date = new Date();
         String julianDateString = new SimpleDateFormat("'0'D").format(jDateChooser1.getDate());
 
         String[] calificacion = txtCalificacion.getText().split(" ");
@@ -300,7 +301,7 @@ public class jdRecibos extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(null, "Seleccione Productor");
             return false;
         } else if (comboParcela.getSelectedItem().equals("Seleccione..")) {
-            JOptionPane.showMessageDialog(null, "Seleccion Parcela");
+            JOptionPane.showMessageDialog(null, "Seleccione Parcela");
             return false;
         } else if (comboForma.getSelectedItem().equals("Seleccione..")) {
             JOptionPane.showMessageDialog(null, "Seleccione Forma de Café");
@@ -314,7 +315,7 @@ public class jdRecibos extends javax.swing.JDialog {
 
     }
 
-    /*    public void crearPdf(String idRecibo) throws JRException {
+    /*public void crearPdf(String idRecibo) throws JRException {
         JasperReport archivo = JasperCompileManager.compileReport("C:\\Users\\USUARIO\\Documents\\NetBeansProjects\\Sistema-CAFESUMEX\\src\\Reportes\\recepcionRecibo.jasper");
         //JasperReport reporte = null;
         //String path = "src\\Reportes\\recepcionRecibo.jasper";
@@ -336,9 +337,7 @@ from recibos r
 inner join personaf pf on (r.idPersona=pf.ID)
 inner join localidad lPer on (pf.ID_Localidad=lPer.ID)
 inner join productor prod on (prod.id_persona=pf.ID)
-where r.id = 43 and prod.tipoPersona=1
-
-         
+where r.id = 43 and prod.tipoPersona=1    
     }*/
     public void validarCorte() {
 
@@ -466,10 +465,12 @@ where r.id = 43 and prod.tipoPersona=1
         txtIdCorte = new javax.swing.JTextField();
         jLabel22 = new javax.swing.JLabel();
         txtEntrego = new javax.swing.JTextField();
-        txtFolio = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
         jDateChooser1 = new com.toedter.calendar.JDateChooser();
         jButton2 = new javax.swing.JButton();
+        labelRecepcion = new javax.swing.JLabel();
+        txtFolio = new javax.swing.JTextField();
+        jCheckBox1 = new javax.swing.JCheckBox();
+        jButton3 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Nuevo Recibo");
@@ -775,13 +776,13 @@ where r.id = 43 and prod.tipoPersona=1
 
         jLabel23.setText("Observaciones");
 
-        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Precios"));
+        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Anticipos"));
 
-        jLabel24.setText("Precio bruto por Kg =");
+        jLabel24.setText("Anticipo bruto por Kg =");
 
         jLabel25.setText("Retencion por Kg =");
 
-        jLabel26.setText("Precio neto por Kg =");
+        jLabel26.setText("Anticipo neto por Kg =");
 
         txtPrecioBruto.setText("0.0");
 
@@ -934,8 +935,6 @@ where r.id = 43 and prod.tipoPersona=1
 
         jLabel22.setText("Entregó");
 
-        jLabel1.setText("Folio Manual:");
-
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
@@ -946,10 +945,6 @@ where r.id = 43 and prod.tipoPersona=1
                     .addComponent(comboForma, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel31))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(txtFolio, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(10, 10, 10)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel21)
                     .addComponent(txtIdCorte, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -971,13 +966,9 @@ where r.id = 43 and prod.tipoPersona=1
                 .addContainerGap()
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel21)
-                            .addComponent(jLabel1))
+                        .addComponent(jLabel21)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtIdCorte, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtFolio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(txtIdCorte, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addComponent(jLabel22)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -985,10 +976,31 @@ where r.id = 43 and prod.tipoPersona=1
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jDateChooser1.setEnabled(false);
+
         jButton2.setText("Abrir PDF");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
+            }
+        });
+
+        labelRecepcion.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        labelRecepcion.setText("Id Recepcion");
+
+        txtFolio.setEnabled(false);
+
+        jCheckBox1.setText("Recibo Manual");
+        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox1ActionPerformed(evt);
+            }
+        });
+
+        jButton3.setText("Cerrar");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
             }
         });
 
@@ -1005,7 +1017,13 @@ where r.id = 43 and prod.tipoPersona=1
                         .addComponent(jLabel6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(txtSociedad, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(84, 84, 84)
+                        .addComponent(labelRecepcion)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jCheckBox1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtFolio, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1013,7 +1031,9 @@ where r.id = 43 and prod.tipoPersona=1
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jButton2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1)))
+                        .addComponent(jButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton3)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -1023,7 +1043,10 @@ where r.id = 43 and prod.tipoPersona=1
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel6)
-                        .addComponent(txtSociedad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(txtSociedad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(labelRecepcion)
+                        .addComponent(txtFolio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jCheckBox1))
                     .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1036,7 +1059,8 @@ where r.id = 43 and prod.tipoPersona=1
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
-                    .addComponent(jButton2))
+                    .addComponent(jButton2)
+                    .addComponent(jButton3))
                 .addContainerGap())
         );
 
@@ -1072,7 +1096,9 @@ where r.id = 43 and prod.tipoPersona=1
         Date date = new Date();
         String fechaActual = new SimpleDateFormat("yyyy-MM-dd").format(date);
 
-        //JOptionPane.showMessageDialog(null, "Fecha actual = " + fechaActual);
+        DateFormat hourFormat = new SimpleDateFormat("HH:mm:ss");
+        String horaActual = hourFormat.format(date);
+
         sociedad = txtSociedad.getText();
         folio = txtFolio.getText();
         nombreProductor = comboProductor.getSelectedItem() + "";
@@ -1097,35 +1123,38 @@ where r.id = 43 and prod.tipoPersona=1
         idParcela = mr.devuelveId("select id from parcelas where clave_parcela='" + claveParcela + "' ");
         idSociedad = mr.devuelveId("select id from personam where nombrecorto='" + sociedad + "'");
 
-        //JOptionPane.showMessageDialog(null, "Punto de partida");
+        //metodosDatosBasicos mdb = new metodosDatosBasicos(cn);
         if (validar()) {
-            mr.insertarRecibo("INSERT INTO recibos VALUES(null, '" + idLote + "', " + idPersona + ", " + idParcela + ", " + idSociedad + ", '" + folio + "', "
+            if (mr.insertarRecibo("INSERT INTO recibos VALUES(null," + idRecepcion + " ,'" + idLote + "', " + idPersona + ", " + idParcela + ", " + idSociedad + ", '" + folio + "', "
                     + "'" + comboForma.getSelectedItem() + "','" + sacos + "', "
                     + "'" + kgRecibidos + "', '" + totalBruto + "', '" + retencion + "', '" + total + "', '" + txtPrecioNeto.getText() + "',  '" + verdes + "', '" + inmaduros + "', "
-                    + "'" + brocados + "', '" + calificacion + "', '" + personaEntrego + "', '" + observaciones + "','" + fechaRecibo + "', '" + fechaActual + "', "
-                    + "'" + txtPrecioBruto.getText() + "', '" + txtPrecioNeto.getText() + "', '" + txtRetencionKg.getText() + "' ) ");
+                    + "'" + brocados + "', '" + calificacion + "', '" + personaEntrego + "', '" + observaciones + "','" + fechaRecibo + "', '" + fechaActual + "', '" + horaActual + "', "
+                    + "'" + txtPrecioBruto.getText() + "', '" + txtPrecioNeto.getText() + "', '" + txtRetencionKg.getText() + "' ) ")) {
+                validarCorte();
+                creacionPDF pdf = new creacionPDF(cn);
 
-            validarCorte();
+                try {
+                    pdf.pdfRecibo(mr.devuelveUnDato("select id from recibos order by id desc limit 1"));
+                } catch (DocumentException ex) {
+                    Logger.getLogger(jdRecibos.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(jdRecibos.class.getName()).log(Level.SEVERE, null, ex);
+                }
 
-            creacionPDF pdf = new creacionPDF(cn);
+                Desktop desktop = Desktop.getDesktop();
+                try {
+                    desktop.open(new java.io.File("C:\\Users\\USUARIO\\Desktop\\prueba2.pdf"));
+                } catch (IOException ex) {
+                    Logger.getLogger(jdRecibos.class.getName()).log(Level.SEVERE, null, ex);
+                }
 
-            try {
-                pdf.pdfRecibo(mr.devuelveUnDato("select id from recibos order by id desc limit 1"));
-            } catch (DocumentException ex) {
-                Logger.getLogger(jdRecibos.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(jdRecibos.class.getName()).log(Level.SEVERE, null, ex);
+                this.dispose();
+                jpR.llenarTabla();
+
+            } else {
+                JOptionPane.showMessageDialog(null, "Error al crear recibo");
             }
 
-            Desktop desktop = Desktop.getDesktop();
-            try {
-                desktop.open(new java.io.File("C:\\Users\\USUARIO\\Desktop\\prueba2.pdf"));
-            } catch (IOException ex) {
-                Logger.getLogger(jdRecibos.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            this.dispose();
-            jpR.llenarTabla();
         } else {
 
         }
@@ -1217,16 +1246,9 @@ where r.id = 43 and prod.tipoPersona=1
             Logger.getLogger(jdRecibos.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-      /*  Desktop desktop = Desktop.getDesktop();
-        try {
-            desktop.open(new java.io.File("C:\\Users\\USUARIO\\Desktop\\prueba2.pdf"));
-        } catch (IOException ex) {
-            Logger.getLogger(jdRecibos.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
-        
-        jdVisual v = new jdVisual(null,true, "C:\\Users\\USUARIO\\Desktop\\prueba2.pdf");
+        jdVisual v = new jdVisual(null, true, "C:\\Users\\USUARIO\\Desktop\\prueba2.pdf");
         v.setVisible(true);
-       // this.dispose();
+        // this.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void comboFormaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboFormaActionPerformed
@@ -1255,11 +1277,11 @@ where r.id = 43 and prod.tipoPersona=1
 
             txtClaveProductor.setText(claveProductor());
             if (radioFisica.isSelected()) {
-                String datos[] = mr.cargarCombos("select nombre from parcelas where id_persona=" + idPersona + " and tipoPersona=1").split("#");
+                String datos[] = mr.cargarCombos("select nombre from parcelas where id_persona=" + idPersona + " and tipoPersona=1").split("¬");
                 comboParcela.setModel(new DefaultComboBoxModel((Object[]) datos));
                 txtEntrego.setText(persona.replace(",", ""));
             } else if (radioMoral.isSelected()) {
-                String datos[] = mr.cargarCombos("select nombre from parcelas where id_persona=" + idPersona + " and tipoPersona=2").split("#");
+                String datos[] = mr.cargarCombos("select nombre from parcelas where id_persona=" + idPersona + " and tipoPersona=2").split("¬");
                 comboParcela.setModel(new DefaultComboBoxModel((Object[]) datos));
             }
 
@@ -1288,6 +1310,22 @@ where r.id = 43 and prod.tipoPersona=1
         generarIdCorte();
     }//GEN-LAST:event_txtVerdesKeyReleased
 
+    private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
+        // TODO add your handling code here:
+        if (jCheckBox1.isSelected()) {
+            txtFolio.setEnabled(true);
+            jDateChooser1.setEnabled(true);
+        } else {
+            txtFolio.setEnabled(false);
+            jDateChooser1.setEnabled(false);
+        }
+    }//GEN-LAST:event_jCheckBox1ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        this.dispose();
+    }//GEN-LAST:event_jButton3ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1315,33 +1353,6 @@ where r.id = 43 and prod.tipoPersona=1
         }
         //</editor-fold>
 
-        /* Create and display the dialog */
- /*        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                jdRecibos2 dialog = new jdRecibos2(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        //</editor-fold>
-
-        /* Create and display the dialog */
- /*        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                jdRecibos dialog = new jdRecibos(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });*/
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1351,8 +1362,9 @@ where r.id = 43 and prod.tipoPersona=1
     private javax.swing.JComboBox<String> comboProductor;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JCheckBox jCheckBox1;
     private com.toedter.calendar.JDateChooser jDateChooser1;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
@@ -1394,6 +1406,7 @@ where r.id = 43 and prod.tipoPersona=1
     private javax.swing.JSeparator jSeparator5;
     private javax.swing.JSeparator jSeparator6;
     private javax.swing.JSeparator jSeparator7;
+    private javax.swing.JLabel labelRecepcion;
     private javax.swing.JRadioButton radioFisica;
     private javax.swing.JRadioButton radioMoral;
     private javax.swing.JTextField txtBrocados;

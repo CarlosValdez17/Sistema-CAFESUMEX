@@ -803,28 +803,28 @@ public class framePruebaSocioProd extends javax.swing.JFrame {
         datos = mdb.cargarCombos("SELECT e.descripcion \n"
             + "from estado e \n"
             + "inner join pais p on (e.id_pais=p.id) \n"
-            + "where p.Descripcion='" + pais + "'").split("#");
+            + "where p.Descripcion='" + pais + "'").split("¬");
         comboEstado.setModel(new DefaultComboBoxModel((Object[]) datos));
         estado = comboEstado.getSelectedItem() + "";
 
         datos = mdb.cargarCombos("SELECT m.descripcion \n"
             + "from municipio m \n"
             + "inner join estado e on (m.id_estado=e.id) \n"
-            + "where e.Descripcion='" + estado + "'").split("#");
+            + "where e.Descripcion='" + estado + "'").split("¬");
         comboMunicipio.setModel(new DefaultComboBoxModel((Object[]) datos));
         municipio = comboMunicipio.getSelectedItem() + "";
 
         datos = mdb.cargarCombos("SELECT m.descripcion \n"
             + "from localidad m \n"
             + "inner join municipio e on (m.id_municipio=e.id) \n"
-            + "where e.Descripcion='" + municipio + "'").split("#");
+            + "where e.Descripcion='" + municipio + "'").split("¬");
         comboLocalidad.setModel(new DefaultComboBoxModel((Object[]) datos));
         localidad = comboLocalidad.getSelectedItem() + "";
 
         datos = mdb.cargarCombos("SELECT m.descripcion \n"
             + "from ejidocolonia m \n"
             + "inner join localidad e on (m.id_localidad=e.id) \n"
-            + "where e.Descripcion='" + localidad + "'").split("#");
+            + "where e.Descripcion='" + localidad + "'").split("¬");
         comboColonia.setModel(new DefaultComboBoxModel((Object[]) datos));*/
     }//GEN-LAST:event_comboPaisItemStateChanged
 
@@ -838,21 +838,21 @@ public class framePruebaSocioProd extends javax.swing.JFrame {
         datos = mdb.cargarCombos("SELECT m.descripcion \n"
             + "from municipio m \n"
             + "inner join estado e on (m.id_estado=e.id) \n"
-            + "where e.Descripcion='" + estado + "'").split("#");
+            + "where e.Descripcion='" + estado + "'").split("¬");
         comboMunicipio.setModel(new DefaultComboBoxModel((Object[]) datos));
         municipio = comboMunicipio.getSelectedItem() + "";
 
         datos = mdb.cargarCombos("SELECT m.descripcion \n"
             + "from localidad m \n"
             + "inner join municipio e on (m.id_municipio=e.id) \n"
-            + "where e.Descripcion='" + municipio + "'").split("#");
+            + "where e.Descripcion='" + municipio + "'").split("¬");
         comboLocalidad.setModel(new DefaultComboBoxModel((Object[]) datos));
         localidad = comboLocalidad.getSelectedItem() + "";
 
         datos = mdb.cargarCombos("SELECT m.descripcion \n"
             + "from ejidocolonia m \n"
             + "inner join localidad e on (m.id_localidad=e.id) \n"
-            + "where e.Descripcion='" + localidad + "'").split("#");
+            + "where e.Descripcion='" + localidad + "'").split("¬");
         comboColonia.setModel(new DefaultComboBoxModel((Object[]) datos));*/
     }//GEN-LAST:event_comboEstadoItemStateChanged
 
@@ -866,14 +866,14 @@ public class framePruebaSocioProd extends javax.swing.JFrame {
         datos = mdb.cargarCombos("SELECT m.descripcion \n"
             + "from localidad m \n"
             + "inner join municipio e on (m.id_municipio=e.id) \n"
-            + "where e.Descripcion='" + municipio + "'").split("#");
+            + "where e.Descripcion='" + municipio + "'").split("¬");
         comboLocalidad.setModel(new DefaultComboBoxModel((Object[]) datos));
         localidad = comboLocalidad.getSelectedItem() + "";
 
         datos = mdb.cargarCombos("SELECT m.descripcion \n"
             + "from ejidocolonia m \n"
             + "inner join localidad e on (m.id_localidad=e.id) \n"
-            + "where e.Descripcion='" + localidad + "'").split("#");
+            + "where e.Descripcion='" + localidad + "'").split("¬");
         comboColonia.setModel(new DefaultComboBoxModel((Object[]) datos));*/
     }//GEN-LAST:event_comboMunicipioItemStateChanged
 
@@ -887,7 +887,7 @@ public class framePruebaSocioProd extends javax.swing.JFrame {
         datos = mdb.cargarCombos("SELECT m.descripcion \n"
             + "from ejidocolonia m \n"
             + "inner join localidad e on (m.id_localidad=e.id) \n"
-            + "where e.Descripcion='" + localidad + "'").split("#");
+            + "where e.Descripcion='" + localidad + "'").split("¬");
         comboColonia.setModel(new DefaultComboBoxModel((Object[]) datos));*/
     }//GEN-LAST:event_comboLocalidadItemStateChanged
 

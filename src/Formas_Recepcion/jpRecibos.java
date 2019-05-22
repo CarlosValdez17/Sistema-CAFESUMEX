@@ -24,7 +24,7 @@ public class jpRecibos extends javax.swing.JPanel {
     metodosDatosBasicos mdb;
     DefaultTableModel modelo;
     jdRecibos jdR;
-    String idSociedadRecepcion = "";
+    String idSociedadRecepcion = "", recepcion;
 
     public jpRecibos(Connection cn, String recepcion) {
         initComponents();
@@ -34,7 +34,8 @@ public class jpRecibos extends javax.swing.JPanel {
         modelo = (DefaultTableModel) tablaRecibos.getModel();
 
         idSociedadRecepcion = mdb.devuelveUnDato("select idSociedad from recepciones where idRecepcion='" + recepcion + "'");
-
+        this.recepcion=recepcion;
+        
         llenarTabla();
         sumarColumnas();
     }
@@ -46,10 +47,15 @@ public class jpRecibos extends javax.swing.JPanel {
                 + "from recibos r\n"
                 + "inner join personam pm on ( pm.ID=r.idSociedad)\n"
                 + "inner join personaf pf on ( pf.ID=r.idPersona)\n"
-                + "inner join parcelas p on ( p.id=r.idParcela) "
-                + "where r.idSociedad=" + idSociedadRecepcion + " order by r.id");
+                + "inner join parcelas p on ( p.id=r.idParcela)\n"              
+                + "inner join recepciones re on(r.idRecepcion=re.id)\n"
+                + "where re.idRecepcion='" + recepcion + "' order by r.id");
         cambiarMesLetra(tablaRecibos);
     }
+    
+    
+    /*
+                + "inner join recepciones re on(r.idSociedad=re.idSociedad)"*/
 
     public void buscar(String tipo) {
         limpiar(tablaRecibos);
@@ -461,7 +467,7 @@ public class jpRecibos extends javax.swing.JPanel {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        jdRecibos jdr = new jdRecibos(null, true, "", "1", idSociedadRecepcion, cn);
+        jdRecibos jdr = new jdRecibos(null, true, "", "1", recepcion,idSociedadRecepcion, cn);
         jdr.jpR = this;
         jdr.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
@@ -509,7 +515,7 @@ public class jpRecibos extends javax.swing.JPanel {
         idRecibo = tablaRecibos.getValueAt(tablaRecibos.getSelectedRow(), 0) + "";
 
         if (evt.getClickCount() == 2) {
-            jdR = new jdRecibos(null, true, idRecibo, "2", idSociedadRecepcion, cn);
+            jdR = new jdRecibos(null, true, idRecibo, "2", recepcion, idSociedadRecepcion, cn);
             jdR.setVisible(true);
         }
 
@@ -517,7 +523,7 @@ public class jpRecibos extends javax.swing.JPanel {
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
-        jdR = new jdRecibos(null, true, idRecibo, "2", idSociedadRecepcion, cn);
+        jdR = new jdRecibos(null, true, idRecibo, "2", recepcion,idSociedadRecepcion, cn);
         jdR.setVisible(true);
     }//GEN-LAST:event_jButton5ActionPerformed
 

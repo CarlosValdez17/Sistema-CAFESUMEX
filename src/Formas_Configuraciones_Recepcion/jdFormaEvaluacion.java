@@ -62,7 +62,7 @@ public class jdFormaEvaluacion extends javax.swing.JDialog {
                 + "from formaevaluacion fe\n "
                 + "inner join tipoevaluacion te on (fe.ID_Evaluacion=te.ID)\n"
                 + "where fe.id_forma= "
-                + mdb.devuelveId("select id from formacafe where descripcion='" + valor + "'")).split("#");
+                + mdb.devuelveId("select id from formacafe where descripcion='" + valor + "'")).split("¬");
         int e = 0;
         for (int i = 0; i < modelo.getRowCount(); i++) {
 
@@ -79,7 +79,7 @@ public class jdFormaEvaluacion extends javax.swing.JDialog {
    
 
     public void llenarCombo() {
-        String[] datos = mdb.cargarCombos("SELECT descripcion from formacafe").split("#");
+        String[] datos = mdb.cargarCombos("SELECT descripcion from formacafe").split("¬");
         comboFormas.setModel(new DefaultComboBoxModel((Object[]) datos));
     }
 

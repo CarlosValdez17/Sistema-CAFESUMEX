@@ -60,7 +60,7 @@ public class jdEstado extends javax.swing.JDialog {
     String[] datos;
 
     public void rellenarCombos() {
-        datos = mdb.cargarCombos("SELECT descripcion from pais").split("#");
+        datos = mdb.cargarCombos("SELECT descripcion from pais").split("¬");
         comboPais.setModel(new DefaultComboBoxModel((Object[]) datos));
     }
 

@@ -42,7 +42,7 @@ public class jpFormaProceso extends javax.swing.JPanel {
     //✘ ✓
 
     public void llenarCombo() {
-        String[] datos = mdb.cargarCombos("SELECT descripcion from formacafe").split("#");
+        String[] datos = mdb.cargarCombos("SELECT descripcion from formacafe").split("¬");
         comboFormas.setModel(new DefaultComboBoxModel((Object[]) datos));
 
         String forma = comboFormas.getSelectedItem() + "";

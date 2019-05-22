@@ -8,6 +8,8 @@ package FormasGenerales;
 import Conexion.Conexion;
 import FormasInternas.internalPrueba;
 import FormasInternas.panelPrueba;
+import Formas_BeneficioHumedo.jdSeleccionBeneficio;
+import Formas_BeneficioHumedo.jpCortesRecibidos;
 import Formas_Configuraciones_BeneficioHumedo.jpActividadesBH;
 import Formas_Configuraciones_BeneficioHumedo.jpAreaAlmacen;
 import Formas_Configuraciones_BeneficioHumedo.jpClima;
@@ -120,18 +122,17 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         //jButton3.setVisible(false);
         //jButton4.setVisible(false);
         //jButton5.setVisible(false);
-        jButton6.setVisible(false);
+        //jButton6.setVisible(false);
         jButton7.setVisible(false);
 
-        jButton2.setBackground(new Color(26,66,21));
-        
+        jButton2.setBackground(new Color(26, 66, 21));
+
         DefaultTreeCellRenderer render = (DefaultTreeCellRenderer) jTree1.getCellRenderer();
         //render.setLeafIcon(new ImageIcon(this.getClass().getResource("../Imagenes/database.png")));
         //render.setOpenIcon(new ImageIcon(this.getClass().getResource("../Imagenes/database.png")));
         //render.setClosedIcon(new ImageIcon(this.getClass().getResource("../Imagenes/database.png")));
 
     }
-
 
     public void pintarPanel(String tipo) throws ParseException {
         Dimension size = panelPrincipal.getSize();
@@ -691,6 +692,15 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 panelPrincipal.revalidate();
                 panelPrincipal.repaint();
                 break;
+            case "Cortes Recibidos":
+                jpCortesRecibidos jpCR = new jpCortesRecibidos(beneficio,cn);
+                jpCR.setSize(size);
+                jpCR.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpCR);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
             default:
                 JLabel lbl = new JLabel();
                 lbl.setSize(panelPrincipal.getWidth(), panelPrincipal.getHeight());
@@ -711,7 +721,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
 
     public void recepcion(String recepcion) {
         this.recepcion = recepcion;
-        
+
         try {
             pintarPanel("fondo");
         } catch (ParseException ex) {
@@ -733,13 +743,62 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         jTree1.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
 
         //CAMBIAR COLORES BOTOTES
-        jButton5.setBackground(new Color(26,66,21));
+        jButton5.setBackground(new Color(26, 66, 21));
         //QUITAR COLOR
         jButton1.setBackground(Color.getColor("FFFFFF"));
         jButton3.setBackground(Color.getColor("FFFFFF"));
         jButton4.setBackground(Color.getColor("FFFFFF"));
         jButton2.setBackground(Color.getColor("FFFFFF"));
         jButton6.setBackground(Color.getColor("FFFFFF"));
+        jButton7.setBackground(Color.getColor("FFFFFF"));
+    }
+
+    public void beneficio(String beneficio) {
+        this.beneficio=beneficio;
+        
+        panelArbol.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jScrollPane2.setOpaque(false);
+
+        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Beneficio Humedo");
+        javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Cortes Recibidos");
+        javax.swing.tree.DefaultMutableTreeNode treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Cortes Confirmados");
+        javax.swing.tree.DefaultMutableTreeNode treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("Cortes en Proceso de Secado");
+        javax.swing.tree.DefaultMutableTreeNode treeNode5 = new javax.swing.tree.DefaultMutableTreeNode("Cortes Enviado");
+        javax.swing.tree.DefaultMutableTreeNode treeNode6 = new javax.swing.tree.DefaultMutableTreeNode("Consumo Agua");
+        javax.swing.tree.DefaultMutableTreeNode treeNode7 = new javax.swing.tree.DefaultMutableTreeNode("Entrega Cascarilla");
+        javax.swing.tree.DefaultMutableTreeNode treeNode8 = new javax.swing.tree.DefaultMutableTreeNode("Clima y Temperatura Ambiente");
+        javax.swing.tree.DefaultMutableTreeNode treeNode9 = new javax.swing.tree.DefaultMutableTreeNode("Mantenimiento Maquinaria");
+        javax.swing.tree.DefaultMutableTreeNode treeNode10 = new javax.swing.tree.DefaultMutableTreeNode("Limpieza de Maquinaria");
+        javax.swing.tree.DefaultMutableTreeNode treeNode11 = new javax.swing.tree.DefaultMutableTreeNode("Evaluacion Maquinaria");
+        javax.swing.tree.DefaultMutableTreeNode treeNode12 = new javax.swing.tree.DefaultMutableTreeNode("Lotes Secos");
+        treeNode1.add(treeNode2);
+        treeNode1.add(treeNode3);
+        treeNode1.add(treeNode4);
+        treeNode1.add(treeNode5);
+        treeNode1.add(treeNode6);
+        treeNode1.add(treeNode7);
+        treeNode1.add(treeNode8);
+        treeNode1.add(treeNode9);
+        treeNode1.add(treeNode10);
+        treeNode1.add(treeNode11);
+        treeNode1.add(treeNode12);
+
+        jTree1.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+
+        try {
+            pintarPanel("fondo");
+        } catch (ParseException ex) {
+            Logger.getLogger(pantallaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        //CAMBIAR COLORES BOTOTES
+        jButton6.setBackground(Color.getHSBColor(0.56f, 1.0f, 0.8f));
+        //QUITAR COLOR
+        jButton1.setBackground(Color.getColor("FFFFFF"));
+        jButton3.setBackground(Color.getColor("FFFFFF"));
+        jButton4.setBackground(Color.getColor("FFFFFF"));
+        jButton5.setBackground(Color.getColor("FFFFFF"));
+        jButton2.setBackground(Color.getColor("FFFFFF"));
         jButton7.setBackground(Color.getColor("FFFFFF"));
     }
 
@@ -1193,9 +1252,8 @@ public class pantallaPrincipal extends javax.swing.JFrame {
             Logger.getLogger(pantallaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        
         //CAMBIAR COLORES BOTOTES
-        jButton3.setBackground(new Color(26,66,21));
+        jButton3.setBackground(new Color(26, 66, 21));
         //QUITAR COLOR
         jButton1.setBackground(Color.getColor("FFFFFF"));
         jButton2.setBackground(Color.getColor("FFFFFF"));
@@ -1353,7 +1411,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         jTree1.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
 
         //CAMBIAR COLORES BOTOTES
-        jButton2.setBackground(new Color(26,66,21));
+        jButton2.setBackground(new Color(26, 66, 21));
         //QUITAR COLOR
         jButton1.setBackground(Color.getColor("FFFFFF"));
         jButton3.setBackground(Color.getColor("FFFFFF"));
@@ -1389,7 +1447,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         }
 
         //CAMBIAR COLORES BOTOTES
-        jButton4.setBackground(new Color(26,66,21));
+        jButton4.setBackground(new Color(26, 66, 21));
         //QUITAR COLOR
         jButton1.setBackground(Color.getColor("FFFFFF"));
         jButton3.setBackground(Color.getColor("FFFFFF"));
@@ -1405,18 +1463,14 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         jdSRecepcion.pPrin = this;
         jdSRecepcion.setVisible(true);
     }//GEN-LAST:event_jButton5ActionPerformed
-
+    String beneficio = "";
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
-        //CAMBIAR COLORES BOTOTES
-        jButton6.setBackground(Color.getHSBColor(0.56f, 1.0f, 0.8f));
-        //QUITAR COLOR
-        jButton1.setBackground(Color.getColor("FFFFFF"));
-        jButton3.setBackground(Color.getColor("FFFFFF"));
-        jButton4.setBackground(Color.getColor("FFFFFF"));
-        jButton5.setBackground(Color.getColor("FFFFFF"));
-        jButton2.setBackground(Color.getColor("FFFFFF"));
-        jButton7.setBackground(Color.getColor("FFFFFF"));
+        jdSeleccionBeneficio jdSBH = new jdSeleccionBeneficio(null, true, cn);
+        jdSBH.pPrin = this;
+        jdSBH.setVisible(true);
+
+
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
@@ -1458,7 +1512,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         }
 
         //CAMBIAR COLORES BOTOTES
-        jButton1.setBackground(new Color(26,66,21));
+        jButton1.setBackground(new Color(26, 66, 21));
         //QUITAR COLOR
         jButton5.setBackground(Color.getColor("FFFFFF"));
         jButton3.setBackground(Color.getColor("FFFFFF"));

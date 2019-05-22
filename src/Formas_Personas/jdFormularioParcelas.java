@@ -358,41 +358,41 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
         String pais, estado, municipio;
         String[] datos;
 
-        datos = mdb.cargarCombos("SELECT descripcion from pais").split("#");
+        datos = mdb.cargarCombos("SELECT descripcion from pais").split("¬");
         comboPais.setModel(new DefaultComboBoxModel((Object[]) datos));
         pais = comboPais.getSelectedItem() + "";
 
         datos = mdb.cargarCombos("SELECT e.descripcion from estado e "
                 + "inner join pais p on(e.id_pais=p.id) "
-                + "where p.descripcion='" + pais + "'").split("#");
+                + "where p.descripcion='" + pais + "'").split("¬");
         comboEstado.setModel(new DefaultComboBoxModel((Object[]) datos));
         estado = comboEstado.getSelectedItem() + "";
 
         datos = mdb.cargarCombos("SELECT m.descripcion \n"
                 + "from municipio m \n"
                 + "inner join estado e on (m.id_estado=e.id) \n"
-                + "where e.Descripcion='" + estado + "'").split("#");
+                + "where e.Descripcion='" + estado + "'").split("¬");
         comboMunicipio.setModel(new DefaultComboBoxModel((Object[]) datos));
         municipio = comboMunicipio.getSelectedItem() + "";
 
         datos = mdb.cargarCombos("SELECT m.descripcion \n"
                 + "from localidad m \n"
                 + "inner join municipio e on (m.id_municipio=e.id) \n"
-                + "where e.Descripcion='" + municipio + "'").split("#");
+                + "where e.Descripcion='" + municipio + "'").split("¬");
         comboLocalidad.setModel(new DefaultComboBoxModel((Object[]) datos));
 //        localidad = comboLocalidad.getSelectedItem() + "";
 
         /*      datos = mdb.cargarCombos("SELECT m.descripcion \n"
                 + "from ejidocolonia m \n"
                 + "inner join localidad e on (m.id_localidad=e.id) \n"
-                + "where e.Descripcion='" + localidad + "'").split("#");
+                + "where e.Descripcion='" + localidad + "'").split("¬");
         comboColonia.setModel(new DefaultComboBoxModel((Object[]) datos));
          */
- /*        String[] datosC = mdb.cargarCombos("select clave from certificado").split("#");
+ /*        String[] datosC = mdb.cargarCombos("select clave from certificado").split("¬");
         comboCertificado.setModel(new DefaultComboBoxModel((Object[]) datosC));
          */
  /*       int c1, c2;
-        String[] codigos = mdb.cargarCombos("select codigo from codigo_relacion").split("#");
+        String[] codigos = mdb.cargarCombos("select codigo from codigo_relacion").split("¬");
         for (int i = 1; i < codigos.length; i++) {
             String[] cod = codigos[i].split(",");
 
@@ -410,31 +410,31 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
 
         JOptionPane.showMessageDialog(null, "El ascii 66 es igual a -> " + Character.toString((char) 66));
          */
-        String[] datosCodC = mdb.cargarCombos("select concat (codigo,' - ',nombre) from codigos_certificacion").split("#");
+        String[] datosCodC = mdb.cargarCombos("select concat (codigo,' - ',nombre) from codigos_certificacion").split("¬");
         comboCertificado.setModel(new DefaultComboBoxModel((Object[]) datosCodC));
 
         String[] datosS = mdb.cargarCombos("select p.nombrecorto from personam p \n"
                 + "inner join sociedadespersona s on (p.id=s.id_asociado)\n"
                 + "inner join personaf f on (f.ID=s.id_persona)\n"
-                + "where f.ID=" + idPersona).split("#");
+                + "where f.ID=" + idPersona).split("¬");
         comboSociedades.setModel(new DefaultComboBoxModel((Object[]) datosS));
 
-        String[] datosTSuelo = mdb.cargarCombos("select descripcion from tiposuelo").split("#");
+        String[] datosTSuelo = mdb.cargarCombos("select descripcion from tiposuelo").split("¬");
         comboSuelo.setModel(new DefaultComboBoxModel((Object[]) datosTSuelo));
 
-        String[] datosTSombra = mdb.cargarCombos("select descripcion from tiposombra").split("#");
+        String[] datosTSombra = mdb.cargarCombos("select descripcion from tiposombra").split("¬");
         comboSombra.setModel(new DefaultComboBoxModel((Object[]) datosTSombra));
 
-        String[] datosTProd = mdb.cargarCombos("select descripcion from tipoproduccion").split("#");
+        String[] datosTProd = mdb.cargarCombos("select descripcion from tipoproduccion").split("¬");
         comboSistemaP.setModel(new DefaultComboBoxModel((Object[]) datosTProd));
 
-        String[] datosCultivos = mdb.cargarCombos("select descripcion from cultivos").split("#");
+        String[] datosCultivos = mdb.cargarCombos("select descripcion from cultivos").split("¬");
         comboCultivos.setModel(new DefaultComboBoxModel((Object[]) datosCultivos));
 
-        String[] datosVariedad = mdb.cargarCombos("select descripcion from variedadcafe").split("#");
+        String[] datosVariedad = mdb.cargarCombos("select descripcion from variedadcafe").split("¬");
         comboVariedad.setModel(new DefaultComboBoxModel((Object[]) datosVariedad));
 
-        String[] datosArchivos = mdb.cargarCombos("select descripcion from categoriadearchivos where parcelas=1").split("#");
+        String[] datosArchivos = mdb.cargarCombos("select descripcion from categoriadearchivos where parcelas=1").split("¬");
         comboArchivos.setModel(new DefaultComboBoxModel((Object[]) datosArchivos));
     }
 
@@ -1662,14 +1662,14 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
         datos = mdb.cargarCombos("SELECT m.descripcion \n"
                 + "from municipio m \n"
                 + "inner join estado e on (m.id_estado=e.id) \n"
-                + "where e.Descripcion='" + estado + "'").split("#");
+                + "where e.Descripcion='" + estado + "'").split("¬");
         comboMunicipio.setModel(new DefaultComboBoxModel((Object[]) datos));
         municipio = comboMunicipio.getSelectedItem() + "";
 
         datos = mdb.cargarCombos("SELECT m.descripcion \n"
                 + "from localidad m \n"
                 + "inner join municipio e on (m.id_municipio=e.id) \n"
-                + "where e.Descripcion='" + municipio + "'").split("#");
+                + "where e.Descripcion='" + municipio + "'").split("¬");
         comboLocalidad.setModel(new DefaultComboBoxModel((Object[]) datos));
     }//GEN-LAST:event_comboEstadoItemStateChanged
 
@@ -1683,7 +1683,7 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
         datos = mdb.cargarCombos("SELECT m.descripcion \n"
                 + "from localidad m \n"
                 + "inner join municipio e on (m.id_municipio=e.id) \n"
-                + "where e.Descripcion='" + municipio + "'").split("#");
+                + "where e.Descripcion='" + municipio + "'").split("¬");
 
         comboLocalidad.setModel(new DefaultComboBoxModel((Object[]) datos));
     }//GEN-LAST:event_comboMunicipioItemStateChanged
@@ -1775,21 +1775,21 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
 
         datos = mdb.cargarCombos("SELECT e.descripcion from estado e "
                 + "inner join pais p on(e.id_pais=p.id) "
-                + "where p.descripcion='" + pais + "'").split("#");
+                + "where p.descripcion='" + pais + "'").split("¬");
         comboEstado.setModel(new DefaultComboBoxModel((Object[]) datos));
         estado = comboEstado.getSelectedItem() + "";
 
         datos = mdb.cargarCombos("SELECT m.descripcion \n"
                 + "from municipio m \n"
                 + "inner join estado e on (m.id_estado=e.id) \n"
-                + "where e.Descripcion='" + estado + "'").split("#");
+                + "where e.Descripcion='" + estado + "'").split("¬");
         comboMunicipio.setModel(new DefaultComboBoxModel((Object[]) datos));
         municipio = comboMunicipio.getSelectedItem() + "";
 
         datos = mdb.cargarCombos("SELECT m.descripcion \n"
                 + "from localidad m \n"
                 + "inner join municipio e on (m.id_municipio=e.id) \n"
-                + "where e.Descripcion='" + municipio + "'").split("#");
+                + "where e.Descripcion='" + municipio + "'").split("¬");
         comboLocalidad.setModel(new DefaultComboBoxModel((Object[]) datos));
         localidad = comboLocalidad.getSelectedItem() + "";
     }//GEN-LAST:event_comboPaisItemStateChanged

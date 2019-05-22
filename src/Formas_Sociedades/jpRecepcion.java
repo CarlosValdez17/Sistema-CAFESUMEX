@@ -7,6 +7,7 @@ package Formas_Sociedades;
 
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.Connection;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
@@ -22,6 +23,7 @@ public class jpRecepcion extends javax.swing.JPanel {
     Connection cn;
     DefaultTableModel modelo;
     metodosDatosBasicos mdb;
+    jdRecepcion jdR;
 
     public jpRecepcion(Connection cn) {
         initComponents();
@@ -37,12 +39,12 @@ public class jpRecepcion extends javax.swing.JPanel {
         mdb.cargarInformacion2(modelo, 7, "select r.idRecepcion, CONCAT(pf.Nombre, ' ', pf.apellidoPaterno, ' ', pf.apellidoMaterno),\n"
                 + "CONCAT(pf2.Nombre, ' ', pf2.apellidoPaterno, ' ', pf2.apellidoMaterno), r.telefono, e.Descripcion,l.Descripcion, pm.nombrecorto\n"
                 + "from recepciones r \n"
-                + "inner join personaf pf on (pf.ID=r.idResponsable)\n"
-                + "inner join personaf pf2 on (pf2.ID=r.idCapturista)\n"
-                + "inner join localidad l on (r.idLocalidad=l.ID)\n"
-                + "inner join municipio m on (l.ID_Municipio=m.ID)\n"
-                + "inner join estado e on (m.ID_Estado=e.ID)\n"
-                + "inner join personam pm on (r.idSociedad=pm.ID)"
+                + "left join personaf pf on (pf.ID=r.idResponsable)\n"
+                + "left join personaf pf2 on (pf2.ID=r.idCapturista)\n"
+                + "left join localidad l on (r.idLocalidad=l.ID)\n"
+                + "left join municipio m on (l.ID_Municipio=m.ID)\n"
+                + "left join estado e on (m.ID_Estado=e.ID)\n"
+                + "left join personam pm on (r.idSociedad=pm.ID) where idEstado" + estado
         );
     }
 
@@ -77,6 +79,7 @@ public class jpRecepcion extends javax.swing.JPanel {
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
+        comboEstado = new javax.swing.JComboBox<>();
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -166,6 +169,18 @@ public class jpRecepcion extends javax.swing.JPanel {
         jButton4.setText("Editar");
 
         jButton5.setText("Desactivar");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
+
+        comboEstado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Activos", "Inactivos", "Todos" }));
+        comboEstado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboEstadoActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -177,7 +192,8 @@ public class jpRecepcion extends javax.swing.JPanel {
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jScrollPane1)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(comboEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButton2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton3)
@@ -199,7 +215,8 @@ public class jpRecepcion extends javax.swing.JPanel {
                     .addComponent(jButton2)
                     .addComponent(jButton3)
                     .addComponent(jButton4)
-                    .addComponent(jButton5))
+                    .addComponent(jButton5)
+                    .addComponent(comboEstado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -223,12 +240,46 @@ public class jpRecepcion extends javax.swing.JPanel {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        jdRecepcion jdR = new jdRecepcion(null, true, cn);
+        jdR = new jdRecepcion(null, true, cn);
+        jdR.jpR = this;
         jdR.setVisible(true);
     }//GEN-LAST:event_jButton3ActionPerformed
+    String estado = "=1";
+    private void comboEstadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboEstadoActionPerformed
+        // TODO add your handling code here:
+        switch (comboEstado.getSelectedItem() + "") {
+            case "Activos":
+                estado = "=1";
+                jButton5.setText("Desactivar");
+                llenarTabla();
+                break;
+            case "Inactivos":
+                estado = "=2";
+                jButton5.setText("Activar");
+                llenarTabla();
+                break;
+            case "Todos":
+                estado = " <> 3";
+                llenarTabla();
+                break;
+        }
+    }//GEN-LAST:event_comboEstadoActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        // TODO add your handling code here:
+        if (estado.equals("=1")) {
+            mdb.actualizarBasicos("update recepciones set idEstado=2 where idRecepcion='" + jTable1.getValueAt(jTable1.getSelectedRow(), 0) + "'");
+        } else if (estado.equals("=2")) {
+            mdb.actualizarBasicos("update recepciones set idEstado=1 where idRecepcion='" + jTable1.getValueAt(jTable1.getSelectedRow(), 0) + "'");
+        }else{
+            JOptionPane.showMessageDialog(null,"Opcion No Permitida");
+        }
+        llenarTabla();
+    }//GEN-LAST:event_jButton5ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> comboEstado;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;

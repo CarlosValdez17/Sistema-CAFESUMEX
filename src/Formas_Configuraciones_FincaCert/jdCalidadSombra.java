@@ -62,7 +62,7 @@ public class jdCalidadSombra extends javax.swing.JDialog {
     String[] datos;
 
     public void rellenarCombos() {
-        datos = mdb.cargarCombos("SELECT descripcion from tiposombra where id_situacion=1").split("#");
+        datos = mdb.cargarCombos("SELECT descripcion from tiposombra where id_situacion=1").split("¬");
         comboTipo.setModel(new DefaultComboBoxModel((Object[]) datos));
     }
 

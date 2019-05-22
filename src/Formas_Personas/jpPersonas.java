@@ -55,7 +55,7 @@ public class jpPersonas extends javax.swing.JPanel {
     }
 
     public void cargarCombo() {
-        String[] datos = mdb.cargarCombos("SELECT descripcion from puestos").split("#");
+        String[] datos = mdb.cargarCombos("SELECT descripcion from puestos").split("¬");
         comboAsignaciones.setModel(new DefaultComboBoxModel((Object[]) datos));
     }
 

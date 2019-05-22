@@ -56,9 +56,9 @@ public class jdMaximoRendimiento extends javax.swing.JDialog {
 
     public void rellenaCombos() {
         String[] datos;
-        datos = mdb.cargarCombos("SELECT descripcion from procesocafe").split("#");
+        datos = mdb.cargarCombos("SELECT descripcion from procesocafe").split("¬");
         comboProceso.setModel(new DefaultComboBoxModel((Object[]) datos));
-        datos = mdb.cargarCombos("SELECT descripcion from formacafe").split("#");
+        datos = mdb.cargarCombos("SELECT descripcion from formacafe").split("¬");
         comboForma.setModel(new DefaultComboBoxModel((Object[]) datos));
     }
 

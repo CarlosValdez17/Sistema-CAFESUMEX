@@ -37,7 +37,7 @@ public class jpEvaluaciones extends javax.swing.JPanel {
     }
 
     public void llenarCombo() {
-        String[] datos = mdb.cargarCombos("SELECT descripcion from formacafe").split("#");
+        String[] datos = mdb.cargarCombos("SELECT descripcion from formacafe").split("¬");
         comboFormas.setModel(new DefaultComboBoxModel((Object[]) datos));
 
         String forma = comboFormas.getSelectedItem() + "";
@@ -58,7 +58,7 @@ public class jpEvaluaciones extends javax.swing.JPanel {
      */
     //✘ ✓
     /*   public void construirTabla() {
-        String[] columnas = mdb.cargarCombos("Select descripcion from procesocafe").split("#");
+        String[] columnas = mdb.cargarCombos("Select descripcion from procesocafe").split("¬");
         for (int i = 0; i < columnas.length; i++) {
             System.out.println(columnas[i]);
             //modelo.addColumn(new Object[]{columnas[i],true} );
@@ -81,7 +81,7 @@ public class jpEvaluaciones extends javax.swing.JPanel {
                 + " FROM formaproceso fp\n"
                 + "	INNER JOIN formacafe fc on (fp.ID_Forma=fc.ID)\n"
                 + "	INNER JOIN procesocafe pc on (fp.ID_Proceso=pc.ID)\n"
-                + " GROUP BY fc.Descripcion").split("#");
+                + " GROUP BY fc.Descripcion").split("¬");
         for(int i=0; i<datos.length; i++){
             String[] dat = datos[i].split(",");
             String col1 = dat[0];

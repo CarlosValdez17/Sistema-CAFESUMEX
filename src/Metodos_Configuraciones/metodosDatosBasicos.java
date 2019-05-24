@@ -55,7 +55,7 @@ public class metodosDatosBasicos {
 
     public Boolean insertarEnCiclo(String sql) {
         try {
-            // System.out.println(sql);
+            System.out.println(sql);
             PreparedStatement cmd = cn.prepareCall(sql);
             cmd.execute();
             cmd.close();
@@ -220,7 +220,7 @@ public class metodosDatosBasicos {
 
     public String cargarCombos(String sql) {
         try {
-            //System.out.println(sql + "\n AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII");
+            System.out.println(sql + "\n AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII");
             CallableStatement cmd = cn.prepareCall(sql);
             ResultSet rs = cmd.executeQuery();
             String a = "";

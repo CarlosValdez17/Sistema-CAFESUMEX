@@ -10,9 +10,11 @@ import FormasInternas.internalPrueba;
 import FormasInternas.panelPrueba;
 import Formas_BeneficioHumedo.jdSeleccionBeneficio;
 import Formas_BeneficioHumedo.jpCortesRecibidos;
+import Formas_BeneficioHumedo.jpLotesConfirmados;
 import Formas_Configuraciones_BeneficioHumedo.jpActividadesBH;
 import Formas_Configuraciones_BeneficioHumedo.jpAreaAlmacen;
 import Formas_Configuraciones_BeneficioHumedo.jpClima;
+import Formas_Configuraciones_BeneficioHumedo.jpMaquinaria;
 import Formas_Configuraciones_BeneficioHumedo.jpRutas;
 import Formas_Configuraciones_BeneficioHumedo.jpSobrante;
 import Formas_Configuraciones_BeneficioHumedo.jpVehiculo;
@@ -692,8 +694,9 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 panelPrincipal.revalidate();
                 panelPrincipal.repaint();
                 break;
+
             case "Cortes Recibidos":
-                jpCortesRecibidos jpCR = new jpCortesRecibidos(beneficio,cn);
+                jpCortesRecibidos jpCR = new jpCortesRecibidos(beneficio, cn);
                 jpCR.setSize(size);
                 jpCR.setLocation(0, 0);
                 panelPrincipal.removeAll();
@@ -701,6 +704,27 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 panelPrincipal.revalidate();
                 panelPrincipal.repaint();
                 break;
+
+            case "Lotes Confirmados":
+                jpLotesConfirmados jpLC = new jpLotesConfirmados(cn);
+                jpLC.setSize(size);
+                jpLC.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpLC);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+
+            case "Maquinaria":
+                jpMaquinaria jpMa = new jpMaquinaria(cn);
+                jpMa.setSize(size);
+                jpMa.setLocation(0, 0);
+                panelPrincipal.removeAll();
+                panelPrincipal.add(jpMa);
+                panelPrincipal.revalidate();
+                panelPrincipal.repaint();
+                break;
+
             default:
                 JLabel lbl = new JLabel();
                 lbl.setSize(panelPrincipal.getWidth(), panelPrincipal.getHeight());
@@ -754,17 +778,17 @@ public class pantallaPrincipal extends javax.swing.JFrame {
     }
 
     public void beneficio(String beneficio) {
-        this.beneficio=beneficio;
-        
+        this.beneficio = beneficio;
+
         panelArbol.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         jScrollPane2.setOpaque(false);
 
         javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Beneficio Humedo");
         javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Cortes Recibidos");
-        javax.swing.tree.DefaultMutableTreeNode treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Cortes Confirmados");
-        javax.swing.tree.DefaultMutableTreeNode treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("Cortes en Proceso de Secado");
-        javax.swing.tree.DefaultMutableTreeNode treeNode5 = new javax.swing.tree.DefaultMutableTreeNode("Cortes Enviado");
+        javax.swing.tree.DefaultMutableTreeNode treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Lotes Confirmados");
+        javax.swing.tree.DefaultMutableTreeNode treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("Lotes en Proceso de Secado");
+        javax.swing.tree.DefaultMutableTreeNode treeNode5 = new javax.swing.tree.DefaultMutableTreeNode("Lotes Enviados");
         javax.swing.tree.DefaultMutableTreeNode treeNode6 = new javax.swing.tree.DefaultMutableTreeNode("Consumo Agua");
         javax.swing.tree.DefaultMutableTreeNode treeNode7 = new javax.swing.tree.DefaultMutableTreeNode("Entrega Cascarilla");
         javax.swing.tree.DefaultMutableTreeNode treeNode8 = new javax.swing.tree.DefaultMutableTreeNode("Clima y Temperatura Ambiente");
@@ -1392,6 +1416,8 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         treeNode1.add(treeNode2);
         treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Beneficio Húmedo");
         treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Vehículos");
+        treeNode2.add(treeNode3);
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Maquinaria");
         treeNode2.add(treeNode3);
         treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Actividades de BH");
         treeNode2.add(treeNode3);

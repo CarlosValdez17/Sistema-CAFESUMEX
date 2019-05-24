@@ -22,7 +22,6 @@ public class MiRender extends DefaultTableCellRenderer {
             int column) {
 
         JLabel cell = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-
        /* if (value instanceof Long) {
             long valor = (long) value;
             if (column == 3) {
@@ -30,17 +29,14 @@ public class MiRender extends DefaultTableCellRenderer {
                     cell.setBackground(Color.yellow);
                 }
             }
-        }*/
-        
-        if(value instanceof String){
-          
+        }*/      
+        if(value instanceof String){     
             String Valor = (String) value;
             cell.setBackground(new Color(202, 245, 235));
-            cell.setForeground(Color.black);
-            
+            cell.setForeground(Color.black);    
         }
+        
         return cell;
-
     }
 
 }

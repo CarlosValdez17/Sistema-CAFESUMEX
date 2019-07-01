@@ -5,6 +5,7 @@
  */
 package Formas_Configuraciones_DatosBasicos;
 
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.Connection;
 import javax.swing.JOptionPane;
@@ -25,15 +26,38 @@ public class jpLocalidad extends javax.swing.JPanel {
     DefaultTableModel modelo;
     Connection cn;
     jdLocalidad jdL;
+    Propiedades idioma;
+    String Idioma;
 
-    public jpLocalidad(Connection c) {
+    public jpLocalidad(Connection c, String Idioma) {
         initComponents();
 
         cn = c;
+        this.Idioma = Idioma;
         mdb = new metodosDatosBasicos(cn);
         modelo = (DefaultTableModel) tablaLocalidad.getModel();
 
         tablaLocalidad.setRowSorter(new TableRowSorter(modelo));
+
+        idioma = new Propiedades(Idioma);
+        jButton5.setText(idioma.getProperty("Cerrar"));
+        jButton2.setText(idioma.getProperty("Nuevo"));
+        jButton3.setText(idioma.getProperty("Editar"));
+        jButton4.setText(idioma.getProperty("Desactivar"));
+        jLabel10.setText(idioma.getProperty("Situacion"));
+        jLabel6.setText(idioma.getProperty("Localidad"));
+        jLabel7.setText(idioma.getProperty("Municipio"));
+        jLabel8.setText(idioma.getProperty("Estado"));
+        jLabel9.setText(idioma.getProperty("Pais"));
+
+        tablaLocalidad.getColumnModel().getColumn(0).setHeaderValue(idioma.getProperty("Localidad"));
+        tablaLocalidad.getColumnModel().getColumn(1).setHeaderValue(idioma.getProperty("Municipio"));
+        tablaLocalidad.getColumnModel().getColumn(2).setHeaderValue(idioma.getProperty("Estado"));
+        tablaLocalidad.getColumnModel().getColumn(3).setHeaderValue(idioma.getProperty("Pais"));
+
+        comboSituacion.addItem(idioma.getProperty("Activos"));
+        comboSituacion.addItem(idioma.getProperty("Inactivos"));
+        comboSituacion.addItem(idioma.getProperty("Todos"));
 
         llenaTablaLocalidad();
 
@@ -56,13 +80,14 @@ public class jpLocalidad extends javax.swing.JPanel {
         String tipoUE = "";
         String tipoISO = "";
         String situacion = "";
+        situacion = comboSituacion.getSelectedIndex() + "";
 
-        situacion = comboSituacionLocalidad.getSelectedItem() + "";
-
-        if (situacion.equals("Inactivo")) {
+        if (situacion.equals("1")) {
             situacion = "2";
-        } else if (situacion.equals("Activo")) {
+        } else if (situacion.equals("0")) {
             situacion = "1";
+        } else {
+            situacion = "3";
         }
 
         if (txtBusquedaL.getText().length() > 0) {
@@ -79,7 +104,7 @@ public class jpLocalidad extends javax.swing.JPanel {
         }
 
         String sql;
-        if (situacion.equals("Todos")) {
+        if (situacion.equals("3")) {
             sql = "SELECT l.descripcion, m.descripcion, e.descripcion, p.descripcion from localidad l "
                     + "inner join municipio m on (l.ID_Municipio=m.ID) \n"
                     + "inner join estado e on (m.ID_Estado=e.ID) \n"
@@ -128,7 +153,7 @@ public class jpLocalidad extends javax.swing.JPanel {
         tablaLocalidad = new javax.swing.JTable();
         jPanel8 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
-        comboSituacionLocalidad = new javax.swing.JComboBox<>();
+        comboSituacion = new javax.swing.JComboBox<>();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
@@ -247,10 +272,9 @@ public class jpLocalidad extends javax.swing.JPanel {
 
         jLabel10.setText("Situacion");
 
-        comboSituacionLocalidad.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Activo", "Inactivo", "Todos" }));
-        comboSituacionLocalidad.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                comboSituacionLocalidadItemStateChanged(evt);
+        comboSituacion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboSituacionActionPerformed(evt);
             }
         });
 
@@ -285,7 +309,7 @@ public class jpLocalidad extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jLabel10)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(comboSituacionLocalidad, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(comboSituacion, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -304,7 +328,7 @@ public class jpLocalidad extends javax.swing.JPanel {
                     .addComponent(jButton2)
                     .addComponent(jButton3)
                     .addComponent(jButton4)
-                    .addComponent(comboSituacionLocalidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(comboSituacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel10)
                     .addComponent(jButton5))
                 .addContainerGap())
@@ -375,7 +399,7 @@ public class jpLocalidad extends javax.swing.JPanel {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        jdL = new jdLocalidad(null, true, "1", "", municipio, estado, pais, cn);
+        jdL = new jdLocalidad(null, true, "1", "", municipio, estado, pais, Idioma, cn);
         jdL.jpL = this;
         jdL.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
@@ -391,7 +415,7 @@ public class jpLocalidad extends javax.swing.JPanel {
             System.out.println("1 Clic");
         }
         if (evt.getClickCount() == 2) {
-            jdL = new jdLocalidad(null, true, "2", localidad, municipio, estado, pais, cn);
+            jdL = new jdLocalidad(null, true, "2", localidad, municipio, estado, pais, Idioma, cn);
             jdL.jpL = this;
             jdL.setVisible(true);
         }
@@ -400,9 +424,9 @@ public class jpLocalidad extends javax.swing.JPanel {
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
         if (municipio.equals("")) {
-            JOptionPane.showMessageDialog(null, "Seleccione un estado");
+            JOptionPane.showMessageDialog(null, idioma.getProperty("SeleccionRegistro"));
         } else {
-            jdL = new jdLocalidad(null, true, "2", localidad, municipio, estado, pais, cn);
+            jdL = new jdLocalidad(null, true, "2", localidad, municipio, estado, pais, Idioma, cn);
             jdL.jpL = this;
             jdL.setVisible(true);
         }
@@ -428,20 +452,33 @@ public class jpLocalidad extends javax.swing.JPanel {
         busquedaLocalidad();
     }//GEN-LAST:event_txtBusquedaPKeyReleased
 
-    private void comboSituacionLocalidadItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionLocalidadItemStateChanged
-        // TODO add your handling code here:
-        busquedaLocalidad();
-    }//GEN-LAST:event_comboSituacionLocalidadItemStateChanged
-
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        mdb.actualizarBasicos("UPDATE localidad SET ID_Situacion=2 where descripcion='" + localidad + "'");
-        llenaTablaLocalidad();
+        if (comboSituacion.getSelectedIndex() == 0) {
+            mdb.actualizarBasicos("UPDATE localidad SET ID_Situacion=2 where descripcion='" + localidad + "'");
+        } else if (comboSituacion.getSelectedIndex() == 1) {
+            mdb.actualizarBasicos("UPDATE localidad SET ID_Situacion=1 where descripcion='" + localidad + "'");
+        }
+        busquedaLocalidad();
     }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void comboSituacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboSituacionActionPerformed
+        // TODO add your handling code here:
+        if (comboSituacion.getSelectedItem().equals(idioma.getProperty("Inactivos"))) {
+            jButton4.setText(idioma.getProperty("Activar"));
+            jButton4.setEnabled(true);
+        } else if (comboSituacion.getSelectedItem().equals(idioma.getProperty("Activos"))) {
+            jButton4.setText(idioma.getProperty("Desactivar"));
+            jButton4.setEnabled(true);
+        } else {
+            jButton4.setEnabled(false);
+        }
+        busquedaLocalidad();
+    }//GEN-LAST:event_comboSituacionActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox<String> comboSituacionLocalidad;
+    private javax.swing.JComboBox<String> comboSituacion;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;

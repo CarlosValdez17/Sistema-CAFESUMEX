@@ -5,6 +5,7 @@
  */
 package Formas_Sociedades;
 
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.Connection;
 import javax.swing.DefaultComboBoxModel;
@@ -22,52 +23,156 @@ public class jdAlmacenes extends javax.swing.JDialog {
     Connection cn;
     metodosDatosBasicos mdb;
     jpAlmacenes jpAl;
-    
-    public jdAlmacenes(java.awt.Frame parent, boolean modal, Connection cn) {
+    String Idioma, almacen, tipoOperacion;
+    Propiedades idioma;
+
+    public jdAlmacenes(java.awt.Frame parent, boolean modal, String Idioma, String almacen, String tipoOperacion, Connection cn) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
-        
+
         this.cn = cn;
+        this.Idioma = Idioma;
+        this.almacen = almacen;
+        this.tipoOperacion = tipoOperacion;
+        idioma = new Propiedades(Idioma);
         mdb = new metodosDatosBasicos(cn);
-        
-        rellenarCombo();
+
+        traductor();
+
+        if (tipoOperacion.equals("Nuevo")) {
+            rellenarCombo();
+        } else if (tipoOperacion.equals("Editar")) {
+            llenarDatos();
+        }
     }
-    
+
+    public void traductor() {
+        jLabel2.setText(idioma.getProperty("Sociedad"));
+        jLabel1.setText(idioma.getProperty(("Nombre")));
+        jLabel3.setText(idioma.getProperty("Responsable"));
+        jLabel11.setText(idioma.getProperty("Capturista"));
+        jLabel4.setText(idioma.getProperty("Direccion"));
+        jLabel5.setText(idioma.getProperty("Telefono"));
+        jLabel7.setText(idioma.getProperty("Pais"));
+        jLabel8.setText(idioma.getProperty("Estado"));
+        jLabel10.setText(idioma.getProperty("Municipio"));
+        jLabel9.setText(idioma.getProperty("Localidad"));
+        checkExterno.setText(idioma.getProperty("Externo"));
+        jButton1.setText(idioma.getProperty("Guardar"));
+        jButton2.setText(idioma.getProperty("Cancelar"));
+    }
+
     String[] datos;
-    
+
     public void rellenarCombo() {
         String[] sociedades = mdb.cargarCombos("select nombrecorto from personam").split("¬");
         comboSociedad.setModel(new DefaultComboBoxModel((Object[]) sociedades));
-        
+
         String pais, estado, municipio;
-        
+
         datos = mdb.cargarCombos("SELECT descripcion from pais").split("¬");
         comboPais.setModel(new DefaultComboBoxModel((Object[]) datos));
-        
+
         pais = comboPais.getSelectedItem() + "";
-        
+
         datos = mdb.cargarCombos("SELECT e.descripcion \n"
                 + "from estado e \n"
                 + "inner join pais p on (e.id_pais=p.id) \n"
                 + "where p.Descripcion='" + pais + "'").split("¬");
         comboEstado.setModel(new DefaultComboBoxModel((Object[]) datos));
-        
+
         estado = comboEstado.getSelectedItem() + "";
-        
+
         datos = mdb.cargarCombos("SELECT m.descripcion \n"
                 + "from municipio m \n"
                 + "inner join estado e on (m.id_estado=e.id) \n"
                 + "where e.Descripcion='" + estado + "'").split("¬");
         comboMunicipio.setModel(new DefaultComboBoxModel((Object[]) datos));
-        
+
         municipio = comboMunicipio.getSelectedItem() + "";
-        
+
         datos = mdb.cargarCombos("SELECT l.descripcion \n"
                 + "from localidad l \n"
                 + "inner join municipio m on (l.ID_Municipio=m.ID) \n"
                 + "where m.Descripcion='" + municipio + "' ").split("¬");
         comboLocalidad.setModel(new DefaultComboBoxModel((Object[]) datos));
+    }
+
+    public void llenarDatos() {
+        String datos[] = mdb.devolverLineaDatos("select nombreAlmacen, CONCAT(pf.Nombre, ' ', pf.apellidoPaterno, ' ', pf.apellidoMaterno),CONCAT(pf2.Nombre, ' ', pf2.apellidoPaterno, ' ', pf2.apellidoMaterno), domicilio, a.telefono,p.descripcion, e.descripcion, m.descripcion, l.descripcion, pm.nombrecorto, externo\n"
+                + "from almacenes a\n"
+                + "left join personaf pf on (a.idResponsable=pf.ID)\n"
+                + "left join personaf pf2 on (a.idCapturista=pf2.ID)\n"
+                + "left join localidad l on (a.idLocalidad=l.ID)\n"
+                + "left join municipio m on (l.ID_Municipio=m.ID)\n"
+                + "left join estado e on (m.ID_Estado=e.ID)\n"
+                + "left join pais p on (e.ID_Pais=p.ID)\n"
+                + "left join personam pm on (a.idSociedad=pm.ID) where nombreAlmacen='" + almacen + "'", 11).split("¬");
+
+        String[] sociedades = mdb.cargarCombos("select nombrecorto from personam").split("¬");
+        comboSociedad.setModel(new DefaultComboBoxModel((Object[]) sociedades));
+        comboSociedad.setSelectedItem(datos[9]);
+
+        txtNombre.setText(datos[0]);
+        jTextField1.setText(datos[1]);
+        jTextField2.setText(datos[2]);
+        txtDomicilio.setText(datos[3]);
+        txtTelefono.setText(datos[4]);
+
+        //Combos Geograficos
+        String datosG[];
+
+        datosG = mdb.cargarCombos("SELECT descripcion from pais").split("¬");
+        comboPais.setModel(new DefaultComboBoxModel((Object[]) datosG));
+
+        comboPais.setSelectedItem(datos[5]);
+
+        datosG = mdb.cargarCombos("SELECT e.descripcion \n"
+                + "from estado e \n"
+                + "inner join pais p on (e.id_pais=p.id) \n"
+                + "where p.Descripcion='" + datos[5] + "'").split("¬");
+        comboEstado.setModel(new DefaultComboBoxModel((Object[]) datosG));
+        comboEstado.setSelectedItem(datos[6]);
+
+        datosG = mdb.cargarCombos("SELECT m.descripcion \n"
+                + "from municipio m \n"
+                + "inner join estado e on (m.id_estado=e.id) \n"
+                + "where e.Descripcion='" + datos[6] + "'").split("¬");
+        comboMunicipio.setModel(new DefaultComboBoxModel((Object[]) datosG));
+        comboMunicipio.setSelectedItem(datos[7]);
+
+        comboLocalidad.setSelectedItem(datos[8]);
+
+        if (datos[10].equals("1")) {
+            checkExterno.setSelected(true);
+        } else {
+            checkExterno.setSelected(false);
+        }
+
+    }
+
+    public void tipoOperacion() {
+        int valor;
+
+        if (checkExterno.isSelected()) {
+            valor = 1;
+        } else {
+            valor = 0;
+        }
+
+        if (tipoOperacion.equals("Nuevo")) {
+            mdb.insertarBasicos("insert into almacenes values(null,0,0, '" + txtNombre.getText() + "', "
+                    + "'" + txtDomicilio.getText() + "', '" + txtTelefono.getText() + "', " + mdb.devuelveId("select id from personam where nombrecorto='" + comboSociedad.getSelectedItem() + "'") + ", "
+                    + "" + mdb.devuelveId("select id from localidad where descripcion='" + comboLocalidad.getSelectedItem() + "' ") + ", " + valor + ", 1  )");
+        } else if (tipoOperacion.equals("Editar")) {
+            mdb.actualizarBasicos("update almacenes set domicilio='" + txtDomicilio.getText() + "', telefono='" + txtTelefono.getText() + "', "
+                    + "idSociedad=" + mdb.devuelveId("select id from personam where nombrecorto='" + comboSociedad.getSelectedItem() + "'") + ", "
+                    + "externo=" + valor + ", idLocalidad=" + mdb.devuelveId("select id from localidad where descripcion='" + comboLocalidad.getSelectedItem() + "' ") + " where nombreAlmacen='" + almacen + "' ");
+
+        }
+        jpAl.llenarTabla();
+        this.dispose();
     }
 
     /**
@@ -89,8 +194,6 @@ public class jdAlmacenes extends javax.swing.JDialog {
         txtDomicilio = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         txtTelefono = new javax.swing.JTextField();
-        txtLocalizacion = new javax.swing.JTextField();
-        jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         comboPais = new javax.swing.JComboBox<>();
         jLabel8 = new javax.swing.JLabel();
@@ -128,8 +231,6 @@ public class jdAlmacenes extends javax.swing.JDialog {
         jLabel4.setText("Domicilio");
 
         jLabel5.setText("Telefono");
-
-        jLabel6.setText("Localizacion");
 
         jLabel7.setText("Pais");
 
@@ -208,25 +309,8 @@ public class jdAlmacenes extends javax.swing.JDialog {
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel1)
                                     .addComponent(jLabel2)
-                                    .addComponent(checkExterno)
                                     .addComponent(jLabel4)
                                     .addComponent(txtDomicilio, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel5)
-                                            .addComponent(txtTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel6)
-                                            .addComponent(txtLocalizacion, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel7)
-                                            .addComponent(comboPais, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel8)
-                                            .addComponent(comboEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(jLabel10)
@@ -234,7 +318,18 @@ public class jdAlmacenes extends javax.swing.JDialog {
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(jLabel9)
-                                            .addComponent(comboLocalidad, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                            .addComponent(comboLocalidad, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel7)
+                                            .addComponent(comboPais, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jLabel5)
+                                            .addComponent(txtTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(checkExterno)
+                                            .addComponent(jLabel8)
+                                            .addComponent(comboEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))))
                                 .addGap(0, 0, Short.MAX_VALUE)))
                         .addContainerGap())
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -263,19 +358,15 @@ public class jdAlmacenes extends javax.swing.JDialog {
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(6, 6, 6)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtDomicilio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel5)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtLocalizacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtDomicilio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(checkExterno))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -296,9 +387,7 @@ public class jdAlmacenes extends javax.swing.JDialog {
                         .addComponent(jLabel10)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(comboMunicipio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(checkExterno)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(32, 32, 32)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jButton2))
@@ -327,17 +416,7 @@ public class jdAlmacenes extends javax.swing.JDialog {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        int valor;
-        
-        if (checkExterno.isSelected()) {
-            valor = 1;
-        } else {
-            valor = 0;
-        }
-        
-        mdb.insertarBasicos("insert into almacenes values(null,0,0, '" + txtNombre.getText() + "', "
-                + "'" + txtDomicilio.getText() + "', '" + txtTelefono.getText() + "', " + mdb.devuelveId("select id from personam where nombrecorto='" + comboSociedad.getSelectedItem() + "'") + ", "
-                + "" + mdb.devuelveId("select id from localidad where descripcion='" + comboLocalidad.getSelectedItem() + "' ") + ", " + valor + ", 1  )");
+        tipoOperacion();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void comboEstadoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboEstadoItemStateChanged
@@ -366,7 +445,7 @@ public class jdAlmacenes extends javax.swing.JDialog {
                 + "inner join pais p on (e.id_pais=p.id) \n"
                 + "where p.Descripcion='" + p + "'").split("¬");
         comboEstado.setModel(new DefaultComboBoxModel((Object[]) datos));
-        
+
         datos = mdb.cargarCombos("SELECT m.descripcion \n"
                 + "from municipio m \n"
                 + "inner join estado e on (m.id_estado=e.id) \n"
@@ -382,10 +461,10 @@ public class jdAlmacenes extends javax.swing.JDialog {
     private void comboSociedadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboSociedadActionPerformed
         // TODO add your handling code here:
         String idSociedad = mdb.devuelveId("select id from personam where nombrecorto='" + comboSociedad.getSelectedItem() + "'");
-       
+
         idAlmacen = "AL-" + mdb.devuelveUnDato("select clavecorte from personam where id=" + idSociedad) + "-"
                 + mdb.devuelveUnDato("select id+1 from almacenes order by id desc limit 1");
-        
+
         txtNombre.setText(idAlmacen);
     }//GEN-LAST:event_comboSociedadActionPerformed
 
@@ -461,7 +540,6 @@ public class jdAlmacenes extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
@@ -469,7 +547,6 @@ public class jdAlmacenes extends javax.swing.JDialog {
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField txtDomicilio;
-    private javax.swing.JTextField txtLocalizacion;
     private javax.swing.JTextField txtNombre;
     private javax.swing.JTextField txtTelefono;
     // End of variables declaration//GEN-END:variables

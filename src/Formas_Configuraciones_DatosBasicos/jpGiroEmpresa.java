@@ -5,6 +5,7 @@
  */
 package Formas_Configuraciones_DatosBasicos;
 
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.Connection;
 import javax.swing.JOptionPane;
@@ -24,14 +25,34 @@ public class jpGiroEmpresa extends javax.swing.JPanel {
     DefaultTableModel modelo;
     jdGiroEmpresa jdG;
     Connection cn;
+    Propiedades idioma;
+    String Idioma;
 
-    public jpGiroEmpresa(Connection c) {
+    public jpGiroEmpresa(Connection c, String Idioma) {
         initComponents();
 
         cn = c;
+        this.Idioma=Idioma;
         mdb = new metodosDatosBasicos(cn);
         modelo = (DefaultTableModel) tablaGiro.getModel();
         tablaGiro.getTableHeader().setReorderingAllowed(false);
+        
+        idioma = new Propiedades(Idioma);
+        jButton2.setText(idioma.getProperty("Nuevo"));
+        jButton3.setText(idioma.getProperty("Editar"));
+        jButton4.setText(idioma.getProperty("Desactivar"));
+        jButton5.setText(idioma.getProperty("Cerrar"));
+        jLabel10.setText(idioma.getProperty("Situacion"));
+        jLabel6.setText(idioma.getProperty("GiroEmpresa"));
+
+        tablaGiro.getColumnModel().getColumn(0).setHeaderValue(idioma.getProperty("GiroEmpresa"));
+        tablaGiro.getColumnModel().getColumn(1).setHeaderValue(idioma.getProperty("Situacion"));
+
+        comboSituacionGiro.addItem(idioma.getProperty("Activos"));
+        comboSituacionGiro.addItem(idioma.getProperty("Inactivos"));
+        comboSituacionGiro.addItem(idioma.getProperty("Todos"));
+
+        
         llenaTablaGiro();
     }
 
@@ -47,21 +68,30 @@ public class jpGiroEmpresa extends javax.swing.JPanel {
     public void busquedaGiro() {
         String tipoB = "";
         String situacion = "";
+        situacion = comboSituacionGiro.getSelectedIndex() + "";
 
-        situacion = comboSituacionGiro.getSelectedItem() + "";
+        if (situacion.equals("1")) {
+            situacion = "2";
+        } else if (situacion.equals("0")) {
+            situacion = "1";
+        } else {
+            situacion = "3";
+        }
+
+/*        situacion = comboSituacionGiro.getSelectedItem() + "";
 
         if (situacion.equals("Inactivo")) {
             situacion = "2";
         } else if (situacion.equals("Activo")) {
             situacion = "1";
         }
-
+*/
         if (txtBusquedaGiro.getText().length() > 0) {
             tipoB = "AND g.descripcion like '" + txtBusquedaGiro.getText() + "%'";
         }
 
         String sql;
-        if (situacion.equals("Todos")) {
+        if (situacion.equals("3")) {
 
             sql = "SELECT g.descripcion, s.descripcion from girodemoral g "
                     + "inner join situacion s on (g.id_situacion=s.id) "
@@ -167,10 +197,14 @@ public class jpGiroEmpresa extends javax.swing.JPanel {
 
         jLabel10.setText("Situacion");
 
-        comboSituacionGiro.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Activo", "Inactivo", "Todos" }));
         comboSituacionGiro.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 comboSituacionGiroItemStateChanged(evt);
+            }
+        });
+        comboSituacionGiro.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboSituacionGiroActionPerformed(evt);
             }
         });
 
@@ -295,7 +329,7 @@ public class jpGiroEmpresa extends javax.swing.JPanel {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        jdG = new jdGiroEmpresa(null, true, "1", giro, cn);
+        jdG = new jdGiroEmpresa(null, true, "1", giro, Idioma, cn);
         jdG.jpG = this;
         jdG.setVisible(true);
 
@@ -308,11 +342,11 @@ public class jpGiroEmpresa extends javax.swing.JPanel {
 
         if (evt.getClickCount() == 2) {
             if (situacion.equals("Activo")) {
-                jdG = new jdGiroEmpresa(null, true, "2", giro, cn);
+                jdG = new jdGiroEmpresa(null, true, "2", giro, Idioma, cn);
                 jdG.jpG = this;
                 jdG.setVisible(true);
             } else {
-                JOptionPane.showMessageDialog(null, "Dato Inactivo");
+                JOptionPane.showMessageDialog(null, idioma.getProperty("SeleccionRegistro"));
             }
         }
     }//GEN-LAST:event_tablaGiroMouseClicked
@@ -325,11 +359,13 @@ public class jpGiroEmpresa extends javax.swing.JPanel {
     private void comboSituacionGiroItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionGiroItemStateChanged
         // TODO add your handling code here:
         if (comboSituacionGiro.getSelectedItem().equals("Inactivo")) {
-            jButton4.setText("Activar");
+            //jButton4.setText("Activar");
+            jButton4.setText(idioma.getProperty("Activar"));
             estatus = "1";
         } else {
             estatus = "2";
-            jButton4.setText("Desactivar");
+            //jButton4.setText("Desactivar");
+            jButton4.setText(idioma.getProperty("Desactivar"));
         }
         busquedaGiro();
     }//GEN-LAST:event_comboSituacionGiroItemStateChanged
@@ -347,13 +383,18 @@ public class jpGiroEmpresa extends javax.swing.JPanel {
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
         if (situacion.equals("Activo")) {
-            jdG = new jdGiroEmpresa(null, true, "2", giro, cn);
+            jdG = new jdGiroEmpresa(null, true, "2", giro, Idioma,  cn);
             jdG.jpG = this;
             jdG.setVisible(true);
         } else {
             JOptionPane.showMessageDialog(null, "Dato Inactivo");
         }
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void comboSituacionGiroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboSituacionGiroActionPerformed
+        // TODO add your handling code here:
+        busquedaGiro();
+    }//GEN-LAST:event_comboSituacionGiroActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

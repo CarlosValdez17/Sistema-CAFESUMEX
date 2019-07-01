@@ -371,20 +371,16 @@ public class jpMaquinaria extends javax.swing.JPanel {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        jdR = new jdMaquinaria(null, true, "1", clave, factor, nom, desc, cn);
+        jdR = new jdMaquinaria(null, true, "1", clave, "", "", "", cn);
         jdR.jpR = this;
         jdR.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
-    String clave = "", factor = "", nom = "", desc = "", situacion = "";
+    String clave = "", idMaquinaria = "";
     private void tablaSobranteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaSobranteMouseClicked
         // TODO add your handling code here:
         clave = tablaSobrante.getValueAt(tablaSobrante.getSelectedRow(), 0) + "";
-        factor = tablaSobrante.getValueAt(tablaSobrante.getSelectedRow(), 1) + "";
-        nom = tablaSobrante.getValueAt(tablaSobrante.getSelectedRow(), 2) + "";
-        desc = tablaSobrante.getValueAt(tablaSobrante.getSelectedRow(), 3) + "";
-        situacion = tablaSobrante.getValueAt(tablaSobrante.getSelectedRow(), 4) + "";
 
-       /* if (evt.getClickCount() == 2) {
+        /* if (evt.getClickCount() == 2) {
             if (situacion.equals("Activo")) {
                 jdR = new jdSobrante(null, true, "2", clave, factor, nom, desc, cn);
                 jdR.jpR = this;
@@ -397,7 +393,9 @@ public class jpMaquinaria extends javax.swing.JPanel {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        jdR = new jdMaquinaria(null, true, "1", clave, factor, nom, desc, cn);
+        idMaquinaria = mdb.devuelveUnDato("select id from maquinariabh where clave='" + clave + "'");
+        
+        jdR = new jdMaquinaria(null, true, "2", clave, idMaquinaria, "", "", cn);
         jdR.jpR = this;
         jdR.setVisible(true);
     }//GEN-LAST:event_jButton3ActionPerformed

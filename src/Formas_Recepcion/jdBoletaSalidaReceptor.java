@@ -5,6 +5,7 @@
  */
 package Formas_Recepcion;
 
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import Reportes.creacionPDF;
 import com.itextpdf.text.DocumentException;
@@ -35,101 +36,137 @@ public class jdBoletaSalidaReceptor extends javax.swing.JDialog {
     Connection cn;
     metodosDatosBasicos mdb;
     DefaultTableModel modelo;
-    String cadenaIdsCortes, sociedad, idSociedad, recepcion, idRecepcion;
+    String cadenaIdsCortes, sociedad, idSociedad, recepcion, idRecepcion, Idioma;
     jpCortesDelDia jpL;
-    
-    public jdBoletaSalidaReceptor(java.awt.Frame parent, boolean modal, String cadenaIdsCortes, String sociedad, String recepcion, Connection cn) {
+    Propiedades idioma;
+
+    public jdBoletaSalidaReceptor(java.awt.Frame parent, boolean modal, String cadenaIdsCortes, String sociedad, String recepcion, String Idioma, Connection cn) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
-        
+
         this.cn = cn;
+        this.Idioma = Idioma;
         this.recepcion = recepcion;
+        idioma = new Propiedades(Idioma);
         mdb = new metodosDatosBasicos(cn);
         this.cadenaIdsCortes = cadenaIdsCortes;
         modelo = (DefaultTableModel) jTable1.getModel();
-        
+
         idRecepcion = mdb.devuelveUnDato("select id from recepciones where idRecepcion='" + recepcion + "'");
-        
+
         jDateChooser1.setDate(GregorianCalendar.getInstance().getTime());
-        
+
         this.sociedad = sociedad;
-        
+
         lblSociedad.setText(sociedad);
         lblRecepcion.setText(recepcion);
-        
+
         idSociedad = mdb.devuelveUnDato("select idSociedad from recepciones where idRecepcion='" + recepcion + "' ");
 
         //String ultimoIdBoleta = mdb.devuelveUnDato("select idBoleta from boletasalidareceptor where idSociedad="+idSociedad+" order by id desc limit 1");
         //JOptionPane.showMessageDialog(null, "Ultimo id de la sociedad "+sociedad+ " ="+ultimoIdBoleta);
+        traductor();
         llenarTablaIdCortes();
         llenarCombos();
     }
-    
+
+    public void traductor() {
+        jLabel11.setText(idioma.getProperty("Origen"));
+        jLabel12.setText(idioma.getProperty("Recepcion"));
+        jLabel1.setText(idioma.getProperty("Destino"));
+        jLabel2.setText(idioma.getProperty("Fecha"));
+
+        jCheckBox1.setText(idioma.getProperty("BoletaManual"));
+        jLabel4.setText(idioma.getProperty("FechaDeBoletaManual"));
+
+        jLabel5.setText(idioma.getProperty("TotalSacos"));
+        jLabel6.setText(idioma.getProperty("TotalKilos"));
+
+        jLabel7.setText(idioma.getProperty("Transporte"));
+        jLabel8.setText(idioma.getProperty("Placas"));
+        jLabel9.setText(idioma.getProperty("NombreChofer"));
+        jLabel10.setText(idioma.getProperty("Observaciones"));
+
+        jButton2.setText(idioma.getProperty("Aceptar"));
+        jButton3.setText(idioma.getProperty("Cancelar"));
+
+        valorL.setText(idioma.getProperty("TransporteLimpio"));
+
+        comboTipoDestino.addItem(idioma.getProperty("BeneficioHumedo"));
+        comboTipoDestino.addItem(idioma.getProperty("Almacen"));
+
+        jTable1.getColumnModel().getColumn(0).setHeaderValue(idioma.getProperty("IdCorte"));
+        jTable1.getColumnModel().getColumn(1).setHeaderValue(idioma.getProperty("Certificado"));
+        jTable1.getColumnModel().getColumn(2).setHeaderValue(idioma.getProperty("FormaDeCafe"));
+        jTable1.getColumnModel().getColumn(3).setHeaderValue(idioma.getProperty("Sacos"));
+        jTable1.getColumnModel().getColumn(4).setHeaderValue(idioma.getProperty("Kilos"));
+
+    }
+
     public void llenarTablaIdCortes() {
         limpiar(jTable1);
         String[] cadena = cadenaIdsCortes.split("¬");
         int totalSacos = 0;
         float totalKg = 0;
-        
+
         for (int i = 0; i < cadena.length; i++) {
             mdb.cargarInformacion2(modelo, 5, "select idLote, certificacion, formaCafe, sacos, kg from cortesdeldia where idLote='" + cadena[i] + "'");
         }
-        
+
         for (int i = 0; i < modelo.getRowCount(); i++) {
             totalSacos = totalSacos + Integer.parseInt(modelo.getValueAt(i, 3) + "");
             totalKg = totalKg + Float.parseFloat(modelo.getValueAt(i, 4) + "");
         }
-        
+
         txtTotalSacos.setText(totalSacos + "");
         txtTotalKg.setText(totalKg + "");
     }
-    
+
     public void llenarCombos() {
         String[] sociedades = mdb.cargarCombos("select nombrecorto from personam").split("¬");
         comboSociedades.setModel(new DefaultComboBoxModel((Object[]) sociedades));
     }
-    
+
     public void datosTransporte(String vehiculo, String placas, String chofer) {
         txtVehiculo.setText(vehiculo);
         txtPlacas.setText(placas);
         txtChofer.setText(chofer);
     }
-    
+
     public void procesoCombos() {
         String datos[];
-        
         String idSociedad = mdb.devuelveId("select id from personam where nombrecorto='" + comboSociedades.getSelectedItem() + "'");
-        
-        switch (comboTipoDestino.getSelectedItem() + "") {
-            case "Beneficio Humedo":
+       
+        if (idSociedad.equals("")) {
+        } else {
+            if (idioma.getProperty("BeneficioHumedo").equals(comboTipoDestino.getSelectedItem())) {
                 datos = mdb.cargarCombos("select nombre from beneficioshumedos where idSociedad=" + idSociedad + " ").split("¬");
                 comboDestino.setModel(new DefaultComboBoxModel((Object[]) datos));
-                break;
-            case "Almacen":
+            } else if (idioma.getProperty("Almacen").equals(comboTipoDestino.getSelectedItem())) {
                 datos = mdb.cargarCombos("select nombrealmacen from almacenes where idSociedad=" + idSociedad + " ").split("¬");
                 comboDestino.setModel(new DefaultComboBoxModel((Object[]) datos));
-                break;
+            }
         }
     }
-    
+
     public String idBoletaSalida() {
-        
+
         String ultimoIdBoleta = mdb.devuelveUnDato("select idBoleta from boletasalidareceptor where idSociedad=" + idSociedad + " order by id desc limit 1");
         int numeroConsecutivo = 0;
-        
+
         if (ultimoIdBoleta.equals("") || ultimoIdBoleta.equals("null")) {
             numeroConsecutivo = 1;
         } else {
             String[] datos = ultimoIdBoleta.split("-");
             numeroConsecutivo = Integer.parseInt(datos[4]) + 1;
         }
-        
+
         return "BOL-" + mdb.devuelveUnDato("select clavecorte from personam where nombrecorto='" + sociedad + "'") + "-0-0-" + numeroConsecutivo;
     }
-    
+
     public Boolean validar() {
-        
+
         if (comboSociedades.getSelectedItem().equals("Seleccione..") || comboTipoDestino.getSelectedItem().equals("Seleccione..")
                 || comboDestino.getSelectedItem().equals("Seleccione..")) {
             JOptionPane.showMessageDialog(null, "Seleccione Destino");
@@ -141,7 +178,7 @@ public class jdBoletaSalidaReceptor extends javax.swing.JDialog {
             return true;
         }
     }
-    
+
     public Object[][] obtenerContenidoTabla(DefaultTableModel modelo) {
         Object[][] contenido = null;
         contenido = new Object[modelo.getRowCount()][modelo.getColumnCount()];
@@ -152,7 +189,7 @@ public class jdBoletaSalidaReceptor extends javax.swing.JDialog {
         }
         return contenido;
     }
-    
+
     private void limpiar(JTable tabla) {
         while (tabla.getRowCount() > 0) {
             ((DefaultTableModel) tabla.getModel()).removeRow(0);
@@ -177,7 +214,6 @@ public class jdBoletaSalidaReceptor extends javax.swing.JDialog {
         comboDestino = new javax.swing.JComboBox<>();
         jLabel2 = new javax.swing.JLabel();
         jDateChooser1 = new com.toedter.calendar.JDateChooser();
-        jLabel3 = new javax.swing.JLabel();
         txtBoletaManual = new javax.swing.JTextField();
         jDateChooser2 = new com.toedter.calendar.JDateChooser();
         jLabel4 = new javax.swing.JLabel();
@@ -235,24 +271,21 @@ public class jdBoletaSalidaReceptor extends javax.swing.JDialog {
         jLabel1.setText("Destino");
 
         comboSociedades.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        comboSociedades.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                comboSociedadesItemStateChanged(evt);
+        comboSociedades.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboSociedadesActionPerformed(evt);
             }
         });
 
-        comboTipoDestino.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione..", "Beneficio Humedo", "Almacen" }));
-        comboTipoDestino.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                comboTipoDestinoItemStateChanged(evt);
+        comboTipoDestino.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboTipoDestinoActionPerformed(evt);
             }
         });
 
         jLabel2.setText("Fecha");
 
         jDateChooser1.setEnabled(false);
-
-        jLabel3.setText("Boleta Manual");
 
         txtBoletaManual.setEnabled(false);
 
@@ -402,16 +435,14 @@ public class jdBoletaSalidaReceptor extends javax.swing.JDialog {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jCheckBox1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(txtBoletaManual, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel3))
+                                    .addComponent(jCheckBox1))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jDateChooser2, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel4))
-                                .addGap(295, 295, 295)
+                                .addGap(394, 394, 394)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(txtTotalSacos, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel5))
@@ -462,14 +493,13 @@ public class jdBoletaSalidaReceptor extends javax.swing.JDialog {
                             .addComponent(txtTotalSacos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtTotalKg, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jLabel3)
-                                .addComponent(jLabel4))
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabel4)
+                                .addComponent(jCheckBox1, javax.swing.GroupLayout.Alignment.TRAILING))
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(txtBoletaManual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jCheckBox1)
-                                .addComponent(jDateChooser2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jDateChooser2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtBoletaManual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -501,43 +531,34 @@ public class jdBoletaSalidaReceptor extends javax.swing.JDialog {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        jdTransporteBoletaSalida jdT = new jdTransporteBoletaSalida(null, true, cn);
+        jdTransporteBoletaSalida jdT = new jdTransporteBoletaSalida(null, true, Idioma,cn);
         jdT.jdB = this;
         jdT.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void comboTipoDestinoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboTipoDestinoItemStateChanged
-        // TODO add your handling code here:
-        procesoCombos();
-    }//GEN-LAST:event_comboTipoDestinoItemStateChanged
-
-    private void comboSociedadesItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSociedadesItemStateChanged
-        // TODO add your handling code here:
-        procesoCombos();
-    }//GEN-LAST:event_comboSociedadesItemStateChanged
-
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
         String idTransporte = mdb.devuelveUnDato("select id from vehiculo where nombre='" + txtVehiculo.getText() + "' and placas = '" + txtPlacas.getText() + "' and responsable='" + txtChofer.getText() + "'  ");
-        
+
         String fechaBoleta = new SimpleDateFormat("yyyy-MM-dd").format(jDateChooser1.getDate());
         String fechaBoletaManual = "";
-        String origen = lblSociedad.getText() + " - " + jLabel12.getText() + " - " + lblRecepcion.getText();
-        String destino = comboSociedades.getSelectedItem() + " - " + comboTipoDestino.getSelectedItem() + " - " + comboDestino.getSelectedItem();
+        // String origen = lblSociedad.getText() + " - " + jLabel12.getText() + " - " + lblRecepcion.getText();
+        // String destino = comboSociedades.getSelectedItem() + " - " + comboTipoDestino.getSelectedItem() + " - " + comboDestino.getSelectedItem();
+        String idBeneficio = mdb.devuelveUnDato("select id from beneficioshumedos where nombre='" + comboDestino.getSelectedItem() + "'");
         String valorLimpio = "", idBoletaSalida = idBoletaSalida();
         String boletaManual = "";
-        
+
         Date date = new Date();
         DateFormat hourFormat = new SimpleDateFormat("HH:mm:ss");
         String horaActual = hourFormat.format(date);
-        
+
         if (txtBoletaManual.getText().equals("")) {
             boletaManual = "0";
         } else {
             boletaManual = txtBoletaManual.getText();
             fechaBoletaManual = new SimpleDateFormat("yyyy-MM-dd").format(jDateChooser2.getDate());
         }
-        
+
         if (valorL.isSelected()) {
             //Está limpio
             valorLimpio = "1";
@@ -549,15 +570,15 @@ public class jdBoletaSalidaReceptor extends javax.swing.JDialog {
             for (int i = 0; i < modelo.getRowCount(); i++) {
                 String idLote = modelo.getValueAt(i, 0) + "";
                 // JOptionPane.showMessageDialog(null, "Lote "+idLote);
-                if (mdb.insertarEnCiclo("insert into boletasalidareceptor values (null, "+idRecepcion+", " + idSociedad + ", '" + idBoletaSalida + "', '" + idLote + "', " + boletaManual + ", "
+                if (mdb.insertarEnCiclo("insert into boletasalidareceptor values (null, " + idRecepcion + ", " + idSociedad + ", '" + idBoletaSalida + "', '" + idLote + "', " + boletaManual + ", "
                         + "" + idTransporte + ", '" + fechaBoleta + "', '" + horaActual + "', '" + fechaBoletaManual + "', '" + txtTotalSacos.getText() + "', '" + txtTotalKg.getText() + "', "
-                        + "'" + origen + "', '" + destino + "', '" + txtObserva.getText() + "', " + valorLimpio + ", "
-                        + "'" + modelo.getValueAt(i, 3) + "', '" + modelo.getValueAt(i, 4) + "', 'Enviado desde Receptor' )") == true) {
-                    
+                        + "'" + idRecepcion + "', '" + idBeneficio + "', '" + txtObserva.getText() + "', " + valorLimpio + ", "
+                        + "'" + modelo.getValueAt(i, 3) + "', '" + modelo.getValueAt(i, 4) + "', '1' )") == true) {
+
                     mdb.actualizarEnCiclo("update cortesdeldia set estatus='Inactivo' where idLote='" + idLote + "'");
-                    
+
                     JOptionPane.showMessageDialog(null, "Id Boleta Asignado = " + idBoletaSalida);
-                    
+
                     try {
                         jpL.llenarTabla();
                     } catch (ParseException ex) {
@@ -565,8 +586,8 @@ public class jdBoletaSalidaReceptor extends javax.swing.JDialog {
                     }
                     this.dispose();
                     Object[][] contenido = obtenerContenidoTabla(modelo);
-                    
-                    creacionPDF pdf = new creacionPDF(cn);
+
+                    creacionPDF pdf = new creacionPDF(cn, Idioma);
                     try {
                         pdf.pdfBoletaSalidaRecepcion(mdb.devuelveUnDato("select idBoleta from boletasalidareceptor order by id desc limit 1"), contenido);
                     } catch (FileNotFoundException ex) {
@@ -576,13 +597,13 @@ public class jdBoletaSalidaReceptor extends javax.swing.JDialog {
                     } catch (SQLException ex) {
                         Logger.getLogger(jdBoletaSalidaReceptor.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    
+
                 } else {
                     //Entra aqui si no se inserta correctamente en ciclo
                 }
-                
+
             }
-            
+
         } else {
             //Entra aqui si no esta bien validado
         }
@@ -591,14 +612,24 @@ public class jdBoletaSalidaReceptor extends javax.swing.JDialog {
 
     private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
         // TODO add your handling code here:
-        if(jCheckBox1.isSelected()){
+        if (jCheckBox1.isSelected()) {
             txtBoletaManual.setEnabled(true);
             jDateChooser2.setEnabled(true);
-        }else{
+        } else {
             txtBoletaManual.setEnabled(false);
             jDateChooser2.setEnabled(false);
         }
     }//GEN-LAST:event_jCheckBox1ActionPerformed
+
+    private void comboTipoDestinoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboTipoDestinoActionPerformed
+        // TODO add your handling code here:
+        procesoCombos();
+    }//GEN-LAST:event_comboTipoDestinoActionPerformed
+
+    private void comboSociedadesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboSociedadesActionPerformed
+        // TODO add your handling code here:
+        procesoCombos();
+    }//GEN-LAST:event_comboSociedadesActionPerformed
 
     /**
      * @param args the command line arguments
@@ -657,7 +688,6 @@ public class jdBoletaSalidaReceptor extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;

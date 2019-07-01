@@ -21,7 +21,7 @@ public class jdParcelas extends javax.swing.JDialog {
     /**
      * Creates new form jdParcelas
      */
-    String idPersona, tipoPersona;
+    String idPersona, tipoPersona,Idioma;
     Connection cn;
     metodosDatosBasicos mdb;
     jdFormularioParcelas jdF;
@@ -382,7 +382,7 @@ public class jdParcelas extends javax.swing.JDialog {
         /*JOptionPane.showMessageDialog(null,"Tipo de Persona = "+tipoPersona+" \n"
                 + " "+ mdb.devuelveId("select id from parcelas where clave_parcela='" + clave_parcela + "'"));
         */
-        jdF = new jdFormularioParcelas(null, true, idPersona, tipoPersona, "", cn);
+        jdF = new jdFormularioParcelas(null, true, idPersona, tipoPersona, "",Idioma, cn);
         jdF.setVisible(true);
         
        
@@ -402,7 +402,7 @@ public class jdParcelas extends javax.swing.JDialog {
             clave_parcela = mdb.devuelveId(
                     "select id from parcelas where clave_parcela = '" + clave_parcela + "' ");
 
-            jdF = new jdFormularioParcelas(null, true, idPersona, tipoPersona, clave_parcela, cn);
+            jdF = new jdFormularioParcelas(null, true, idPersona, tipoPersona, clave_parcela,Idioma, cn);
             jdF.setVisible(true);
             clave_parcela = "";
             tablaParcelas.clearSelection();
@@ -427,7 +427,7 @@ public class jdParcelas extends javax.swing.JDialog {
                 clave_parcela = mdb.devuelveId(
                         "select id from parcelas where clave_parcela = '" + clave_parcela + "' ");
 
-                jdF = new jdFormularioParcelas(null, true, idPersona, tipoPersona, clave_parcela, cn);
+                jdF = new jdFormularioParcelas(null, true, idPersona, tipoPersona, clave_parcela,Idioma, cn);
 
                 jdF.setVisible(true);
                 clave_parcela = "";

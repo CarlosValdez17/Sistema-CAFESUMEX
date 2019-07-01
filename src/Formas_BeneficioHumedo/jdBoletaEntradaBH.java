@@ -29,12 +29,12 @@ public class jdBoletaEntradaBH extends javax.swing.JDialog {
     /**
      * Creates new form jdBoletaEntradaBH
      */
-    String idBoleta, idSociedad;
+    String idBoleta, idSociedad, idBeneficio;
     Connection cn;
     metodosBeneficioHumedo mbh;
     DefaultTableModel modelo;
 
-    public jdBoletaEntradaBH(java.awt.Frame parent, boolean modal, String idBoleta, String idSociedad, Connection cn) throws ParseException {
+    public jdBoletaEntradaBH(java.awt.Frame parent, boolean modal, String idBoleta, String idSociedad, String idBeneficio, Connection cn) throws ParseException {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
@@ -42,6 +42,8 @@ public class jdBoletaEntradaBH extends javax.swing.JDialog {
         this.cn = cn;
         this.idBoleta = idBoleta;
         this.idSociedad = idSociedad;
+        this.idBeneficio = idBeneficio;
+
         mbh = new metodosBeneficioHumedo(cn);
         modelo = (DefaultTableModel) jTable1.getModel();
         jDateChooser1.setDate(GregorianCalendar.getInstance().getTime());
@@ -71,36 +73,72 @@ public class jdBoletaEntradaBH extends javax.swing.JDialog {
     }
 
     public void llenarDatos() throws ParseException {
-        String[] datos = mbh.devolverLineaDatos("SELECT b.origen, b.destino, b.fecha, b.horaActual, "
-                + "b.fechaBoletaManual, b.idBoletaManual, b.totalSacos, b.totalKg, v.Nombre, v.Placas, "
-                + "v.Responsable, b.transporteLimpio, b.descripcion\n"
-                + "from boletasalidareceptor b\n"
-                + "inner join vehiculo v\n"
-                + "where b.idBoleta='" + idBoleta + "'", 13).split("¬");
+        String[] datos = mbh.devolverLineaDatos("SELECT\n"
+                + "    r.idRecepcion,\n"
+                + "    bh.nombre,\n"
+                + "    fecha,\n"
+                + "    fechaBoletaManual,\n"
+                + "    idBoletaManual,\n"
+                + "    idBoleta,\n"
+                + "    totalSacos,\n"
+                + "    totalKg,\n"
+                + "    b.descripcion,\n"
+                + "    transporteLimpio,\n"
+                + "    v.Nombre,\n"
+                + "    v.Placas,\n"
+                + "    v.Responsable, horaactual "
+                + "FROM\n"
+                + "    boletasalidareceptor b\n"
+                + "INNER JOIN vehiculo v ON\n"
+                + "    (v.ID = b.idTransporte)\n"
+                + "INNER JOIN recepciones r ON\n"
+                + "    (r.id = b.origen)\n"
+                + "INNER JOIN beneficioshumedos bh ON\n"
+                + "    (bh.id = b.destino)\n"
+                + "WHERE\n"
+                + "    idBoleta = '" + idBoleta + "'\n"
+                + "GROUP BY\n"
+                + "    idBoleta", 14).split("¬");
 
         SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
         Date fechaDate = null;
 
-        fechaDate = formato.parse(datos[4]);
-        jDateChooser2.setDate(fechaDate);
+        if (!datos[3].equals("")) {
+            fechaDate = formato.parse(datos[3]);
+            jDateChooser2.setDate(fechaDate);
+        }
 
+        /*Dato0 :RE-GT-4
+        Dato1: Bh-Rustico
+        Dato2: 2019-06-04
+        Dato3:
+        Dato4:0
+        Dato5:BOL-GT-0-0-2
+        Dato6:11
+        Dato7:201.0
+        Dato8:sdfdsfsdfs
+        Dato9:1
+        Dato10:Ford Negra
+        Dato11:PE-38-170
+        Dato12:Benigno Altamirano
+        Dato13:12:08:23
+         */
         jLabel3.setText(datos[0]);
         jLabel4.setText(datos[1]);
         jLabel13.setText(datos[2]);
-        jLabel14.setText(datos[3]);
-        txtBoletaManual.setText(datos[5]);
+        jLabel14.setText(datos[13]);
+        txtBoletaManual.setText(datos[4]);
         txtSacosEnviados.setText(datos[6]);
         txtKgEnviados.setText(datos[7]);
-        txtTransporte.setText(datos[8]);
-        txtPlacas.setText(datos[9]);
-        txtChofer.setText(datos[10]);
-
-        if (datos[11].equals("1")) {
+        txtTransporte.setText(datos[10]);
+        txtPlacas.setText(datos[11]);
+        txtChofer.setText(datos[12]);
+        txtObservaciones.setText(datos[8]);
+        if (datos[9].equals("1")) {
             checkSi.setSelected(true);
-        } else if (datos[11].equals("0")) {
+        } else if (datos[9].equals("0")) {
             checkNo.setSelected(true);
         }
-        txtObservaciones.setText(datos[12]);
 
     }
 
@@ -540,7 +578,16 @@ public class jdBoletaEntradaBH extends javax.swing.JDialog {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        JOptionPane.showMessageDialog(null, "Boleta creada: " + idBoletaEntrada());
+        String boletaManual = "", fechaBoletaManual = "";
+        if (txtBoletaManual.getText().equals("")) {
+            boletaManual = "0";
+        } else {
+            boletaManual = txtBoletaManual.getText();
+            fechaBoletaManual = new SimpleDateFormat("yyyy-MM-dd").format(jDateChooser2.getDate());
+        }
+
+        mbh.insertarBasicos("insert into boletaentradabh values(null," + idBeneficio + ", " + idBoleta + ", "
+                + "'" + txtBoletaManual.getText() + "', '" + fechaBoletaManual + "','" + txtTotalKg.getText() + "','" + txtTotalSacos.getText() + "'  )");
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**

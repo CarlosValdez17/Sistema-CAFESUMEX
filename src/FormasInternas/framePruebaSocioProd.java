@@ -906,7 +906,7 @@ public class framePruebaSocioProd extends javax.swing.JFrame {
     }//GEN-LAST:event_pMoralItemStateChanged
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         //tipoProceso();
-        if (tSocio.isSelected() && tProductor.isSelected()) {
+ /*       if (tSocio.isSelected() && tProductor.isSelected()) {
             //Preguntar y Añadir Sociedad
             
             formSoc = new jdSociedadesPersonas(null, true, "1", "1", "¿A que sociedad perteneces?", "3", cn);
@@ -923,7 +923,7 @@ public class framePruebaSocioProd extends javax.swing.JFrame {
             
             formSoc = new jdSociedadesPersonas(null, true, "1", "1", "¿A que sociedad perteneces?", "3", cn);
             formSoc.setVisible(true);
-        }
+        }*/
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed

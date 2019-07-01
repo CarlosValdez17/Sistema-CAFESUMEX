@@ -5,6 +5,7 @@
  */
 package Formas_Personas;
 
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.Connection;
 import javax.swing.DefaultComboBoxModel;
@@ -19,31 +20,48 @@ public class jdAsignarBeneficio extends javax.swing.JDialog {
     /**
      * Creates new form jdAsignarBeneficio
      */
-    String idPersona, nombrePersona, tipo;
+    String idPersona, nombrePersona, tipo, puesto, Idioma;
     metodosDatosBasicos mdb;
     Connection cn;
+    Propiedades idioma;
 
-    public jdAsignarBeneficio(java.awt.Frame parent, boolean modal, String idPersona, String nombrePersona, String tipo, Connection cn) {
+    public jdAsignarBeneficio(java.awt.Frame parent, boolean modal, String idPersona, String nombrePersona, String tipo, String puesto, String Idioma, Connection cn) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
 
-        this.idPersona = idPersona;
-        this.tipo = tipo;
-        this.nombrePersona = nombrePersona;
         this.cn = cn;
+        this.tipo = tipo;
+        this.puesto = puesto;
+        this.Idioma = Idioma;
+        this.idPersona = idPersona;
+        this.nombrePersona = nombrePersona;
 
+        idioma = new Propiedades(Idioma);
         mdb = new metodosDatosBasicos(cn);
 
         txtPersona.setText(nombrePersona);
 
         if (tipo.equals("Beneficio")) {
-            jLabel2.setText("Beneficios Humedos");
+            jLabel2.setText(idioma.getProperty("BeneficiosHumedos"));
         } else if (tipo.equals("Recepcion")) {
-            jLabel2.setText("Recepciones");
+            jLabel2.setText(idioma.getProperty("Recepciones"));
         }
 
         llenarCombo();
+    }
+
+    public void traductor() {
+        jLabel1.setText(idioma.getProperty("Capturista"));
+        jLabel6.setText(idioma.getProperty("Sociedad"));
+        jLabel7.setText(idioma.getProperty("Responsable"));
+        jLabel8.setText(idioma.getProperty("Capturista"));
+        jLabel3.setText(idioma.getProperty("Domicilio"));
+        jLabel4.setText(idioma.getProperty("Telefono"));
+        jLabel5.setText(idioma.getProperty("Descripcion"));
+
+        jButton1.setText(idioma.getProperty("Guardar"));
+        jButton2.setText(idioma.getProperty("Cancelar"));
     }
 
     public void llenarCombo() {
@@ -75,14 +93,20 @@ public class jdAsignarBeneficio extends javax.swing.JDialog {
                             + "inner join personaf pf on(pf.ID=b.idPersonaCapturista)\n"
                             + "where b.nombre='" + jComboBox1.getSelectedItem() + "'"));
 
-                    if (txtCapturista.getText().equals(txtPersona.getText())) {
-                        JOptionPane.showMessageDialog(null, "Ya Perteneces A Este Beneficio");
-                    }
-
                     txtResponsable.setText(mdb.devuelveUnDato("select concat(pf.Nombre,' ',pf.ApellidoPaterno,' ',pf.ApellidoMaterno) "
                             + "from beneficioshumedos b \n"
                             + "inner join personaf pf on(pf.ID=b.idPersonaEncargada)\n"
                             + "where b.nombre='" + jComboBox1.getSelectedItem() + "'"));
+
+                    if (puesto.equals("Capturista")) {
+                        if (txtCapturista.getText().equals(txtPersona.getText())) {
+                            JOptionPane.showMessageDialog(null, "Ya Perteneces A Este Beneficio");
+                        }
+                    } else if (puesto.equals("Encargado")) {
+                        if (txtResponsable.getText().equals(txtPersona.getText())) {
+                            JOptionPane.showMessageDialog(null, "Ya Perteneces A Este Beneficio");
+                        }
+                    }
 
                 } else {
                     txtDomicilio.setText("");
@@ -108,15 +132,20 @@ public class jdAsignarBeneficio extends javax.swing.JDialog {
                             + "inner join personaf pf on(pf.ID=r.idCapturista)\n "
                             + "where idRecepcion='" + jComboBox1.getSelectedItem() + "'"));
 
-                    if (txtCapturista.getText().equals(txtPersona.getText())) {
-                        JOptionPane.showMessageDialog(null, "Ya Perteneces A Este Beneficio");
-                    }
-
                     txtResponsable.setText(mdb.devuelveUnDato("select concat(pf.Nombre,' ',pf.ApellidoPaterno,' ',pf.ApellidoMaterno) "
                             + "from recepciones r \n"
                             + "inner join personaf pf on(pf.ID=r.idResponsable)\n "
                             + "where idRecepcion='" + jComboBox1.getSelectedItem() + "'"));
 
+                    if (puesto.equals("Capturista")) {
+                        if (txtCapturista.getText().equals(txtPersona.getText())) {
+                            JOptionPane.showMessageDialog(null, "Ya Perteneces A Este Beneficio");
+                        }
+                    } else if (puesto.equals("Encargado")) {
+                        if (txtResponsable.getText().equals(txtPersona.getText())) {
+                            JOptionPane.showMessageDialog(null, "Ya Perteneces A Este Beneficio");
+                        }
+                    }
                 } else {
                     txtDomicilio.setText("");
                     txtTelefono.setText("");
@@ -125,7 +154,6 @@ public class jdAsignarBeneficio extends javax.swing.JDialog {
                 }
                 break;
         }
-
     }
 
     /**
@@ -224,13 +252,10 @@ public class jdAsignarBeneficio extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel3)
-                                .addGap(189, 189, 189))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(txtDomicilio)
-                                .addGap(10, 10, 10)))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3)
+                            .addComponent(txtDomicilio, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel4)
@@ -350,13 +375,16 @@ public class jdAsignarBeneficio extends javax.swing.JDialog {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        if (tipo.equals("Beneficio")) {
+        if (tipo.equals("Beneficio") && puesto.equals("Capturista")) {
             mdb.actualizarBasicos("update beneficioshumedos set idPersonaCapturista=" + idPersona + " where nombre='" + jComboBox1.getSelectedItem() + "'");
-            this.dispose();
-        } else if (tipo.equals("Recepcion")) {
+        } else if (tipo.equals("Beneficio") && puesto.equals("Encargado")) {
+            mdb.actualizarBasicos("update beneficioshumedos set idPersonaEncargada=" + idPersona + " where nombre='" + jComboBox1.getSelectedItem() + "'");
+        } else if (tipo.equals("Recepcion") && puesto.equals("Capturista")) {
             mdb.actualizarBasicos("update recepciones set idCapturista=" + idPersona + " where idRecepcion='" + jComboBox1.getSelectedItem() + "'");
-            this.dispose();
+        } else if (tipo.equals("Recepcion") && puesto.equals("Encargado")) {
+            mdb.actualizarBasicos("update recepciones set idResponsable=" + idPersona + " where idRecepcion='" + jComboBox1.getSelectedItem() + "'");
         }
+        this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**

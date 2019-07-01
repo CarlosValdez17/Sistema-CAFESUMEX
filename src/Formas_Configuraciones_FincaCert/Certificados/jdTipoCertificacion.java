@@ -5,6 +5,7 @@
  */
 package Formas_Configuraciones_FincaCert.Certificados;
 
+import Idioma.Propiedades;
 import Formas_Configuraciones_FincaCert.Certificados.jpTipoCertificacion;
 import Formas_Configuraciones_Recepcion.*;
 import Formas_Configuraciones_DatosBasicos.*;
@@ -28,8 +29,9 @@ public class jdTipoCertificacion extends javax.swing.JDialog {
     metodosDatosBasicos mdb;
     Connection cn;
     validaConfi valiConf;
+    Propiedades idioma;
 
-    public jdTipoCertificacion(java.awt.Frame parent, boolean modal, String tipo, String dato1, String dato2, Connection c) {
+    public jdTipoCertificacion(java.awt.Frame parent, boolean modal, String tipo, String dato1, String dato2, String Idioma, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
@@ -39,11 +41,19 @@ public class jdTipoCertificacion extends javax.swing.JDialog {
         this.tipo = tipo;
         clave = dato1;
         desc = dato2;
+        
+        idioma = new Propiedades(Idioma);
+        
+        jButton2.setText(idioma.getProperty("Aceptar"));
+        jButton3.setText(idioma.getProperty("Cancelar"));
+        jLabel1.setText(idioma.getProperty("Clave"));
+        jLabel2.setText(idioma.getProperty("TipoDeCertificaciones"));
+        
 
         if (tipo.equals("1")) {
-            setTitle("Nueva Tipo Certificacion");
+            setTitle(idioma.getProperty("NuevoTipoDeCertificado"));
         } else {
-            setTitle("Editar Tipo Certificacion");
+            setTitle(idioma.getProperty("EditarTipoDeCertificado"));
             txtClave.setText(dato1);
             txtDesc.setText(dato2);
         }

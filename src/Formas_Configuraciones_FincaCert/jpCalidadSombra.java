@@ -5,6 +5,7 @@
  */
 package Formas_Configuraciones_FincaCert;
 
+import Idioma.Propiedades;
 import FormasGenerales.pantallaPrincipal;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.Connection;
@@ -31,12 +32,37 @@ public class jpCalidadSombra extends javax.swing.JPanel {
     public pantallaPrincipal pp;
     Connection cn;
 
-    public jpCalidadSombra(Connection c) {
+    Propiedades idioma;
+    String Idioma;
+
+    public jpCalidadSombra(Connection c, String Idioma) {
         initComponents();
 
         cn = c;
+        this.Idioma = Idioma;
         mdb = new metodosDatosBasicos(cn);
         modelo = (DefaultTableModel) tablaCalidadSombra.getModel();
+
+        idioma = new Propiedades(Idioma);
+        jButton5.setText(idioma.getProperty("Cerrar"));
+        jButton2.setText(idioma.getProperty("Nuevo"));
+        jButton3.setText(idioma.getProperty("Editar"));
+        jButton4.setText(idioma.getProperty("Desactivar"));
+        jLabel10.setText(idioma.getProperty("Situacion"));
+        jLabel6.setText(idioma.getProperty("CalidadEstrellas"));
+        jLabel7.setText(idioma.getProperty("AlturaMaximaMts."));
+        jLabel8.setText(idioma.getProperty("TipoDeSombra"));
+        jLabel9.setText(idioma.getProperty("CoberturaDeSombraPorcen"));
+
+        tablaCalidadSombra.getColumnModel().getColumn(0).setHeaderValue(idioma.getProperty("CalidadEstrellas"));
+        tablaCalidadSombra.getColumnModel().getColumn(1).setHeaderValue(idioma.getProperty("AlturaMaximaMts."));
+        tablaCalidadSombra.getColumnModel().getColumn(2).setHeaderValue(idioma.getProperty("TipoDeSombra"));
+        tablaCalidadSombra.getColumnModel().getColumn(3).setHeaderValue(idioma.getProperty("CoberturaDeSombraPorcen"));
+        tablaCalidadSombra.getColumnModel().getColumn(4).setHeaderValue(idioma.getProperty("Situacion"));
+
+        comboSituacion.addItem(idioma.getProperty("Activos"));
+        comboSituacion.addItem(idioma.getProperty("Inactivos"));
+        comboSituacion.addItem(idioma.getProperty("Todos"));
 
         llenaTablaCalidad();
     }
@@ -44,9 +70,7 @@ public class jpCalidadSombra extends javax.swing.JPanel {
     ArrayList<String> array = new ArrayList<String>();
 
     public void llenaTablaCalidad() {
-
         limpiar(tablaCalidadSombra);
-        mdb = new metodosDatosBasicos(cn);
         mdb.cargarInformacionPruebaArray(modelo, 6, "select estrellas, alturasombrametros, t.Descripcion, cobertura,s.descripcion,c.id \n"
                 + "from calidadsombra c \n"
                 + "inner join tiposombra t on (c.ID_tiposombra=t.ID) \n"
@@ -54,19 +78,19 @@ public class jpCalidadSombra extends javax.swing.JPanel {
                 + "where c.ID_Situacion=1", array);
     }
 
-    public void busquedaLocalidad() {
+    public void busqueda() {
         String tipoP = "";
         String tipoOIC = "";
         String tipoUE = "";
         String tipoISO = "";
-        String situacion = "";
+        String situacion = comboSituacion.getSelectedIndex() + "";
 
-        situacion = comboSituacionCalidadSombra.getSelectedItem() + "";
-
-        if (situacion.equals("Inactivo")) {
+        if (situacion.equals("1")) {
             situacion = "2";
-        } else if (situacion.equals("Activo")) {
+        } else if (situacion.equals("0")) {
             situacion = "1";
+        } else {
+            situacion = "3";
         }
 
         if (txtBusquedaC.getText().length() > 0) {
@@ -83,7 +107,7 @@ public class jpCalidadSombra extends javax.swing.JPanel {
         }
 
         String sql;
-        if (situacion.equals("Todos")) {
+        if (situacion.equals("3")) {
             sql = "select estrellas, alturasombrametros, t.Descripcion, cobertura,s.descripcion,c.id \n"
                     + "from calidadsombra c \n"
                     + "inner join tiposombra t on (c.ID_tiposombra=t.ID) \n"
@@ -99,7 +123,7 @@ public class jpCalidadSombra extends javax.swing.JPanel {
         limpiar(tablaCalidadSombra);
         array.clear();
         mdb.cargarInformacionPruebaArray(modelo, 6, sql, array);
-        System.out.println("ARRAY IMPRESO POSICION \n"+array);
+        //System.out.println("ARRAY IMPRESO POSICION \n" + array);
 
     }
 
@@ -133,7 +157,7 @@ public class jpCalidadSombra extends javax.swing.JPanel {
         tablaCalidadSombra = new javax.swing.JTable();
         jPanel8 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
-        comboSituacionCalidadSombra = new javax.swing.JComboBox<>();
+        comboSituacion = new javax.swing.JComboBox<>();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
@@ -253,10 +277,9 @@ public class jpCalidadSombra extends javax.swing.JPanel {
 
         jLabel10.setText("Situacion");
 
-        comboSituacionCalidadSombra.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Activo", "Inactivo", "Todos" }));
-        comboSituacionCalidadSombra.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                comboSituacionCalidadSombraItemStateChanged(evt);
+        comboSituacion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboSituacionActionPerformed(evt);
             }
         });
 
@@ -296,7 +319,7 @@ public class jpCalidadSombra extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jLabel10)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(comboSituacionCalidadSombra, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(comboSituacion, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -315,7 +338,7 @@ public class jpCalidadSombra extends javax.swing.JPanel {
                     .addComponent(jButton2)
                     .addComponent(jButton3)
                     .addComponent(jButton4)
-                    .addComponent(comboSituacionCalidadSombra, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(comboSituacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel10)
                     .addComponent(jButton5))
                 .addContainerGap())
@@ -386,59 +409,47 @@ public class jpCalidadSombra extends javax.swing.JPanel {
 
     private void txtBusquedaCKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBusquedaCKeyReleased
         // TODO add your handling code here:
-        busquedaLocalidad();
+        busqueda();
     }//GEN-LAST:event_txtBusquedaCKeyReleased
 
     private void txtBusquedaAKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBusquedaAKeyReleased
         // TODO add your handling code here:
-        busquedaLocalidad();
+        busqueda();
     }//GEN-LAST:event_txtBusquedaAKeyReleased
 
     private void txtBusquedaTSKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBusquedaTSKeyReleased
         // TODO add your handling code here:
-        busquedaLocalidad();
+        busqueda();
     }//GEN-LAST:event_txtBusquedaTSKeyReleased
 
     private void txtBusquedaCSKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBusquedaCSKeyReleased
         // TODO add your handling code here:
-        busquedaLocalidad();
+        busqueda();
     }//GEN-LAST:event_txtBusquedaCSKeyReleased
     String id = "", calidad = "", altura = "", tipo = "", cobertura = "", situacion = "";
     private void tablaCalidadSombraMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaCalidadSombraMouseClicked
         // TODO add your handling code here:
-        calidad = tablaCalidadSombra.getValueAt(tablaCalidadSombra.getSelectedRow(), 0) + "";  //Estado String
-        altura = tablaCalidadSombra.getValueAt(tablaCalidadSombra.getSelectedRow(), 1) + "";
-        tipo = tablaCalidadSombra.getValueAt(tablaCalidadSombra.getSelectedRow(), 2) + "";
-        cobertura = tablaCalidadSombra.getValueAt(tablaCalidadSombra.getSelectedRow(), 3) + "";
-        situacion = tablaCalidadSombra.getValueAt(tablaCalidadSombra.getSelectedRow(), 4) + "";
-        id = array.get(tablaCalidadSombra.getSelectedRow());
+        try {
+            calidad = tablaCalidadSombra.getValueAt(tablaCalidadSombra.getSelectedRow(), 0) + "";  //Estado String
+            altura = tablaCalidadSombra.getValueAt(tablaCalidadSombra.getSelectedRow(), 1) + "";
+            tipo = tablaCalidadSombra.getValueAt(tablaCalidadSombra.getSelectedRow(), 2) + "";
+            cobertura = tablaCalidadSombra.getValueAt(tablaCalidadSombra.getSelectedRow(), 3) + "";
+            situacion = tablaCalidadSombra.getValueAt(tablaCalidadSombra.getSelectedRow(), 4) + "";
+            id = array.get(tablaCalidadSombra.getSelectedRow());
 
-        if (evt.getClickCount() == 2) {
-            if (situacion.equals("Activo")) {
-                jdCS = new jdCalidadSombra(null, true, "2", calidad, altura, tipo, cobertura, id, cn);
+            if (evt.getClickCount() == 2) {
+                jdCS = new jdCalidadSombra(null, true, "2", calidad, altura, tipo, cobertura, id, Idioma, cn);
                 jdCS.jpCS = this;
                 jdCS.setVisible(true);
-            } else if (situacion.equals("Inactivo")) {
-                JOptionPane.showMessageDialog(null, "Dato Inactivo");
             }
+        } catch (Exception e) {
+
         }
     }//GEN-LAST:event_tablaCalidadSombraMouseClicked
     String estatus = "";
-    private void comboSituacionCalidadSombraItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionCalidadSombraItemStateChanged
-        // TODO add your handling code here:
-        if (comboSituacionCalidadSombra.getSelectedItem().equals("Inactivo")) {
-            jButton4.setText("Activar");
-            estatus = "1";
-        } else {
-            estatus = "2";
-            jButton4.setText("Desactivar");
-        }
-        busquedaLocalidad();
-    }//GEN-LAST:event_comboSituacionCalidadSombraItemStateChanged
-
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        jdCS = new jdCalidadSombra(null, true, "1", calidad, altura, tipo, cobertura, id, cn);
+        jdCS = new jdCalidadSombra(null, true, "1", calidad, altura, tipo, cobertura, id, Idioma, cn);
         jdCS.jpCS = this;
         jdCS.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
@@ -446,10 +457,11 @@ public class jpCalidadSombra extends javax.swing.JPanel {
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
         if (calidad.equals("")) {
-            JOptionPane.showMessageDialog(null, "Seleccione un estado");
+            //JOptionPane.showMessageDialog(null, "Seleccione un estado");
+            JOptionPane.showMessageDialog(null, idioma.getProperty("SeleccionRegistro"));
         } else {
             if (situacion.equals("Activo")) {
-                jdCS = new jdCalidadSombra(null, true, "2", calidad, altura, tipo, cobertura, id, cn);
+                jdCS = new jdCalidadSombra(null, true, "2", calidad, altura, tipo, cobertura, id, Idioma, cn);
                 jdCS.jpCS = this;
                 jdCS.setVisible(true);
             } else if (situacion.equals("Inactivo")) {
@@ -460,12 +472,12 @@ public class jpCalidadSombra extends javax.swing.JPanel {
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        if (estatus.equals("2")) {
+        if (comboSituacion.getSelectedIndex() == 0) {
             mdb.actualizarBasicos("UPDATE calidadsombra SET ID_Situacion=2 where id=" + id);
-        } else if (estatus.equals("1")) {
+        } else if (comboSituacion.getSelectedIndex() == 1) {
             mdb.actualizarBasicos("UPDATE calidadsombra SET ID_Situacion=1 where id=" + id);
         }
-        llenaTablaCalidad();
+        busqueda();
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
@@ -477,9 +489,23 @@ public class jpCalidadSombra extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_jButton5ActionPerformed
 
+    private void comboSituacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboSituacionActionPerformed
+        // TODO add your handling code here:
+        if (comboSituacion.getSelectedItem().equals(idioma.getProperty("Inactivos"))) {
+            jButton4.setText(idioma.getProperty("Activar"));
+            jButton4.setEnabled(true);
+        } else if (comboSituacion.getSelectedItem().equals(idioma.getProperty("Activos"))) {
+            jButton4.setText(idioma.getProperty("Desactivar"));
+            jButton4.setEnabled(true);
+        } else {
+            jButton4.setEnabled(false);
+        }
+        busqueda();
+    }//GEN-LAST:event_comboSituacionActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox<String> comboSituacionCalidadSombra;
+    private javax.swing.JComboBox<String> comboSituacion;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;

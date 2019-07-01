@@ -7,6 +7,7 @@ package Formas_Personas;
 
 import Formas_FincaCert.jdFormularioProductor;
 import Formas_FincaCert.jpProductores;
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import Metodos_Configuraciones.validaConfi;
 import java.awt.Image;
@@ -41,28 +42,84 @@ public class jdFormularioPersonas extends javax.swing.JDialog {
      */
     metodosDatosBasicos mdb;
     jdFormularioProductor formProd;
-    jdAsignacionesPersonas jdAP;
+    jdAsignacionesPersonas2 jdAP;
     jdSociedadesPersonas formSoc;
     jpPersonas jpDP;
     jpProductores jpP;
     validaConfi valiConf;
     private JPanel contentPane;
-    String idPersona, tipo, tipoPersona;
+    String idPersona, tipo, tipoPersona, Idioma;
     File fichero = null;
     Connection cn;
+    Propiedades idioma;
 
-    public jdFormularioPersonas(java.awt.Frame parent, boolean modal, String tipo, String idPersona, String tipoPersona, Connection c) {
+    public jdFormularioPersonas(java.awt.Frame parent, boolean modal, String tipo, String idPersona, String tipoPersona, String Idioma, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
 
         cn = c;
+        this.Idioma = Idioma;
         mdb = new metodosDatosBasicos(cn);
+        idioma = new Propiedades(Idioma);
         valiConf = new validaConfi();
         this.idPersona = idPersona;
         this.tipoPersona = tipoPersona;
         this.tipo = tipo;
         //pFisica.setSelected(true);
+
+        //Radio persona fisica
+        pFisica.setText(idioma.getProperty("PersonaFisica"));
+        //Radio persona moral
+        pMoral.setText(idioma.getProperty("PersonaMoral"));
+
+        //Nombre
+        jLabel1.setText(idioma.getProperty("Nombre"));
+        //Apellido Paterno
+        jLabel2.setText(idioma.getProperty("ApellidoPaterno"));
+        //Apellido Materno
+        jLabel3.setText(idioma.getProperty("ApellidoMaterno"));
+        //Direccion
+        jLabel5.setText(idioma.getProperty("Direccion"));
+        //Codigo postal
+        jLabel6.setText(idioma.getProperty("CodigoPostal"));
+        //RFC
+        jLabel15.setText(idioma.getProperty("IdentificacionFiscal"));
+        //CURP
+        jLabel16.setText(idioma.getProperty("RegistroDePoblacion"));
+        //Telefono fijo
+        jLabel7.setText(idioma.getProperty("TelefonoFijo"));
+        //Telefono movil
+        jLabel8.setText(idioma.getProperty("TelefonoMovil"));
+        //Genero
+        jLabel4.setText(idioma.getProperty("Genero"));
+        //Sociedades
+        jLabel14.setText(idioma.getProperty("Sociedades"));
+        jButton6.setText(idioma.getProperty("Sociedades"));
+        //Asignaciones
+        jButton5.setText(idioma.getProperty("Asignaciones"));
+        //Radio masculino
+        radioM.setText(idioma.getProperty("Masculino"));
+        //Radio femenino
+        radioF.setText(idioma.getProperty("Femenino"));
+        //Guardar
+        jButton1.setText(idioma.getProperty("Guardar"));
+        //Modificar
+        jButton2.setText(idioma.getProperty("Modificar"));
+        //Cerrar
+        jButton3.setText(idioma.getProperty("Cerrar"));
+        //Limpiar
+        jButton7.setText(idioma.getProperty("Limpiar"));
+        //Ruta del archivo
+        jLabel17.setText(idioma.getProperty("RutaDelArchivo"));
+        //Abrir
+        jButton4.setText(idioma.getProperty("Abrir"));
+
+        jLabel13.setText(idioma.getProperty("ColoniaEjido"));
+        jLabel12.setText(idioma.getProperty("Localidad"));
+        jLabel11.setText(idioma.getProperty("Municipio"));
+        jLabel10.setText(idioma.getProperty("Estado"));
+        jLabel9.setText(idioma.getProperty("Pais"));
 
         rellenarCombos();
         rellenarInformacion();
@@ -388,17 +445,17 @@ public class jdFormularioPersonas extends javax.swing.JDialog {
             txtRuta.setEnabled(true);
             jButton4.setEnabled(true);
             jButton1.setEnabled(true);
-            jLabel1.setText("Razon Social");
-            jLabel2.setText("Nombre Corto");
-            jLabel3.setText("Clave Corte");
-            jLabel16.setText("Pagina Web");
-            jLabel8.setText("Email");
+            jLabel1.setText(idioma.getProperty("RazonSocial"));
+            jLabel2.setText(idioma.getProperty("NombreCorto"));
+            jLabel3.setText(idioma.getProperty("Clave"));
+            jLabel16.setText(idioma.getProperty("PaginaWeb"));
+            jLabel8.setText(idioma.getProperty("Email"));
         } else {
-            jLabel1.setText("Nombre");
-            jLabel2.setText("Apellido Paterno");
-            jLabel3.setText("Apellido Materno");
-            jLabel16.setText("CURP");
-            jLabel8.setText("Telefono Movil");
+            jLabel1.setText(idioma.getProperty("Nombre"));
+            jLabel2.setText(idioma.getProperty("ApellidoPaterno"));
+            jLabel3.setText(idioma.getProperty("ApellidoMaterno"));
+            jLabel16.setText(idioma.getProperty("RegistroDePoblacion"));
+            jLabel8.setText(idioma.getProperty("TelefonoMovil"));
             txtNombre.setEnabled(true);
             txtApPat.setEnabled(true);
             txtApMat.setEnabled(true);
@@ -1184,17 +1241,17 @@ public class jdFormularioPersonas extends javax.swing.JDialog {
 
         buttonGroup1.add(pFisica);
         pFisica.setText("Persona Fisica");
-        pFisica.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                pFisicaItemStateChanged(evt);
+        pFisica.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pFisicaActionPerformed(evt);
             }
         });
 
         buttonGroup1.add(pMoral);
         pMoral.setText("Persona Moral");
-        pMoral.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                pMoralItemStateChanged(evt);
+        pMoral.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pMoralActionPerformed(evt);
             }
         });
 
@@ -1323,7 +1380,7 @@ public class jdFormularioPersonas extends javax.swing.JDialog {
             id = mdb.comprobarExistencia("select id from personam "
                     + "where (razonsocial='" + txtNombre.getText() + "')");
         }
-        jdAP = new jdAsignacionesPersonas(null, true, tipo, tipoPersona, txtNombre.getText() + " " + txtApPat.getText() + " " + txtApMat.getText(), idPersona, cn);
+        jdAP = new jdAsignacionesPersonas2(null, true, tipo, tipoPersona, txtNombre.getText() + " " + txtApPat.getText() + " " + txtApMat.getText(), idPersona, Idioma, cn);
         jdAP.setVisible(true);
     }//GEN-LAST:event_jButton5ActionPerformed
 
@@ -1343,16 +1400,6 @@ public class jdFormularioPersonas extends javax.swing.JDialog {
         tipoProceso();
         //      }
     }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void pMoralItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_pMoralItemStateChanged
-        // TODO add your handling code here:
-        tipoFormulario();
-    }//GEN-LAST:event_pMoralItemStateChanged
-
-    private void pFisicaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_pFisicaItemStateChanged
-        // TODO add your handling code here:
-        tipoFormulario();
-    }//GEN-LAST:event_pFisicaItemStateChanged
 
     private void comboLocalidadItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboLocalidadItemStateChanged
         // TODO add your handling code here:
@@ -1503,7 +1550,7 @@ public class jdFormularioPersonas extends javax.swing.JDialog {
             nombre = txtNombre.getText();
         }
 
-        formSoc = new jdSociedadesPersonas(null, true, tipo, tipoPersona, nombre, idPersona, cn);
+        formSoc = new jdSociedadesPersonas(null, true, tipo, tipoPersona, nombre, idPersona,Idioma, cn);
         formSoc.setVisible(true);
     }//GEN-LAST:event_jButton6ActionPerformed
 
@@ -1653,6 +1700,16 @@ public class jdFormularioPersonas extends javax.swing.JDialog {
             evt.consume();
         }
     }//GEN-LAST:event_txtTelefonoKeyTyped
+
+    private void pFisicaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pFisicaActionPerformed
+        // TODO add your handling code here:
+        tipoFormulario();
+    }//GEN-LAST:event_pFisicaActionPerformed
+
+    private void pMoralActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pMoralActionPerformed
+        // TODO add your handling code here:
+        tipoFormulario();
+    }//GEN-LAST:event_pMoralActionPerformed
 
     /**
      * @param args the command line arguments

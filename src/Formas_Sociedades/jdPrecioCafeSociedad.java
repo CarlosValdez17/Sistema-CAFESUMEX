@@ -5,6 +5,7 @@
  */
 package Formas_Sociedades;
 
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.Connection;
 import java.text.DateFormat;
@@ -27,22 +28,45 @@ public class jdPrecioCafeSociedad extends javax.swing.JDialog {
     Connection cn;
     metodosDatosBasicos mdb;
     DefaultTableModel modelo;
-    String claveSociedad;
+    String claveSociedad, Idioma;
+    Propiedades idioma;
 
-    public jdPrecioCafeSociedad(java.awt.Frame parent, boolean modal, String claveSociedad, Connection cn) {
+    public jdPrecioCafeSociedad(java.awt.Frame parent, boolean modal, String claveSociedad, String Idioma,Connection cn) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
 
         this.cn = cn;
+        this.Idioma=Idioma;
+        idioma = new Propiedades(Idioma);
         mdb = new metodosDatosBasicos(cn);
         this.claveSociedad = claveSociedad;
         modelo = (DefaultTableModel) jTable1.getModel();
 
         rellenarCombos();
         llenarTabla();
+        traductor();
     }
 
+    public void traductor(){
+        jLabel5.setText(idioma.getProperty("Clave"));
+        jLabel6.setText(idioma.getProperty("NombreCorto"));
+        jLabel7.setText(idioma.getProperty("IdentificacionFiscal"));
+        jLabel1.setText(idioma.getProperty("FormaDeCafe"));
+        jLabel2.setText(idioma.getProperty("Retencion"));
+        jLabel3.setText(idioma.getProperty("PrecioKilo"));
+        jLabel4.setText(idioma.getProperty("CentavosKilo"));
+        
+        jTable1.getColumnModel().getColumn(0).setHeaderValue(idioma.getProperty("FormaDeCafe"));
+        jTable1.getColumnModel().getColumn(1).setHeaderValue(idioma.getProperty("PrecioKilo"));
+        jTable1.getColumnModel().getColumn(2).setHeaderValue(idioma.getProperty("Retencion"));
+        jTable1.getColumnModel().getColumn(3).setHeaderValue(idioma.getProperty("CentavosKilo"));
+        
+        jButton1.setText(idioma.getProperty("Anadir"));
+        jButton2.setText(idioma.getProperty("Modificar"));
+        jButton3.setText(idioma.getProperty("VerHistorial"));
+    }
+    
     public void rellenarCombos() {
 
         String[] datos1 = mdb.cargarCombos("select descripcion from formacafe").split("¬");
@@ -187,6 +211,11 @@ public class jdPrecioCafeSociedad extends javax.swing.JDialog {
         });
 
         jButton3.setText("Ver Historal");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -313,7 +342,7 @@ public class jdPrecioCafeSociedad extends javax.swing.JDialog {
         String horaActual = hourFormat.format(date);
 
         if (mdb.insertarBasicosComprobacion("insert into preciocafesociedad values (null, " + idSociedad + ", " + idForma + ", " + idRetencion + ", '" + txtPrecioKg.getText() + "' )")) {
-            mdb.insertarBasicos("insert into historialPrecioCafeSociedad ( null, " + idSociedad + ", " + idForma + ", "
+            mdb.insertarBasicos("insert into historialPrecioCafeSociedad values( null, " + idSociedad + ", " + idForma + ", "
                     + "" + idRetencion + ", '" + txtPrecioKg.getText() + "', 'Usuario Modificacion', '" + fechaActual + "', '" + horaActual + "'  )");
         } else {
             JOptionPane.showMessageDialog(null, "Error, Verificar.");
@@ -359,6 +388,10 @@ public class jdPrecioCafeSociedad extends javax.swing.JDialog {
 
         llenarTabla();
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
      * @param args the command line arguments

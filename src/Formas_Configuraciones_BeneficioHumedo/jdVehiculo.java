@@ -5,6 +5,7 @@
  */
 package Formas_Configuraciones_BeneficioHumedo;
 
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
@@ -22,20 +23,23 @@ public class jdVehiculo extends javax.swing.JDialog {
      * Creates new form jdPais
      */
     String tipo, NombreC;
-    String Capacidad, Placas, Nombre, NomRes;
+    String Capacidad, Placas, Nombre, NomRes, Idioma;
     Connection cn;
     jpVehiculo jp;
     validaConfi valiConf;
     metodosDatosBasicos mdb;
+    Propiedades idioma;
 
-    public jdVehiculo(java.awt.Frame parent, boolean modal, String tipo, String NombreC, String CapacidadC, String PlacasC, String NomResC, Connection c) {
+    public jdVehiculo(java.awt.Frame parent, boolean modal, String tipo, String NombreC, String CapacidadC, String PlacasC, String NomResC, String Idioma, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
 
         this.tipo = tipo;
         this.NombreC = NombreC;
+        this.Idioma = Idioma;
         cn = c;
+        idioma = new Propiedades(Idioma);
         valiConf = new validaConfi();
 
         if (tipo.equals("1")) {
@@ -49,6 +53,16 @@ public class jdVehiculo extends javax.swing.JDialog {
 
         }
 
+        traductor();
+    }
+
+    public void traductor() {
+        jLabel3.setText(idioma.getProperty("NombreDelVehiculo"));
+        jLabel1.setText(idioma.getProperty("Capacidad"));
+        jLabel2.setText(idioma.getProperty("Placas"));
+        jLabel4.setText(idioma.getProperty("NombreDelResponsable"));
+        jButton1.setText(idioma.getProperty("Aceptar"));
+        jButton2.setText(idioma.getProperty("Cancelar"));
     }
 
     public void tipoProceso() {

@@ -30,7 +30,7 @@ public class jdMaquinaria extends javax.swing.JDialog {
      * Creates new form jdEstado
      */
     jpMaquinaria jpR;
-    String clave, tipo, factor, nombre, desc;
+    String clave, tipo, idMaquinaria, nombre, desc;
     int entradas = 0, salidas = 0;
     DefaultTableModel modelo, modelo2, modelo3;
     metodosDatosBasicos mdb;
@@ -45,7 +45,7 @@ public class jdMaquinaria extends javax.swing.JDialog {
         cn = c;
         this.tipo = tipo;
         clave = dato1;
-        factor = dato2;
+        idMaquinaria = dato2;
         nombre = dato3;
         desc = dato4;
 
@@ -58,15 +58,113 @@ public class jdMaquinaria extends javax.swing.JDialog {
         modelo2 = (DefaultTableModel) tablaSalidas.getModel();
         modelo3 = (DefaultTableModel) tablaMaquinaria.getModel();
 
-        tablaEntradas.setDefaultRenderer(Object.class, new MiRender());
-        tablaSalidas.setDefaultRenderer(Object.class, new MiRender());
-
-        botonAñadirSalida.setVisible(false);
+        /* botonAñadirSalida.setVisible(false);
         botonEliminarSalida.setVisible(false);
         botonAñadirEntrada.setVisible(false);
-        botonEliminarEntrada.setVisible(false);
-
+        botonEliminarEntrada.setVisible(false);*/
         cargarCombos();
+        if (tipo.equals("2")) {
+            cargarDatos();
+        }
+
+        tablaEntradas.setDefaultRenderer(Object.class, new MiRender());
+        tablaSalidas.setDefaultRenderer(Object.class, new MiRender());
+    }
+
+    public void cargarTablas() {
+        limpiar(tablaSalidas);
+        limpiar(tablaMaquinaria);
+        limpiar(tablaEntradas);
+        //Tabla Entradas
+        mdb.cargarInformacion2(modelo, 5, "select clave, formacafe, procesocafe, estadocafe, datoEvaluar\n"
+                + "from entradasmaquinaria "
+                + "where idMaquinaria=" + idMaquinaria + "");
+
+        //Tabla Salidas
+        mdb.cargarInformacion2(modelo2, 5, "select clave, formacafe, procesocafe, estadocafe, datoEvaluar\n"
+                + "from salidasmaquinaria "
+                + "where idMaquinaria=" + idMaquinaria + "");
+
+        //Tabla Enlaces
+        mdb.cargarInformacion2(modelo3, 3, "SELECT r.claveSalida, a.Actividad, m.nombre\n"
+                + "from relacionsalidamaquinarias r\n"
+                + "left join actividadesbh a on(r.idActividad=a.ID)\n"
+                + "left join maquinariabh m on(r.idMaquinariaRelacion=m.id) "
+                + "where r.idMaquinaria=" + idMaquinaria + "");
+
+        for (int i = 0; i < modelo2.getRowCount(); i++) {
+            comboSalidas.addItem(modelo2.getValueAt(i, 0) + "");
+        }
+
+    }
+
+    public void cargarDatos() {
+        String[] datos = mdb.devolverLineaDatos("SELECT\n"
+                + "    a.Actividad,\n"
+                + "    m.nombre,\n"
+                + "    m.clave,\n"
+                + "    m.marca,\n"
+                + "    m.modelo,\n"
+                + "    m.serie,\n"
+                + "    m.capacidad,\n"
+                + "    m.tiempoevaluacion,\n"
+                + "    s.Nombre,\n"
+                + "    m.descripcion,\n"
+                + "    m.generarLote,\n"
+                + "    m.restarInmediato\n"
+                + "FROM\n"
+                + "    maquinariabh m\n"
+                + "LEFT JOIN actividadesbh a ON\n"
+                + "    (m.idActividad = a.ID)\n"
+                + "LEFT JOIN sobrante s ON\n"
+                + "    (m.sobrante = a.ID) "
+                + "WHERE m.id=" + idMaquinaria + " ", 12).split("¬");
+
+        comboActividades.setSelectedItem(datos[0]);
+        txtNombre.setText(datos[1]);
+        txtClave.setText(datos[2]);
+        txtMarca.setText(datos[3]);
+        txtModelo.setText(datos[4]);
+        txtSerie.setText(datos[5]);
+        txtCapacidad.setText(datos[6]);
+        txtEvaluacion.setText(datos[7]);
+        comboSobrantes.setSelectedItem(datos[8]);
+        txtDescripcion.setText(datos[9]);
+
+        if (datos[10].equals("1")) {
+            jCheckBox1.setSelected(true);
+            jCheckBox2.setVisible(true);
+        } else {
+            jCheckBox1.setSelected(false);
+        }
+
+        if (datos[11].equals("1")) {
+            jCheckBox2.setSelected(true);
+        } else {
+            jCheckBox2.setSelected(false);
+        }
+
+        //Tabla Entradas
+        mdb.cargarInformacion2(modelo, 5, "select clave, formacafe, procesocafe, estadocafe, datoEvaluar\n"
+                + "from entradasmaquinaria "
+                + "where idMaquinaria=" + idMaquinaria + "");
+
+        //Tabla Salidas
+        mdb.cargarInformacion2(modelo2, 5, "select clave, formacafe, procesocafe, estadocafe, datoEvaluar\n"
+                + "from salidasmaquinaria "
+                + "where idMaquinaria=" + idMaquinaria + "");
+
+        //Tabla Enlaces
+        mdb.cargarInformacion2(modelo3, 3, "SELECT r.claveSalida, a.Actividad, m.nombre\n"
+                + "from relacionsalidamaquinarias r\n"
+                + "left join actividadesbh a on(r.idActividad=a.ID)\n"
+                + "left join maquinariabh m on(r.idMaquinariaRelacion=m.id) "
+                + "where r.idMaquinaria=" + idMaquinaria + "");
+
+        for (int i = 0; i < modelo2.getRowCount(); i++) {
+            comboSalidas.addItem(modelo2.getValueAt(i, 0) + "");
+        }
+
     }
 
     public void cargarCombos() {
@@ -123,31 +221,12 @@ public class jdMaquinaria extends javax.swing.JDialog {
 
     }
 
-    /* public void tipoProceso() {
-        String sql = "";
-
-        mdb = new metodosDatosBasicos(cn);
-
-        if (tipo.equals("1")) {
-            //nuevoPais();
-            if (mdb.comprobarExistencia("select clave from sobrante where clave='" + txtClave.getText() + "'") == null) {
-                sql = "INSERT INTO sobrante VALUES(null,'" + txtClave.getText() + "','" + txtNombre.getText() + "',"
-                        + "'" + txtFactor.getText() + "','" + txtDesc.getText() + "',1, 1,current_date(),current_time(), 1, 1, 1, 1 )";
-                mdb.insertarBasicos(sql);
-                jpR.busqueda();
-                this.dispose();
-            } else {
-                JOptionPane.showMessageDialog(null, "Dato Repetido");
-            }
-        } else {
-            //editarPais();
-            sql = "UPDATE sobrante SET clave='" + txtClave.getText() + "', nombre='" + txtNombre.getText() + "', factor='" + txtFactor.getText() + "', descripcion='" + txtDesc.getText()
-                    + "' where clave='" + clave + "' ";
-            mdb.actualizarBasicos(sql);
-            jpR.busqueda();
-            this.dispose();
+    private void limpiar(JTable tabla) {
+        while (tabla.getRowCount() > 0) {
+            ((DefaultTableModel) tabla.getModel()).removeRow(0);
         }
-    }*/
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -183,11 +262,14 @@ public class jdMaquinaria extends javax.swing.JDialog {
         jLabel9 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
         txtNombre = new javax.swing.JTextField();
+        jButton10 = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         tablaEntradas = new javax.swing.JTable();
         jButton4 = new javax.swing.JButton();
         jLabel10 = new javax.swing.JLabel();
+        botonAñadirEntrada = new javax.swing.JButton();
+        botonEliminarEntrada = new javax.swing.JButton();
         jPanel6 = new javax.swing.JPanel();
         jScrollPane5 = new javax.swing.JScrollPane();
         tablaSalidas = new javax.swing.JTable();
@@ -203,13 +285,10 @@ public class jdMaquinaria extends javax.swing.JDialog {
         jLabel15 = new javax.swing.JLabel();
         comboSalidas = new javax.swing.JComboBox<>();
         jButton3 = new javax.swing.JButton();
-        jPanel7 = new javax.swing.JPanel();
-        jButton10 = new javax.swing.JButton();
-        jButton11 = new javax.swing.JButton();
-        botonAñadirEntrada = new javax.swing.JButton();
-        botonEliminarEntrada = new javax.swing.JButton();
         botonAñadirSalida = new javax.swing.JButton();
         botonEliminarSalida = new javax.swing.JButton();
+        jPanel7 = new javax.swing.JPanel();
+        jButton11 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -258,6 +337,13 @@ public class jdMaquinaria extends javax.swing.JDialog {
 
         jLabel13.setText("Nombre");
 
+        jButton10.setText("Guardar");
+        jButton10.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -278,46 +364,49 @@ public class jdMaquinaria extends javax.swing.JDialog {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2)
                             .addComponent(txtClave, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jCheckBox1)
-                                .addGap(18, 18, 18)
-                                .addComponent(jCheckBox2))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addGap(1, 1, 1)
-                                        .addComponent(jLabel3))
-                                    .addComponent(txtMarca, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(18, 18, 18)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addGap(1, 1, 1)
-                                        .addComponent(jLabel4))
-                                    .addComponent(txtModelo, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(18, 18, 18)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtSerie, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel6)))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addGap(1, 1, 1)
-                                        .addComponent(jLabel5))
-                                    .addComponent(txtCapacidad, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(18, 18, 18)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addGap(1, 1, 1)
-                                        .addComponent(jLabel7))
-                                    .addComponent(txtEvaluacion, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(18, 18, 18)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel8)
-                                    .addComponent(comboSobrantes, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addComponent(jLabel9))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addComponent(jCheckBox1)
+                            .addGap(18, 18, 18)
+                            .addComponent(jCheckBox2)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton10))
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(jPanel1Layout.createSequentialGroup()
+                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                            .addGap(1, 1, 1)
+                                            .addComponent(jLabel3))
+                                        .addComponent(txtMarca, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGap(18, 18, 18)
+                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                            .addGap(1, 1, 1)
+                                            .addComponent(jLabel4))
+                                        .addComponent(txtModelo, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGap(18, 18, 18)
+                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(txtSerie, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabel6)))
+                                .addGroup(jPanel1Layout.createSequentialGroup()
+                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                            .addGap(1, 1, 1)
+                                            .addComponent(jLabel5))
+                                        .addComponent(txtCapacidad, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGap(18, 18, 18)
+                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                            .addGap(1, 1, 1)
+                                            .addComponent(jLabel7))
+                                        .addComponent(txtEvaluacion, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGap(18, 18, 18)
+                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel8)
+                                        .addComponent(comboSobrantes, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(jLabel9))
+                            .addGap(0, 0, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -369,11 +458,12 @@ public class jdMaquinaria extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel9)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jCheckBox1)
-                    .addComponent(jCheckBox2))
+                    .addComponent(jCheckBox2)
+                    .addComponent(jButton10))
                 .addContainerGap())
         );
 
@@ -408,7 +498,7 @@ public class jdMaquinaria extends javax.swing.JDialog {
             tablaEntradas.getColumnModel().getColumn(4).setHeaderValue("Dato a Evaluar");
         }
 
-        jButton4.setText("Pruebas");
+        jButton4.setText("Guardar Entradas");
         jButton4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton4ActionPerformed(evt);
@@ -416,6 +506,20 @@ public class jdMaquinaria extends javax.swing.JDialog {
         });
 
         jLabel10.setText("Configuración de Entradas de Maquinaria.");
+
+        botonAñadirEntrada.setText("Añadir Entrada");
+        botonAñadirEntrada.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonAñadirEntradaActionPerformed(evt);
+            }
+        });
+
+        botonEliminarEntrada.setText("Eliminar Entrada");
+        botonEliminarEntrada.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonEliminarEntradaActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -426,10 +530,14 @@ public class jdMaquinaria extends javax.swing.JDialog {
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 606, Short.MAX_VALUE)
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jButton4)
-                            .addComponent(jLabel10))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addComponent(jLabel10)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                        .addComponent(botonAñadirEntrada)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(botonEliminarEntrada)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton4)))
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -438,9 +546,13 @@ public class jdMaquinaria extends javax.swing.JDialog {
                 .addGap(18, 18, 18)
                 .addComponent(jLabel10)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 247, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton4)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton4)
+                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(botonAñadirEntrada)
+                        .addComponent(botonEliminarEntrada)))
                 .addContainerGap())
         );
 
@@ -483,7 +595,7 @@ public class jdMaquinaria extends javax.swing.JDialog {
 
         jLabel11.setText("Configuración de Salidas de Maquinaria.");
 
-        jButton8.setText("Prueba");
+        jButton8.setText("Guardar Salidas");
         jButton8.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton8ActionPerformed(evt);
@@ -532,10 +644,24 @@ public class jdMaquinaria extends javax.swing.JDialog {
 
         jLabel15.setText("Salidas");
 
-        jButton3.setText("Relacion");
+        jButton3.setText("Guardar Relaciones");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
+            }
+        });
+
+        botonAñadirSalida.setText("Añadir Salida");
+        botonAñadirSalida.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonAñadirSalidaActionPerformed(evt);
+            }
+        });
+
+        botonEliminarSalida.setText("Eliminar Salida");
+        botonEliminarSalida.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonEliminarSalidaActionPerformed(evt);
             }
         });
 
@@ -560,23 +686,31 @@ public class jdMaquinaria extends javax.swing.JDialog {
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel14)
                             .addComponent(comboMaquinaria, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGap(0, 73, Short.MAX_VALUE)
                         .addComponent(jButton9))
                     .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel6Layout.createSequentialGroup()
-                                .addComponent(jButton8)
-                                .addGap(18, 18, 18)
-                                .addComponent(jButton3))
-                            .addComponent(jLabel11))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addComponent(jLabel11)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(botonAñadirSalida)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(botonEliminarSalida)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton8))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jButton3)))
                 .addContainerGap())
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
-                .addGap(18, 18, 18)
-                .addComponent(jLabel11)
+                .addGap(14, 14, 14)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel11)
+                    .addComponent(jButton8)
+                    .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(botonEliminarSalida)
+                        .addComponent(botonAñadirSalida)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -591,11 +725,9 @@ public class jdMaquinaria extends javax.swing.JDialog {
                     .addComponent(comboSalidas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton9))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 69, Short.MAX_VALUE)
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 77, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton8)
-                    .addComponent(jButton3))
+                .addComponent(jButton3)
                 .addContainerGap())
         );
 
@@ -618,59 +750,14 @@ public class jdMaquinaria extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        jButton10.setText("Guardar");
-        jButton10.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
-        jButton11.setText("Cancelar");
-
-        botonAñadirEntrada.setText("Añadir Entrada");
-        botonAñadirEntrada.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                botonAñadirEntradaActionPerformed(evt);
-            }
-        });
-
-        botonEliminarEntrada.setText("Eliminar Entrada");
-        botonEliminarEntrada.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                botonEliminarEntradaActionPerformed(evt);
-            }
-        });
-
-        botonAñadirSalida.setText("Añadir Salida");
-        botonAñadirSalida.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                botonAñadirSalidaActionPerformed(evt);
-            }
-        });
-
-        botonEliminarSalida.setText("Eliminar Salida");
-        botonEliminarSalida.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                botonEliminarSalidaActionPerformed(evt);
-            }
-        });
+        jButton11.setText("Cerrar");
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
         jPanel7Layout.setHorizontalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(botonAñadirSalida)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(botonEliminarSalida)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(botonAñadirEntrada)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(botonEliminarEntrada)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton10)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton11)
                 .addContainerGap())
         );
@@ -678,16 +765,7 @@ public class jdMaquinaria extends javax.swing.JDialog {
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(botonEliminarSalida)
-                        .addComponent(botonAñadirSalida))
-                    .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(botonAñadirEntrada)
-                        .addComponent(botonEliminarEntrada))
-                    .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jButton10)
-                        .addComponent(jButton11)))
+                .addComponent(jButton11)
                 .addContainerGap())
         );
 
@@ -729,16 +807,23 @@ public class jdMaquinaria extends javax.swing.JDialog {
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        /*    JOptionPane.showMessageDialog(null, "Datos: " + modelo.getValueAt(0, 0)
-                + " - " + modelo.getValueAt(0, 1) + " - " + modelo.getValueAt(0, 2) + " - " + modelo.getValueAt(0, 3) + " - " + modelo.getValueAt(0, 4));
-         */
-        String idMaquinaria = mdb.devuelveUnDato("select id from maquinariabh where clave='" + clave + "'");
+        if (tipo.equals("1")) {
+            for (int i = 0; i < tablaEntradas.getRowCount(); i++) {
+                mdb.insertarEnCiclo("insert into entradasmaquinaria values(null," + idMaquinaria + ",  '" + tablaEntradas.getValueAt(i, 0) + "', "
+                        + "'" + tablaEntradas.getValueAt(i, 1) + "', '" + tablaEntradas.getValueAt(i, 2) + "',"
+                        + "'" + tablaEntradas.getValueAt(i, 3) + "','" + tablaEntradas.getValueAt(i, 4) + "')");
+            }
+        } else {
+            mdb.actualizarBasicos("delete from entradasmaquinaria where idMaquinaria=" + idMaquinaria + "");
 
-        for (int i = 0; i < tablaEntradas.getRowCount(); i++) {
-            mdb.insertarEnCiclo("insert into entradasmaquinaria values(null," + idMaquinaria + ",  '" + tablaEntradas.getValueAt(i, 0) + "', "
-                    + "'" + tablaEntradas.getValueAt(i, 1) + "', '" + tablaEntradas.getValueAt(i, 2) + "',"
-                    + "'" + tablaEntradas.getValueAt(i, 3) + "','" + tablaEntradas.getValueAt(i, 4) + "')");
+            for (int i = 0; i < tablaEntradas.getRowCount(); i++) {
+                mdb.insertarEnCiclo("insert into entradasmaquinaria values(null," + idMaquinaria + ",  '" + tablaEntradas.getValueAt(i, 0) + "', "
+                        + "'" + tablaEntradas.getValueAt(i, 1) + "', '" + tablaEntradas.getValueAt(i, 2) + "',"
+                        + "'" + tablaEntradas.getValueAt(i, 3) + "','" + tablaEntradas.getValueAt(i, 4) + "')");
+            }
         }
+
+        cargarTablas();
 
     }//GEN-LAST:event_jButton4ActionPerformed
 
@@ -753,21 +838,31 @@ public class jdMaquinaria extends javax.swing.JDialog {
         int count;
         count = tablaSalidas.getRowCount() + 1;
 
-        String clave = "S" + count;
+        String claveSalida = "S" + count;
 
-        modelo2.addRow(new Object[]{clave, "Seleccione..", "Seleccione..", "Seleccione..", ""});
+        modelo2.addRow(new Object[]{claveSalida, "Seleccione..", "Seleccione..", "Seleccione..", ""});
 
         setBox(tablaSalidas, tablaSalidas.getColumnModel().getColumn(1));
         setBox2(tablaSalidas, tablaSalidas.getColumnModel().getColumn(2));
         setBox3(tablaSalidas, tablaSalidas.getColumnModel().getColumn(3));
 
-        comboSalidas.addItem(clave);
+        comboSalidas.addItem(claveSalida);
     }//GEN-LAST:event_botonAñadirSalidaActionPerformed
 
     private void botonEliminarSalidaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonEliminarSalidaActionPerformed
         // TODO add your handling code here:
-        modelo2.removeRow(tablaSalidas.getSelectedRow());
-        modificarEntradas("Salidas");
+        try {
+            modelo2.removeRow(tablaSalidas.getSelectedRow());
+            modificarEntradas("Salidas");
+
+            comboSalidas.removeAllItems();
+            for (int i = 0; i < modelo2.getRowCount(); i++) {
+                comboSalidas.addItem(modelo2.getValueAt(i, 0) + "");
+            }
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Seleccione Una Salida");
+        }
     }//GEN-LAST:event_botonEliminarSalidaActionPerformed
 
     private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
@@ -816,11 +911,14 @@ public class jdMaquinaria extends javax.swing.JDialog {
                 + "'" + txtMarca.getText() + "', '" + txtModelo.getText() + "', '" + txtSerie.getText() + "', '" + txtCapacidad.getText() + "', "
                 + "" + txtEvaluacion.getText() + ", " + entradas + ", " + salidas + ", " + idSobrante + ", '" + txtDescripcion.getText() + "', "
                 + "" + generarLote + "," + disminucionInm + " )");
+
+        idMaquinaria = mdb.devuelveUnDato("select id from maquinariabh where clave='" + txtClave.getText() + "'");
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jTabbedPane1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTabbedPane1MouseClicked
         // TODO add your handling code here:
-
+/*
         switch (jTabbedPane1.getSelectedIndex()) {
             case 0:
                 botonAñadirSalida.setVisible(false);
@@ -843,7 +941,7 @@ public class jdMaquinaria extends javax.swing.JDialog {
                 botonEliminarEntrada.setVisible(false);
                 break;
         }
-
+         */
     }//GEN-LAST:event_jTabbedPane1MouseClicked
 
     private void jPanel6MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel6MouseClicked
@@ -853,15 +951,24 @@ public class jdMaquinaria extends javax.swing.JDialog {
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
         // TODO add your handling code here:
+        if (tipo.equals("1")) {
+            for (int i = 0; i < tablaSalidas.getRowCount(); i++) {
+                mdb.insertarEnCiclo("insert into salidasmaquinaria values(null," + idMaquinaria + ",  '" + tablaSalidas.getValueAt(i, 0) + "', "
+                        + "'" + tablaSalidas.getValueAt(i, 1) + "', '" + tablaSalidas.getValueAt(i, 2) + "',"
+                        + "'" + tablaSalidas.getValueAt(i, 3) + "','" + tablaSalidas.getValueAt(i, 4) + "')");
+            }
+        } else {
+            mdb.actualizarBasicos("delete from salidasmaquinaria where idMaquinaria=" + idMaquinaria + "");
 
-        String idMaquinaria = mdb.devuelveUnDato("select id from maquinariabh where clave='" + clave + "'");
+            for (int i = 0; i < tablaSalidas.getRowCount(); i++) {
+                mdb.insertarEnCiclo("insert into salidasmaquinaria values(null," + idMaquinaria + ",  '" + tablaSalidas.getValueAt(i, 0) + "', "
+                        + "'" + tablaSalidas.getValueAt(i, 1) + "', '" + tablaSalidas.getValueAt(i, 2) + "',"
+                        + "'" + tablaSalidas.getValueAt(i, 3) + "','" + tablaSalidas.getValueAt(i, 4) + "')");
+            }
 
-        for (int i = 0; i < tablaSalidas.getRowCount(); i++) {
-            mdb.insertarEnCiclo("insert into salidasmaquinaria values(null," + idMaquinaria + ",  '" + tablaSalidas.getValueAt(i, 0) + "', "
-                    + "'" + tablaSalidas.getValueAt(i, 1) + "', '" + tablaSalidas.getValueAt(i, 2) + "',"
-                    + "'" + tablaSalidas.getValueAt(i, 3) + "','" + tablaSalidas.getValueAt(i, 4) + "')");
         }
 
+        cargarTablas();
     }//GEN-LAST:event_jButton8ActionPerformed
 
     private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
@@ -871,14 +978,25 @@ public class jdMaquinaria extends javax.swing.JDialog {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        String idMaquinaria = mdb.devuelveUnDato("select id from maquinariabh where clave='" + clave + "'");
+        if (tipo.equals("1")) {
+            for (int i = 0; i < tablaMaquinaria.getRowCount(); i++) {
+                mdb.insertarEnCiclo("insert into relacionsalidamaquinarias values(null," + idMaquinaria + ",  "
+                        + "'" + tablaMaquinaria.getValueAt(i, 0) + "', "
+                        + "" + mdb.devuelveUnDato("select id from actividadesbh where actividad='" + tablaMaquinaria.getValueAt(i, 1) + "'") + ", "
+                        + "" + mdb.devuelveUnDato("select id from maquinariabh where nombre= '" + tablaMaquinaria.getValueAt(i, 2) + "'") + " )");
+            }
+        } else {
+            mdb.actualizarBasicos("delete from relacionsalidamaquinarias where idMaquinaria=" + idMaquinaria + "");
 
-        for (int i = 0; i < tablaMaquinaria.getRowCount(); i++) {
-            mdb.insertarEnCiclo("insert into relacionsalidamaquinarias values(null," + idMaquinaria + ",  "
-                    + "'" + tablaMaquinaria.getValueAt(i, 0) + "', "
-                    + "" + mdb.devuelveUnDato("select id from actividadesbh where actividad='"+tablaMaquinaria.getValueAt(i,1)+"'")+ ", "
-                    + "" + mdb.devuelveUnDato("select id from maquinariabh where nombre= '"+tablaMaquinaria.getValueAt(i, 2) + "'")+" )");
+            for (int i = 0; i < tablaMaquinaria.getRowCount(); i++) {
+                mdb.insertarEnCiclo("insert into relacionsalidamaquinarias values(null," + idMaquinaria + ",  "
+                        + "'" + tablaMaquinaria.getValueAt(i, 0) + "', "
+                        + "" + mdb.devuelveUnDato("select id from actividadesbh where actividad='" + tablaMaquinaria.getValueAt(i, 1) + "'") + ", "
+                        + "" + mdb.devuelveUnDato("select id from maquinariabh where nombre= '" + tablaMaquinaria.getValueAt(i, 2) + "'") + " )");
+            }
         }
+
+        cargarTablas();
     }//GEN-LAST:event_jButton3ActionPerformed
 
     /**

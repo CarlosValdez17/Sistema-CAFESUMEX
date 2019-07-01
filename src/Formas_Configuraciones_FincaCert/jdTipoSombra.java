@@ -5,6 +5,7 @@
  */
 package Formas_Configuraciones_FincaCert;
 
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
@@ -24,8 +25,9 @@ public class jdTipoSombra extends javax.swing.JDialog {
     metodosDatosBasicos mdb;
     String sombra, tipo;
     validaConfi valiConf;
+    Propiedades idioma;
 
-    public jdTipoSombra(java.awt.Frame parent, boolean modal, String tipo, String sombra, Connection c) {
+    public jdTipoSombra(java.awt.Frame parent, boolean modal, String tipo, String sombra, String Idioma, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
@@ -34,11 +36,19 @@ public class jdTipoSombra extends javax.swing.JDialog {
         this.tipo = tipo;
         this.sombra = sombra;
         mdb = new metodosDatosBasicos(cn);
+        idioma = new Propiedades(Idioma);
+        
+        jButton1.setText(idioma.getProperty("Aceptar"));;
+        jButton2.setText(idioma.getProperty("Cancelar"));;
+        jLabel1.setText(idioma.getProperty("TipoSombra"));;
+        
 
         if (tipo.equals("1")) {
-            setTitle("Nuevo Tipo de Sombra");
+            //setTitle("Nuevo Tipo de Sombra");
+            setTitle(idioma.getProperty("NuevoTipoDeSombra"));
         } else {
-            setTitle("Editar Tipo de Sombra");
+            //setTitle("Editar Tipo de Sombra");
+            setTitle(idioma.getProperty("EditarTipoDeSombra"));
             txtSombra.setText(sombra);
         }
     }

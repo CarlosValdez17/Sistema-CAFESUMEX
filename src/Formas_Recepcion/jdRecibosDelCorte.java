@@ -5,6 +5,7 @@
  */
 package Formas_Recepcion;
 
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosRecepcion;
 import java.sql.Connection;
 import javax.swing.table.DefaultTableModel;
@@ -21,19 +22,22 @@ public class jdRecibosDelCorte extends javax.swing.JDialog {
     Connection cn;
     metodosRecepcion mdr;
     DefaultTableModel modelo;
-    
-    public jdRecibosDelCorte(java.awt.Frame parent, boolean modal, String idCorte, Connection cn) {
+    String Idioma;
+    Propiedades idioma;
+
+    public jdRecibosDelCorte(java.awt.Frame parent, boolean modal, String idCorte, String Idioma, Connection cn) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
-        
-        this.cn=cn;
-    
+
+        this.cn = cn;
+        this.Idioma = Idioma;
         mdr = new metodosRecepcion(cn);
+        idioma = new Propiedades(Idioma);
         modelo = (DefaultTableModel) tablaRecibos.getModel();
-        
+
         jLabel2.setText(idCorte);
-        
+
         mdr.cargarInformacion2(modelo, 21, "select r.id, r.folioManual,r.idLote, r.fechaRecepcion, pf.Nombre, pf.ApellidoPaterno, pf.ApellidoMaterno,\n"
                 + "pm.RazonSocial, p.nombre, r.formaCafe, r.sacos, r.kgRecibidos, r.totalBruto, r.retencion, r.total, r.verdes, r.inmaduros, r.brocados, r.calificacion, r.personaEntrego, r.observaciones\n"
                 + "from recibos r\n"
@@ -41,6 +45,35 @@ public class jdRecibosDelCorte extends javax.swing.JDialog {
                 + "inner join personaf pf on ( pf.ID=r.idPersona)\n"
                 + "inner join parcelas p on ( p.id=r.idParcela) "
                 + "where r.idLote='" + idCorte + "'");
+
+        traductor();
+    }
+
+    public void traductor() {
+        jLabel1.setText(idioma.getProperty("RecibosDelCorte"));
+
+        tablaRecibos.getColumnModel().getColumn(0).setHeaderValue(idioma.getProperty("Folio"));
+        tablaRecibos.getColumnModel().getColumn(1).setHeaderValue(idioma.getProperty("FolioManual"));
+        tablaRecibos.getColumnModel().getColumn(2).setHeaderValue(idioma.getProperty("IdCorte"));
+        tablaRecibos.getColumnModel().getColumn(3).setHeaderValue(idioma.getProperty("FechaDeRecepcion"));
+        tablaRecibos.getColumnModel().getColumn(4).setHeaderValue(idioma.getProperty("Nombre"));
+        tablaRecibos.getColumnModel().getColumn(5).setHeaderValue(idioma.getProperty("ApellidoPaterno"));
+        tablaRecibos.getColumnModel().getColumn(6).setHeaderValue(idioma.getProperty("ApellidoMaterno"));
+        tablaRecibos.getColumnModel().getColumn(7).setHeaderValue(idioma.getProperty("Sociedad"));
+        tablaRecibos.getColumnModel().getColumn(8).setHeaderValue(idioma.getProperty("Parcela"));
+        tablaRecibos.getColumnModel().getColumn(9).setHeaderValue(idioma.getProperty("FormaDeCafe"));
+        tablaRecibos.getColumnModel().getColumn(10).setHeaderValue(idioma.getProperty("Sacos"));
+        tablaRecibos.getColumnModel().getColumn(11).setHeaderValue(idioma.getProperty("KilosRecibidos"));
+        tablaRecibos.getColumnModel().getColumn(12).setHeaderValue(idioma.getProperty("TotalBruto"));
+        tablaRecibos.getColumnModel().getColumn(13).setHeaderValue(idioma.getProperty("Retencion"));
+        tablaRecibos.getColumnModel().getColumn(14).setHeaderValue(idioma.getProperty("Total"));
+        tablaRecibos.getColumnModel().getColumn(15).setHeaderValue(idioma.getProperty("Verdes"));
+        tablaRecibos.getColumnModel().getColumn(16).setHeaderValue(idioma.getProperty("Inmaduros"));
+        tablaRecibos.getColumnModel().getColumn(17).setHeaderValue(idioma.getProperty("Brocados"));
+        tablaRecibos.getColumnModel().getColumn(18).setHeaderValue(idioma.getProperty("Calificacion"));
+        tablaRecibos.getColumnModel().getColumn(19).setHeaderValue(idioma.getProperty("Entrego"));
+        tablaRecibos.getColumnModel().getColumn(20).setHeaderValue(idioma.getProperty("Observaciones"));
+
     }
 
     /**
@@ -145,7 +178,7 @@ String idRecibo;
         idRecibo = tablaRecibos.getValueAt(tablaRecibos.getSelectedRow(), 0) + "";
 
         if (evt.getClickCount() == 2) {
-            jdRecibos jdR = new jdRecibos(null, true, idRecibo, "2","", "", cn);
+            jdRecibos jdR = new jdRecibos(null, true, idRecibo, "2", "", "", Idioma,cn);
             jdR.setVisible(true);
         }
     }//GEN-LAST:event_tablaRecibosMouseClicked
@@ -178,7 +211,7 @@ String idRecibo;
         //</editor-fold>
 
         /* Create and display the dialog */
-      /*  java.awt.EventQueue.invokeLater(new Runnable() {
+ /*  java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 jdRecibosDelCorte dialog = new jdRecibosDelCorte(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {

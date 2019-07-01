@@ -5,6 +5,7 @@
  */
 package Formas_Configuraciones_FincaCert.Certificados;
 
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.Connection;
 import javax.swing.DefaultComboBoxModel;
@@ -24,14 +25,37 @@ public class jdCodigosCertificados extends javax.swing.JFrame {
     Connection cn;
     jpCodigosCertificados jp;
     metodosDatosBasicos mdb;
+    Propiedades idioma;
 
-    public jdCodigosCertificados(Connection c) {
+    public jdCodigosCertificados(Connection c, String Idioma) {
         initComponents();
         setLocationRelativeTo(null);
 
         cn = c;
         mdb = new metodosDatosBasicos(cn);
         validacion();
+        
+        idioma = new Propiedades(Idioma);
+        
+        jButton4.setText(idioma.getProperty("Limpiar"));
+        jButton6.setText(idioma.getProperty("Guardar"));
+        jButton3.setText(idioma.getProperty("Agregar"));
+        jButton5.setText(idioma.getProperty("Eliminar"));
+        
+        
+        jLabel4.setText(idioma.getProperty("NombreIdentificador"));
+        jLabel6.setText(idioma.getProperty("Codigo"));
+        
+        jLabel1.setText(idioma.getProperty("Certificado"));
+        jLabel2.setText(idioma.getProperty("Certificador"));
+        jLabel3.setText(idioma.getProperty("Alcances"));
+        
+        tablaContenido.getColumnModel().getColumn(0).setHeaderValue(idioma.getProperty("Certificado"));
+        tablaContenido.getColumnModel().getColumn(1).setHeaderValue(idioma.getProperty("Certificador"));
+        tablaContenido.getColumnModel().getColumn(2).setHeaderValue(idioma.getProperty("Alcances"));
+        
+        setTitle(idioma.getProperty("NuevoCodigo"));
+        
         rellenarCombos();
     }
 

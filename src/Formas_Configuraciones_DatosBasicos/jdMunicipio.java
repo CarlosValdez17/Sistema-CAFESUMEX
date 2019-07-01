@@ -5,6 +5,7 @@
  */
 package Formas_Configuraciones_DatosBasicos;
 
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
@@ -25,9 +26,10 @@ public class jdMunicipio extends javax.swing.JDialog {
     jdMunicipio jdM;
     jpMunicipio jpM;
     Connection cn;
+    Propiedades idioma;
     String tipo, municipio, pais, estado;
 
-    public jdMunicipio(java.awt.Frame parent, boolean modal, String tipo, String municipio, String pais, String estado, Connection c) {
+    public jdMunicipio(java.awt.Frame parent, boolean modal, String tipo, String municipio, String pais, String estado, String Idioma, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
@@ -40,15 +42,23 @@ public class jdMunicipio extends javax.swing.JDialog {
 
         mdb = new metodosDatosBasicos(cn);
         valiConf = new validaConfi();
+        idioma = new Propiedades(Idioma);
 
         txtMunicipio.setText(municipio);
 
+        jButton2.setText(idioma.getProperty("Aceptar"));
+        jButton3.setText(idioma.getProperty("Cancelar"));
+        jLabel1.setText(idioma.getProperty("Pais"));
+        jLabel3.setText(idioma.getProperty("Estado"));        
+        jLabel2.setText(idioma.getProperty("Municipio"));        
         rellenarCombos();
 
         if (tipo.equals("1")) {
-            setTitle("Nuevo Municipio");
+            //setTitle("Nuevo Municipio");
+            setTitle(idioma.getProperty("NuevoMunicipio"));
         } else {
-            setTitle("Modificar Municipio");
+            //setTitle("Modificar Municipio");
+            setTitle(idioma.getProperty("EditarMunicipio"));
             comboPais.setEnabled(false);
             comboEstado.setEnabled(false);
 

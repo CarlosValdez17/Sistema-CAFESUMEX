@@ -5,6 +5,7 @@
  */
 package Formas_Configuraciones_FincaCert;
 
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
@@ -26,11 +27,12 @@ public class jdSuelos extends javax.swing.JDialog {
     Connection cn;
     jpSuelos jp;
    validaConfi valiConf;
+   Propiedades idioma;
 
 
     metodosDatosBasicos mdb;
 
-    public jdSuelos(java.awt.Frame parent, boolean modal, String tipo, String SuelosC, Connection c) {
+    public jdSuelos(java.awt.Frame parent, boolean modal, String tipo, String SuelosC, String Idioma, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
@@ -38,10 +40,18 @@ valiConf = new validaConfi();
         this.tipo = tipo;
         this.SuelosC = SuelosC;
         cn = c;
+        idioma = new Propiedades(Idioma);
+        
+        jButton1.setText(idioma.getProperty("Aceptar"));;
+        jButton2.setText(idioma.getProperty("Cancelar"));;
+        jLabel1.setText(idioma.getProperty("TipoDeSuelo"));;
+        
         if (tipo.equals("1")) {
-            setTitle("nueva retencion");
+            //setTitle("nueva retencion");
+            setTitle(idioma.getProperty("NuevoTipoDeSuelo"));
         }else{
-              setTitle("editar");
+              //setTitle("editar");
+              setTitle(idioma.getProperty("EditarTipoDeSuelo"));
             
               txtSuelos.setText(SuelosC);
         }  
@@ -138,12 +148,12 @@ valiConf = new validaConfi();
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(txtSuelos)
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -153,7 +163,7 @@ valiConf = new validaConfi();
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtSuelos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(149, 149, 149)
+                .addGap(47, 47, 47)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jButton2))
@@ -168,7 +178,7 @@ valiConf = new validaConfi();
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();

@@ -27,7 +27,7 @@ public class jpCortesRecibidos extends javax.swing.JPanel {
     Connection cn;
     metodosBeneficioHumedo mbh;
     DefaultTableModel modelo;
-    String beneficio, idSociedad;
+    String beneficio, idSociedad, idBeneficio;
 
     public jpCortesRecibidos(String beneficio, Connection cn) {
         initComponents();
@@ -38,16 +38,16 @@ public class jpCortesRecibidos extends javax.swing.JPanel {
         modelo = (DefaultTableModel) jTable1.getModel();
 
         idSociedad = mbh.devuelveUnDato("Select idSociedad from beneficioshumedos where nombre='" + beneficio + "'");
-
+        idBeneficio = mbh.devuelveUnDato("select id from beneficioshumedos where nombre='" + beneficio + "'");
         llenarTabla();
     }
 
     public void llenarTabla() {
         limpiar(jTable1);
-        mbh.cargarInformacionColumna1B(modelo, 10, "SELECT b.fecha, b.idBoletaManual, b.fechaBoletaManual, b.idBoleta, v.Nombre, v.Placas, v.Responsable, b.totalKg, b.totalSacos, b.estatus\n"
+        mbh.cargarInformacionColumna1B(modelo, 9, "SELECT b.fecha, b.idBoletaManual, b.fechaBoletaManual, b.idBoleta, v.Nombre, v.Placas, v.Responsable, b.totalKg, b.totalSacos\n"
                 + "from boletasalidareceptor b\n"
                 + "inner join vehiculo v on (b.idTransporte=v.ID) \n"
-                + "where b.idSociedad="+idSociedad+" group by b.idBoleta order by b.id  ");
+                + "where b.destino=" + idBeneficio + " and estatus=1 group by b.idBoleta order by b.id  ");
     }
 
     private void limpiar(JTable tabla) {
@@ -75,20 +75,20 @@ public class jpCortesRecibidos extends javax.swing.JPanel {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Fecha de Envio", "Folio Manual", "Fecha Boleta Manual", "No. Boleta", "Vehiculo", "Placas", "Responsable", "Kg Enviados", "Sacos Enviados", "Estatus", ""
+                "Fecha de Envio", "Folio Manual", "Fecha Boleta Manual", "No. Boleta", "Vehiculo", "Placas", "Responsable", "Kg Enviados", "Sacos Enviados", ""
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Boolean.class
+                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false, true
+                false, false, false, false, false, false, false, false, false, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -191,10 +191,10 @@ public class jpCortesRecibidos extends javax.swing.JPanel {
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        jdBoletaEntradaBH jdBBH;
+         jdBoletaEntradaBH jdBBH;
         try {
             if (!idBoleta.equals("")) {
-                jdBBH = new jdBoletaEntradaBH(null, true, idBoleta, idSociedad, cn);
+                jdBBH = new jdBoletaEntradaBH(null, true, idBoleta, idSociedad, idBeneficio, cn);
                 jdBBH.setVisible(true);
             } else {
                 JOptionPane.showMessageDialog(null, "Seleccione Boleta");

@@ -5,6 +5,7 @@
  */
 package Formas_Configuraciones_Sociedades;
 
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
@@ -27,8 +28,9 @@ public class jdPuestos extends javax.swing.JDialog {
     jpPuestos jp;
     validaConfi valiConf;
     metodosDatosBasicos mdb;
+    Propiedades idioma;
 
-    public jdPuestos(java.awt.Frame parent, boolean modal, String tipo, String PuestosC, Connection c) {
+    public jdPuestos(java.awt.Frame parent, boolean modal, String tipo, String PuestosC, String Idioma, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
@@ -37,11 +39,19 @@ public class jdPuestos extends javax.swing.JDialog {
         this.PuestosC = PuestosC;
         cn = c;
         valiConf = new validaConfi();
+        idioma = new Propiedades(Idioma);
+        
+        jButton1.setText(idioma.getProperty("Aceptar"));
+        jButton2.setText(idioma.getProperty("Cancelar"));
+        jLabel1.setText(idioma.getProperty("Puesto"));
+        
 
         if (tipo.equals("1")) {
-            setTitle("nueva retencion");
+            //setTitle("nueva retencion");
+            setTitle(idioma.getProperty("NuevoPuesto"));
         } else {
-            setTitle("editar");
+            //setTitle("editar");
+            setTitle(idioma.getProperty("EditarPuesto"));
 
             txtPuestos.setText(PuestosC);
         }

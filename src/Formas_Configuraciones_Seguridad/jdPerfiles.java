@@ -5,6 +5,7 @@
  */
 package Formas_Configuraciones_Seguridad;
 
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
@@ -27,22 +28,33 @@ public class jdPerfiles extends javax.swing.JDialog {
     jpPerfiles jp;
     validaConfi valiConf;
     metodosDatosBasicos mdb;
+    Propiedades idioma;
+    String Idioma;
 
-    public jdPerfiles(java.awt.Frame parent, boolean modal, String tipo, String PerfilesC, Connection c) {
+    public jdPerfiles(java.awt.Frame parent, boolean modal, String tipo, String PerfilesC, String Idioma, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
 
         this.tipo = tipo;
         this.PerfilesC = PerfilesC;
+        this.Idioma=Idioma;
         cn = c;
         valiConf = new validaConfi();
+        idioma = new Propiedades(Idioma);
+        
+        jButton1.setText(idioma.getProperty("Aceptar"));;
+        jButton2.setText(idioma.getProperty("Cancelar"));;
+        jLabel1.setText(idioma.getProperty("Perfiles"));;
+        
         
         if (tipo.equals("1")) {
-            setTitle("nuevo perfil");
+            //setTitle("nuevo perfil");
+            setTitle(idioma.getProperty("NuevoPerfil"));
         } else {
-            setTitle("editar");
-            txtPerfiles.setText(PerfilesC);
+            //setTitle("editar");
+            setTitle(idioma.getProperty("EditarPerfil"));
+            //txtPerfiles.setText(PerfilesC);
         }
 
     }

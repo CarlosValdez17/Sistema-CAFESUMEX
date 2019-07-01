@@ -5,6 +5,7 @@
  */
 package Formas_Configuraciones_DatosBasicos;
 
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
@@ -26,8 +27,9 @@ public class jdEstado extends javax.swing.JDialog {
     metodosDatosBasicos mdb;
     validaConfi valiConf;
     Connection cn;
+    Propiedades idioma;
 
-    public jdEstado(java.awt.Frame parent, boolean modal, String tipo, String estado, String paisC, Connection c) {
+    public jdEstado(java.awt.Frame parent, boolean modal, String tipo, String estado, String paisC, String Idioma, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
@@ -39,6 +41,13 @@ public class jdEstado extends javax.swing.JDialog {
 
         mdb = new metodosDatosBasicos(cn);
         valiConf = new validaConfi();
+        idioma = new Propiedades(Idioma);
+        
+        jButton2.setText(idioma.getProperty("Aceptar"));;
+        jButton3.setText(idioma.getProperty("Cancelar"));;
+        jLabel1.setText(idioma.getProperty("Pais"));;
+        jLabel2.setText(idioma.getProperty("Estado"));;
+        
 
         rellenarCombos();
         comparaciones();
@@ -46,10 +55,12 @@ public class jdEstado extends javax.swing.JDialog {
 
     public void comparaciones() {
         if (tipo.equals("1")) {
-            setTitle("Nuevo Estado");
+            //setTitle("Nuevo Estado");
+            setTitle(idioma.getProperty("NuevoEstado"));
             txtEstado.setFocusable(true);
         } else {
-            setTitle("Editar Estado");
+            //setTitle("Editar Estado");
+            setTitle(idioma.getProperty("EditarEstado"));
             txtEstado.setText(estado);
             comboPais.setEnabled(false);
             comboPais.addItem(paisC);

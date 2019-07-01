@@ -5,6 +5,7 @@
  */
 package Formas_Configuraciones_FincaCert;
 
+import Idioma.Propiedades;
 import FormasGenerales.pantallaPrincipal;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.CallableStatement;
@@ -30,61 +31,71 @@ public class jpSuelos extends javax.swing.JPanel {
     DefaultTableModel modelo;
     Connection cn;
 
-    public jpSuelos(Connection c) {
+    Propiedades idioma;
+    String Idioma;
+
+    public jpSuelos(Connection c, String Idioma) {
         initComponents();
         cn = c;
+        this.Idioma = Idioma;
 
         modelo = (DefaultTableModel) tabla.getModel();
         tabla.setRowSorter(new TableRowSorter(modelo));
-mdb=new metodosDatosBasicos(cn);
-   tabla.getTableHeader().setReorderingAllowed(false);
-    busqueda();
-   
-     
-    }
+        mdb = new metodosDatosBasicos(cn);
+        tabla.getTableHeader().setReorderingAllowed(false);
 
-   
+        idioma = new Propiedades(Idioma);
+        jButton5.setText(idioma.getProperty("Cerrar"));
+        jButton2.setText(idioma.getProperty("Nuevo"));
+        jButton3.setText(idioma.getProperty("Editar"));
+        jButton4.setText(idioma.getProperty("Desactivar"));
+        jLabel10.setText(idioma.getProperty("Situacion"));
+        jLabel6.setText(idioma.getProperty("TipoDeSuelo"));
+
+        tabla.getColumnModel().getColumn(0).setHeaderValue(idioma.getProperty("TipoDeSuelo"));
+        tabla.getColumnModel().getColumn(1).setHeaderValue(idioma.getProperty("Situacion"));
+
+        comboSituacion.addItem(idioma.getProperty("Activos"));
+        comboSituacion.addItem(idioma.getProperty("Inactivos"));
+        comboSituacion.addItem(idioma.getProperty("Todos"));
+
+        busqueda();
+
+    }
 
     public void busqueda() {
         String tipoP = "";
-        String tipoK="";
+        String tipoK = "";
         String situacion = "";
         String where = "";
+        situacion = comboSituacion.getSelectedIndex() + "";
 
-        situacion = comboSituacion.getSelectedItem() + "";
-        if (situacion.equals("Inactivo")) {
+        if (situacion.equals("1")) {
             situacion = "2";
-        }else if(situacion.equals("Activo")){
-            situacion="1";
-            
+        } else if (situacion.equals("0")) {
+            situacion = "1";
+        } else {
+            situacion = "3";
         }
 
         if (txtBusquedaP.getText().length() > 0) {
             tipoP = " AND t.descripcion like '" + txtBusquedaP.getText() + "%'";
         }
-        /*  if (txtBusquedaK.getText().length() > 0) {
-            tipoK = " AND Importe like '%" + txtBusquedaK.getText() + "%'";
-        }
-      if (txtBusquedaUE.getText().length() > 0) {
-            tipoUE = "AND UE like '" + txtBusquedaUE.getText() + "%'";
-        }
-        if (txtBusquedaISO.getText().length() > 0) {
-            tipoISO = "AND ISO like '" + txtBusquedaISO.getText() + "%'";
-        }**/
+
         String sql;
         System.out.println("SITUACION: " + situacion);
-        if (situacion.equals("Todos")) {
+        if (situacion.equals("3")) {
             sql = "select t.descripcion, s.descripcion "
-                + "from tiposuelo t "
-                + "inner join situacion s on (t.id_situacion=s.id) WHERE t.ID_Situacion<>3 "+tipoP;
+                    + "from tiposuelo t "
+                    + "inner join situacion s on (t.id_situacion=s.id) WHERE t.ID_Situacion<>3 " + tipoP;
         } else {
             sql = "select t.descripcion, s.descripcion "
-                + "from tiposuelo t "
-                + "inner join situacion s on (t.id_situacion=s.id) WHERE t.ID_Situacion=" + situacion+tipoP;
+                    + "from tiposuelo t "
+                    + "inner join situacion s on (t.id_situacion=s.id) WHERE t.ID_Situacion=" + situacion + tipoP;
         }
         //System.out.println(sql);
         limpiar(tabla);
-        mdb.cargarInformacion2(modelo,2, sql);
+        mdb.cargarInformacion2(modelo, 2, sql);
 
     }
 
@@ -180,7 +191,6 @@ mdb=new metodosDatosBasicos(cn);
 
         jLabel10.setText("Situacion");
 
-        comboSituacion.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Activo", "Inactivo", "Todos" }));
         comboSituacion.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 comboSituacionItemStateChanged(evt);
@@ -318,7 +328,7 @@ mdb=new metodosDatosBasicos(cn);
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        jdP = new jdSuelos(null, true, "1", Puestos, cn);
+        jdP = new jdSuelos(null, true, "1", Puestos, Idioma, cn);
         jdP.jp = this;
         jdP.setVisible(true);
 
@@ -327,34 +337,35 @@ mdb=new metodosDatosBasicos(cn);
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
         if (Puestos.equals("")) {
-            JOptionPane.showMessageDialog(null,"selecciona un registro");
-        }else{
-             if (situacion.equals("Activo")) {
-             jdP = new jdSuelos(null, true, "2", Puestos ,cn);
-        jdP.jp = this;
-        jdP.setVisible(true);
-         }else if(situacion.equals("Inactivo")){
-         JOptionPane.showMessageDialog(null,"Dato inactivo");   
-        }
+            JOptionPane.showMessageDialog(null, idioma.getProperty("SeleccionRegistro"));
+            //JOptionPane.showMessageDialog(null,"selecciona un registro");
+        } else {
+            if (situacion.equals("Activo")) {
+                jdP = new jdSuelos(null, true, "2", Puestos, Idioma, cn);
+                jdP.jp = this;
+                jdP.setVisible(true);
+            } else if (situacion.equals("Inactivo")) {
+                JOptionPane.showMessageDialog(null, "Dato inactivo");
+            }
         }
 
     }//GEN-LAST:event_jButton3ActionPerformed
-   String situacion="";
+    String situacion = "";
     String Puestos = "";
-    String importe="";
+    String importe = "";
     private void tablaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaMouseClicked
         // TODO add your handling code here: Puestos
         Puestos = tabla.getValueAt(tabla.getSelectedRow(), 0) + "";  //
-        situacion=tabla.getValueAt(tabla.getSelectedRow(), 1) + "";
-     
+        situacion = tabla.getValueAt(tabla.getSelectedRow(), 1) + "";
+
         if (evt.getClickCount() == 2) {
-             if (situacion.equals("Activo")) {
-            jdP = new jdSuelos(null, true, "2", Puestos, cn);
-            jdP.jp = this;
-            jdP.setVisible(true);
-             }else if(situacion.equals("Inactivo")){
-            JOptionPane.showMessageDialog(null,"Dato inactivo");
-             }
+            if (situacion.equals("Activo")) {
+                jdP = new jdSuelos(null, true, "2", Puestos, Idioma, cn);
+                jdP.jp = this;
+                jdP.setVisible(true);
+            } else if (situacion.equals("Inactivo")) {
+                JOptionPane.showMessageDialog(null, "Dato inactivo");
+            }
         }
     }//GEN-LAST:event_tablaMouseClicked
 
@@ -364,16 +375,9 @@ mdb=new metodosDatosBasicos(cn);
     }//GEN-LAST:event_txtBusquedaPKeyReleased
 
     private void comboSituacionItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionItemStateChanged
-     if (comboSituacion.getSelectedItem().equals("Inactivo")) {
-         estatus="1";
-            jButton4.setText("Activar");
-        }else{jButton4.setText("Desactivar");
-        estatus="2";
-        }
-        // TODO add your handling code here
-        busqueda();
+
     }//GEN-LAST:event_comboSituacionItemStateChanged
-String estatus="2";
+    String estatus = "2";
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
         this.removeAll();
@@ -385,16 +389,14 @@ String estatus="2";
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-      String sql="";
-
-        if (estatus.equals("2")) {
-             sql = "UPDATE tiposuelo SET ID_Situacion=2 where descripcion='" + Puestos + "'";
-       
-        }else if(estatus.equals("1")){
+        String sql = "";
+        if (comboSituacion.getSelectedIndex() == 0) {
+            sql = "UPDATE tiposuelo SET ID_Situacion=2 where descripcion='" + Puestos + "'";
+        } else if (comboSituacion.getSelectedIndex() == 1) {
             sql = "UPDATE tiposuelo SET ID_Situacion=1 where descripcion='" + Puestos + "'";
         }
-     mdb.actualizarBasicos(sql);
-         busqueda();
+        mdb.actualizarBasicos(sql);
+        busqueda();
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void txtBusquedaPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBusquedaPActionPerformed
@@ -403,6 +405,17 @@ String estatus="2";
 
     private void comboSituacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboSituacionActionPerformed
         // TODO add your handling code here:
+        if (comboSituacion.getSelectedItem().equals(idioma.getProperty("Inactivos"))) {
+            jButton4.setText(idioma.getProperty("Activar"));
+            jButton4.setEnabled(true);
+        } else if (comboSituacion.getSelectedItem().equals(idioma.getProperty("Activos"))) {
+            jButton4.setText(idioma.getProperty("Desactivar"));
+            jButton4.setEnabled(true);
+        } else {
+            jButton4.setEnabled(false);
+        }
+        // TODO add your handling code here
+        busqueda();
     }//GEN-LAST:event_comboSituacionActionPerformed
 
 

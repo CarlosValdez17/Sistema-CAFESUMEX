@@ -5,6 +5,7 @@
  */
 package Formas_Configuraciones_Sociedades;
 
+import Idioma.Propiedades;
 import FormasGenerales.pantallaPrincipal;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.CallableStatement;
@@ -30,32 +31,50 @@ public class jpRetenciones extends javax.swing.JPanel {
     DefaultTableModel modelo;
     Connection cn;
 
-    public jpRetenciones(Connection c) {
+    Propiedades idioma;
+    String Idioma;
+
+    public jpRetenciones(Connection c, String Idioma) {
         initComponents();
         cn = c;
-mdb=new metodosDatosBasicos(cn);
+        this.Idioma = Idioma;
+        mdb = new metodosDatosBasicos(cn);
         modelo = (DefaultTableModel) tablaRetenciones.getModel();
         tablaRetenciones.setRowSorter(new TableRowSorter(modelo));
-tablaRetenciones.getTableHeader().setReorderingAllowed(false);
-    busqueda();
-   
-     
-    }
+        tablaRetenciones.getTableHeader().setReorderingAllowed(false);
 
-   
+        idioma = new Propiedades(Idioma);
+        jButton5.setText(idioma.getProperty("Cerrar"));
+        jButton2.setText(idioma.getProperty("Nuevo"));
+        jButton3.setText(idioma.getProperty("Editar"));
+        jButton4.setText(idioma.getProperty("Desactivar"));
+        jLabel10.setText(idioma.getProperty("Situacion"));
+        jLabel6.setText(idioma.getProperty("NombreDeLaRetencion"));
+        jLabel7.setText(idioma.getProperty("MontoRetencion"));
+
+        tablaRetenciones.getColumnModel().getColumn(0).setHeaderValue(idioma.getProperty("NombreDeLaRetencion"));
+        tablaRetenciones.getColumnModel().getColumn(1).setHeaderValue(idioma.getProperty("MontoRetencion"));
+        tablaRetenciones.getColumnModel().getColumn(2).setHeaderValue(idioma.getProperty("Situacion"));
+
+        comboSituacion.addItem(idioma.getProperty("Activos"));
+        comboSituacion.addItem(idioma.getProperty("Inactivos"));
+        comboSituacion.addItem(idioma.getProperty("Todos"));
+
+        busqueda();
+
+    }
 
     public void busqueda() {
         String tipoP = "";
-        String tipoK="";
-        String situacion = "";
-        String where = "";
+        String tipoK = "";
+        String situacion = comboSituacion.getSelectedIndex() + "";
 
-        situacion = comboSituacionRetenciones.getSelectedItem() + "";
-        if (situacion.equals("Inactivo")) {
+        if (situacion.equals("1")) {
             situacion = "2";
-        }else if(situacion.equals("Activo")){
-            situacion="1";
-            
+        } else if (situacion.equals("0")) {
+            situacion = "1";
+        } else {
+            situacion = "3";
         }
 
         if (txtBusquedaP.getText().length() > 0) {
@@ -64,26 +83,21 @@ tablaRetenciones.getTableHeader().setReorderingAllowed(false);
         if (txtBusquedaK.getText().length() > 0) {
             tipoK = " AND t.Importe like '" + txtBusquedaK.getText() + "%'";
         }
-       /* if (txtBusquedaUE.getText().length() > 0) {
-            tipoUE = "AND UE like '" + txtBusquedaUE.getText() + "%'";
-        }
-        if (txtBusquedaISO.getText().length() > 0) {
-            tipoISO = "AND ISO like '" + txtBusquedaISO.getText() + "%'";
-        }**/
+
         String sql;
         System.out.println("SITUACION: " + situacion);
-        if (situacion.equals("Todos")) {
+        if (situacion.equals("3")) {
             sql = "select t.descripcion,t.Importe, s.descripcion "
-                + "from retenciones t "
-                + "inner join situacion s on (t.id_situacion=s.id) WHERE t.ID_Situacion<>3 "+tipoP+tipoK;
+                    + "from retenciones t "
+                    + "inner join situacion s on (t.id_situacion=s.id) WHERE t.ID_Situacion<>3 " + tipoP + tipoK;
         } else {
             sql = "select t.descripcion,t.Importe, s.descripcion "
-                + "from retenciones t "
-                + "inner join situacion s on (t.id_situacion=s.id) WHERE t.ID_Situacion=" + situacion+tipoP+tipoK;
+                    + "from retenciones t "
+                    + "inner join situacion s on (t.id_situacion=s.id) WHERE t.ID_Situacion=" + situacion + tipoP + tipoK;
         }
         //System.out.println(sql);
         limpiar(tablaRetenciones);
-        mdb.cargarInformacion2(modelo,3, sql);
+        mdb.cargarInformacion2(modelo, 3, sql);
 
     }
 
@@ -113,7 +127,7 @@ tablaRetenciones.getTableHeader().setReorderingAllowed(false);
         tablaRetenciones = new javax.swing.JTable();
         jPanel8 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
-        comboSituacionRetenciones = new javax.swing.JComboBox<>();
+        comboSituacion = new javax.swing.JComboBox<>();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
@@ -124,11 +138,6 @@ tablaRetenciones.getTableHeader().setReorderingAllowed(false);
 
         jLabel6.setText("Nombre de la Retencion:");
 
-        txtBusquedaP.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtBusquedaPActionPerformed(evt);
-            }
-        });
         txtBusquedaP.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtBusquedaPKeyReleased(evt);
@@ -137,11 +146,6 @@ tablaRetenciones.getTableHeader().setReorderingAllowed(false);
 
         jLabel7.setText("Centavos por Kg");
 
-        txtBusquedaK.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtBusquedaKActionPerformed(evt);
-            }
-        });
         txtBusquedaK.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtBusquedaKKeyReleased(evt);
@@ -204,15 +208,9 @@ tablaRetenciones.getTableHeader().setReorderingAllowed(false);
 
         jLabel10.setText("Situacion");
 
-        comboSituacionRetenciones.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Activo", "Inactivo", "Todos" }));
-        comboSituacionRetenciones.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                comboSituacionRetencionesItemStateChanged(evt);
-            }
-        });
-        comboSituacionRetenciones.addActionListener(new java.awt.event.ActionListener() {
+        comboSituacion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                comboSituacionRetencionesActionPerformed(evt);
+                comboSituacionActionPerformed(evt);
             }
         });
 
@@ -252,7 +250,7 @@ tablaRetenciones.getTableHeader().setReorderingAllowed(false);
                 .addContainerGap()
                 .addComponent(jLabel10)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(comboSituacionRetenciones, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(comboSituacion, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 293, Short.MAX_VALUE)
                 .addComponent(jButton2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -271,7 +269,7 @@ tablaRetenciones.getTableHeader().setReorderingAllowed(false);
                     .addComponent(jButton2)
                     .addComponent(jButton3)
                     .addComponent(jButton4)
-                    .addComponent(comboSituacionRetenciones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(comboSituacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel10)
                     .addComponent(jButton5))
                 .addContainerGap())
@@ -342,59 +340,40 @@ tablaRetenciones.getTableHeader().setReorderingAllowed(false);
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        jdR = new jdRetenciones(null, true, "1", Retenciones,importe, cn);
+        jdR = new jdRetenciones(null, true, "1", Retenciones, importe, Idioma, cn);
         jdR.jp = this;
         jdR.setVisible(true);
-
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
         if (Retenciones.equals("")) {
-            JOptionPane.showMessageDialog(null,"selecciona un registro");
-        }else{ if (situacion.equals("Activo")) {
-             jdR = new jdRetenciones(null, true, "2", Retenciones,importe ,cn);
-        jdR.jp = this;
-        jdR.setVisible(true);
-        }else if(situacion.equals("Inactivo")){
-            JOptionPane.showMessageDialog(null,"Dato inactivo");
+            JOptionPane.showMessageDialog(null, idioma.getProperty("SeleccionRegistro"));
+        } else {
+            jdR = new jdRetenciones(null, true, "2", Retenciones, importe, Idioma, cn);
+            jdR.jp = this;
+            jdR.setVisible(true);
         }
-        }
-
     }//GEN-LAST:event_jButton3ActionPerformed
-    String situacion="";
+
     String Retenciones = "";
-    String importe="";
+    String importe = "";
     private void tablaRetencionesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaRetencionesMouseClicked
         // TODO add your handling code here: Retenciones
         Retenciones = tablaRetenciones.getValueAt(tablaRetenciones.getSelectedRow(), 0) + "";  //
-        importe=tablaRetenciones.getValueAt(tablaRetenciones.getSelectedRow(), 1) + "";
-         situacion=tablaRetenciones.getValueAt(tablaRetenciones.getSelectedRow(), 2) + "";
-      
+        importe = tablaRetenciones.getValueAt(tablaRetenciones.getSelectedRow(), 1) + "";
+
         if (evt.getClickCount() == 2) {
-             if (situacion.equals("Activo")) {
-            jdR = new jdRetenciones(null, true, "2", Retenciones,importe, cn);
+            jdR = new jdRetenciones(null, true, "2", Retenciones, importe, Idioma, cn);
             jdR.jp = this;
             jdR.setVisible(true);
-             }else if(situacion.equals("Inactivo")){
-            JOptionPane.showMessageDialog(null,"Dato inactivo");
-        }}
+        }
     }//GEN-LAST:event_tablaRetencionesMouseClicked
 
     private void txtBusquedaPKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBusquedaPKeyReleased
         // TODO add your handling code here:
         busqueda();
     }//GEN-LAST:event_txtBusquedaPKeyReleased
-String estatus="2";
-    private void comboSituacionRetencionesItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionRetencionesItemStateChanged
-      if (comboSituacionRetenciones.getSelectedItem().equals("Inactivo")) {
-         estatus="1";
-            jButton4.setText("Activar");
-        }else{jButton4.setText("Desactivar");
-        estatus="2";
-        }  // TODO add your handling code here:
-        busqueda();
-    }//GEN-LAST:event_comboSituacionRetencionesItemStateChanged
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
@@ -408,38 +387,37 @@ String estatus="2";
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-          String sql="";
-
-        if (estatus.equals("2")) {
-             sql = "UPDATE retenciones SET ID_Situacion=2 where descripcion='" + Retenciones + "'";
-       
-        }else if(estatus.equals("1")){
-             sql = "UPDATE retenciones SET ID_Situacion=1 where descripcion='" + Retenciones + "'";
+        String sql = "";
+        if (comboSituacion.getSelectedIndex() == 0) {
+            sql = "UPDATE retenciones SET ID_Situacion=2 where descripcion='" + Retenciones + "'";
+        } else if (comboSituacion.getSelectedIndex() == 1) {
+            sql = "UPDATE retenciones SET ID_Situacion=1 where descripcion='" + Retenciones + "'";
         }
-        
-     mdb.actualizarBasicos(sql);
-         busqueda();
+        mdb.actualizarBasicos(sql);
+        busqueda();
     }//GEN-LAST:event_jButton4ActionPerformed
 
-    private void txtBusquedaPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBusquedaPActionPerformed
+    private void comboSituacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboSituacionActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtBusquedaPActionPerformed
-
-    private void comboSituacionRetencionesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboSituacionRetencionesActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_comboSituacionRetencionesActionPerformed
-
-    private void txtBusquedaKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBusquedaKActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtBusquedaKActionPerformed
+        if (comboSituacion.getSelectedItem().equals(idioma.getProperty("Inactivos"))) {
+            jButton4.setText(idioma.getProperty("Activar"));
+            jButton4.setEnabled(true);
+        } else if (comboSituacion.getSelectedItem().equals(idioma.getProperty("Activos"))) {
+            jButton4.setText(idioma.getProperty("Desactivar"));
+            jButton4.setEnabled(true);
+        } else {
+            jButton4.setEnabled(false);
+        }
+        busqueda();
+    }//GEN-LAST:event_comboSituacionActionPerformed
 
     private void txtBusquedaKKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBusquedaKKeyReleased
-         busqueda(); // TODO add your handling code here:
+        busqueda(); // TODO add your handling code here:
     }//GEN-LAST:event_txtBusquedaKKeyReleased
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    public javax.swing.JComboBox<String> comboSituacionRetenciones;
+    public javax.swing.JComboBox<String> comboSituacion;
     public javax.swing.JButton jButton2;
     public javax.swing.JButton jButton3;
     public javax.swing.JButton jButton4;

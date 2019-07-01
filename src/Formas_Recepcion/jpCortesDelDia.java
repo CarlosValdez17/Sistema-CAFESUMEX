@@ -5,6 +5,7 @@
  */
 package Formas_Recepcion;
 
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.Connection;
 import java.text.ParseException;
@@ -27,20 +28,78 @@ public class jpCortesDelDia extends javax.swing.JPanel {
     metodosDatosBasicos mdb;
     DefaultTableModel modelo, modelo2;
     jdRecibos jdR;
-    String idSociedad, sociedad, recepcion;
+    String idSociedad, sociedad, recepcion, idRecepcion, Idioma;
+    Propiedades idioma;
 
-    public jpCortesDelDia(Connection cn, String recepcion) throws ParseException {
+    public jpCortesDelDia(Connection cn, String Idioma, String recepcion) throws ParseException {
         initComponents();
 
         this.cn = cn;
+        this.Idioma = Idioma;
         mdb = new metodosDatosBasicos(cn);
+        idioma = new Propiedades(Idioma);
         modelo = (DefaultTableModel) jTable1.getModel();
 
         this.recepcion = recepcion;
         idSociedad = mdb.devuelveUnDato("select idSociedad from recepciones where idRecepcion='" + recepcion + "'");
+        idRecepcion = mdb.devuelveUnDato("select id from recepciones where idRecepcion='" + recepcion + "'");
         sociedad = mdb.devuelveUnDato("select nombrecorto from personam where id=" + idSociedad);
 
+        traductor();
         llenarTabla();
+    }
+
+    public void traductor() {
+        jLabel1.setText(idioma.getProperty("IdCorte"));
+        jLabel13.setText(idioma.getProperty("Desde"));
+        jLabel14.setText(idioma.getProperty("Hasta"));
+        jButton2.setText(idioma.getProperty("Buscar"));
+
+        jLabel4.setText(idioma.getProperty("CortesDelDia"));
+        jLabel3.setText(idioma.getProperty("RecibosDelcorte"));
+
+        jLabel7.setText(idioma.getProperty("Situacion"));
+        jLabel8.setText(idioma.getProperty("TotalRecibos"));
+        jLabel9.setText(idioma.getProperty("TotalSacos"));
+        jLabel10.setText(idioma.getProperty("TotalKilos"));
+
+        jButton1.setText(idioma.getProperty("Enviar"));
+        jButton5.setText(idioma.getProperty("VerRecibo"));
+        jButton4.setText(idioma.getProperty("Cerrar"));
+
+        //Tabla Cortes del Dia
+        jTable1.getColumnModel().getColumn(0).setHeaderValue(idioma.getProperty("Fecha"));
+        jTable1.getColumnModel().getColumn(1).setHeaderValue(idioma.getProperty("FechaJuliana"));
+        jTable1.getColumnModel().getColumn(2).setHeaderValue(idioma.getProperty("IdCorte"));
+        jTable1.getColumnModel().getColumn(3).setHeaderValue(idioma.getProperty("Sociedad"));
+        jTable1.getColumnModel().getColumn(4).setHeaderValue(idioma.getProperty("FormaDeCafe"));
+        jTable1.getColumnModel().getColumn(5).setHeaderValue(idioma.getProperty("Sacos"));
+        jTable1.getColumnModel().getColumn(6).setHeaderValue(idioma.getProperty("Kilos"));
+        jTable1.getColumnModel().getColumn(7).setHeaderValue(idioma.getProperty("CostoAcumulado"));
+        jTable1.getColumnModel().getColumn(9).setHeaderValue(idioma.getProperty("Lista"));
+        
+        tablaRecibos.getColumnModel().getColumn(0).setHeaderValue(idioma.getProperty("Folio"));
+        tablaRecibos.getColumnModel().getColumn(1).setHeaderValue(idioma.getProperty("FolioManual"));
+        tablaRecibos.getColumnModel().getColumn(2).setHeaderValue(idioma.getProperty("IdCorte"));
+        tablaRecibos.getColumnModel().getColumn(3).setHeaderValue(idioma.getProperty("FechaDeRecepcion"));
+        tablaRecibos.getColumnModel().getColumn(4).setHeaderValue(idioma.getProperty("Nombre"));
+        tablaRecibos.getColumnModel().getColumn(5).setHeaderValue(idioma.getProperty("ApellidoPaterno"));
+        tablaRecibos.getColumnModel().getColumn(6).setHeaderValue(idioma.getProperty("ApellidoMaterno"));
+        tablaRecibos.getColumnModel().getColumn(7).setHeaderValue(idioma.getProperty("Sociedad"));
+        tablaRecibos.getColumnModel().getColumn(8).setHeaderValue(idioma.getProperty("Parcela"));
+        tablaRecibos.getColumnModel().getColumn(9).setHeaderValue(idioma.getProperty("FormaDeCafe"));
+        tablaRecibos.getColumnModel().getColumn(10).setHeaderValue(idioma.getProperty("Sacos"));
+        tablaRecibos.getColumnModel().getColumn(11).setHeaderValue(idioma.getProperty("KilosRecibidos"));
+        tablaRecibos.getColumnModel().getColumn(12).setHeaderValue(idioma.getProperty("TotalBruto"));
+        tablaRecibos.getColumnModel().getColumn(13).setHeaderValue(idioma.getProperty("Retencion"));
+        tablaRecibos.getColumnModel().getColumn(14).setHeaderValue(idioma.getProperty("Total"));
+        tablaRecibos.getColumnModel().getColumn(15).setHeaderValue(idioma.getProperty("Verdes"));
+        tablaRecibos.getColumnModel().getColumn(16).setHeaderValue(idioma.getProperty("Inmaduros"));
+        tablaRecibos.getColumnModel().getColumn(17).setHeaderValue(idioma.getProperty("Brocados"));
+        tablaRecibos.getColumnModel().getColumn(18).setHeaderValue(idioma.getProperty("Calificacion"));
+        tablaRecibos.getColumnModel().getColumn(19).setHeaderValue(idioma.getProperty("Entrego"));
+        tablaRecibos.getColumnModel().getColumn(20).setHeaderValue(idioma.getProperty("Observaciones"));
+        
     }
 
     public void llenarTabla() throws ParseException {
@@ -49,7 +108,7 @@ public class jpCortesDelDia extends javax.swing.JPanel {
         mdb.cargarInformacion2(modelo, 9,
                 "select fechaCreacion, julianDate, idLote, sociedad, formaCafe, sacos, kg, costoAcumulado, estatus "
                 + "from cortesdeldia "
-                + "where sociedad='" + sociedad + "' and estatus='Activo' order by id");
+                + "where sociedad='" + sociedad + "' and idRecepcion=" + idRecepcion + " and estatus='Activo' order by id");
 
         cambiarMesLetra(jTable1);
     }
@@ -461,7 +520,7 @@ public class jpCortesDelDia extends javax.swing.JPanel {
         idRecibo = tablaRecibos.getValueAt(tablaRecibos.getSelectedRow(), 0) + "";
 
         if (evt.getClickCount() == 2) {
-            jdR = new jdRecibos(null, true, idRecibo, "2", recepcion, idSociedad, cn);
+            jdR = new jdRecibos(null, true, idRecibo, "2", recepcion, idSociedad, Idioma,cn);
             jdR.setVisible(true);
         }
     }//GEN-LAST:event_tablaRecibosMouseClicked
@@ -507,7 +566,7 @@ public class jpCortesDelDia extends javax.swing.JPanel {
         if (cadenaIdCortes.equals("")) {
             JOptionPane.showMessageDialog(null, "Selecciona Cortes");
         } else {
-            jdBoletaSalidaReceptor jdr = new jdBoletaSalidaReceptor(null, true, cadenaIdCortes, sociedad, recepcion, cn);
+            jdBoletaSalidaReceptor jdr = new jdBoletaSalidaReceptor(null, true, cadenaIdCortes, sociedad, recepcion, Idioma, cn);
             jdr.jpL = this;
             jdr.setVisible(true);
         }
@@ -517,7 +576,7 @@ public class jpCortesDelDia extends javax.swing.JPanel {
         if (idRecibo.equals("")) {
             JOptionPane.showMessageDialog(null, "Selecciona Recibo");
         } else {
-            jdR = new jdRecibos(null, true, idRecibo, "2", recepcion, idSociedad, cn);
+            jdR = new jdRecibos(null, true, idRecibo, "2", recepcion, idSociedad,Idioma, cn);
             jdR.setVisible(true);
         }        // TODO add your handling code here:
     }//GEN-LAST:event_jButton5ActionPerformed

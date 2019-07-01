@@ -5,6 +5,7 @@
  */
 package Formas_Configuraciones_Seguridad;
 
+import Idioma.Propiedades;
 import Formas_Configuraciones_Seguridad.jdPerfiles;
 import FormasGenerales.pantallaPrincipal;
 import Metodos_Configuraciones.metodosDatosBasicos;
@@ -30,14 +31,34 @@ public class jpPerfiles extends javax.swing.JPanel {
     metodosDatosBasicos mdb;
     DefaultTableModel modelo;
     Connection cn;
+    Propiedades idioma;
+    String Idioma;
 
-    public jpPerfiles(Connection c) {
+    public jpPerfiles(Connection c, String Idioma) {
         initComponents();
         cn = c;
-mdb=new metodosDatosBasicos(cn);
+        this.Idioma=Idioma;
+        mdb=new metodosDatosBasicos(cn);
         modelo = (DefaultTableModel) tablaPerfiles.getModel();
         tablaPerfiles.setRowSorter(new TableRowSorter(modelo));
 tablaPerfiles.getTableHeader().setReorderingAllowed(false);
+
+        idioma = new Propiedades(Idioma);
+        jButton2.setText(idioma.getProperty("Nuevo"));
+        jButton3.setText(idioma.getProperty("Editar"));
+        jButton4.setText(idioma.getProperty("Desactivar"));
+        jButton5.setText(idioma.getProperty("Cerrar"));
+        jLabel10.setText(idioma.getProperty("Situacion"));
+        jLabel6.setText(idioma.getProperty("Perfiles"));
+
+        tablaPerfiles.getColumnModel().getColumn(0).setHeaderValue(idioma.getProperty("Perfiles"));
+        tablaPerfiles.getColumnModel().getColumn(1).setHeaderValue(idioma.getProperty("Situacion"));
+        
+        comboSituacionPerfiles.addItem(idioma.getProperty("Activos"));
+        comboSituacionPerfiles.addItem(idioma.getProperty("Inactivos"));
+        comboSituacionPerfiles.addItem(idioma.getProperty("Todos"));
+        
+
     busquedaPerfiles();
     }
 
@@ -48,7 +69,16 @@ tablaPerfiles.getTableHeader().setReorderingAllowed(false);
         
         String situacion = "";
         String where = "";
+        situacion = comboSituacionPerfiles.getSelectedIndex() + "";
 
+        if (situacion.equals("1")) {
+            situacion = "2";
+        } else if (situacion.equals("0")) {
+            situacion = "1";
+        } else {
+            situacion = "3";
+        }
+/*
         situacion = comboSituacionPerfiles.getSelectedItem() + "";
         if (situacion.equals("Inactivo")) {
             situacion = "2";
@@ -56,7 +86,7 @@ tablaPerfiles.getTableHeader().setReorderingAllowed(false);
             situacion="1";
             
         }
-
+*/
         if (txtBusquedaP.getText().length() > 0) {
             tipoP = " AND t.descripcion like '" + txtBusquedaP.getText() + "%'";
         }
@@ -71,7 +101,7 @@ tablaPerfiles.getTableHeader().setReorderingAllowed(false);
         }**/
         String sql;
         System.out.println("SITUACION: " + situacion);
-        if (situacion.equals("Todos")) {
+        if (situacion.equals("3")) {
             sql = "select t.descripcion, s.descripcion "
                 + "from perfiles t "
                 + "inner join situacion s on (t.id_situacion=s.id) WHERE t.ID_Situacion<>3 "+tipoP;
@@ -178,7 +208,6 @@ tablaPerfiles.getTableHeader().setReorderingAllowed(false);
 
         jLabel10.setText("Situacion");
 
-        comboSituacionPerfiles.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Activo", "Inactivo", "Todos" }));
         comboSituacionPerfiles.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 comboSituacionPerfilesItemStateChanged(evt);
@@ -316,7 +345,7 @@ tablaPerfiles.getTableHeader().setReorderingAllowed(false);
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        jdP = new jdPerfiles(null, true, "1", Perfiles, cn);
+        jdP = new jdPerfiles(null, true, "1", Perfiles, Idioma, cn);
         jdP.jp = this;
         jdP.setVisible(true);
 
@@ -325,9 +354,9 @@ tablaPerfiles.getTableHeader().setReorderingAllowed(false);
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
         if (Perfiles.equals("")) {
-            JOptionPane.showMessageDialog(null,"selecciona un registro");
+            JOptionPane.showMessageDialog(null,idioma.getProperty("SeleccionRegistro"));
         }else{ if (situacion.equals("Activo")) {
-            jdP = new jdPerfiles(null, true, "2", Perfiles, cn);
+            jdP = new jdPerfiles(null, true, "2", Perfiles, Idioma, cn);
             jdP.jp = this;
             jdP.setVisible(true);
             }else if(situacion.equals("Inactivo")){
@@ -345,7 +374,7 @@ tablaPerfiles.getTableHeader().setReorderingAllowed(false);
        
         if (evt.getClickCount() == 2) {
             if (situacion.equals("Activo")) {
-            jdP = new jdPerfiles(null, true, "2", Perfiles, cn);
+            jdP = new jdPerfiles(null, true, "2", Perfiles, Idioma, cn);
             jdP.jp = this;
             jdP.setVisible(true);
             }else if(situacion.equals("Inactivo")){
@@ -402,6 +431,7 @@ String estatus="2";
 
     private void comboSituacionPerfilesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboSituacionPerfilesActionPerformed
         // TODO add your handling code here:
+        busquedaPerfiles();
     }//GEN-LAST:event_comboSituacionPerfilesActionPerformed
 
 

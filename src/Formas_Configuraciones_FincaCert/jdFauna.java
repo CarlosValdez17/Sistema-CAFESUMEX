@@ -5,6 +5,7 @@
  */
 package Formas_Configuraciones_FincaCert;
 
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
@@ -26,22 +27,32 @@ public class jdFauna extends javax.swing.JDialog {
     Connection cn;
     jpFauna jp;
     validaConfi valiConf;
-
+    Propiedades idioma;
+    String Idioma;
 
     metodosDatosBasicos mdb;
 
-    public jdFauna(java.awt.Frame parent, boolean modal, String tipo, String FaunaC, Connection c) {
+    public jdFauna(java.awt.Frame parent, boolean modal, String tipo, String FaunaC, String Idioma, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
-valiConf = new validaConfi();
+        valiConf = new validaConfi();
+        idioma = new Propiedades(Idioma);
         this.tipo = tipo;
         this.FaunaC = FaunaC;
+        
+        jButton1.setText(idioma.getProperty("Aceptar"));;
+        jButton2.setText(idioma.getProperty("Cancelar"));;
+        jLabel1.setText(idioma.getProperty("NativoFauna"));;
+        
+        
         cn = c;
         if (tipo.equals("1")) {
-            setTitle("nueva especie");
+           //setTitle("nueva especie");
+           setTitle(idioma.getProperty("NuevaFauna"));
         }else{
-              setTitle("editar");
+              //setTitle("editar");
+              setTitle(idioma.getProperty("EditarFauna"));
             
               txtFauna.setText(FaunaC);
         }  

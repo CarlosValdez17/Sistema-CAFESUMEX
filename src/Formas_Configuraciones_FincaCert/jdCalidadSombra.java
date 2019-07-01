@@ -5,6 +5,7 @@
  */
 package Formas_Configuraciones_FincaCert;
 
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.Connection;
 import javax.swing.DefaultComboBoxModel;
@@ -24,9 +25,10 @@ public class jdCalidadSombra extends javax.swing.JDialog {
     Connection cn;
     String tipo, calidad, altura, tSombra, cobertura, id;
     metodosDatosBasicos mdb;
+    Propiedades idioma;
 
     public jdCalidadSombra(java.awt.Frame parent, boolean modal, String tipo, String calidad,
-            String altura, String tSombra, String cobertura, String id, Connection c) {
+            String altura, String tSombra, String cobertura, String id, String Idioma, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
@@ -39,6 +41,17 @@ public class jdCalidadSombra extends javax.swing.JDialog {
         this.cobertura = cobertura;
         this.altura = altura;
         this.id = id;
+        
+        idioma = new Propiedades(Idioma);
+        
+        jButton2.setText(idioma.getProperty("Aceptar"));
+        jButton3.setText(idioma.getProperty("Cancelar"));
+        jLabel1.setText(idioma.getProperty("CalidadEstrellas"));
+        jLabel3.setText(idioma.getProperty("AlturaMaximaMts."));
+        jLabel4.setText(idioma.getProperty("TipoDeSombra"));
+        jLabel2.setText(idioma.getProperty("CoberturaDeSombraPorcen"));
+        
+        
 
         rellenarCombos();
         comparaciones();
@@ -46,10 +59,12 @@ public class jdCalidadSombra extends javax.swing.JDialog {
 
     public void comparaciones() {
         if (tipo.equals("1")) {
-            setTitle("Nuevo Tipo de Sombra");
+            //setTitle("Nuevo Tipo de Sombra");
+            setTitle(idioma.getProperty("NuevoTipoDeSombra"));
 
         } else {
-            setTitle("Editar Tipo de Sombra");
+            //setTitle("Editar Tipo de Sombra");
+            setTitle(idioma.getProperty("EditarTipoDeSombra"));
             comboTipo.addItem(tSombra);
             comboTipo.setSelectedItem(tSombra);
 

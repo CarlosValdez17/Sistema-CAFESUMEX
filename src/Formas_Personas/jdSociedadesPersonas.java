@@ -7,6 +7,7 @@ package Formas_Personas;
 
 import Formas_FincaCert.jdFormularioProductor;
 import Formas_Configuraciones_Recepcion.*;
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.Connection;
 import javax.swing.DefaultComboBoxModel;
@@ -24,41 +25,46 @@ public class jdSociedadesPersonas extends javax.swing.JDialog {
      * Creates new form jdFormaProceso
      */
     Connection cn;
-    String tipoOperacion, tipoPregunta, idPersona, tipoPersona;
+    String tipoOperacion, tipoPregunta, idPersona, tipoPersona, Idioma;
     metodosDatosBasicos mdb;
+    Propiedades idioma;
     jpEvaluaciones jpE;
     jdFormularioProductor jdFP;
 
-    public jdSociedadesPersonas(java.awt.Frame parent, boolean modal, String tipoOperacion, String tipoPersona, String tipoPregunta, String idPersona, Connection c) {
+    public jdSociedadesPersonas(java.awt.Frame parent, boolean modal, String tipoOperacion, String tipoPersona, String tipoPregunta, String idPersona, String Idioma, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
 
         cn = c;
         this.idPersona = idPersona;
+        this.Idioma = Idioma;
         this.tipoOperacion = tipoOperacion;
         this.tipoPregunta = tipoPregunta;
         this.tipoPersona = tipoPersona;
         mdb = new metodosDatosBasicos(cn);
+        idioma = new Propiedades(Idioma);
 
         llenarTabla();
         //lblPregunta.setText(tipoPregunta);
-        setTitle("Sociedades");
-
-        if(tipoOperacion.equals("1")){
+        setTitle(idioma.getProperty("Sociedades"));
+        tablaSociedades.getColumnModel().getColumn(0).setHeaderValue(idioma.getProperty("Sociedad"));
+        tablaSociedades.getColumnModel().getColumn(1).setHeaderValue(idioma.getProperty("Seleccione"));
+        
+        if (tipoOperacion.equals("1")) {
             //Tipo operacion 1 = a nuevo mensajes de preguntas
             lblPregunta.setText(tipoPregunta);
             labelPersona.setText("");
-        
-        }else if(tipoOperacion.equals("2")){
+
+        } else if (tipoOperacion.equals("2")) {
             //Tipo operacion 2 = a edicion - mensajes de
             lblPregunta.setText(tipoPregunta);
             labelPersona.setText("");
         }
-        
+
         //JOptionPane.showMessageDialog(null, "Tipo Operacion=" + tipoOperacion + " - Tipo Persona=" + tipoPersona + " - id=" + idPersona);
         rellenar();
-        
+
     }
 
     public void llenarTabla() {
@@ -103,7 +109,7 @@ public class jdSociedadesPersonas extends javax.swing.JDialog {
         }
     }
 
-/*    public void abrirFormulario(String formulario) {
+    /*    public void abrirFormulario(String formulario) {
         //JOptionPane.showMessageDialog(null, "Entre al case");
         switch (formulario) {
             case "Productor":
@@ -112,12 +118,12 @@ public class jdSociedadesPersonas extends javax.swing.JDialog {
                 break;
         }
     }
-*/
+     */
     public void tipoOperacion() {
-    DefaultTableModel modelo = (DefaultTableModel) tablaSociedades.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) tablaSociedades.getModel();
 
         if (tipoOperacion.equals("1")) {
-            
+
             if (tipoPersona.equals("1")) {
                 for (int i = 0; i < modelo.getRowCount(); i++) {
                     String desc = modelo.getValueAt(i, 0) + "";

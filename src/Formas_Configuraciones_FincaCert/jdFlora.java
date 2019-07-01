@@ -5,6 +5,7 @@
  */
 package Formas_Configuraciones_FincaCert;
 
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
@@ -26,21 +27,31 @@ public class jdFlora extends javax.swing.JDialog {
     Connection cn;
     jpFlora jp;
    
-validaConfi valiConf;
+    validaConfi valiConf;
     metodosDatosBasicos mdb;
+    Propiedades idioma;
 
-    public jdFlora(java.awt.Frame parent, boolean modal, String tipo, String VarTxTC, Connection c) {
+    public jdFlora(java.awt.Frame parent, boolean modal, String tipo, String VarTxTC, String Idioma, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
-valiConf = new validaConfi();
+        valiConf = new validaConfi();
         this.tipo = tipo;
         this.VarTxTC = VarTxTC;
         cn = c;
+        idioma = new Propiedades(Idioma);
+        
+        jButton1.setText(idioma.getProperty("Aceptar"));;
+        jButton2.setText(idioma.getProperty("Cancelar"));;
+        jLabel1.setText(idioma.getProperty("NativoFlora"));;
+        
         if (tipo.equals("1")) {
-            setTitle("nueva especie");
-        }else{
-              setTitle("editar");
+            //setTitle("Nuevo");
+            setTitle(idioma.getProperty("NuevaFlora"));
+
+        } else {
+            //setTitle("Editar Localidad");
+            setTitle(idioma.getProperty("EditarFlora"));            
             
               txtFlora.setText(VarTxTC);
         }  

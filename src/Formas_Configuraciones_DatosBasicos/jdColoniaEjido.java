@@ -5,6 +5,7 @@
  */
 package Formas_Configuraciones_DatosBasicos;
 
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
@@ -25,8 +26,9 @@ public class jdColoniaEjido extends javax.swing.JDialog {
     validaConfi valiConf;
     jpColoniaEjido jpC;
     Connection cn;
+    Propiedades idioma;
 
-    public jdColoniaEjido(java.awt.Frame parent, boolean modal, String tipo, String co, String l, String m, String e, String p, Connection c) {
+    public jdColoniaEjido(java.awt.Frame parent, boolean modal, String tipo, String co, String l, String m, String e, String p, String Idioma, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
@@ -41,18 +43,28 @@ public class jdColoniaEjido extends javax.swing.JDialog {
 
         mdb = new metodosDatosBasicos(cn);
         valiConf = new validaConfi();
-        
+        idioma = new Propiedades(Idioma);
+
+        jButton2.setText(idioma.getProperty("Aceptar"));
+        jButton3.setText(idioma.getProperty("Cancelar"));
+        jLabel1.setText(idioma.getProperty("Pais"));
+        jLabel3.setText(idioma.getProperty("Estado"));
+        jLabel4.setText(idioma.getProperty("Municipio"));
+        jLabel5.setText(idioma.getProperty("Localidad"));
+        jLabel2.setText(idioma.getProperty("ColoniaEjido"));
+
         rellenarCombos();
         comparaciones();
 
     }
-   
+
     public void comparaciones() {
         if (tipo.equals("1")) {
-            setTitle("Nuevo");
-
+            //setTitle("Nuevo");
+            setTitle(idioma.getProperty("NuevoEjido"));
         } else {
-            setTitle("Editar Colonia/Ejido");
+            //setTitle("Editar Colonia/Ejido");
+            setTitle(idioma.getProperty("EditarEjido"));
 
             comboPais.setEnabled(false);
             comboEstado.setEnabled(false);
@@ -70,7 +82,7 @@ public class jdColoniaEjido extends javax.swing.JDialog {
 
             comboLocalidad.addItem(l);
             comboLocalidad.setSelectedItem(l);
-            
+
             txtColonia.setText(co);
         }
     }
@@ -119,7 +131,7 @@ public class jdColoniaEjido extends javax.swing.JDialog {
             //nuevo
             if (mdb.comprobarExistencia("select descripcion from ejidocolonia where descripcion='" + txtColonia.getText() + "'") == null) {
                 sql = "INSERT INTO ejidocolonia VALUES(null,'" + txtColonia.getText() + "', 1, 1,current_date()"
-                        + ", current_time(), 1, 1, 1, 1, " + mdb.devuelveId("select id from localidad where descripcion='"+localidad+"'") + " )";
+                        + ", current_time(), 1, 1, 1, 1, " + mdb.devuelveId("select id from localidad where descripcion='" + localidad + "'") + " )";
                 mdb.insertarBasicos(sql);
                 jpC.llenaTablaColonia();
                 this.dispose();
@@ -128,7 +140,7 @@ public class jdColoniaEjido extends javax.swing.JDialog {
             }
         } else {
             //editar
-            sql = "UPDATE ejidocolonia SET descripcion ='" + txtColonia.getText() + "', ID_localidad='" + mdb.devuelveId("select id from localidad where descripcion='"+localidad+"'") + "' where descripcion='" + co + "' ";
+            sql = "UPDATE ejidocolonia SET descripcion ='" + txtColonia.getText() + "', ID_localidad='" + mdb.devuelveId("select id from localidad where descripcion='" + localidad + "'") + "' where descripcion='" + co + "' ";
             System.out.println(sql);
             mdb.actualizarBasicos(sql);
             jpC.llenaTablaColonia();
@@ -186,22 +198,17 @@ public class jdColoniaEjido extends javax.swing.JDialog {
             }
         });
 
-        comboEstado.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                comboEstadoItemStateChanged(evt);
-            }
-        });
-        comboEstado.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                comboEstadoMouseClicked(evt);
+        comboEstado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboEstadoActionPerformed(evt);
             }
         });
 
         jLabel3.setText("Estado");
 
-        comboPais.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                comboPaisItemStateChanged(evt);
+        comboPais.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboPaisActionPerformed(evt);
             }
         });
 
@@ -209,16 +216,6 @@ public class jdColoniaEjido extends javax.swing.JDialog {
 
         jLabel4.setText("Municipio");
 
-        comboMunicipio.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                comboMunicipioItemStateChanged(evt);
-            }
-        });
-        comboMunicipio.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                comboMunicipioMouseClicked(evt);
-            }
-        });
         comboMunicipio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboMunicipioActionPerformed(evt);
@@ -226,17 +223,6 @@ public class jdColoniaEjido extends javax.swing.JDialog {
         });
 
         jLabel5.setText("Localidad");
-
-        comboLocalidad.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                comboLocalidadItemStateChanged(evt);
-            }
-        });
-        comboLocalidad.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                comboLocalidadMouseClicked(evt);
-            }
-        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -311,10 +297,10 @@ public class jdColoniaEjido extends javax.swing.JDialog {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        if (txtColonia.getText().length() == 0 ) {
+        if (txtColonia.getText().length() == 0) {
             JOptionPane.showMessageDialog(null, "Rellene todos los campos");
         } else {
-        tipoProceso();
+            tipoProceso();
         }
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -322,53 +308,6 @@ public class jdColoniaEjido extends javax.swing.JDialog {
         // TODO add your handling code here:
         this.dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
-
-    private void comboEstadoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboEstadoItemStateChanged
-        // TODO add your handling code here:
-        datos = mdb.cargarCombos("SELECT m.descripcion \n"
-                + "from municipio m \n"
-                + "inner join estado e on (m.id_estado=e.id) \n"
-                + "where e.Descripcion='" + comboEstado.getSelectedItem() + "" + "'").split("¬");
-        comboMunicipio.setModel(new DefaultComboBoxModel((Object[]) datos));
-    }//GEN-LAST:event_comboEstadoItemStateChanged
-
-    private void comboEstadoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_comboEstadoMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_comboEstadoMouseClicked
-
-    private void comboPaisItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboPaisItemStateChanged
-        // TODO add your handling code here:
-        String p = comboPais.getSelectedItem() + "";
-        datos = mdb.cargarCombos("SELECT e.descripcion \n"
-                + "from estado e \n"
-                + "inner join pais p on (e.id_pais=p.id) \n"
-                + "where p.Descripcion='" + p + "'").split("¬");
-        comboEstado.setModel(new DefaultComboBoxModel((Object[]) datos));
-
-        datos = mdb.cargarCombos("SELECT m.descripcion \n"
-                + "from municipio m \n"
-                + "inner join estado e on (m.id_estado=e.id) \n"
-                + "where e.Descripcion='" + comboEstado.getSelectedItem() + "" + "'").split("¬");
-        comboMunicipio.setModel(new DefaultComboBoxModel((Object[]) datos));
-        
-    }//GEN-LAST:event_comboPaisItemStateChanged
-
-    private void comboMunicipioItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboMunicipioItemStateChanged
-        // TODO add your handling code here:
-        
-    }//GEN-LAST:event_comboMunicipioItemStateChanged
-
-    private void comboMunicipioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_comboMunicipioMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_comboMunicipioMouseClicked
-
-    private void comboLocalidadItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboLocalidadItemStateChanged
-        // TODO add your handling code here:
-    }//GEN-LAST:event_comboLocalidadItemStateChanged
-
-    private void comboLocalidadMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_comboLocalidadMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_comboLocalidadMouseClicked
 
     private void txtColoniaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtColoniaKeyReleased
         // TODO add your handling code here:
@@ -384,8 +323,40 @@ public class jdColoniaEjido extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_txtColoniaKeyTyped
 
+    private void comboPaisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboPaisActionPerformed
+        // TODO add your handling code here:
+        String p = comboPais.getSelectedItem() + "";
+        datos = mdb.cargarCombos("SELECT e.descripcion \n"
+                + "from estado e \n"
+                + "inner join pais p on (e.id_pais=p.id) \n"
+                + "where p.Descripcion='" + p + "'").split("¬");
+        comboEstado.setModel(new DefaultComboBoxModel((Object[]) datos));
+
+        datos = mdb.cargarCombos("SELECT m.descripcion \n"
+                + "from municipio m \n"
+                + "inner join estado e on (m.id_estado=e.id) \n"
+                + "where e.Descripcion='" + comboEstado.getSelectedItem() + "" + "'").split("¬");
+        comboMunicipio.setModel(new DefaultComboBoxModel((Object[]) datos));
+
+    }//GEN-LAST:event_comboPaisActionPerformed
+
+    private void comboEstadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboEstadoActionPerformed
+        // TODO add your handling code here:
+        datos = mdb.cargarCombos("SELECT m.descripcion \n"
+                + "from municipio m \n"
+                + "inner join estado e on (m.id_estado=e.id) \n"
+                + "where e.Descripcion='" + comboEstado.getSelectedItem() + "" + "'").split("¬");
+        comboMunicipio.setModel(new DefaultComboBoxModel((Object[]) datos));
+    }//GEN-LAST:event_comboEstadoActionPerformed
+
     private void comboMunicipioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboMunicipioActionPerformed
         // TODO add your handling code here:
+        String municipio = comboMunicipio.getSelectedItem() + "";
+        datos = mdb.cargarCombos("SELECT l.descripcion \n"
+                + "from localidad l \n"
+                + "inner join municipio m on (l.ID_Municipio=m.ID) \n"
+                + "where m.Descripcion='" + municipio + "' ").split("¬");
+        comboLocalidad.setModel(new DefaultComboBoxModel((Object[]) datos));
     }//GEN-LAST:event_comboMunicipioActionPerformed
 
     /**

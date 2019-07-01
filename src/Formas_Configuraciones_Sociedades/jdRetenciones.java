@@ -5,6 +5,7 @@
  */
 package Formas_Configuraciones_Sociedades;
 
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
@@ -27,8 +28,10 @@ public class jdRetenciones extends javax.swing.JDialog {
     jpRetenciones jp;
     validaConfi valiConf;
     metodosDatosBasicos mdb;
+    Propiedades idioma;
+    
 
-    public jdRetenciones(java.awt.Frame parent, boolean modal, String tipo, String RetencionesC, String importeC, Connection c) {
+    public jdRetenciones(java.awt.Frame parent, boolean modal, String tipo, String RetencionesC, String importeC, String Idioma, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
@@ -37,11 +40,20 @@ public class jdRetenciones extends javax.swing.JDialog {
         this.RetencionesC = RetencionesC;
         cn = c;
         valiConf = new validaConfi();
+        idioma = new Propiedades(Idioma);
+        
+        jButton1.setText(idioma.getProperty("Aceptar"));;
+        jButton2.setText(idioma.getProperty("Cancelar"));;
+        jLabel1.setText(idioma.getProperty("NombreDeLaRetencion"));;
+        jLabel2.setText(idioma.getProperty("MontoRetencion"));;
+        
 
         if (tipo.equals("1")) {
-            setTitle("nueva retencion");
+            //setTitle("nueva retencion");
+            setTitle(idioma.getProperty("NuevaRetencion"));
         } else {
-            setTitle("editar");
+            //setTitle("editar");
+            setTitle(idioma.getProperty("EditarRetencion"));
             Centavos.setText(importeC);
             txtRetenciones.setText(RetencionesC);
         }

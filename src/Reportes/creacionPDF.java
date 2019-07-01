@@ -5,6 +5,7 @@
  */
 package Reportes;
 
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
@@ -36,9 +37,13 @@ public class creacionPDF {
 
     metodosDatosBasicos mdb;
     Connection cn;
+    Propiedades idioma;
+    String Idioma;
 
-    public creacionPDF(Connection cn) {
+    public creacionPDF(Connection cn, String Idioma) {
         this.cn = cn;
+        this.Idioma=Idioma;
+        idioma = new Propiedades(Idioma);
         mdb = new metodosDatosBasicos(cn);
     }
 
@@ -318,7 +323,7 @@ public class creacionPDF {
             Document documento = new Document(PageSize.LETTER);
             //Image img = Image.getInstance("mega200px.png");
 
-            FileOutputStream ficheroPdf = new FileOutputStream("C:\\Users\\USUARIO\\Desktop\\prueba2.pdf");
+            FileOutputStream ficheroPdf = new FileOutputStream("C:\\Users\\acer\\Desktop\\pruebaRecibo.pdf");
             PdfWriter.getInstance(documento, ficheroPdf).setInitialLeading(20);
 
             documento.open();
@@ -331,15 +336,15 @@ public class creacionPDF {
             fuente2.setSize(7);
 
             //documento.add(img);
-            Paragraph titulo = new Paragraph("RECIBO DE COMPRA DE CAFÉ", fuente);
+            Paragraph titulo = new Paragraph(idioma.getProperty("ReciboCompraCafe"), fuente);
             titulo.setAlignment(Element.ALIGN_CENTER);
             documento.add(titulo);
 
-            Paragraph infoSociedad = new Paragraph(razonsocial + "      " + direccionSociedad + "      Localidad: " + localidadSociedad + "        Estado: " + estadoSociedad, fuente2);
+            Paragraph infoSociedad = new Paragraph(razonsocial + "      " + direccionSociedad + "      "+idioma.getProperty("Localidad")+" " + localidadSociedad + "        "+idioma.getProperty("Estado")+" " + estadoSociedad, fuente2);
             infoSociedad.setAlignment(Element.ALIGN_CENTER);
             documento.add(infoSociedad);
 
-            Paragraph infoRecibo = new Paragraph("Fecha: " + fechaRecibo + "                                       Folio Manual: " + folioManual + "                                       Folio: " + id, fuente2);
+            Paragraph infoRecibo = new Paragraph(idioma.getProperty("Fecha")+" " + fechaRecibo + "                                       "+idioma.getProperty("FolioManual")+" " + folioManual + "                                       "+idioma.getProperty("Folio")+" " + id, fuente2);
             infoRecibo.setAlignment(Element.ALIGN_CENTER);
             documento.add(infoRecibo);
 
@@ -381,7 +386,7 @@ public class creacionPDF {
             firmas.setAlignment(Element.ALIGN_CENTER);
             documento.add(firmas);
 
-            Paragraph nombres = new Paragraph("               Receptor                                                         Quien Entrega                                                A Quien Se Paga              ", fuente2);
+            Paragraph nombres = new Paragraph("               "+idioma.getProperty("Receptor")+"                                                         "+idioma.getProperty("QuienEntrega")+"                                                "+idioma.getProperty("AQuienSePaga")+"              ", fuente2);
             nombres.setAlignment(Element.ALIGN_CENTER);
             documento.add(nombres);
 
@@ -494,8 +499,8 @@ public class creacionPDF {
 
         table.getDefaultCell().setBackgroundColor(new GrayColor(0.75f));
 
-        Paragraph columna1 = new Paragraph(formaCafe + "          Calificación " + calificacion);
-        Paragraph columna2 = new Paragraph("Totales");
+        Paragraph columna1 = new Paragraph(formaCafe + "           " +idioma.getProperty("Calificacion")+" "+ calificacion);
+        Paragraph columna2 = new Paragraph(idioma.getProperty("Totales"));
 
         columna1.getFont().setStyle(Font.BOLD);
         columna1.getFont().setSize(7);
@@ -515,18 +520,18 @@ public class creacionPDF {
         table.getDefaultCell().setBorder(Rectangle.NO_BORDER);
         table.setWidthPercentage(100);
 
-        Paragraph dVerdes = new Paragraph("Verdes:      " + verdes, fuente3);
-        Paragraph dPrecioBrutoCereza = new Paragraph("Precio Bruto Cereza Por Kg:       $" + precioBrutoKgSociedad, fuente3);
-        Paragraph dInmaduros = new Paragraph("Inmaduros:        " + inmaduros, fuente3);
-        Paragraph dPrecioNetoCereza = new Paragraph("Precio Neto Cereza Por Kg:         $" + precioNetoKgSociedad, fuente3);
-        Paragraph dBrocados = new Paragraph("Brocados:      " + brocados, fuente3);
-        Paragraph dtotalBruto = new Paragraph("Precio Bruto Cereza:         $" + totalBruto, fuente3);
-        Paragraph dFormaCafe = new Paragraph("Forma de Café:        " + formaCafe, fuente3);
-        Paragraph dRetenciones = new Paragraph("Retenciones:        $" + retencion, fuente3);
-        Paragraph dSacos = new Paragraph("Sacos:        " + sacos, fuente3);
-        Paragraph dPago = new Paragraph("Pago al Productor:         $" + total, fuente3);
-        Paragraph dCalifica = new Paragraph("Calificacion:        " + calificacion, fuente3);
-        Paragraph dKg = new Paragraph("Kg Recibidos:        " + kgRecibidos, fuente3);
+        Paragraph dVerdes = new Paragraph(idioma.getProperty("Verdes") + "      " + verdes, fuente3);
+        Paragraph dPrecioBrutoCereza = new Paragraph(idioma.getProperty("PrecioBrutoCerezaKg")+"         $" + precioBrutoKgSociedad, fuente3);
+        Paragraph dInmaduros = new Paragraph(idioma.getProperty("Inmaduros")+"      " + inmaduros, fuente3);
+        Paragraph dPrecioNetoCereza = new Paragraph(idioma.getProperty("PrecioNetoCerezaKg")+"         $" + precioNetoKgSociedad, fuente3);
+        Paragraph dBrocados = new Paragraph(idioma.getProperty("Brocados")+"      " + brocados, fuente3);
+        Paragraph dtotalBruto = new Paragraph(idioma.getProperty("PrecioBrutoCereza")+"         $" + totalBruto, fuente3);
+        Paragraph dFormaCafe = new Paragraph(idioma.getProperty("FormaDeCafe")+"        " + formaCafe, fuente3);
+        Paragraph dRetenciones = new Paragraph(idioma.getProperty("Retenciones")+"         $" + retencion, fuente3);
+        Paragraph dSacos = new Paragraph(idioma.getProperty("Sacos")+"      " + sacos, fuente3);
+        Paragraph dPago = new Paragraph(idioma.getProperty("PagoProductor")+"         $" + total, fuente3);
+        Paragraph dCalifica = new Paragraph(idioma.getProperty("Calificacion")+"        " + calificacion, fuente3);
+        Paragraph dKg = new Paragraph(idioma.getProperty("KgRecibidos")+"      " + kgRecibidos, fuente3);
 
         /*table.addCell(dVerdes);
         table.addCell(dFormaCafe);
@@ -566,8 +571,8 @@ public class creacionPDF {
 
         table.getDefaultCell().setBackgroundColor(new GrayColor(0.75f));
 
-        Paragraph columna1 = new Paragraph("Productor " + prod + "    -   " + claveProd);
-        Paragraph columna2 = new Paragraph("Parcela " + parce + "    -   " + claveParce);
+        Paragraph columna1 = new Paragraph(idioma.getProperty("Productor")+" " + prod + "    -   " + claveProd);
+        Paragraph columna2 = new Paragraph(idioma.getProperty("Parcela")+" " + parce + "    -   " + claveParce);
 
         columna1.getFont().setStyle(Font.BOLD);
         columna1.getFont().setSize(7);
@@ -584,11 +589,17 @@ public class creacionPDF {
         table.getDefaultCell().setBorder(Rectangle.NO_BORDER);
         table.setWidthPercentage(100);
 
-        Paragraph datosProd = new Paragraph(locaProd + " " + sociedad, fuente2);
+        Paragraph datosProd = new Paragraph(locaProd, fuente2);
         table.addCell(datosProd);
 
-        Paragraph datosParc = new Paragraph(locaParce + " Certificado: " + certParce, fuente2);
+        Paragraph datosParc = new Paragraph(locaParce + " "+idioma.getProperty("Certificado")+" " + certParce, fuente2);
         table.addCell(datosParc);
+        
+         Paragraph datosProd2 = new Paragraph(sociedad, fuente2);
+        table.addCell(datosProd2);
+        
+         Paragraph datosParc2 = new Paragraph(idioma.getProperty("Certificado")+" " + certParce, fuente2);
+        table.addCell(datosParc2);
 
         return table;
     }

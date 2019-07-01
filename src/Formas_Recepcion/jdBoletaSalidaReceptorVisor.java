@@ -5,6 +5,7 @@
  */
 package Formas_Recepcion;
 
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import Reportes.creacionPDF;
 import com.itextpdf.text.DocumentException;
@@ -36,39 +37,97 @@ public class jdBoletaSalidaReceptorVisor extends javax.swing.JDialog {
     Connection cn;
     metodosDatosBasicos mdb;
     DefaultTableModel modelo;
-    String idBoleta;
+    String idBoleta, Idioma;
     jpCortesDelDia jpL;
+    Propiedades idioma;
 
-    public jdBoletaSalidaReceptorVisor(java.awt.Frame parent, boolean modal, String idBoleta, Connection cn) throws ParseException {
+    public jdBoletaSalidaReceptorVisor(java.awt.Frame parent, boolean modal, String idBoleta, String Idioma, Connection cn) throws ParseException {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
 
         this.cn = cn;
+        this.Idioma = Idioma;
         mdb = new metodosDatosBasicos(cn);
+        idioma = new Propiedades(Idioma);
         modelo = (DefaultTableModel) jTable1.getModel();
 
         this.idBoleta = idBoleta;
 
+        traductor();
         llenarDatos();
     }
 
+    public void traductor() {
+        jLabel11.setText(idioma.getProperty("Origen"));
+        jLabel12.setText(idioma.getProperty("Recepcion"));
+        //jLabel1.setText(idioma.getProperty("Destino"));
+        jLabel2.setText(idioma.getProperty("Fecha"));
+
+        jLabel3.setText(idioma.getProperty("BoletaManual"));
+        jLabel4.setText(idioma.getProperty("FechaDeBoletaManual"));
+
+        jLabel5.setText(idioma.getProperty("TotalSacos"));
+        jLabel6.setText(idioma.getProperty("TotalKilos"));
+
+        jLabel7.setText(idioma.getProperty("Transporte"));
+        jLabel8.setText(idioma.getProperty("Placas"));
+        jLabel9.setText(idioma.getProperty("NombreChofer"));
+        jLabel10.setText(idioma.getProperty("Observaciones"));
+
+        valorL.setText(idioma.getProperty("TransporteLimpio"));
+        
+        jButton2.setText(idioma.getProperty("Aceptar"));
+        jButton3.setText(idioma.getProperty("Cancelar"));
+
+        jTable1.getColumnModel().getColumn(0).setHeaderValue(idioma.getProperty("IdCorte"));
+        jTable1.getColumnModel().getColumn(1).setHeaderValue(idioma.getProperty("Certificado"));
+        jTable1.getColumnModel().getColumn(2).setHeaderValue(idioma.getProperty("FormaDeCafe"));
+        jTable1.getColumnModel().getColumn(3).setHeaderValue(idioma.getProperty("Sacos"));
+        jTable1.getColumnModel().getColumn(4).setHeaderValue(idioma.getProperty("Kilos"));
+
+    }
+
     public void llenarDatos() throws ParseException {
-        String[] datos = mdb.devolverLineaDatos("SELECT origen, destino, fecha, fechaBoletaManual, "
-                + "idBoletaManual, idBoleta, totalSacos, totalKg, descripcion, "
-                + "transporteLimpio, v.Nombre, v.Placas, v.Responsable\n"
-                + "FROM boletasalidareceptor b\n"
-                + "inner join vehiculo v on (v.ID=b.idTransporte)\n"
-                + "where idBoleta ='" + idBoleta + "' group by idBoleta ", 13).split("¬");
+        String[] datos = mdb.devolverLineaDatos("SELECT\n"
+                + "    r.idRecepcion,\n"
+                + "    bh.nombre,\n"
+                + "    fecha,\n"
+                + "    fechaBoletaManual,\n"
+                + "    idBoletaManual,\n"
+                + "    idBoleta,\n"
+                + "    totalSacos,\n"
+                + "    totalKg,\n"
+                + "    b.descripcion,\n"
+                + "    transporteLimpio,\n"
+                + "    v.Nombre,\n"
+                + "    v.Placas,\n"
+                + "    v.Responsable\n"
+                + "FROM\n"
+                + "    boletasalidareceptor b\n"
+                + "INNER JOIN vehiculo v ON\n"
+                + "    (v.ID = b.idTransporte)\n"
+                + "INNER JOIN recepciones r ON\n"
+                + "    (r.id = b.origen)\n"
+                + "INNER JOIN beneficioshumedos bh ON\n"
+                + "    (bh.id = b.destino)\n"
+                + "WHERE\n"
+                + "    idBoleta = '" + idBoleta + "'\n"
+                + "GROUP BY\n"
+                + "    idBoleta", 13).split("¬");
 
         SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
         Date fechaDate = null;
-        
-        fechaDate = formato.parse(datos[2]);
-        jDateChooser1.setDate(fechaDate);
-        
-        fechaDate = formato.parse(datos[3]);
-        jDateChooser2.setDate(fechaDate);
+
+        if (!datos[2].equals("")) {
+            fechaDate = formato.parse(datos[2]);
+            jDateChooser1.setDate(fechaDate);
+        }
+
+        if (!datos[3].equals("")) {
+            fechaDate = formato.parse(datos[3]);
+            jDateChooser2.setDate(fechaDate);
+        }
 
         lblSociedad.setText(datos[0]);
         lblDestino.setText(datos[1]);
@@ -78,9 +137,9 @@ public class jdBoletaSalidaReceptorVisor extends javax.swing.JDialog {
         txtTotalKg.setText(datos[7]);
         txtObserva.setText(datos[8]);
         //Transporte Limpio o No
-        if(datos[9].equals("1")){
+        if (datos[9].equals("1")) {
             valorL.setSelected(true);
-        }else{
+        } else {
             valorL.setSelected(false);
         }
         txtVehiculo.setText(datos[10]);
@@ -441,7 +500,7 @@ public class jdBoletaSalidaReceptorVisor extends javax.swing.JDialog {
 
         Object[][] contenido = obtenerContenidoTabla(modelo);
 
-        creacionPDF pdf = new creacionPDF(cn);
+        creacionPDF pdf = new creacionPDF(cn,Idioma);
         try {
             pdf.pdfBoletaSalidaRecepcion(idBoleta, contenido);
         } catch (FileNotFoundException ex) {

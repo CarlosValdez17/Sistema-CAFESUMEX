@@ -5,6 +5,7 @@
  */
 package Formas_Configuraciones_FincaCert;
 
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.Connection;
 import javax.swing.JOptionPane;
@@ -25,12 +26,31 @@ public class jpSistemaProduccion extends javax.swing.JPanel {
     DefaultTableModel modelo;
     jdSistemaProduccion jdSP;
 
-    public jpSistemaProduccion(Connection c) {
+    Propiedades idioma;
+    String Idioma;
+
+    public jpSistemaProduccion(Connection c, String Idioma) {
         initComponents();
 
         cn = c;
+        this.Idioma = Idioma;
         mdb = new metodosDatosBasicos(cn);
         modelo = (DefaultTableModel) tablaSP.getModel();
+
+        idioma = new Propiedades(Idioma);
+        jButton5.setText(idioma.getProperty("Cerrar"));
+        jButton2.setText(idioma.getProperty("Nuevo"));
+        jButton3.setText(idioma.getProperty("Editar"));
+        jButton4.setText(idioma.getProperty("Desactivar"));
+        jLabel10.setText(idioma.getProperty("Situacion"));
+        jLabel6.setText(idioma.getProperty("SistemaDeProduccion"));
+
+        tablaSP.getColumnModel().getColumn(0).setHeaderValue(idioma.getProperty("SistemaDeProduccion"));
+        tablaSP.getColumnModel().getColumn(1).setHeaderValue(idioma.getProperty("Situacion"));
+
+        comboSituacion.addItem(idioma.getProperty("Activos"));
+        comboSituacion.addItem(idioma.getProperty("Inactivos"));
+        comboSituacion.addItem(idioma.getProperty("Todos"));
 
         busqueda();
     }
@@ -38,13 +58,14 @@ public class jpSistemaProduccion extends javax.swing.JPanel {
     public void busqueda() {
         String tipoB = "";
         String situacion = "";
+        situacion = comboSituacion.getSelectedIndex() + "";
 
-        situacion = comboSituacionSP.getSelectedItem() + "";
-
-        if (situacion.equals("Inactivo")) {
+        if (situacion.equals("1")) {
             situacion = "2";
-        } else if (situacion.equals("Activo")) {
+        } else if (situacion.equals("0")) {
             situacion = "1";
+        } else {
+            situacion = "3";
         }
 
         if (txtBusquedaSP.getText().length() > 0) {
@@ -52,7 +73,7 @@ public class jpSistemaProduccion extends javax.swing.JPanel {
         }
 
         String sql;
-        if (situacion.equals("Todos")) {
+        if (situacion.equals("3")) {
             sql = "SELECT t.descripcion, s.descripcion "
                     + "from tipoproduccion t "
                     + "inner join situacion s on (t.id_situacion = s.id) "
@@ -91,7 +112,7 @@ public class jpSistemaProduccion extends javax.swing.JPanel {
         tablaSP = new javax.swing.JTable();
         jPanel8 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
-        comboSituacionSP = new javax.swing.JComboBox<>();
+        comboSituacion = new javax.swing.JComboBox<>();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
@@ -158,10 +179,9 @@ public class jpSistemaProduccion extends javax.swing.JPanel {
 
         jLabel10.setText("Situacion");
 
-        comboSituacionSP.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Activo", "Inactivo", "Todos" }));
-        comboSituacionSP.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                comboSituacionSPItemStateChanged(evt);
+        comboSituacion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboSituacionActionPerformed(evt);
             }
         });
 
@@ -201,7 +221,7 @@ public class jpSistemaProduccion extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jLabel10)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(comboSituacionSP, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(comboSituacion, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -220,7 +240,7 @@ public class jpSistemaProduccion extends javax.swing.JPanel {
                     .addComponent(jButton2)
                     .addComponent(jButton3)
                     .addComponent(jButton4)
-                    .addComponent(comboSituacionSP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(comboSituacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel10)
                     .addComponent(jButton5))
                 .addContainerGap())
@@ -301,51 +321,35 @@ public class jpSistemaProduccion extends javax.swing.JPanel {
         situacion = tablaSP.getValueAt(tablaSP.getSelectedRow(), 1) + "";
 
         if (evt.getClickCount() == 2) {
-            if (situacion.equals("Activo")) {
-                jdSP = new jdSistemaProduccion(null, true, "2", variedad, cn);
+                jdSP = new jdSistemaProduccion(null, true, "2", variedad, Idioma, cn);
                 jdSP.jpSP = this;
-                jdSP.setVisible(true);
-            } else {
-                JOptionPane.showMessageDialog(null, "Dato Inactivo");
-            }
+                jdSP.setVisible(true);  
         }
     }//GEN-LAST:event_tablaSPMouseClicked
     String estatus = "2";
-    private void comboSituacionSPItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionSPItemStateChanged
-        // TODO add your handling code here:
-        if (comboSituacionSP.getSelectedItem().equals("Inactivo")) {
-            estatus = "1";
-            jButton4.setText("Activar");
-        } else {
-            estatus = "2";
-            jButton4.setText("Desactivar");
-        }
-        busqueda();
-    }//GEN-LAST:event_comboSituacionSPItemStateChanged
-
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        jdSP = new jdSistemaProduccion(null, true, "1", variedad, cn);
+        jdSP = new jdSistemaProduccion(null, true, "1", variedad, Idioma, cn);
         jdSP.jpSP = this;
         jdSP.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        if (situacion.equals("Activo")) {
-            jdSP = new jdSistemaProduccion(null, true, "2", variedad, cn);
-            jdSP.jpSP = this;
-            jdSP.setVisible(true);
+        if (variedad.equals("")) {
+            JOptionPane.showMessageDialog(null, idioma.getProperty("SeleccionRegistro"));
         } else {
-            JOptionPane.showMessageDialog(null, "Dato Inactivo");
+                jdSP = new jdSistemaProduccion(null, true, "2", variedad, Idioma, cn);
+                jdSP.jpSP = this;
+                jdSP.setVisible(true);  
         }
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        if (estatus.equals("2")) {
+        if (comboSituacion.getSelectedIndex() == 0) {
             mdb.actualizarBasicos("UPDATE tipoproduccion SET ID_Situacion=2 where descripcion='" + variedad + "'");
-        } else if (estatus.equals("1")) {
+        } else if (comboSituacion.getSelectedIndex() == 1) {
             mdb.actualizarBasicos("UPDATE tipoproduccion SET ID_Situacion=1 where descripcion='" + variedad + "'");
         }
         busqueda();
@@ -353,12 +357,28 @@ public class jpSistemaProduccion extends javax.swing.JPanel {
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
-
+        this.removeAll();
+        this.revalidate();
+        this.repaint();
     }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void comboSituacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboSituacionActionPerformed
+        // TODO add your handling code here:
+        if (comboSituacion.getSelectedItem().equals(idioma.getProperty("Inactivos"))) {
+            jButton4.setText(idioma.getProperty("Activar"));
+            jButton4.setEnabled(true);
+        } else if (comboSituacion.getSelectedItem().equals(idioma.getProperty("Activos"))) {
+            jButton4.setText(idioma.getProperty("Desactivar"));
+            jButton4.setEnabled(true);
+        } else {
+            jButton4.setEnabled(false);
+        }
+        busqueda();
+    }//GEN-LAST:event_comboSituacionActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox<String> comboSituacionSP;
+    private javax.swing.JComboBox<String> comboSituacion;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;

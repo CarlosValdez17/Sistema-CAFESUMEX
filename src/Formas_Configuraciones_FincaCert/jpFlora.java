@@ -5,6 +5,7 @@
  */
 package Formas_Configuraciones_FincaCert;
 
+import Idioma.Propiedades;
 import FormasGenerales.pantallaPrincipal;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.CallableStatement;
@@ -30,59 +31,65 @@ public class jpFlora extends javax.swing.JPanel {
     DefaultTableModel modelo;
     Connection cn;
 
-    public jpFlora(Connection c) {
+    Propiedades idioma;
+    String Idioma;
+
+    public jpFlora(Connection c, String Idioma) {
         initComponents();
         cn = c;
+        this.Idioma = Idioma;
 
         modelo = (DefaultTableModel) tabla.getModel();
         tabla.setRowSorter(new TableRowSorter(modelo));
 
-   
+        mdb = new metodosDatosBasicos(cn);
+        idioma = new Propiedades(Idioma);
+
+        jButton5.setText(idioma.getProperty("Cerrar"));
+        jButton2.setText(idioma.getProperty("Nuevo"));
+        jButton3.setText(idioma.getProperty("Editar"));
+        jButton4.setText(idioma.getProperty("Desactivar"));
+        jLabel10.setText(idioma.getProperty("Situacion"));
+        jLabel6.setText(idioma.getProperty("NativoFlora"));
+
+        tabla.getColumnModel().getColumn(0).setHeaderValue(idioma.getProperty("NativoFlora"));
+
+        comboSituacion.addItem(idioma.getProperty("Activos"));
+        comboSituacion.addItem(idioma.getProperty("Inactivos"));
+        comboSituacion.addItem(idioma.getProperty("Todos"));
+
         llenaTabla();
     }
 
     public void llenaTabla() {
         limpiar(tabla);
-        mdb = new metodosDatosBasicos(cn);
-        mdb.cargarInformacion2(modelo,1,"select Descripcion from NativoFlora where ID_Situacion=1");
+        mdb.cargarInformacion2(modelo, 1, "select Descripcion from NativoFlora where ID_Situacion=1");
     }
 
     public void busqueda() {
         String tipoP = "";
-        String tipoK="";
-        String situacion = "";
-        String where = "";
+        String situacion = comboSituacion.getSelectedIndex() + "";
 
-        situacion = comboSituacion.getSelectedItem() + "";
-        if (situacion.equals("Inactivo")) {
+        if (situacion.equals("1")) {
             situacion = "2";
-        }else if(situacion.equals("Activo")){
-            situacion="1";
-            
+        } else if (situacion.equals("0")) {
+            situacion = "1";
+        } else {
+            situacion = "3";
         }
 
         if (txtBusquedaP.getText().length() > 0) {
-            tipoP = " AND descripcion like '%" + txtBusquedaP.getText() + "%'";
+            tipoP = " AND descripcion like '" + txtBusquedaP.getText() + "%'";
         }
-        /*  if (txtBusquedaK.getText().length() > 0) {
-            tipoK = " AND Importe like '%" + txtBusquedaK.getText() + "%'";
-        }
-      if (txtBusquedaUE.getText().length() > 0) {
-            tipoUE = "AND UE like '" + txtBusquedaUE.getText() + "%'";
-        }
-        if (txtBusquedaISO.getText().length() > 0) {
-            tipoISO = "AND ISO like '" + txtBusquedaISO.getText() + "%'";
-        }**/
+
         String sql;
-        System.out.println("SITUACION: " + situacion);
-        if (situacion.equals("Todos")) {
-            sql = "SELECT Descripcion from NativoFlora WHERE ID_Situacion<>3 "+tipoP;
+        if (situacion.equals("3")) {
+            sql = "SELECT Descripcion from NativoFlora WHERE ID_Situacion<>3 " + tipoP;
         } else {
-            sql = "SELECT Descripcion from NativoFlora WHERE ID_Situacion=" + situacion+tipoP;
+            sql = "SELECT Descripcion from NativoFlora WHERE ID_Situacion=" + situacion + tipoP;
         }
-        //System.out.println(sql);
         limpiar(tabla);
-        mdb.cargarInformacion2(modelo,1, sql);
+        mdb.cargarInformacion2(modelo, 1, sql);
 
     }
 
@@ -178,12 +185,6 @@ public class jpFlora extends javax.swing.JPanel {
 
         jLabel10.setText("Situacion");
 
-        comboSituacion.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Activo", "Inactivo", "Todos" }));
-        comboSituacion.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                comboSituacionItemStateChanged(evt);
-            }
-        });
         comboSituacion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboSituacionActionPerformed(evt);
@@ -316,7 +317,7 @@ public class jpFlora extends javax.swing.JPanel {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        jdP = new jdFlora(null, true, "1", TxTvar, cn);
+        jdP = new jdFlora(null, true, "1", TxTvar, Idioma, cn);
         jdP.jp = this;
         jdP.setVisible(true);
 
@@ -325,26 +326,25 @@ public class jpFlora extends javax.swing.JPanel {
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
         if (TxTvar.equals("")) {
-            JOptionPane.showMessageDialog(null,"selecciona un registro");
-        }else{
-             jdP = new jdFlora(null, true, "2", TxTvar ,cn);
-        jdP.jp = this;
-        jdP.setVisible(true);
+            //JOptionPane.showMessageDialog(null,"selecciona un registro");
+            JOptionPane.showMessageDialog(null, idioma.getProperty("SeleccionRegistro"));
+        } else {
+            jdP = new jdFlora(null, true, "2", TxTvar, Idioma, cn);
+            jdP.jp = this;
+            jdP.setVisible(true);
         }
 
     }//GEN-LAST:event_jButton3ActionPerformed
     String TxTvar = "";
-    String importe="";
+    String importe = "";
     private void tablaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaMouseClicked
         // TODO add your handling code here: Puestos
         TxTvar = modelo.getValueAt(tabla.getSelectedRow(), 0) + "";  //
-        importe=modelo.getValueAt(tabla.getSelectedRow(), 1) + "";
         if (evt.getClickCount() == 1) {
             System.out.println("1 Clic");
         }
         if (evt.getClickCount() == 2) {
-            
-            jdP = new jdFlora(null, true, "2", TxTvar, cn);
+            jdP = new jdFlora(null, true, "2", TxTvar, Idioma, cn);
             jdP.jp = this;
             jdP.setVisible(true);
         }
@@ -354,11 +354,6 @@ public class jpFlora extends javax.swing.JPanel {
         // TODO add your handling code here:
         busqueda();
     }//GEN-LAST:event_txtBusquedaPKeyReleased
-
-    private void comboSituacionItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionItemStateChanged
-        // TODO add your handling code here:
-        busqueda();
-    }//GEN-LAST:event_comboSituacionItemStateChanged
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
@@ -371,12 +366,14 @@ public class jpFlora extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-      if (TxTvar.equals("")) {
-            JOptionPane.showMessageDialog(null,"selecciona un registro");
-        }else{  // TODO add your handling code here:
-        String sql = "UPDATE NativoFlora SET ID_Situacion=2 where descripcion='" + TxTvar+ "'";
-        mdb.actualizarBasicos(sql);
-        llenaTabla();}
+        if (TxTvar.equals("")) {
+            JOptionPane.showMessageDialog(null, idioma.getProperty("SeleccionRegistro"));
+        } else if (comboSituacion.getSelectedIndex() == 0) {
+            mdb.actualizarBasicos("UPDATE NativoFlora SET ID_Situacion=2 where descripcion='" + TxTvar + "'");
+        } else if (comboSituacion.getSelectedIndex() == 1) {
+            mdb.actualizarBasicos("UPDATE NativoFlora SET ID_Situacion=1 where descripcion='" + TxTvar + "'");
+        }
+        busqueda();
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void txtBusquedaPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBusquedaPActionPerformed
@@ -385,6 +382,16 @@ public class jpFlora extends javax.swing.JPanel {
 
     private void comboSituacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboSituacionActionPerformed
         // TODO add your handling code here:
+        if (comboSituacion.getSelectedItem().equals(idioma.getProperty("Inactivos"))) {
+            jButton4.setText(idioma.getProperty("Activar"));
+            jButton4.setEnabled(true);
+        } else if (comboSituacion.getSelectedItem().equals(idioma.getProperty("Activos"))) {
+            jButton4.setText(idioma.getProperty("Desactivar"));
+            jButton4.setEnabled(true);
+        } else {
+            jButton4.setEnabled(false);
+        }
+        busqueda();
     }//GEN-LAST:event_comboSituacionActionPerformed
 
 

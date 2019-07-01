@@ -78,6 +78,7 @@ import Formas_Sociedades.jpBeneficiosH;
 import Formas_Sociedades.jpCatalogoSociedades;
 import Formas_Sociedades.jpLocalidadesSociedades;
 import Formas_Sociedades.jpRecepcion;
+import Idioma.Propiedades;
 import MetodosGenerales.JComboCheckBox;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -89,6 +90,7 @@ import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import java.text.ParseException;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Icon;
@@ -114,6 +116,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
     Connection cn;
     panelPrueba pP;
     jpTipoSombra jpTS;
+    Propiedades idioma;
 
     public pantallaPrincipal() throws ParseException {
         initComponents();
@@ -125,9 +128,11 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         //jButton4.setVisible(false);
         //jButton5.setVisible(false);
         //jButton6.setVisible(false);
-        jButton7.setVisible(false);
+        btnLaboratorio.setVisible(false);
+        idioma = new Propiedades(comboIdioma.getSelectedItem() + "");
 
-        jButton2.setBackground(new Color(26, 66, 21));
+        setTitle(idioma.getProperty("TituloVentanaPrincipal"));
+        btnConfigurador.setBackground(new Color(26, 66, 21));
 
         DefaultTreeCellRenderer render = (DefaultTreeCellRenderer) jTree1.getCellRenderer();
         //render.setLeafIcon(new ImageIcon(this.getClass().getResource("../Imagenes/database.png")));
@@ -136,10 +141,553 @@ public class pantallaPrincipal extends javax.swing.JFrame {
 
     }
 
+    public void cambiarIdioma(String I) {
+
+        idioma = new Propiedades(I);
+
+        btnConfigurador.setText(idioma.getProperty("Configurador"));
+        btnPersonas.setText(idioma.getProperty("Personas"));
+        btnFincaCert.setText(idioma.getProperty("FincaCert"));
+        btnRecepcion.setText(idioma.getProperty("Recepcion"));
+        btnBH.setText(idioma.getProperty("BeneficioHumedo"));
+        btnLaboratorio.setText(idioma.getProperty("Laboratorio"));
+        btnSociedades.setText(idioma.getProperty("Sociedades"));
+        jLabel3.setText(idioma.getProperty("Idioma"));
+        jLabel1.setText(idioma.getProperty("Bienvenido"));
+        setTitle(idioma.getProperty("TituloVentanaPrincipal"));
+
+    }
+
     public void pintarPanel(String tipo) throws ParseException {
         Dimension size = panelPrincipal.getSize();
         //Tamaño Manual = 830, 570
-        switch (tipo) {
+        //Propiedades idioma = new Propiedades(comboIdioma.getSelectedItem() + "");
+        //String tipo2 = idioma.getProperty("Pais");
+        //JOptionPane.showMessageDialog(null, "Valor " + tipo2);
+        String idiomaActual = comboIdioma.getSelectedItem() + "";
+
+        if (idioma.getProperty("Pais").equals(tipo)) {
+            //JOptionPane.showMessageDialog(null, "Entre");
+            jpPais jpP = new jpPais(cn, idiomaActual);
+            jpP.setSize(size);
+            jpP.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpP);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("Sociedades").equals(tipo)) {
+            jpCatalogoSociedades jpCPre = new jpCatalogoSociedades(cn, idiomaActual);
+            jpCPre.setSize(size);
+            jpCPre.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpCPre);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("Estado").equals(tipo)) {
+            jpEstado jpE = new jpEstado(cn, idiomaActual);
+            jpE.setSize(size);
+            jpE.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpE);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("Municipio").equals(tipo)) {
+            jpMunicipio jpM = new jpMunicipio(cn, idiomaActual);
+            jpM.setSize(size);
+            jpM.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpM);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("Localidad").equals(tipo)) {
+            jpLocalidad jpL = new jpLocalidad(cn, idiomaActual);
+            jpL.setSize(size);
+            jpL.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpL);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("ColoniaEjido").equals(tipo)) {
+            jpColoniaEjido jpCE = new jpColoniaEjido(cn, idiomaActual);
+            jpCE.setSize(size);
+            jpCE.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpCE);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("GiroEmpresa").equals(tipo)) {
+            jpGiroEmpresa jpCE = new jpGiroEmpresa(cn, idiomaActual);
+            jpCE.setSize(size);
+            jpCE.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpCE);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("TipoDeSombra").equals(tipo)) {
+            jpTipoSombra jpCE = new jpTipoSombra(cn, idiomaActual);
+            jpCE.setSize(size);
+            jpCE.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpCE);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("CalidadDeSombra").equals(tipo)) {
+            jpCalidadSombra jpCE = new jpCalidadSombra(cn, idiomaActual);
+            jpCE.setSize(size);
+            jpCE.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpCE);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("VariedadDeCafe").equals(tipo)) {
+            jpVariedadCafe jpCE = new jpVariedadCafe(cn, idiomaActual);
+            jpCE.setSize(size);
+            jpCE.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpCE);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("Cultivos").equals(tipo)) {
+            jpCultivos jpCE = new jpCultivos(cn, idiomaActual);
+            jpCE.setSize(size);
+            jpCE.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpCE);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("DisenoDePlantacion").equals(tipo)) {
+            jpDiseñoPlantacion jpCE = new jpDiseñoPlantacion(cn);
+            jpCE.setSize(size);
+            jpCE.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpCE);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("Herbicida").equals(tipo)) {
+            jpHerbicida jpCE = new jpHerbicida(cn);
+            jpCE.setSize(size);
+            jpCE.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpCE);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("EnfermedadPlaga").equals(tipo)) {
+            jpEnfermedadPlaga jpCE = new jpEnfermedadPlaga(cn);
+            jpCE.setSize(size);
+            jpCE.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpCE);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("Fertilizante").equals(tipo)) {
+            jpFertilizante jpFe = new jpFertilizante(cn);
+            jpFe.setSize(size);
+            jpFe.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpFe);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("SistemaDeProduccion").equals(tipo)) {
+            jpSistemaProduccion jpSP = new jpSistemaProduccion(cn, idiomaActual);
+            jpSP.setSize(size);
+            jpSP.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpSP);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("TiposDeEvaluacion").equals(tipo)) {
+            jpTipoEvaluacion jpTE = new jpTipoEvaluacion(cn);
+            jpTE.setSize(size);
+            jpTE.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpTE);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("ActividadesParcela").equals(tipo)) {
+            jpActividadesParcela jpAP = new jpActividadesParcela(cn);
+            jpAP.setSize(size);
+            jpAP.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpAP);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("FormaDeCafe").equals(tipo)) {
+            jpFormaCafe jpFC = new jpFormaCafe(cn);
+            jpFC.setSize(size);
+            jpFC.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpFC);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("TipoDeCertificaciones").equals(tipo)) {
+            jpTipoCertificacion jpTC = new jpTipoCertificacion(cn, idiomaActual);
+            jpTC.setSize(size);
+            jpTC.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpTC);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("ActividadesBH").equals(tipo)) {
+            jpActividadesBH jpABH = new jpActividadesBH(cn);
+            jpABH.setSize(size);
+            jpABH.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpABH);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("Sobrantes").equals(tipo)) {
+            jpSobrante jpS = new jpSobrante(cn);
+            jpS.setSize(size);
+            jpS.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpS);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("ReglasDeEvaluacion").equals(tipo)) {
+            jpReglasEvaluacion jpR = new jpReglasEvaluacion(cn);
+            jpR.setSize(size);
+            jpR.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpR);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("CalificacionSeco").equals(tipo)) {
+            jpCalificacionSeco jpCalS = new jpCalificacionSeco(cn);
+            jpCalS.setSize(size);
+            jpCalS.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpCalS);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("CalificacionCereza").equals(tipo)) {
+            jpCalificacionCereza jpCC = new jpCalificacionCereza(cn);
+            jpCC.setSize(size);
+            jpCC.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpCC);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("Evaluaciones").equals(tipo)) {
+            jpEvaluaciones jpEva = new jpEvaluaciones(cn);
+            jpEva.setSize(size);
+            jpEva.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpEva);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("Personas").equals(tipo)) {
+            jpPersonas jpPer = new jpPersonas(cn, idiomaActual);
+            jpPer.setSize(size);
+            jpPer.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpPer);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("Perfiles").equals(tipo)) {
+            jpPerfiles jpPerf = new jpPerfiles(cn, idiomaActual);
+            jpPerf.setSize(size);
+            jpPerf.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpPerf);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("Retenciones").equals(tipo)) {
+            jpRetenciones jpRet = new jpRetenciones(cn, idiomaActual);
+            jpRet.setSize(size);
+            jpRet.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpRet);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("Puestos").equals(tipo)) {
+            jpPuestos jpPues = new jpPuestos(cn, idiomaActual);
+            jpPues.setSize(size);
+            jpPues.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpPues);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("TipoDeSuelo").equals(tipo)) {
+            jpSuelos jpTSuelo = new jpSuelos(cn, idiomaActual);
+            jpTSuelo.setSize(size);
+            jpTSuelo.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpTSuelo);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("NativoFauna").equals(tipo)) {
+            jpFauna jpNF = new jpFauna(cn, idiomaActual);
+            jpNF.setSize(size);
+            jpNF.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpNF);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("NativoFlora").equals(tipo)) {
+            jpFlora jpNFlora = new jpFlora(cn, idiomaActual);
+            jpNFlora.setSize(size);
+            jpNFlora.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpNFlora);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("Certificado").equals(tipo)) {
+            jpCertificado jpCertificado = new jpCertificado(cn, idiomaActual);
+            jpCertificado.setSize(size);
+            jpCertificado.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpCertificado);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("Certificador").equals(tipo)) {
+            jpCertificador jpCertificador = new jpCertificador(cn, idiomaActual);
+            jpCertificador.setSize(size);
+            jpCertificador.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpCertificador);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("TipoDeAccion").equals(tipo)) {
+            jpTipoAccion jpTipoA = new jpTipoAccion(cn);
+            jpTipoA.setSize(size);
+            jpTipoA.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpTipoA);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("MotivoPlantacion").equals(tipo)) {
+            jpMotivoPlantacion jpMPlan = new jpMotivoPlantacion(cn);
+            jpMPlan.setSize(size);
+            jpMPlan.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpMPlan);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("MaquinariaHerramienta").equals(tipo)) {
+            jpMaquinariaHerramienta jpMH = new jpMaquinariaHerramienta(cn);
+            jpMH.setSize(size);
+            jpMH.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpMH);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("ControlMaleza").equals(tipo)) {
+            jpControlMaleza jpCMaleza = new jpControlMaleza(cn);
+            jpCMaleza.setSize(size);
+            jpCMaleza.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpCMaleza);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("TipoPoda").equals(tipo)) {
+            jpTipoPoda jpTPoda = new jpTipoPoda(cn);
+            jpTPoda.setSize(size);
+            jpTPoda.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpTPoda);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("CategoriaArchivo").equals(tipo)) {
+            jpCategoriaDeArchivos jpCArch = new jpCategoriaDeArchivos(cn);
+            jpCArch.setSize(size);
+            jpCArch.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpCArch);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("ProcesoDeCafe").equals(tipo)) {
+            jpProcesoCafe jpProcC = new jpProcesoCafe(cn);
+            jpProcC.setSize(size);
+            jpProcC.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpProcC);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("FactorFormaCafe").equals(tipo)) {
+            jpFactorForma jpFFC = new jpFactorForma(cn);
+            jpFFC.setSize(size);
+            jpFFC.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpFFC);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("MaximoTamanoPromedio").equals(tipo)) {
+            jpMaximoTamañoPromedio jpMTP = new jpMaximoTamañoPromedio(cn);
+            jpMTP.setSize(size);
+            jpMTP.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpMTP);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("Vehiculos").equals(tipo)) {
+            jpVehiculo jpVh = new jpVehiculo(cn, idiomaActual);
+            jpVh.setSize(size);
+            jpVh.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpVh);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("ActividadesBH").equals(tipo)) {
+            jpAreaAlmacen jpAAl = new jpAreaAlmacen(cn);
+            jpAAl.setSize(size);
+            jpAAl.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpAAl);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("Clima").equals(tipo)) {
+            jpClima jpClima = new jpClima(cn);
+            jpClima.setSize(size);
+            jpClima.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpClima);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("Idioma").equals(tipo)) {
+            jpIdioma jpIdi = new jpIdioma(cn);
+            jpIdi.setSize(size);
+            jpIdi.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpIdi);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("Rutas").equals(tipo)) {
+            jpRutas jpRut = new jpRutas(cn);
+            jpRut.setSize(size);
+            jpRut.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpRut);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("MaximoRendimiento").equals(tipo)) {
+            jpMaximoRendimiento jpMR = new jpMaximoRendimiento(cn);
+            jpMR.setSize(size);
+            jpMR.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpMR);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+            /* } else if (idioma.getProperty("FormaProceso").equals(tipo)) {
+            jpFormaProceso jpFP = new jpFormaProceso(cn);
+            jpFP.setSize(size);
+            jpFP.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpFP);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();*/
+        } else if (idioma.getProperty("Productores").equals(tipo)) {
+            jpProductores jpPro = new jpProductores(cn, idiomaActual);
+            jpPro.setSize(size);
+            jpPro.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpPro);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("Codigos").equals(tipo)) {
+            jpCodigosCertificados jpCodC = new jpCodigosCertificados(cn, idiomaActual);
+            jpCodC.setSize(size);
+            jpCodC.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpCodC);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("Recibos").equals(tipo)) {
+            jpRecibos jpRec = new jpRecibos(cn, idiomaActual, recepcion);
+            jpRec.setSize(size);
+            jpRec.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpRec);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("CortesDelDia").equals(tipo)) {
+            jpCortesDelDia jpLot = new jpCortesDelDia(cn, idiomaActual, recepcion);
+            jpLot.setSize(size);
+            jpLot.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpLot);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("CortesEnviados").equals(tipo)) {
+            jpCortesEnviados jpLotE = new jpCortesEnviados(cn, idiomaActual, recepcion);
+            jpLotE.setSize(size);
+            jpLotE.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpLotE);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("Recepciones").equals(tipo)) {
+            jpRecepcion jpRece = new jpRecepcion(cn, idiomaActual);
+            jpRece.setSize(size);
+            jpRece.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpRece);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("BeneficiosHumedos").equals(tipo)) {
+            jpBeneficiosH jpBH = new jpBeneficiosH(cn, idiomaActual);
+            jpBH.setSize(size);
+            jpBH.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpBH);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("Almacenes").equals(tipo)) {
+            jpAlmacenes jpAlm = new jpAlmacenes(cn, idiomaActual);
+            jpAlm.setSize(size);
+            jpAlm.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpAlm);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("CortesRecibidos").equals(tipo)) {
+            jpCortesRecibidos jpCR = new jpCortesRecibidos(beneficio, cn);
+            jpCR.setSize(size);
+            jpCR.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpCR);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("CortesConfirmados").equals(tipo)) {
+            jpLotesConfirmados jpLC = new jpLotesConfirmados(cn);
+            jpLC.setSize(size);
+            jpLC.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpLC);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else if (idioma.getProperty("Maquinaria").equals(tipo)) {
+            jpMaquinaria jpMa = new jpMaquinaria(cn);
+            jpMa.setSize(size);
+            jpMa.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpMa);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+
+        } else if (idioma.getProperty("Recibos").equals(tipo)) {
+            jpRecibos jpRec = new jpRecibos(cn, idiomaActual, recepcion);
+            jpRec.setSize(size);
+            jpRec.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(jpRec);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        } else {
+            JLabel lbl = new JLabel();
+            lbl.setSize(panelPrincipal.getWidth(), panelPrincipal.getHeight());
+            ImageIcon fot = new ImageIcon("C:\\Users\\USUARIO\\Documents\\NetBeansProjects\\Sistema-CAFESUMEX\\src\\Imagenes\\granos fondo.jpg");
+            Icon icono = new ImageIcon(fot.getImage().getScaledInstance(lbl.getWidth(), lbl.getHeight(), Image.SCALE_DEFAULT));
+            lbl.setIcon(icono);
+            //jpFondo jpF = new jpFondo();
+            //jpF.setSize(size);
+            //.setLocation(0, 0);
+            panelPrincipal.removeAll();
+            panelPrincipal.add(lbl);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        }
+
+        /* switch (tipo) {
             case "Sociedades":
                 jpCatalogoSociedades jpCPre = new jpCatalogoSociedades(cn);
                 jpCPre.setSize(size);
@@ -738,9 +1286,8 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 panelPrincipal.add(lbl);
                 panelPrincipal.revalidate();
                 panelPrincipal.repaint();
-
                 break;
-        }
+        }*/
     }
 
     public void recepcion(String recepcion) {
@@ -756,10 +1303,10 @@ public class pantallaPrincipal extends javax.swing.JFrame {
 
         jScrollPane2.setOpaque(false);
 
-        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Recepcion");
-        javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Recibos");
-        javax.swing.tree.DefaultMutableTreeNode treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Cortes del día");
-        javax.swing.tree.DefaultMutableTreeNode treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("Cortes Enviados");
+        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("Recepcion"));
+        javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("Recibos"));
+        javax.swing.tree.DefaultMutableTreeNode treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("CortesDelDia"));
+        javax.swing.tree.DefaultMutableTreeNode treeNode4 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("CortesEnviados"));
         treeNode1.add(treeNode2);
         treeNode1.add(treeNode3);
         treeNode1.add(treeNode4);
@@ -767,14 +1314,14 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         jTree1.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
 
         //CAMBIAR COLORES BOTOTES
-        jButton5.setBackground(new Color(26, 66, 21));
+        btnRecepcion.setBackground(new Color(26, 66, 21));
         //QUITAR COLOR
-        jButton1.setBackground(Color.getColor("FFFFFF"));
-        jButton3.setBackground(Color.getColor("FFFFFF"));
-        jButton4.setBackground(Color.getColor("FFFFFF"));
-        jButton2.setBackground(Color.getColor("FFFFFF"));
-        jButton6.setBackground(Color.getColor("FFFFFF"));
-        jButton7.setBackground(Color.getColor("FFFFFF"));
+        btnSociedades.setBackground(Color.getColor("FFFFFF"));
+        btnPersonas.setBackground(Color.getColor("FFFFFF"));
+        btnFincaCert.setBackground(Color.getColor("FFFFFF"));
+        btnConfigurador.setBackground(Color.getColor("FFFFFF"));
+        btnBH.setBackground(Color.getColor("FFFFFF"));
+        btnLaboratorio.setBackground(Color.getColor("FFFFFF"));
     }
 
     public void beneficio(String beneficio) {
@@ -784,18 +1331,18 @@ public class pantallaPrincipal extends javax.swing.JFrame {
 
         jScrollPane2.setOpaque(false);
 
-        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Beneficio Humedo");
-        javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Cortes Recibidos");
-        javax.swing.tree.DefaultMutableTreeNode treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Lotes Confirmados");
-        javax.swing.tree.DefaultMutableTreeNode treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("Lotes en Proceso de Secado");
-        javax.swing.tree.DefaultMutableTreeNode treeNode5 = new javax.swing.tree.DefaultMutableTreeNode("Lotes Enviados");
-        javax.swing.tree.DefaultMutableTreeNode treeNode6 = new javax.swing.tree.DefaultMutableTreeNode("Consumo Agua");
-        javax.swing.tree.DefaultMutableTreeNode treeNode7 = new javax.swing.tree.DefaultMutableTreeNode("Entrega Cascarilla");
-        javax.swing.tree.DefaultMutableTreeNode treeNode8 = new javax.swing.tree.DefaultMutableTreeNode("Clima y Temperatura Ambiente");
-        javax.swing.tree.DefaultMutableTreeNode treeNode9 = new javax.swing.tree.DefaultMutableTreeNode("Mantenimiento Maquinaria");
-        javax.swing.tree.DefaultMutableTreeNode treeNode10 = new javax.swing.tree.DefaultMutableTreeNode("Limpieza de Maquinaria");
-        javax.swing.tree.DefaultMutableTreeNode treeNode11 = new javax.swing.tree.DefaultMutableTreeNode("Evaluacion Maquinaria");
-        javax.swing.tree.DefaultMutableTreeNode treeNode12 = new javax.swing.tree.DefaultMutableTreeNode("Lotes Secos");
+        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("BeneficioHumedo"));
+        javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("CortesRecibidos"));
+        javax.swing.tree.DefaultMutableTreeNode treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("CortesConfirmados"));
+        javax.swing.tree.DefaultMutableTreeNode treeNode4 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("CortesProcesoSecado"));
+        javax.swing.tree.DefaultMutableTreeNode treeNode5 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("SubLotesEnviados"));
+        javax.swing.tree.DefaultMutableTreeNode treeNode6 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("ConsumoAgua"));
+        javax.swing.tree.DefaultMutableTreeNode treeNode7 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("EntregaCascarilla"));
+        javax.swing.tree.DefaultMutableTreeNode treeNode8 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("ClimaTemperaturaAmbiente"));
+        javax.swing.tree.DefaultMutableTreeNode treeNode9 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("MantenimientoMaquinaria"));
+        javax.swing.tree.DefaultMutableTreeNode treeNode10 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("LimpiezaDeMaquinaria"));
+        javax.swing.tree.DefaultMutableTreeNode treeNode11 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("EvaluacionMaquinaria"));
+        javax.swing.tree.DefaultMutableTreeNode treeNode12 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("SubLotesSecos"));
         treeNode1.add(treeNode2);
         treeNode1.add(treeNode3);
         treeNode1.add(treeNode4);
@@ -816,14 +1363,14 @@ public class pantallaPrincipal extends javax.swing.JFrame {
             Logger.getLogger(pantallaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         }
         //CAMBIAR COLORES BOTOTES
-        jButton6.setBackground(Color.getHSBColor(0.56f, 1.0f, 0.8f));
+        btnBH.setBackground(Color.getHSBColor(0.56f, 1.0f, 0.8f));
         //QUITAR COLOR
-        jButton1.setBackground(Color.getColor("FFFFFF"));
-        jButton3.setBackground(Color.getColor("FFFFFF"));
-        jButton4.setBackground(Color.getColor("FFFFFF"));
-        jButton5.setBackground(Color.getColor("FFFFFF"));
-        jButton2.setBackground(Color.getColor("FFFFFF"));
-        jButton7.setBackground(Color.getColor("FFFFFF"));
+        btnSociedades.setBackground(Color.getColor("FFFFFF"));
+        btnPersonas.setBackground(Color.getColor("FFFFFF"));
+        btnFincaCert.setBackground(Color.getColor("FFFFFF"));
+        btnRecepcion.setBackground(Color.getColor("FFFFFF"));
+        btnConfigurador.setBackground(Color.getColor("FFFFFF"));
+        btnLaboratorio.setBackground(Color.getColor("FFFFFF"));
     }
 
     /*
@@ -848,13 +1395,15 @@ public class pantallaPrincipal extends javax.swing.JFrame {
 
         jMenu1 = new javax.swing.JMenu();
         jPanel1 = new javax.swing.JPanel();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
-        jButton7 = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        btnConfigurador = new javax.swing.JButton();
+        btnPersonas = new javax.swing.JButton();
+        btnFincaCert = new javax.swing.JButton();
+        btnRecepcion = new javax.swing.JButton();
+        btnBH = new javax.swing.JButton();
+        btnLaboratorio = new javax.swing.JButton();
+        btnSociedades = new javax.swing.JButton();
+        comboIdioma = new javax.swing.JComboBox<>();
+        jLabel3 = new javax.swing.JLabel();
         panelArbol = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTree1 = new javax.swing.JTree();
@@ -872,92 +1421,101 @@ public class pantallaPrincipal extends javax.swing.JFrame {
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/database(2).png"))); // NOI18N
-        jButton2.setText("Configurador");
-        jButton2.setToolTipText("");
-        jButton2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jButton2.setFocusPainted(false);
-        jButton2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton2.setOpaque(false);
-        jButton2.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        btnConfigurador.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/database(2).png"))); // NOI18N
+        btnConfigurador.setText("Configurador");
+        btnConfigurador.setToolTipText("");
+        btnConfigurador.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnConfigurador.setFocusPainted(false);
+        btnConfigurador.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnConfigurador.setOpaque(false);
+        btnConfigurador.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnConfigurador.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                btnConfiguradorActionPerformed(evt);
             }
         });
 
-        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/group(1).png"))); // NOI18N
-        jButton3.setText("Personas");
-        jButton3.setToolTipText("Modulo Personas");
-        jButton3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jButton3.setFocusPainted(false);
-        jButton3.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton3.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        btnPersonas.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/group(1).png"))); // NOI18N
+        btnPersonas.setText("Personas");
+        btnPersonas.setToolTipText("Modulo Personas");
+        btnPersonas.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnPersonas.setFocusPainted(false);
+        btnPersonas.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnPersonas.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnPersonas.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                btnPersonasActionPerformed(evt);
             }
         });
 
-        jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/avatar.png"))); // NOI18N
-        jButton4.setText("FincaCert");
-        jButton4.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jButton4.setFocusPainted(false);
-        jButton4.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton4.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        btnFincaCert.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/avatar.png"))); // NOI18N
+        btnFincaCert.setText("FincaCert");
+        btnFincaCert.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnFincaCert.setFocusPainted(false);
+        btnFincaCert.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnFincaCert.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnFincaCert.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+                btnFincaCertActionPerformed(evt);
             }
         });
 
-        jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/cash.png"))); // NOI18N
-        jButton5.setText("Recepcion");
-        jButton5.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jButton5.setFocusPainted(false);
-        jButton5.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton5.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButton5.addActionListener(new java.awt.event.ActionListener() {
+        btnRecepcion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/cash.png"))); // NOI18N
+        btnRecepcion.setText("Recepcion");
+        btnRecepcion.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnRecepcion.setFocusPainted(false);
+        btnRecepcion.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnRecepcion.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnRecepcion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton5ActionPerformed(evt);
+                btnRecepcionActionPerformed(evt);
             }
         });
 
-        jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/machinery.png"))); // NOI18N
-        jButton6.setText("B Humedo");
-        jButton6.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jButton6.setFocusPainted(false);
-        jButton6.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton6.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButton6.addActionListener(new java.awt.event.ActionListener() {
+        btnBH.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/machinery.png"))); // NOI18N
+        btnBH.setText("B Humedo");
+        btnBH.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnBH.setFocusPainted(false);
+        btnBH.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnBH.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnBH.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton6ActionPerformed(evt);
+                btnBHActionPerformed(evt);
             }
         });
 
-        jButton7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/breakfast.png"))); // NOI18N
-        jButton7.setText("Laboratorio");
-        jButton7.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jButton7.setFocusPainted(false);
-        jButton7.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton7.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButton7.addActionListener(new java.awt.event.ActionListener() {
+        btnLaboratorio.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/breakfast.png"))); // NOI18N
+        btnLaboratorio.setText("Laboratorio");
+        btnLaboratorio.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnLaboratorio.setFocusPainted(false);
+        btnLaboratorio.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnLaboratorio.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnLaboratorio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton7ActionPerformed(evt);
+                btnLaboratorioActionPerformed(evt);
             }
         });
 
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/network.png"))); // NOI18N
-        jButton1.setText("Sociedades");
-        jButton1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jButton1.setFocusPainted(false);
-        jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnSociedades.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/network.png"))); // NOI18N
+        btnSociedades.setText("Sociedades");
+        btnSociedades.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnSociedades.setFocusPainted(false);
+        btnSociedades.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnSociedades.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnSociedades.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnSociedadesActionPerformed(evt);
             }
         });
+
+        comboIdioma.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Español", "Ingles", "Ingles Etiopia", "Oromo" }));
+        comboIdioma.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboIdiomaActionPerformed(evt);
+            }
+        });
+
+        jLabel3.setText("Idioma");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -965,33 +1523,42 @@ public class pantallaPrincipal extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton2)
+                .addComponent(btnConfigurador)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton3)
+                .addComponent(btnPersonas)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton4)
+                .addComponent(btnFincaCert)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton5)
+                .addComponent(btnRecepcion)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton6)
+                .addComponent(btnBH)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton7)
+                .addComponent(btnLaboratorio)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton1)
-                .addContainerGap(391, Short.MAX_VALUE))
+                .addComponent(btnSociedades)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel3)
+                    .addComponent(comboIdioma, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton7, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(comboIdioma, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(btnSociedades, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnLaboratorio, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnBH, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnRecepcion, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnFincaCert, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnPersonas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnConfigurador, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -1138,7 +1705,6 @@ public class pantallaPrincipal extends javax.swing.JFrame {
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("¡ BIENVENIDO A FINCALAB !");
         jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 
         javax.swing.GroupLayout panelPrincipalLayout = new javax.swing.GroupLayout(panelPrincipal);
@@ -1157,8 +1723,6 @@ public class pantallaPrincipal extends javax.swing.JFrame {
                 .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
-
-        jLabel2.setText("jLabel2");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -1198,7 +1762,7 @@ public class pantallaPrincipal extends javax.swing.JFrame {
             .addGroup(panelArbolLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panelArbolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 520, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 534, Short.MAX_VALUE)
                     .addComponent(panelPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1238,6 +1802,8 @@ public class pantallaPrincipal extends javax.swing.JFrame {
 
         if (tp != null) {
             System.out.println(jTree1.getLastSelectedPathComponent());//tp.toString()+ "COUNT: "+c);
+            // JOptionPane.showMessageDialog(null, tp.getPathCount());
+
             try {
                 pintarPanel(tipoPanel);
             } catch (ParseException ex) {
@@ -1259,14 +1825,14 @@ public class pantallaPrincipal extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jTree1MouseClicked
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void btnPersonasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPersonasActionPerformed
         // TODO add your handling code here:
         panelArbol.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         jScrollPane2.setOpaque(false);
 
-        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Modulo Personas");
-        javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Personas");
+        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("ModuloPersonas"));
+        javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("Personas"));
         treeNode1.add(treeNode2);
         jTree1.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
 
@@ -1277,15 +1843,15 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         }
 
         //CAMBIAR COLORES BOTOTES
-        jButton3.setBackground(new Color(26, 66, 21));
+        btnPersonas.setBackground(new Color(26, 66, 21));
         //QUITAR COLOR
-        jButton1.setBackground(Color.getColor("FFFFFF"));
-        jButton2.setBackground(Color.getColor("FFFFFF"));
-        jButton4.setBackground(Color.getColor("FFFFFF"));
-        jButton5.setBackground(Color.getColor("FFFFFF"));
-        jButton6.setBackground(Color.getColor("FFFFFF"));
-        jButton7.setBackground(Color.getColor("FFFFFF"));
-    }//GEN-LAST:event_jButton3ActionPerformed
+        btnSociedades.setBackground(Color.getColor("FFFFFF"));
+        btnConfigurador.setBackground(Color.getColor("FFFFFF"));
+        btnFincaCert.setBackground(Color.getColor("FFFFFF"));
+        btnRecepcion.setBackground(Color.getColor("FFFFFF"));
+        btnBH.setBackground(Color.getColor("FFFFFF"));
+        btnLaboratorio.setBackground(Color.getColor("FFFFFF"));
+    }//GEN-LAST:event_btnPersonasActionPerformed
 
     private void jTree1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTree1KeyReleased
         // TODO add your handling code here:
@@ -1307,144 +1873,146 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jTree1KeyReleased
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void btnConfiguradorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfiguradorActionPerformed
         // TODO add your handling code here:
         panelArbol.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         jScrollPane2.setOpaque(false);
 
-        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Configuracion");
-        javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Datos Basicos");
-        javax.swing.tree.DefaultMutableTreeNode treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Ubicación Geográfica");
-        javax.swing.tree.DefaultMutableTreeNode treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("Pais");
+        idioma = new Propiedades(comboIdioma.getSelectedItem() + "");
+
+        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("Configuracion"));
+        javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("DatosBasicos"));
+        javax.swing.tree.DefaultMutableTreeNode treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("UbicacionGeografica"));
+        javax.swing.tree.DefaultMutableTreeNode treeNode4 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("Pais"));
         treeNode3.add(treeNode4);
-        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("Estado");
+        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("Estado"));
         treeNode3.add(treeNode4);
-        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("Municipio");
+        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("Municipio"));
         treeNode3.add(treeNode4);
-        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("Localidad");
+        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("Localidad"));
         treeNode3.add(treeNode4);
-        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("Colonia/Ejido");
+        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("ColoniaEjido"));
         treeNode3.add(treeNode4);
         treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Personas");
-        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("Giro de Empresa");
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("Personas"));
+        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("GiroEmpresa"));
         treeNode3.add(treeNode4);
         treeNode2.add(treeNode3);
         treeNode1.add(treeNode2);
-        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Seguridad");
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Perfiles");
+        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("Seguridad"));
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("Perfiles"));
         treeNode2.add(treeNode3);
         treeNode1.add(treeNode2);
-        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Sociedades");
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Retenciones");
+        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("Sociedad"));
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("Retenciones"));
         treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Puestos");
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("Puestos"));
         treeNode2.add(treeNode3);
         treeNode1.add(treeNode2);
-        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("FincaCert");
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Tipos de Suelo");
+        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("FincaCert"));
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("TipoDeSuelo"));
         treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Nativo Fauna");
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("NativoFauna"));
         treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Nativo Flora");
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("NativoFlora"));
         treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Tipo de Sombra");
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("TipoDeSombra"));
         treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Calidad de Sombra");
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("CalidadDeSombra"));
         treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Certificados");
-        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("Certificado");
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("Certificados"));
+        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("Certificado"));
         treeNode3.add(treeNode4);
-        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("Certificador");
+        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("Certificador"));
         treeNode3.add(treeNode4);
-        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("Tipo de Certificaciones");
+        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("TipoDeCertificaciones"));
         treeNode3.add(treeNode4);
-        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("Codigos");
+        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("Codigos"));
         treeNode3.add(treeNode4);
         treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Variedad de Café");
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("VariedadDeCafe"));
         treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Cultivos");
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("Cultivos"));
         treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Tipo de Acción");
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("TipoDeAccion"));
         treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Diseño Plantación");
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("DisenoDePlantacion"));
         treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Motivo Plantación");
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("MotivoPlantacion"));
         treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Herbicida");
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("Herbicida"));
         treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Maquinaria/Herramienta");
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("MaquinariaHerramienta"));
         treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Enfermedad/Plaga");
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("EnfermedadPlaga"));
         treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Control Maleza");
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("ControlMaleza"));
         treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Fertilizante");
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("Fertilizante"));
         treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Tipo de Poda");
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("TipoPoda"));
         treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Categoria de Archivo");
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("CategoriaArchivo"));
         treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Actividades de Parcela");
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("ActividadesParcela"));
         treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Sistemas de Producción");
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("SistemaDeProduccion"));
         treeNode2.add(treeNode3);
         treeNode1.add(treeNode2);
-        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Recepción");
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Proceso de Café");
+        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("Recepcion"));
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("ProcesoDeCafe"));
         treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Forma de Café");
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("FormaDeCafe"));
         treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Tipos de Evaluación");
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("TiposDeEvaluacion"));
         treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Evaluaciones");
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("Evaluaciones"));
         treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Factor por Forma de Café");
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("FactorFormaCafe"));
         treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Calificación Seco");
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("CalificacionSeco"));
         treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Máximo Rendimiento");
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("MaximoRendimiento"));
         treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Máximo Tamaño Promedio");
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("MaximoTamanoPromedio"));
         treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Reglas de Evaluación");
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("ReglasDeEvaluacion"));
         treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Calificación Cereza");
-        treeNode2.add(treeNode3);
-        treeNode1.add(treeNode2);
-        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Beneficio Húmedo");
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Vehículos");
-        treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Maquinaria");
-        treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Actividades de BH");
-        treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Área de Almacén");
-        treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Rutas");
-        treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Climas");
-        treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Sobrantes");
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("CalificacionCereza"));
         treeNode2.add(treeNode3);
         treeNode1.add(treeNode2);
-        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Idioma");
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Idiomas");
+        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("BeneficioHumedo"));
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("Vehiculos"));
+        treeNode2.add(treeNode3);
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("Maquinaria"));
+        treeNode2.add(treeNode3);
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("ActividadesBH"));
+        treeNode2.add(treeNode3);
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("AreasAlmacen"));
+        treeNode2.add(treeNode3);
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("Rutas"));
+        treeNode2.add(treeNode3);
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("Climas"));
+        treeNode2.add(treeNode3);
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("Sobrantes"));
+        treeNode2.add(treeNode3);
+        treeNode1.add(treeNode2);
+        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("Idioma"));
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("Idiomas"));
         treeNode2.add(treeNode3);
         treeNode1.add(treeNode2);
         jTree1.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
 
         //CAMBIAR COLORES BOTOTES
-        jButton2.setBackground(new Color(26, 66, 21));
+        btnConfigurador.setBackground(new Color(26, 66, 21));
         //QUITAR COLOR
-        jButton1.setBackground(Color.getColor("FFFFFF"));
-        jButton3.setBackground(Color.getColor("FFFFFF"));
-        jButton4.setBackground(Color.getColor("FFFFFF"));
-        jButton5.setBackground(Color.getColor("FFFFFF"));
-        jButton6.setBackground(Color.getColor("FFFFFF"));
-        jButton7.setBackground(Color.getColor("FFFFFF"));
+        btnSociedades.setBackground(Color.getColor("FFFFFF"));
+        btnPersonas.setBackground(Color.getColor("FFFFFF"));
+        btnFincaCert.setBackground(Color.getColor("FFFFFF"));
+        btnRecepcion.setBackground(Color.getColor("FFFFFF"));
+        btnBH.setBackground(Color.getColor("FFFFFF"));
+        btnLaboratorio.setBackground(Color.getColor("FFFFFF"));
 
         try {
             pintarPanel("fondo");
@@ -1452,16 +2020,16 @@ public class pantallaPrincipal extends javax.swing.JFrame {
             Logger.getLogger(pantallaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_btnConfiguradorActionPerformed
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+    private void btnFincaCertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFincaCertActionPerformed
         // TODO add your handling code here:
         panelArbol.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         jScrollPane2.setOpaque(false);
 
-        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("FincaCert");
-        javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Productores");
+        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("FincaCert"));
+        javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("Productores"));
         treeNode1.add(treeNode2);
 
         jTree1.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
@@ -1473,56 +2041,56 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         }
 
         //CAMBIAR COLORES BOTOTES
-        jButton4.setBackground(new Color(26, 66, 21));
+        btnFincaCert.setBackground(new Color(26, 66, 21));
         //QUITAR COLOR
-        jButton1.setBackground(Color.getColor("FFFFFF"));
-        jButton3.setBackground(Color.getColor("FFFFFF"));
-        jButton2.setBackground(Color.getColor("FFFFFF"));
-        jButton5.setBackground(Color.getColor("FFFFFF"));
-        jButton6.setBackground(Color.getColor("FFFFFF"));
-        jButton7.setBackground(Color.getColor("FFFFFF"));
-    }//GEN-LAST:event_jButton4ActionPerformed
+        btnSociedades.setBackground(Color.getColor("FFFFFF"));
+        btnPersonas.setBackground(Color.getColor("FFFFFF"));
+        btnConfigurador.setBackground(Color.getColor("FFFFFF"));
+        btnRecepcion.setBackground(Color.getColor("FFFFFF"));
+        btnBH.setBackground(Color.getColor("FFFFFF"));
+        btnLaboratorio.setBackground(Color.getColor("FFFFFF"));
+    }//GEN-LAST:event_btnFincaCertActionPerformed
     String recepcion = "";
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+    private void btnRecepcionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRecepcionActionPerformed
         // TODO add your handling code here:
         jdSeleccionRecepcion jdSRecepcion = new jdSeleccionRecepcion(null, true, cn);
         jdSRecepcion.pPrin = this;
         jdSRecepcion.setVisible(true);
-    }//GEN-LAST:event_jButton5ActionPerformed
+    }//GEN-LAST:event_btnRecepcionActionPerformed
     String beneficio = "";
-    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+    private void btnBHActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBHActionPerformed
         // TODO add your handling code here:
         jdSeleccionBeneficio jdSBH = new jdSeleccionBeneficio(null, true, cn);
         jdSBH.pPrin = this;
         jdSBH.setVisible(true);
 
 
-    }//GEN-LAST:event_jButton6ActionPerformed
+    }//GEN-LAST:event_btnBHActionPerformed
 
-    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+    private void btnLaboratorioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLaboratorioActionPerformed
         // TODO add your handling code here:
         //CAMBIAR COLORES BOTOTES
-        jButton7.setBackground(Color.getHSBColor(0.56f, 1.0f, 0.8f));
+        btnLaboratorio.setBackground(Color.getHSBColor(0.56f, 1.0f, 0.8f));
         //QUITAR COLOR
-        jButton1.setBackground(Color.getColor("FFFFFF"));
-        jButton3.setBackground(Color.getColor("FFFFFF"));
-        jButton4.setBackground(Color.getColor("FFFFFF"));
-        jButton5.setBackground(Color.getColor("FFFFFF"));
-        jButton6.setBackground(Color.getColor("FFFFFF"));
-        jButton2.setBackground(Color.getColor("FFFFFF"));
-    }//GEN-LAST:event_jButton7ActionPerformed
+        btnSociedades.setBackground(Color.getColor("FFFFFF"));
+        btnPersonas.setBackground(Color.getColor("FFFFFF"));
+        btnFincaCert.setBackground(Color.getColor("FFFFFF"));
+        btnRecepcion.setBackground(Color.getColor("FFFFFF"));
+        btnBH.setBackground(Color.getColor("FFFFFF"));
+        btnConfigurador.setBackground(Color.getColor("FFFFFF"));
+    }//GEN-LAST:event_btnLaboratorioActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnSociedadesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSociedadesActionPerformed
         panelArbol.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         jScrollPane2.setOpaque(false);
 
-        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Modulo Sociedades");
-        javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Sociedades");
-        javax.swing.tree.DefaultMutableTreeNode treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Localidades");
-        javax.swing.tree.DefaultMutableTreeNode treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("Recepcion");
-        javax.swing.tree.DefaultMutableTreeNode treeNode5 = new javax.swing.tree.DefaultMutableTreeNode("Beneficios Humedos");
-        javax.swing.tree.DefaultMutableTreeNode treeNode6 = new javax.swing.tree.DefaultMutableTreeNode("Almacenes");
+        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("ModuloSociedades"));
+        javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("Sociedades"));
+        javax.swing.tree.DefaultMutableTreeNode treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("Localidades"));
+        javax.swing.tree.DefaultMutableTreeNode treeNode4 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("Recepciones"));
+        javax.swing.tree.DefaultMutableTreeNode treeNode5 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("BeneficiosHumedos"));
+        javax.swing.tree.DefaultMutableTreeNode treeNode6 = new javax.swing.tree.DefaultMutableTreeNode(idioma.getProperty("Almacenes"));
         treeNode1.add(treeNode2);
         treeNode1.add(treeNode3);
         treeNode1.add(treeNode4);
@@ -1538,15 +2106,20 @@ public class pantallaPrincipal extends javax.swing.JFrame {
         }
 
         //CAMBIAR COLORES BOTOTES
-        jButton1.setBackground(new Color(26, 66, 21));
+        btnSociedades.setBackground(new Color(26, 66, 21));
         //QUITAR COLOR
-        jButton5.setBackground(Color.getColor("FFFFFF"));
-        jButton3.setBackground(Color.getColor("FFFFFF"));
-        jButton4.setBackground(Color.getColor("FFFFFF"));
-        jButton2.setBackground(Color.getColor("FFFFFF"));
-        jButton6.setBackground(Color.getColor("FFFFFF"));
-        jButton7.setBackground(Color.getColor("FFFFFF"));
-    }//GEN-LAST:event_jButton1ActionPerformed
+        btnRecepcion.setBackground(Color.getColor("FFFFFF"));
+        btnPersonas.setBackground(Color.getColor("FFFFFF"));
+        btnFincaCert.setBackground(Color.getColor("FFFFFF"));
+        btnConfigurador.setBackground(Color.getColor("FFFFFF"));
+        btnBH.setBackground(Color.getColor("FFFFFF"));
+        btnLaboratorio.setBackground(Color.getColor("FFFFFF"));
+    }//GEN-LAST:event_btnSociedadesActionPerformed
+
+    private void comboIdiomaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboIdiomaActionPerformed
+        // TODO add your handling code here:
+        cambiarIdioma(comboIdioma.getSelectedItem() + "");
+    }//GEN-LAST:event_comboIdiomaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1598,15 +2171,17 @@ public class pantallaPrincipal extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
-    private javax.swing.JButton jButton7;
+    private javax.swing.JButton btnBH;
+    private javax.swing.JButton btnConfigurador;
+    private javax.swing.JButton btnFincaCert;
+    private javax.swing.JButton btnLaboratorio;
+    private javax.swing.JButton btnPersonas;
+    private javax.swing.JButton btnRecepcion;
+    private javax.swing.JButton btnSociedades;
+    private javax.swing.JComboBox<String> comboIdioma;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;

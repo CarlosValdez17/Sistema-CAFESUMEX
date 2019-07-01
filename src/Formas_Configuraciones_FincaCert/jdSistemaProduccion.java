@@ -5,6 +5,7 @@
  */
 package Formas_Configuraciones_FincaCert;
 
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
@@ -24,8 +25,9 @@ public class jdSistemaProduccion extends javax.swing.JDialog {
     metodosDatosBasicos mdb;
     String tipo, dato;
     validaConfi valiConf;
+    Propiedades idioma;
 
-    public jdSistemaProduccion(java.awt.Frame parent, boolean modal, String tipo, String dato, Connection c) {
+    public jdSistemaProduccion(java.awt.Frame parent, boolean modal, String tipo, String dato, String Idioma, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
@@ -35,11 +37,19 @@ public class jdSistemaProduccion extends javax.swing.JDialog {
         this.tipo = tipo;
 
         mdb = new metodosDatosBasicos(cn);
+                idioma = new Propiedades(Idioma);
+        
+        jButton1.setText(idioma.getProperty("Aceptar"));;
+        jButton2.setText(idioma.getProperty("Cancelar"));;
+        jLabel1.setText(idioma.getProperty("SistemaDeProduccion"));;
+
 
         if (tipo.equals("1")) {
-            setTitle("Nuevo Sistema de Produccion");
+            //setTitle("NuevoSistemaDeProduccion");
+            setTitle(idioma.getProperty("NuevoSistemaDeProduccion"));
         } else {
-            setTitle("Editar Sistema de Produccion");
+            //setTitle("EditarSistemaDeProduccion");
+            setTitle(idioma.getProperty("EditarSistemaDeProduccion"));
             txtSistema.setText(dato);
         }
     }

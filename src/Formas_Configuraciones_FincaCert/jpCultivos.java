@@ -5,6 +5,7 @@
  */
 package Formas_Configuraciones_FincaCert;
 
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.Connection;
 import javax.swing.JOptionPane;
@@ -25,12 +26,31 @@ public class jpCultivos extends javax.swing.JPanel {
     DefaultTableModel modelo;
     jdCultivos jdC;
 
-    public jpCultivos(Connection c) {
+    Propiedades idioma;
+    String Idioma;
+
+    public jpCultivos(Connection c, String Idioma) {
         initComponents();
 
         cn = c;
+        this.Idioma = Idioma;
         mdb = new metodosDatosBasicos(cn);
         modelo = (DefaultTableModel) tablaCultivos.getModel();
+
+        idioma = new Propiedades(Idioma);
+        jButton5.setText(idioma.getProperty("Cerrar"));
+        jButton2.setText(idioma.getProperty("Nuevo"));
+        jButton3.setText(idioma.getProperty("Editar"));
+        jButton4.setText(idioma.getProperty("Desactivar"));
+        jLabel10.setText(idioma.getProperty("Situacion"));
+        jLabel6.setText(idioma.getProperty("Cultivos"));
+
+        tablaCultivos.getColumnModel().getColumn(0).setHeaderValue(idioma.getProperty("Cultivos"));
+        tablaCultivos.getColumnModel().getColumn(1).setHeaderValue(idioma.getProperty("Situacion"));
+
+        comboSituacion.addItem(idioma.getProperty("Activos"));
+        comboSituacion.addItem(idioma.getProperty("Inactivos"));
+        comboSituacion.addItem(idioma.getProperty("Todos"));
 
         busqueda();
         //llenaTabla();
@@ -39,21 +59,30 @@ public class jpCultivos extends javax.swing.JPanel {
     public void busqueda() {
         String tipoB = "";
         String situacion = "";
+        situacion = comboSituacion.getSelectedIndex() + "";
 
-        situacion = comboSituacionCultivos.getSelectedItem() + "";
+        if (situacion.equals("1")) {
+            situacion = "2";
+        } else if (situacion.equals("0")) {
+            situacion = "1";
+        } else {
+            situacion = "3";
+        }
+
+        /*        situacion = comboSituacionCultivos.getSelectedItem() + "";
 
         if (situacion.equals("Inactivo")) {
             situacion = "2";
         } else if (situacion.equals("Activo")) {
             situacion = "1";
         }
-
+         */
         if (txtBusquedaCultivos.getText().length() > 0) {
             tipoB = "AND c.descripcion like '" + txtBusquedaCultivos.getText() + "%'";
         }
 
         String sql;
-        if (situacion.equals("Todos")) {
+        if (situacion.equals("3")) {
             sql = "select c.descripcion, s.descripcion "
                     + "from cultivos c "
                     + "inner join situacion s on (c.id_situacion=s.id) "
@@ -93,7 +122,7 @@ public class jpCultivos extends javax.swing.JPanel {
         tablaCultivos = new javax.swing.JTable();
         jPanel8 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
-        comboSituacionCultivos = new javax.swing.JComboBox<>();
+        comboSituacion = new javax.swing.JComboBox<>();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
@@ -160,10 +189,9 @@ public class jpCultivos extends javax.swing.JPanel {
 
         jLabel10.setText("Situacion");
 
-        comboSituacionCultivos.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Activo", "Inactivo", "Todos" }));
-        comboSituacionCultivos.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                comboSituacionCultivosItemStateChanged(evt);
+        comboSituacion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboSituacionActionPerformed(evt);
             }
         });
 
@@ -203,7 +231,7 @@ public class jpCultivos extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jLabel10)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(comboSituacionCultivos, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(comboSituacion, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -222,7 +250,7 @@ public class jpCultivos extends javax.swing.JPanel {
                     .addComponent(jButton2)
                     .addComponent(jButton3)
                     .addComponent(jButton4)
-                    .addComponent(comboSituacionCultivos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(comboSituacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel10)
                     .addComponent(jButton5))
                 .addContainerGap())
@@ -299,55 +327,39 @@ public class jpCultivos extends javax.swing.JPanel {
     String variedad = "", situacion = "";
     private void tablaCultivosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaCultivosMouseClicked
         // TODO add your handling code here:
-        variedad = modelo.getValueAt(tablaCultivos.getSelectedRow(), 0) + "";  //pais
-        situacion = tablaCultivos.getValueAt(tablaCultivos.getSelectedRow(), 1) + "";
+        variedad = modelo.getValueAt(tablaCultivos.getSelectedRow(), 0) + "";
 
         if (evt.getClickCount() == 2) {
-            if (situacion.equals("Activo")) {
-                jdC = new jdCultivos(null, true, "2", variedad, cn);
-                jdC.jpC = this;
-                jdC.setVisible(true);
-            } else if (situacion.equals("Inactivo")) {
-                JOptionPane.showMessageDialog(null, "Dato Inactivo");
-            }
+            jdC = new jdCultivos(null, true, "2", variedad, Idioma, cn);
+            jdC.jpC = this;
+            jdC.setVisible(true);
         }
     }//GEN-LAST:event_tablaCultivosMouseClicked
     String estatus = "";
-    private void comboSituacionCultivosItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionCultivosItemStateChanged
-        // TODO add your handling code here:
-        if (comboSituacionCultivos.getSelectedItem().equals("Inactivo")) {
-            estatus = "1";
-            jButton4.setText("Activar");
-        } else {
-            estatus = "2";
-            jButton4.setText("Desactivar");
-        }
-        busqueda();
-    }//GEN-LAST:event_comboSituacionCultivosItemStateChanged
-
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        jdC = new jdCultivos(null, true, "1", variedad, cn);
+        jdC = new jdCultivos(null, true, "1", variedad, Idioma, cn);
         jdC.jpC = this;
         jdC.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        if (situacion.equals("Activo")) {
-            jdC = new jdCultivos(null, true, "2", variedad, cn);
+        if (variedad.equals("")) {
+            JOptionPane.showMessageDialog(null, idioma.getProperty("SeleccionRegistro"));
+            //JOptionPane.showMessageDialog(null,"selecciona un registro");
+        } else {
+            jdC = new jdCultivos(null, true, "2", variedad, Idioma, cn);
             jdC.jpC = this;
             jdC.setVisible(true);
-        } else {
-            JOptionPane.showMessageDialog(null, "Dato Inactivo");
         }
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        if (estatus.equals("2")) {
+        if (comboSituacion.getSelectedIndex() == 0) {
             mdb.actualizarBasicos("UPDATE cultivos SET ID_Situacion=2 where descripcion='" + variedad + "'");
-        } else if (estatus.equals("1")) {
+        } else if (comboSituacion.getSelectedIndex() == 1) {
             mdb.actualizarBasicos("UPDATE cultivos SET ID_Situacion=1 where descripcion='" + variedad + "'");
         }
         busqueda();
@@ -358,9 +370,23 @@ public class jpCultivos extends javax.swing.JPanel {
 
     }//GEN-LAST:event_jButton5ActionPerformed
 
+    private void comboSituacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboSituacionActionPerformed
+        // TODO add your handling code here:
+        if (comboSituacion.getSelectedItem().equals(idioma.getProperty("Inactivos"))) {
+            jButton4.setText(idioma.getProperty("Activar"));
+            jButton4.setEnabled(true);
+        } else if (comboSituacion.getSelectedItem().equals(idioma.getProperty("Activos"))) {
+            jButton4.setText(idioma.getProperty("Desactivar"));
+            jButton4.setEnabled(true);
+        } else {
+            jButton4.setEnabled(false);
+        }
+        busqueda();
+    }//GEN-LAST:event_comboSituacionActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox<String> comboSituacionCultivos;
+    private javax.swing.JComboBox<String> comboSituacion;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;

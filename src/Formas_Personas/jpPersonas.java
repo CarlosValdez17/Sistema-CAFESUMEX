@@ -5,6 +5,7 @@
  */
 package Formas_Personas;
 
+import Idioma.Propiedades;
 import MetodosGenerales.JComboCheckBox;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.awt.Checkbox;
@@ -38,20 +39,90 @@ public class jpPersonas extends javax.swing.JPanel {
     DefaultTableModel modelo, modelo2;
     jdFormularioPersonas jdDP;
     ArrayList<String> array = new ArrayList<String>();
+    String Idioma;
+    Propiedades idioma;
 
-    public jpPersonas(Connection c) {
+    public jpPersonas(Connection c, String Idioma) {
         initComponents();
         //tablaPersonas.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         //new JScrollPane(tablaPersonas, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         cn = c;
         mdb = new metodosDatosBasicos(cn);
         modelo = (DefaultTableModel) tablaPersonas.getModel();
+        idioma = new Propiedades(Idioma);
+        this.Idioma = Idioma;
+
+        //Etiqueta Persona
+        jLabel1.setText(idioma.getProperty("Persona"));
+        //Etiqueta Genero
+        jLabel2.setText(idioma.getProperty("Genero"));
+        //Etiqueta Asignaciones
+        jLabel5.setText(idioma.getProperty("Asignaciones"));
+        //Etiqueta buscar por
+        jLabel4.setText(idioma.getProperty("BuscarPor"));
+        //Etiqueta Busqueda
+        jLabel3.setText(idioma.getProperty("Busqueda"));
+        //Etiqueta Situacion
+        jLabel10.setText(idioma.getProperty("Situacion"));
+        //Boton nuevo
+        jButton2.setText(idioma.getProperty("Nuevo"));
+        //Boton editar
+        jButton3.setText(idioma.getProperty("Editar"));
+        //Boton desactivar
+        jButton4.setText(idioma.getProperty("Desactivar"));
+        //Boton cerrar
+        jButton1.setText(idioma.getProperty("Cerrar"));
+
+        comboSituacion.addItem(idioma.getProperty("Activos"));
+        comboSituacion.addItem(idioma.getProperty("Inactivos"));
+        comboSituacion.addItem(idioma.getProperty("Todos"));
+
+        comboGenero.addItem(idioma.getProperty("Todos"));
+        comboGenero.addItem(idioma.getProperty("Masculino"));
+        comboGenero.addItem(idioma.getProperty("Femenino"));
+
+        comboPersona.addItem(idioma.getProperty("Todos"));
+        comboPersona.addItem(idioma.getProperty("PersonaFisica"));
+        comboPersona.addItem(idioma.getProperty("PersonaMoral"));
+
+        comboAsignaciones.addItem(idioma.getProperty("Seleccione"));
+        comboAsignaciones.addItem(idioma.getProperty("Socio"));
+        comboAsignaciones.addItem(idioma.getProperty("Productor"));
+        comboAsignaciones.addItem(idioma.getProperty("EnlaceComercial"));
+        comboAsignaciones.addItem(idioma.getProperty("EncargadoBH"));
+        comboAsignaciones.addItem(idioma.getProperty("EncargadoRecepcion"));
+        comboAsignaciones.addItem(idioma.getProperty("CapturistaBH"));
+        comboAsignaciones.addItem(idioma.getProperty("CapturistaRecepcion"));
+        comboAsignaciones.addItem(idioma.getProperty("Transportista"));
+
+        //Seleccione.., Nombre, Razon Social, Nombre Corto, Apellido Paterno, Apellido Materno, Direccion
+        /*comboBusqueda.addItem(idioma.getProperty("Seleccione")); //0
+        comboBusqueda.addItem(idioma.getProperty("Nombre"));     //1
+        comboBusqueda.addItem(idioma.getProperty("RazonSocial"));//2
+        comboBusqueda.addItem(idioma.getProperty("NombreCorto"));//3
+        comboBusqueda.addItem(idioma.getProperty("ApellidoPaterno"));   //4
+        comboBusqueda.addItem(idioma.getProperty("ApellidoMaterno"));   //5
+        comboBusqueda.addItem(idioma.getProperty("Direccion"));         //6*/
+        tablaPersonas.getColumnModel().getColumn(0).setHeaderValue(idioma.getProperty("Nombre"));
+        tablaPersonas.getColumnModel().getColumn(1).setHeaderValue(idioma.getProperty("ApellidoPaterno"));
+        tablaPersonas.getColumnModel().getColumn(2).setHeaderValue(idioma.getProperty("ApellidoMaterno"));
+        tablaPersonas.getColumnModel().getColumn(3).setHeaderValue(idioma.getProperty("RazonSocial"));
+        tablaPersonas.getColumnModel().getColumn(4).setHeaderValue(idioma.getProperty("Direccion"));
+        tablaPersonas.getColumnModel().getColumn(5).setHeaderValue(idioma.getProperty("CodigoPostal"));
+        tablaPersonas.getColumnModel().getColumn(6).setHeaderValue(idioma.getProperty("TelefonoFijo"));
+        tablaPersonas.getColumnModel().getColumn(7).setHeaderValue(idioma.getProperty("TelefonoMovil"));
+        tablaPersonas.getColumnModel().getColumn(8).setHeaderValue(idioma.getProperty("Pais"));
+        tablaPersonas.getColumnModel().getColumn(9).setHeaderValue(idioma.getProperty("Estado"));
+        tablaPersonas.getColumnModel().getColumn(10).setHeaderValue(idioma.getProperty("Municipio"));
+        tablaPersonas.getColumnModel().getColumn(11).setHeaderValue(idioma.getProperty("Localidad"));
+        tablaPersonas.getColumnModel().getColumn(12).setHeaderValue(idioma.getProperty("ColoniaEjido"));
+
         //  AutoCompleteDecorator.decorate(comboPersona);
-       
         llenarTabla();
         tablaPersonas.setRowSorter(new TableRowSorter(modelo));
-        cargarCombo();
-        comboGenero.setEnabled(false);
+        //cargarCombo();
+        comboBusqueda.setEnabled(false);
+        txtBusqueda.setEnabled(false);
     }
 
     public void cargarCombo() {
@@ -60,94 +131,272 @@ public class jpPersonas extends javax.swing.JPanel {
     }
 
     //✘ ✓
-    String situacion = "1";
-
     public void llenarTabla() {
-        array.clear();
-        String tipoPer = comboPersona.getSelectedItem() + "";
-        String tipoGen = comboGenero.getSelectedItem() + "";
-        String where = " where x.id_situacion=1";
+        limpiar(tablaPersonas);
+        String where = "";
 
-     /*   if (!tipoGen.equals("Todos")) {
-            tipoGen = mdb.devuelveId("select id from genero where descripcion='" + tipoGen + "'");
-        } else {
-            tipoGen = "";
+        switch (comboSituacion.getSelectedIndex()) {
+            // -------------------------------------- Combo situacion = ACTIVOS -------------------------------------- 
+            case 0:
+                //JOptionPane.showMessageDialog(null, "Estoy en situacion ACTIVOS");
+                switch (comboPersona.getSelectedIndex()) {
+                    //Todas fisicas y morales
+                    case 0:
+
+                        mdb.cargarInformacionPruebaArray(modelo, 13, "select nombre, ApellidoPaterno, ApellidoMaterno, '' as razon, Direccion, CodigoPostal, Telefono, telefonoMovil, p.descripcion, e.descripcion, m.descripcion, l.descripcion, c.descripcion\n"
+                                + "from personaf x\n"
+                                + "left join pais p on (x.ID_Pais=p.ID)\n"
+                                + "left join estado e on (x.ID_Estado=e.ID)\n"
+                                + "left join municipio m on (x.ID_Municipio=m.ID)\n"
+                                + "left join localidad l on (x.ID_Localidad=l.ID)\n"
+                                + "left join ejidocolonia c on (x.ID_EjidoColonia=c.ID) where x.id_situacion=1 ", array);
+                        mdb.cargarInformacionPruebaArray(modelo, 13, "select '' as nombre, '' as ApellidoPaterno, '' as ApellidoMaterno, RazonSocial, Direccion, CodigoPostal, Telefono, '' as telefonoMovil, p.descripcion, e.descripcion, m.descripcion, l.descripcion, c.descripcion\n"
+                                + "from personam x\n"
+                                + "left join pais p on (x.ID_Pais=p.ID)\n"
+                                + "left join estado e on (x.ID_Estado=e.ID)\n"
+                                + "left join municipio m on (x.ID_Municipio=m.ID)\n"
+                                + "left join localidad l on (x.ID_Localidad=l.ID)\n"
+                                + "left join ejidocolonia c on (x.ID_EjidoColonia=c.ID) where x.id_situacion=1 ", array);
+                        break;
+
+                    //Personas fisicas
+                    case 1:
+                        //Combo de Genero masculino / mujer
+                        switch (comboGenero.getSelectedIndex()) {
+                            //Todos Hombres y Mujeres
+                            case 0:
+                                where = " and id_genero <> 3";
+                                break;
+
+                            //Masculino
+                            case 1:
+                                where = " and id_genero = 1";
+                                break;
+
+                            //Femenino
+                            case 2:
+                                where = " and id_genero = 2";
+                                break;
+
+                        }
+                        //Combo de ASignaciones
+                        switch (comboAsignaciones.getSelectedIndex()) {
+                            //Nada
+                            case 0:
+                                where += "";
+                                break;
+                            //Socio
+                            case 1:
+                                where += " and ap.codigo='Socio'";
+                                break;
+                            //Productor
+                            case 2:
+                                where += " and ap.codigo='Productor'";
+                                break;
+                            //Enlace Comercial
+                            case 3:
+                                where += " and ap.codigo='Enlace Comercial'";
+                                break;
+                            //Encargado Beneficio
+                            case 4:
+                                where = " and ap.codigo='Encargado Beneficio'";
+                                break;
+                            //Encargado Recep
+                            case 5:
+                                where += " and ap.codigo='Encargado Recepcion'";
+                                break;
+                            //Capturista beneficio
+                            case 6:
+                                where += " and ap.codigo='Capturista Beneficio'";
+                                break;
+                            //Capturista Recepcion
+                            case 7:
+                                where += " and ap.codigo='Capturista Recepcion'";
+                                break;
+                            //Transportista
+                            case 8:
+                                where += " and ap.codigo='Transportista'";
+                                break;
+                        }
+                        
+                        switch (comboBusqueda.getSelectedIndex()) {
+                            //Select
+                            case 0:
+
+                                break;
+                            //Nombre
+                            case 1:
+                                where += " and x.nombre like '" + txtBusqueda.getText() + "%'";
+                                break;
+                              //Apellido Pat
+                            case 2:
+                                where += " and x.apellidopaterno like '" + txtBusqueda.getText() + "%'";
+                                break;
+                            //Apellido Mat
+                            case 3:
+                                where += " and x.apellidomaterno like '" + txtBusqueda.getText() + "%'";
+                                break;
+                            //Direccion
+                            case 4:
+                                where += " and x.direccion like '" + txtBusqueda.getText() + "%'";
+                                break;
+                        }
+
+
+                        mdb.cargarInformacionPruebaArray(modelo, 13, "select nombre, ApellidoPaterno, ApellidoMaterno, '' as razon, Direccion, CodigoPostal, Telefono, telefonoMovil, p.descripcion, e.descripcion, m.descripcion, l.descripcion, c.descripcion\n"
+                                + "from personaf x\n"
+                                + "left join pais p on (x.ID_Pais=p.ID)\n"
+                                + "left join estado e on (x.ID_Estado=e.ID)\n"
+                                + "left join municipio m on (x.ID_Municipio=m.ID)\n"
+                                + "left join localidad l on (x.ID_Localidad=l.ID)\n"
+                                + "left join asignacionespersona ap on (ap.id_persona=x.ID)\n"
+                                + "left join ejidocolonia c on (x.ID_EjidoColonia=c.ID) where x.id_situacion=1 " + where + " group by x.id", array);
+                        break;
+
+                    //Personas morales
+                    case 2:
+
+                        switch (comboBusqueda.getSelectedIndex()) {
+                            //Select
+                            case 0:
+
+                                break;
+                            //Razon social
+                            case 1:
+                                where += " and x.razonsocial like '" + txtBusqueda.getText() + "%'";
+                                break;
+                            //Nombre corto
+                            case 2:
+                                where += " and x.nombrecorto like '" + txtBusqueda.getText() + "%'";
+                                break;
+                            //Direccion
+                            case 3:
+                                where += " and x.direccion like '" + txtBusqueda.getText() + "%'";
+                                break;
+                        }
+
+                        mdb.cargarInformacionPruebaArray(modelo, 13, "select '' as nombre, '' as ApellidoPaterno, '' as ApellidoMaterno, RazonSocial, Direccion, CodigoPostal, Telefono, '' as telefonoMovil, p.descripcion, e.descripcion, m.descripcion, l.descripcion, c.descripcion\n"
+                                + "from personam x\n"
+                                + "left join pais p on (x.ID_Pais=p.ID)\n"
+                                + "left join estado e on (x.ID_Estado=e.ID)\n"
+                                + "left join municipio m on (x.ID_Municipio=m.ID)\n"
+                                + "left join localidad l on (x.ID_Localidad=l.ID)\n"
+                                + "left join ejidocolonia c on (x.ID_EjidoColonia=c.ID) where x.id_situacion=1 " + where, array);
+                        break;
+
+                }
+                break;
+            // -------------------------------------- Combo situacion = Inactivos -------------------------------------- 
+            case 1:
+                //JOptionPane.showMessageDialog(null, "Estoy en situacion INACTIVOS");
+                switch (comboPersona.getSelectedIndex()) {
+                    //Todas fisicas y morales
+                    case 0:
+                        mdb.cargarInformacionPruebaArray(modelo, 13, "select nombre, ApellidoPaterno, ApellidoMaterno, '' as razon, Direccion, CodigoPostal, Telefono, telefonoMovil, p.descripcion, e.descripcion, m.descripcion, l.descripcion, c.descripcion\n"
+                                + "from personaf x\n"
+                                + "left join pais p on (x.ID_Pais=p.ID)\n"
+                                + "left join estado e on (x.ID_Estado=e.ID)\n"
+                                + "left join municipio m on (x.ID_Municipio=m.ID)\n"
+                                + "left join localidad l on (x.ID_Localidad=l.ID)\n"
+                                + "left join ejidocolonia c on (x.ID_EjidoColonia=c.ID) where x.id_situacion=2", array);
+                        mdb.cargarInformacionPruebaArray(modelo, 13, "select '' as nombre, '' as ApellidoPaterno, '' as ApellidoMaterno, RazonSocial, Direccion, CodigoPostal, Telefono, '' as telefonoMovil, p.descripcion, e.descripcion, m.descripcion, l.descripcion, c.descripcion\n"
+                                + "from personam x\n"
+                                + "left join pais p on (x.ID_Pais=p.ID)\n"
+                                + "left join estado e on (x.ID_Estado=e.ID)\n"
+                                + "left join municipio m on (x.ID_Municipio=m.ID)\n"
+                                + "left join localidad l on (x.ID_Localidad=l.ID)\n"
+                                + "left join ejidocolonia c on (x.ID_EjidoColonia=c.ID) where x.id_situacion=2", array);
+                        break;
+
+                    //Personas fisicas
+                    case 1:
+                        switch (comboGenero.getSelectedIndex()) {
+                            //Todos Hombres y Mujeres
+                            case 0:
+                                where = " and id_genero <> 3";
+                                break;
+
+                            //Masculino
+                            case 1:
+                                where = " and id_genero = 1";
+                                break;
+
+                            //Femenino
+                            case 2:
+                                where = " and id_genero = 2";
+                                break;
+
+                        }
+                        mdb.cargarInformacionPruebaArray(modelo, 13, "select nombre, ApellidoPaterno, ApellidoMaterno, '' as razon, Direccion, CodigoPostal, Telefono, telefonoMovil, p.descripcion, e.descripcion, m.descripcion, l.descripcion, c.descripcion\n"
+                                + "from personaf x\n"
+                                + "left join pais p on (x.ID_Pais=p.ID)\n"
+                                + "left join estado e on (x.ID_Estado=e.ID)\n"
+                                + "left join municipio m on (x.ID_Municipio=m.ID)\n"
+                                + "left join localidad l on (x.ID_Localidad=l.ID)\n"
+                                + "left join ejidocolonia c on (x.ID_EjidoColonia=c.ID) where x.id_situacion=2 " + where, array);
+                        break;
+                    //Personas Morales
+                    case 2:
+                        mdb.cargarInformacionPruebaArray(modelo, 13, "select '' as nombre, '' as ApellidoPaterno, '' as ApellidoMaterno, RazonSocial, Direccion, CodigoPostal, Telefono, '' as telefonoMovil, p.descripcion, e.descripcion, m.descripcion, l.descripcion, c.descripcion\n"
+                                + "from personam x\n"
+                                + "left join pais p on (x.ID_Pais=p.ID)\n"
+                                + "left join estado e on (x.ID_Estado=e.ID)\n"
+                                + "left join municipio m on (x.ID_Municipio=m.ID)\n"
+                                + "left join localidad l on (x.ID_Localidad=l.ID)\n"
+                                + "left join ejidocolonia c on (x.ID_EjidoColonia=c.ID) where x.id_situacion =2 " + where, array);
+                        break;
+                }
+                break;
+            // -------------------------------------- Combo situacion = TODOS --------------------------------------     
+            case 2:
+                //JOptionPane.showMessageDialog(null, "Estoy en situacion TODOS");
+                switch (comboPersona.getSelectedIndex()) {
+                    //Todas fisicas y morales
+                    case 0:
+                        mdb.cargarInformacionPruebaArray(modelo, 13, "select nombre, ApellidoPaterno, ApellidoMaterno, '' as razon, Direccion, CodigoPostal, Telefono, telefonoMovil, p.descripcion, e.descripcion, m.descripcion, l.descripcion, c.descripcion\n"
+                                + "from personaf x\n"
+                                + "left join pais p on (x.ID_Pais=p.ID)\n"
+                                + "left join estado e on (x.ID_Estado=e.ID)\n"
+                                + "left join municipio m on (x.ID_Municipio=m.ID)\n"
+                                + "left join localidad l on (x.ID_Localidad=l.ID)\n"
+                                + "left join ejidocolonia c on (x.ID_EjidoColonia=c.ID) where x.id_situacion <> 3 ", array);
+                        mdb.cargarInformacionPruebaArray(modelo, 13, "select '' as nombre, '' as ApellidoPaterno, '' as ApellidoMaterno, RazonSocial, Direccion, CodigoPostal, Telefono, '' as telefonoMovil, p.descripcion, e.descripcion, m.descripcion, l.descripcion, c.descripcion\n"
+                                + "from personam x\n"
+                                + "left join pais p on (x.ID_Pais=p.ID)\n"
+                                + "left join estado e on (x.ID_Estado=e.ID)\n"
+                                + "left join municipio m on (x.ID_Municipio=m.ID)\n"
+                                + "left join localidad l on (x.ID_Localidad=l.ID)\n"
+                                + "left join ejidocolonia c on (x.ID_EjidoColonia=c.ID) where x.id_situacion <> 3 ", array);
+                        break;
+
+                    //Personas fisicas
+                    case 1:
+
+                        mdb.cargarInformacionPruebaArray(modelo, 13, "select nombre, ApellidoPaterno, ApellidoMaterno, '' as razon, Direccion, CodigoPostal, Telefono, telefonoMovil, p.descripcion, e.descripcion, m.descripcion, l.descripcion, c.descripcion\n"
+                                + "from personaf x\n"
+                                + "left join pais p on (x.ID_Pais=p.ID)\n"
+                                + "left join estado e on (x.ID_Estado=e.ID)\n"
+                                + "left join municipio m on (x.ID_Municipio=m.ID)\n"
+                                + "left join localidad l on (x.ID_Localidad=l.ID)\n"
+                                + "left join ejidocolonia c on (x.ID_EjidoColonia=c.ID) where x.id_situacion <> 3 ", array);
+                        break;
+
+                    //Personas morales
+                    case 2:
+                        mdb.cargarInformacionPruebaArray(modelo, 13, "select '' as nombre, '' as ApellidoPaterno, '' as ApellidoMaterno, RazonSocial, Direccion, CodigoPostal, Telefono, '' as telefonoMovil, p.descripcion, e.descripcion, m.descripcion, l.descripcion, c.descripcion\n"
+                                + "from personam x\n"
+                                + "left join pais p on (x.ID_Pais=p.ID)\n"
+                                + "left join estado e on (x.ID_Estado=e.ID)\n"
+                                + "left join municipio m on (x.ID_Municipio=m.ID)\n"
+                                + "left join localidad l on (x.ID_Localidad=l.ID)\n"
+                                + "left join ejidocolonia c on (x.ID_EjidoColonia=c.ID) where x.id_situacion <> 3 ", array);
+                        break;
+
+                }
+                break;
+
         }
 
-        if (comboBusqueda.getSelectedItem().equals("Seleccione..") && !comboGenero.getSelectedItem().equals("Todos")) {
-            where = "and id_genero=" + tipoGen;
-        }
-
-        String tipoBusqueda = "";
-        if (txtBusqueda.getText().length() > 0) {
-            tipoBusqueda = " AND Almacen like '%" + txtBusqueda.getText() + "%'";
-        }*/
-
-        if (tipoPer.equals(
-                "Moral")) {
-            comboGenero.setEnabled(false);
-            //comboPuestos.setEnabled(false);
-            limpiar(tablaPersonas);
-            mdb.cargarInformacionPruebaArray(modelo, 13, "select '' as nombre, '' as ApellidoPaterno, '' as ApellidoMaterno, RazonSocial, Direccion, CodigoPostal, Telefono, '' as telefonoMovil, p.descripcion, e.descripcion, m.descripcion, l.descripcion, c.descripcion\n"
-                    + "from personam x\n"
-                    + "inner join pais p on (x.ID_Pais=p.ID)\n"
-                    + "inner join estado e on (x.ID_Estado=e.ID)\n"
-                    + "inner join municipio m on (x.ID_Municipio=m.ID)\n"
-                    + "inner join localidad l on (x.ID_Localidad=l.ID)\n"
-                    + "inner join ejidocolonia c on (x.ID_EjidoColonia=c.ID) " + where, array);
-            //+ "where x.ID_TipoPersona=2", array);
-            System.out.println(array);
-
-        } else if (tipoPer.equals(
-                "Fisica")) {
-            comboGenero.setEnabled(true);
-            //comboPuestos.setEnabled(true);
-            limpiar(tablaPersonas);
-            mdb.cargarInformacionPruebaArray(modelo, 13, "select nombre, ApellidoPaterno, ApellidoMaterno, '' as razon, Direccion, CodigoPostal, Telefono, telefonoMovil, p.descripcion, e.descripcion, m.descripcion, l.descripcion, c.descripcion\n"
-                    + "from personaf x\n"
-                    + "inner join pais p on (x.ID_Pais=p.ID)\n"
-                    + "inner join estado e on (x.ID_Estado=e.ID)\n"
-                    + "inner join municipio m on (x.ID_Municipio=m.ID)\n"
-                    + "inner join localidad l on (x.ID_Localidad=l.ID)\n"
-                    + "inner join ejidocolonia c on (x.ID_EjidoColonia=c.ID)" + where , array);
-            //+ "where x.ID_TipoPersona=1", array);
-
-        } else {
-            comboGenero.setEnabled(true);
-            //comboPuestos.setEnabled(true);
-            limpiar(tablaPersonas);
-            mdb.cargarInformacionPruebaArray(modelo, 13, "select nombre, ApellidoPaterno, ApellidoMaterno, '' as razon, Direccion, CodigoPostal, Telefono, telefonoMovil, p.descripcion, e.descripcion, m.descripcion, l.descripcion, c.descripcion\n"
-                    + "from personaf x\n"
-                    + "inner join pais p on (x.ID_Pais=p.ID)\n"
-                    + "inner join estado e on (x.ID_Estado=e.ID)\n"
-                    + "inner join municipio m on (x.ID_Municipio=m.ID)\n"
-                    + "inner join localidad l on (x.ID_Localidad=l.ID)\n"
-                    + "inner join ejidocolonia c on (x.ID_EjidoColonia=c.ID)" + where, array);
-            mdb.cargarInformacionPruebaArray(modelo, 13, "select '' as nombre, '' as ApellidoPaterno, '' as ApellidoMaterno, RazonSocial, Direccion, CodigoPostal, Telefono, '' as telefonoMovil, p.descripcion, e.descripcion, m.descripcion, l.descripcion, c.descripcion\n"
-                    + "from personam x\n"
-                    + "inner join pais p on (x.ID_Pais=p.ID)\n"
-                    + "inner join estado e on (x.ID_Estado=e.ID)\n"
-                    + "inner join municipio m on (x.ID_Municipio=m.ID)\n"
-                    + "inner join localidad l on (x.ID_Localidad=l.ID)\n"
-                    + "inner join ejidocolonia c on (x.ID_EjidoColonia=c.ID)" + where, array);
-
-        }
-
-        /* for (int i = 0;
-                i < modelo.getRowCount();
-                i++) {
-            if (modelo.getValueAt(i, 4).equals("1")) {
-                modelo.setValueAt("✓", i, 4);
-            } else {
-                modelo.setValueAt("✘", i, 4);
-            }
-
-            if (modelo.getValueAt(i, 5).equals("1")) {
-                modelo.setValueAt("✓", i, 5);
-            } else {
-                modelo.setValueAt("✘", i, 5);
-            }
-        }*/
     }
 
     public void busqueda(String tipoCPersona, String tipoGenero, String tipoAsignacion, String tipoBusqueda, String palabra) {
@@ -157,20 +406,20 @@ public class jpPersonas extends javax.swing.JPanel {
         situacion = comboSituacion.getSelectedItem() + "";
 
         switch (tipoBusqueda) {
-            case "Apellido Paterno":
+            case "4":
                 tipoBusqueda = "apellidoPaterno";
                 break;
-            case "Apellido Materno":
+            case "5":
                 tipoBusqueda = "apellidoMaterno";
                 break;
-            case "Razon Social":
+            case "2":
                 tipoBusqueda = "razonsocial";
                 break;
         }
 
-        if (situacion.equals("Activo")) {
+        if (situacion.equals("0")) {
             whereSituacion = " and x.id_situacion=1";
-        } else if (situacion.equals("Inactivo")) {
+        } else if (situacion.equals("1")) {
             whereSituacion = " and x.id_situacion=2";
         } else {
             whereSituacion = " and x.id_situacion <> 3";
@@ -178,7 +427,7 @@ public class jpPersonas extends javax.swing.JPanel {
 
         switch (tipoCPersona) {
 
-            case "Todos":
+            case "0":
 
                 //JOptionPane.showMessageDialog(null, "Asignacion : "+tipoAsignacion);
                 if (tipoAsignacion.equals("Seleccione..")) {
@@ -195,24 +444,24 @@ public class jpPersonas extends javax.swing.JPanel {
 
                 sql = "select nombre, ApellidoPaterno, ApellidoMaterno, '' as razon, Direccion, CodigoPostal, Telefono, telefonoMovil, p.descripcion, e.descripcion, m.descripcion, l.descripcion, c.descripcion\n"
                         + "from personaf x\n"
-                        + "inner join pais p on (x.ID_Pais=p.ID)\n"
-                        + "inner join estado e on (x.ID_Estado=e.ID)\n"
-                        + "inner join municipio m on (x.ID_Municipio=m.ID)\n"
-                        + "inner join localidad l on (x.ID_Localidad=l.ID)\n"
-                        + "inner join ejidocolonia c on (x.ID_EjidoColonia=c.ID) "
-                        + "inner join genero g on (x.ID_Genero=g.ID) "
-                        + "inner join asignacionespersona a on (x.ID=a.id_persona)\n"
-                        + "inner join puestos pu on (pu.ID=a.id_puesto) \n" + where + whereSituacion + " group by x.id";
+                        + "left join pais p on (x.ID_Pais=p.ID)\n"
+                        + "left join estado e on (x.ID_Estado=e.ID)\n"
+                        + "left join municipio m on (x.ID_Municipio=m.ID)\n"
+                        + "left join localidad l on (x.ID_Localidad=l.ID)\n"
+                        + "left join ejidocolonia c on (x.ID_EjidoColonia=c.ID) "
+                        + "left join genero g on (x.ID_Genero=g.ID) "
+                        + "left join asignacionespersona a on (x.ID=a.id_persona)\n"
+                        + "left join puestos pu on (pu.ID=a.id_puesto) \n" + where + whereSituacion + " group by x.id";
 
                 sql2 = "select '' as nombre, '' as ApellidoPaterno, '' as ApellidoMaterno, RazonSocial, Direccion, CodigoPostal, Telefono, '' as telefonoMovil, p.descripcion, e.descripcion, m.descripcion, l.descripcion, c.descripcion\n"
                         + "from personam x\n"
-                        + "inner join pais p on (x.ID_Pais=p.ID)\n"
-                        + "inner join estado e on (x.ID_Estado=e.ID)\n"
-                        + "inner join municipio m on (x.ID_Municipio=m.ID)\n"
-                        + "inner join localidad l on (x.ID_Localidad=l.ID)\n"
-                        + "inner join ejidocolonia c on (x.ID_EjidoColonia=c.ID) "
-                        + "inner join asignacionespersona a on (x.ID=a.id_persona)\n"
-                        + "inner join puestos pu on (pu.ID=a.id_puesto) \n" + where + whereSituacion + " group by x.id";
+                        + "left join pais p on (x.ID_Pais=p.ID)\n"
+                        + "left join estado e on (x.ID_Estado=e.ID)\n"
+                        + "left join municipio m on (x.ID_Municipio=m.ID)\n"
+                        + "left join localidad l on (x.ID_Localidad=l.ID)\n"
+                        + "left join ejidocolonia c on (x.ID_EjidoColonia=c.ID) "
+                        + "left join asignacionespersona a on (x.ID=a.id_persona)\n"
+                        + "left join puestos pu on (pu.ID=a.id_puesto) \n" + where + whereSituacion + " group by x.id";
 
                 if (tipoAsignacion.equals("Ninguno") && tipoBusqueda.equals("Seleccione..")) {
                     mdb.cargarInformacionPruebaArray(modelo, 13, sql, array);
@@ -224,19 +473,19 @@ public class jpPersonas extends javax.swing.JPanel {
                 } else {//if (!tipoAsignacion.equals("Ninguno") && !tipoBusqueda.equals("Seleccione..")) {
 
                     switch (tipoBusqueda) {
-                        case "Nombre":
+                        case "1":
                             mdb.cargarInformacionPruebaArray(modelo, 13, sql, array);
                             break;
-                        case "apellidoPaterno":
+                        case "4":
                             mdb.cargarInformacionPruebaArray(modelo, 13, sql, array);
                             break;
-                        case "apellidoMaterno":
+                        case "5":
                             mdb.cargarInformacionPruebaArray(modelo, 13, sql, array);
                             break;
-                        case "razonsocial":
+                        case "2":
                             mdb.cargarInformacionPruebaArray(modelo, 13, sql2, array);
                             break;
-                        case "Direccion":
+                        case "6":
                             mdb.cargarInformacionPruebaArray(modelo, 13, sql, array);
                             mdb.cargarInformacionPruebaArray(modelo, 13, sql2, array);
                             break;
@@ -244,11 +493,11 @@ public class jpPersonas extends javax.swing.JPanel {
                 }
                 break;
 
-            case "Fisica":
+            case "1":
 //------------------------------- RESTRICCION MASCULINO ------------------------------------------
                 switch (tipoGenero) {
-                    case "Masculino":
-                        if (!situacion.equals("Todos")) {
+                    case "1":
+                        if (!situacion.equals("2")) {
                             where = " and g.descripcion='Masculino'";
                         } else {
                             where = " WHERE g.descripcion='Masculino'";
@@ -262,7 +511,7 @@ public class jpPersonas extends javax.swing.JPanel {
                         }
 //------------------------------- RESTRICCION FEMENINA ------------------------------------------
                         break;
-                    case "Femenino":
+                    case "2":
                         where = " and g.descripcion='Femenino'";
                         if (!tipoAsignacion.equals("Seleccione..")) {
                             where = where + " AND pu.descripcion ='" + tipoAsignacion + "' ";
@@ -285,18 +534,18 @@ public class jpPersonas extends javax.swing.JPanel {
 
                 sql = "select nombre, ApellidoPaterno, ApellidoMaterno, '' as razon, Direccion, CodigoPostal, Telefono, telefonoMovil, p.descripcion, e.descripcion, m.descripcion, l.descripcion, c.descripcion\n"
                         + "from personaf x\n"
-                        + "inner join pais p on (x.ID_Pais=p.ID)\n"
-                        + "inner join estado e on (x.ID_Estado=e.ID)\n"
-                        + "inner join municipio m on (x.ID_Municipio=m.ID)\n"
-                        + "inner join localidad l on (x.ID_Localidad=l.ID)\n"
-                        + "inner join ejidocolonia c on (x.ID_EjidoColonia=c.ID) "
-                        + "inner join genero g on (x.ID_Genero=g.ID) "
-                        + "inner join asignacionespersona a on (x.ID=a.id_persona)\n"
-                        + "inner join puestos pu on (pu.ID=a.id_puesto) \n" + where + whereSituacion + " group by x.id";
+                        + "left join pais p on (x.ID_Pais=p.ID)\n"
+                        + "left join estado e on (x.ID_Estado=e.ID)\n"
+                        + "left join municipio m on (x.ID_Municipio=m.ID)\n"
+                        + "left join localidad l on (x.ID_Localidad=l.ID)\n"
+                        + "left join ejidocolonia c on (x.ID_EjidoColonia=c.ID) "
+                        + "left join genero g on (x.ID_Genero=g.ID) "
+                        + "left join asignacionespersona a on (x.ID=a.id_persona)\n"
+                        + "left join puestos pu on (pu.ID=a.id_puesto) \n" + where + whereSituacion + " group by x.id";
                 mdb.cargarInformacionPruebaArray(modelo, 13, sql, array);
                 break;
 
-            case "Moral":
+            case "2":
 
                 if (!tipoAsignacion.equals("Seleccione..")) {
                     where = " and pu.descripcion ='" + tipoAsignacion + "' ";
@@ -308,13 +557,13 @@ public class jpPersonas extends javax.swing.JPanel {
 
                 sql = "select '' as nombre, '' as ApellidoPaterno, '' as ApellidoMaterno, RazonSocial, Direccion, CodigoPostal, Telefono, '' as telefonoMovil, p.descripcion, e.descripcion, m.descripcion, l.descripcion, c.descripcion\n"
                         + "from personam x\n"
-                        + "inner join pais p on (x.ID_Pais=p.ID)\n"
-                        + "inner join estado e on (x.ID_Estado=e.ID)\n"
-                        + "inner join municipio m on (x.ID_Municipio=m.ID)\n"
-                        + "inner join localidad l on (x.ID_Localidad=l.ID)\n"
-                        + "inner join ejidocolonia c on (x.ID_EjidoColonia=c.ID) "
-                        + "inner join asignacionespersona a on (x.ID=a.id_persona)\n"
-                        + "inner join puestos pu on (pu.ID=a.id_puesto) \n" + where + whereSituacion + " group by x.id";
+                        + "left join pais p on (x.ID_Pais=p.ID)\n"
+                        + "left join estado e on (x.ID_Estado=e.ID)\n"
+                        + "left join municipio m on (x.ID_Municipio=m.ID)\n"
+                        + "left join localidad l on (x.ID_Localidad=l.ID)\n"
+                        + "left join ejidocolonia c on (x.ID_EjidoColonia=c.ID) "
+                        + "left join asignacionespersona a on (x.ID=a.id_persona)\n"
+                        + "left join puestos pu on (pu.ID=a.id_puesto) \n" + where + whereSituacion + " group by x.id";
 
                 mdb.cargarInformacionPruebaArray(modelo, 13, sql, array);
                 break;
@@ -365,16 +614,14 @@ public class jpPersonas extends javax.swing.JPanel {
 
         jLabel1.setText("Persona");
 
-        comboPersona.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Todos", "Fisica", "Moral" }));
-        comboPersona.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                comboPersonaItemStateChanged(evt);
+        comboPersona.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboPersonaActionPerformed(evt);
             }
         });
 
         jLabel2.setText("Genero");
 
-        comboGenero.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Todos", "Masculino", "Femenino" }));
         comboGenero.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 comboGeneroItemStateChanged(evt);
@@ -394,19 +641,11 @@ public class jpPersonas extends javax.swing.JPanel {
 
         jLabel3.setText("Busqueda");
 
-        comboBusqueda.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione..", "Nombre", "Razon Social", "Nombre Corto", "Apellido Paterno", "Apellido Materno", "Direccion" }));
-        comboBusqueda.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                comboBusquedaItemStateChanged(evt);
-            }
-        });
-
         jLabel4.setText("Buscar por..");
 
-        comboAsignaciones.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccionar.." }));
-        comboAsignaciones.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                comboAsignacionesItemStateChanged(evt);
+        comboAsignaciones.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboAsignacionesActionPerformed(evt);
             }
         });
 
@@ -463,10 +702,9 @@ public class jpPersonas extends javax.swing.JPanel {
 
         jLabel10.setText("Situacion");
 
-        comboSituacion.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Activo", "Inactivo", "Todos" }));
-        comboSituacion.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                comboSituacionItemStateChanged(evt);
+        comboSituacion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboSituacionActionPerformed(evt);
             }
         });
 
@@ -660,26 +898,9 @@ public class jpPersonas extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void comboSituacionItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionItemStateChanged
-        // TODO add your handling code here:
-
-        if (situacion.equals("Activo")) {
-            jButton4.setText("Desactivar");
-        } else if (situacion.equals("Inactivo")) {
-            jButton4.setText("Activar");
-        }
-
-        tipoCPersona = comboPersona.getSelectedItem() + "";
-        tipoGenero = comboGenero.getSelectedItem() + "";
-        tipoAsignacion = comboAsignaciones.getSelectedItem() + "";
-        tipoBusqueda = comboBusqueda.getSelectedItem() + "";
-
-        busqueda(tipoCPersona, tipoGenero, tipoAsignacion, tipoBusqueda, txtBusqueda.getText());
-    }//GEN-LAST:event_comboSituacionItemStateChanged
-
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        jdDP = new jdFormularioPersonas(null, true, "1", "", "", cn);
+        jdDP = new jdFormularioPersonas(null, true, "1", "", "", Idioma, cn);
         jdDP.jpDP = this;
         jdDP.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
@@ -691,7 +912,7 @@ public class jpPersonas extends javax.swing.JPanel {
             id = mdb.comprobarExistencia("select id from personaf "
                     + "where (nombre='" + nom + "' and apellidoPaterno='" + app + "' and apellidoMaterno='" + apm + "' ) ");
             //JOptionPane.showMessageDialog(null,"Persona Fisica #"+id);
-            jdDP = new jdFormularioPersonas(null, true, "2", id, "1", cn);
+            jdDP = new jdFormularioPersonas(null, true, "2", id, "1", Idioma, cn);
             jdDP.jpDP = this;
             jdDP.setVisible(true);
 
@@ -701,7 +922,7 @@ public class jpPersonas extends javax.swing.JPanel {
             id = mdb.comprobarExistencia("select id from personam "
                     + "where razonsocial='" + rsocial + "'");
             //JOptionPane.showMessageDialog(null,"Persona Moral #"+id);
-            jdDP = new jdFormularioPersonas(null, true, "2", id, "2", cn);
+            jdDP = new jdFormularioPersonas(null, true, "2", id, "2", Idioma, cn);
             jdDP.jpDP = this;
             jdDP.setVisible(true);
         }
@@ -710,8 +931,7 @@ public class jpPersonas extends javax.swing.JPanel {
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-
-        if (situacion.equals("Activo")) {
+        if (comboSituacion.getSelectedIndex() == 0) {
             if (!nom.equals("")) {
 
                 id = mdb.comprobarExistencia("select id from personaf "
@@ -723,7 +943,7 @@ public class jpPersonas extends javax.swing.JPanel {
                         + "where razonsocial='" + rsocial + "'");
                 mdb.actualizarBasicos("update personam set id_situacion = 2 where id=" + id);
             }
-        } else if (situacion.equals("Inactivo")) {
+        } else if (comboSituacion.getSelectedIndex() == 1) {
 
             if (!nom.equals("")) {
 
@@ -738,63 +958,23 @@ public class jpPersonas extends javax.swing.JPanel {
             }
         }
 
-        tipoCPersona = comboPersona.getSelectedItem() + "";
-        tipoGenero = comboGenero.getSelectedItem() + "";
-        tipoAsignacion = comboAsignaciones.getSelectedItem() + "";
-        tipoBusqueda = comboBusqueda.getSelectedItem() + "";
+        tipoCPersona = comboPersona.getSelectedIndex() + "";
+        tipoGenero = comboGenero.getSelectedIndex() + "";
+        tipoAsignacion = comboAsignaciones.getSelectedIndex() + "";
+        tipoBusqueda = comboBusqueda.getSelectedIndex() + "";
 
-        busqueda(tipoCPersona, tipoGenero, tipoAsignacion, tipoBusqueda, txtBusqueda.getText());
+        // busqueda(tipoCPersona, tipoGenero, tipoAsignacion, tipoBusqueda, txtBusqueda.getText());
+        llenarTabla();
     }//GEN-LAST:event_jButton4ActionPerformed
-
-    private void comboPersonaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboPersonaItemStateChanged
-        // TODO add your handling code here:
-        switch (tipoCPersona) {
-            case "Fisica":
-                comboGenero.setEnabled(true);
-                comboBusqueda.removeAllItems();
-                comboBusqueda.addItem("Seleccione..");
-                comboBusqueda.addItem("Nombre");
-                comboBusqueda.addItem("Apellido Paterno");
-                comboBusqueda.addItem("Apellido Materno");
-                comboBusqueda.addItem("Direccion");
-                break;
-            case "Moral":
-                comboGenero.setEnabled(false);
-                comboBusqueda.removeAllItems();
-                comboBusqueda.addItem("Seleccione..");
-                comboBusqueda.addItem("Razon Social");
-                comboBusqueda.addItem("Direccion");
-                break;
-            case "Todos":
-                comboGenero.setEnabled(false);
-                comboBusqueda.removeAllItems();
-                comboBusqueda.addItem("Seleccione..");
-                comboBusqueda.addItem("Nombre");
-                comboBusqueda.addItem("Razon Social");
-                comboBusqueda.addItem("Apellido Paterno");
-                comboBusqueda.addItem("Apellido Materno");
-                comboBusqueda.addItem("Direccion");
-                break;
-            default:
-                break;
-        }
-
-        tipoCPersona = comboPersona.getSelectedItem() + "";
-        tipoGenero = comboGenero.getSelectedItem() + "";
-        tipoAsignacion = comboAsignaciones.getSelectedItem() + "";
-        tipoBusqueda = comboBusqueda.getSelectedItem() + "";
-
-        busqueda(tipoCPersona, tipoGenero, tipoAsignacion, tipoBusqueda, txtBusqueda.getText());
-    }//GEN-LAST:event_comboPersonaItemStateChanged
 
     private void comboGeneroItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboGeneroItemStateChanged
         // TODO add your handling code here:*
-        tipoCPersona = comboPersona.getSelectedItem() + "";
-        tipoGenero = comboGenero.getSelectedItem() + "";
-        tipoAsignacion = comboAsignaciones.getSelectedItem() + "";
-        tipoBusqueda = comboBusqueda.getSelectedItem() + "";
+        /*    tipoCPersona = comboPersona.getSelectedIndex() + "";
+        tipoGenero = comboGenero.getSelectedIndex() + "";
+        tipoAsignacion = comboAsignaciones.getSelectedIndex() + "";
+        tipoBusqueda = comboBusqueda.getSelectedIndex() + "";
 
-        busqueda(tipoCPersona, tipoGenero, tipoAsignacion, tipoBusqueda, txtBusqueda.getText());
+        busqueda(tipoCPersona, tipoGenero, tipoAsignacion, tipoBusqueda, txtBusqueda.getText());*/
     }//GEN-LAST:event_comboGeneroItemStateChanged
     String nom = "", app = "", apm = "", id, rsocial = "";
     private void tablaPersonasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaPersonasMouseClicked
@@ -810,7 +990,7 @@ public class jpPersonas extends javax.swing.JPanel {
                 id = mdb.comprobarExistencia("select id from personaf "
                         + "where (nombre='" + nom + "' and apellidoPaterno='" + app + "' and apellidoMaterno='" + apm + "' ) ");
                 //JOptionPane.showMessageDialog(null,"Persona Fisica #"+id);
-                jdDP = new jdFormularioPersonas(null, true, "2", id, "1", cn);
+                jdDP = new jdFormularioPersonas(null, true, "2", id, "1", Idioma, cn);
                 jdDP.jpDP = this;
                 jdDP.setVisible(true);
 
@@ -820,7 +1000,7 @@ public class jpPersonas extends javax.swing.JPanel {
                 id = mdb.comprobarExistencia("select id from personam "
                         + "where razonsocial='" + rsocial + "'");
                 //JOptionPane.showMessageDialog(null,"Persona Moral #"+id);
-                jdDP = new jdFormularioPersonas(null, true, "2", id, "2", cn);
+                jdDP = new jdFormularioPersonas(null, true, "2", id, "2", Idioma, cn);
                 jdDP.jpDP = this;
                 jdDP.setVisible(true);
             }
@@ -830,31 +1010,56 @@ public class jpPersonas extends javax.swing.JPanel {
     String tipoGenero = "", tipoBusqueda = "", tipoAsignacion = "", tipoCPersona = "";
     private void txtBusquedaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBusquedaKeyReleased
         // TODO add your handling code here:
-        tipoCPersona = comboPersona.getSelectedItem() + "";
-        tipoGenero = comboGenero.getSelectedItem() + "";
-        tipoAsignacion = comboAsignaciones.getSelectedItem() + "";
-        tipoBusqueda = comboBusqueda.getSelectedItem() + "";
-
-        busqueda(tipoCPersona, tipoGenero, tipoAsignacion, tipoBusqueda, txtBusqueda.getText());
+        llenarTabla();
     }//GEN-LAST:event_txtBusquedaKeyReleased
-
-    private void comboBusquedaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboBusquedaItemStateChanged
-        // TODO add your handling code here:
-    }//GEN-LAST:event_comboBusquedaItemStateChanged
 
     private void comboGeneroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboGeneroActionPerformed
         // TODO add your handling code here:
+        llenarTabla();
     }//GEN-LAST:event_comboGeneroActionPerformed
-
-    private void comboAsignacionesItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboAsignacionesItemStateChanged
+    String situacion;
+    private void comboPersonaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboPersonaActionPerformed
         // TODO add your handling code here:
-        tipoCPersona = comboPersona.getSelectedItem() + "";
-        tipoGenero = comboGenero.getSelectedItem() + "";
-        tipoAsignacion = comboAsignaciones.getSelectedItem() + "";
-        tipoBusqueda = comboBusqueda.getSelectedItem() + "";
+        if (comboPersona.getSelectedIndex() == 1) {
+            comboGenero.setEnabled(true);
+            comboBusqueda.removeAllItems();
+            //Seleccione.., Nombre, Razon Social, Nombre Corto, Apellido Paterno, Apellido Materno, Direccion
+            comboBusqueda.addItem(idioma.getProperty("Seleccione")); //0
+            comboBusqueda.addItem(idioma.getProperty("Nombre"));     //1
+            comboBusqueda.addItem(idioma.getProperty("ApellidoPaterno"));   //2
+            comboBusqueda.addItem(idioma.getProperty("ApellidoMaterno"));   //3
+            comboBusqueda.addItem(idioma.getProperty("Direccion"));         //4
 
-        busqueda(tipoCPersona, tipoGenero, tipoAsignacion, tipoBusqueda, txtBusqueda.getText());
-    }//GEN-LAST:event_comboAsignacionesItemStateChanged
+            comboBusqueda.setEnabled(true);
+            txtBusqueda.setEnabled(true);
+
+        } else if (comboPersona.getSelectedIndex() == 2) {
+            comboBusqueda.removeAllItems();
+            //Seleccione.., Nombre, Razon Social, Nombre Corto, Apellido Paterno, Apellido Materno, Direccion
+            comboBusqueda.addItem(idioma.getProperty("Seleccione")); //0
+            comboBusqueda.addItem(idioma.getProperty("RazonSocial"));//1
+            comboBusqueda.addItem(idioma.getProperty("NombreCorto"));//2
+
+            comboBusqueda.setEnabled(true);
+            txtBusqueda.setEnabled(true);
+        } else {
+            comboGenero.setSelectedIndex(0);
+            comboGenero.setEnabled(false);
+            comboBusqueda.setEnabled(false);
+            txtBusqueda.setEnabled(false);
+        }
+        llenarTabla();
+    }//GEN-LAST:event_comboPersonaActionPerformed
+
+    private void comboSituacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboSituacionActionPerformed
+        // TODO add your handling code here:
+        llenarTabla();
+    }//GEN-LAST:event_comboSituacionActionPerformed
+
+    private void comboAsignacionesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboAsignacionesActionPerformed
+        // TODO add your handling code here:
+        llenarTabla();
+    }//GEN-LAST:event_comboAsignacionesActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

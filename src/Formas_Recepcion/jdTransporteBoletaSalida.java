@@ -5,8 +5,10 @@
  */
 package Formas_Recepcion;
 
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.Connection;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
@@ -23,22 +25,46 @@ public class jdTransporteBoletaSalida extends javax.swing.JDialog {
     metodosDatosBasicos mdb;
     DefaultTableModel modelo;
     jdBoletaSalidaReceptor jdB;
+    String Idioma;
+    Propiedades idioma;
 
-    public jdTransporteBoletaSalida(java.awt.Frame parent, boolean modal, Connection cn) {
+    public jdTransporteBoletaSalida(java.awt.Frame parent, boolean modal, String Idioma, Connection cn) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
-        this.cn = cn;
 
+        this.cn = cn;
+        this.Idioma = Idioma;
+        idioma = new Propiedades(Idioma);
         mdb = new metodosDatosBasicos(cn);
         modelo = (DefaultTableModel) tabla.getModel();
 
+        traductor();
         llenaTabla();
+    }
+
+    public void traductor() {
+        jLabel7.setText(idioma.getProperty("NombreDelVehiculo"));
+        jLabel6.setText(idioma.getProperty("Capacidad"));
+        jLabel8.setText(idioma.getProperty("Placas"));
+        jLabel9.setText(idioma.getProperty("NombreDelResponsable"));
+
+        tabla.getColumnModel().getColumn(0).setHeaderValue(idioma.getProperty("NombreDelVehiculo"));
+        tabla.getColumnModel().getColumn(1).setHeaderValue(idioma.getProperty("Capacidad"));
+        tabla.getColumnModel().getColumn(2).setHeaderValue(idioma.getProperty("Placas"));
+        tabla.getColumnModel().getColumn(3).setHeaderValue(idioma.getProperty("NombreDelResponsable"));
+
+        jButton1.setText(idioma.getProperty("Seleccione"));
+        jButton2.setText(idioma.getProperty("Nuevo"));
+        jButton5.setText(idioma.getProperty("Cerrar"));
+
+        comboSituacion.addItem(idioma.getProperty("Activos"));
+        comboSituacion.addItem(idioma.getProperty("Inactivos"));
+        comboSituacion.addItem(idioma.getProperty("Todos"));
     }
 
     public void llenaTabla() {
         limpiar(tabla);
-        mdb = new metodosDatosBasicos(cn);
         mdb.cargarInformacion2(modelo, 4, "select Nombre,Capacidad,Placas,Responsable from Vehiculo where ID_Situacion=1");
     }
 
@@ -50,12 +76,13 @@ public class jdTransporteBoletaSalida extends javax.swing.JDialog {
         String situacion = "";
         String where = "";
 
-        situacion = comboSituacion.getSelectedItem() + "";
-        if (situacion.equals("Inactivo")) {
-            situacion = "2";
-        } else if (situacion.equals("Activo")) {
+        situacion = comboSituacion.getSelectedIndex() + "";
+        if (situacion.equals("0")) {
             situacion = "1";
-
+        } else if (situacion.equals("1")) {
+            situacion = "2";
+        } else {
+            situacion = "3";
         }
 
         if (txtBusquedaP.getText().length() > 0) {
@@ -72,7 +99,7 @@ public class jdTransporteBoletaSalida extends javax.swing.JDialog {
         }
         String sql;
         System.out.println("SITUACION: " + situacion);
-        if (situacion.equals("Todos")) {
+        if (situacion.equals("3")) {
             sql = "SELECT Nombre,Capacidad,Placas,Responsable from Vehiculo WHERE ID_Situacion<>3 " + tipoP + tipoK + tipoL + tipoÑ;
         } else {
             sql = "SELECT Nombre,Capacidad,Placas,Responsable  from Vehiculo WHERE ID_Situacion=" + situacion + tipoP + tipoK + tipoL + tipoÑ;
@@ -248,7 +275,6 @@ public class jdTransporteBoletaSalida extends javax.swing.JDialog {
 
         jLabel10.setText("Situacion");
 
-        comboSituacion.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Activo", "Inactivo", "Todos" }));
         comboSituacion.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 comboSituacionItemStateChanged(evt);
@@ -425,11 +451,11 @@ public class jdTransporteBoletaSalida extends javax.swing.JDialog {
 
     private void comboSituacionItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionItemStateChanged
         // TODO add your handling code here:
-         busqueda();
     }//GEN-LAST:event_comboSituacionItemStateChanged
 
     private void comboSituacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboSituacionActionPerformed
         // TODO add your handling code here:
+       busqueda();
     }//GEN-LAST:event_comboSituacionActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed

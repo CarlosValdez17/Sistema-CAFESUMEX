@@ -238,7 +238,8 @@ public class metodosRecepcion {
             //System.out.println(sql);
             CallableStatement cmd = cn.prepareCall("select clave, descripcion, minima, maxima from calidadcereza");
             ResultSet rs = cmd.executeQuery();
-
+            
+            //JOptionPane.showMessageDialog(null, "Valor final : " + valor);
             while (rs.next()) {
                 Object[] datos = new Object[4];
                 datos[0] = rs.getString("clave");
@@ -250,15 +251,15 @@ public class metodosRecepcion {
                 float maxima = (float) datos[3];
                 String clave = (String) datos[0];
                 String desc = (String) datos[1];
+                //JOptionPane.showMessageDialog(null,"Minima: "+minima+"\nMaxima: "+maxima );
                 if (valor >= minima && valor <= maxima) {
                     return clave + " " + desc;
                 }
             }
-
             cmd.close();
         } catch (Exception ex) {
         }
-        return "0";
+        return "3 Rosa";
     }
 
 }

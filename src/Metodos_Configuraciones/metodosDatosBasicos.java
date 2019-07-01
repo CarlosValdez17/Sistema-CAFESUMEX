@@ -27,7 +27,7 @@ public class metodosDatosBasicos {
 
     public void insertarBasicos(String sql) {
         try {
-            JOptionPane.showMessageDialog(null, "Entre a insertar");
+            //JOptionPane.showMessageDialog(null, "Entre a insertar");
             System.out.println(sql);
             PreparedStatement cmd = cn.prepareCall(sql);
             cmd.execute();
@@ -40,7 +40,7 @@ public class metodosDatosBasicos {
 
     public Boolean insertarBasicosComprobacion(String sql) {
         try {
-            JOptionPane.showMessageDialog(null, "Entre a insertar Comprobacion");
+            //JOptionPane.showMessageDialog(null, "Entre a insertar Comprobacion");
             System.out.println(sql);
             PreparedStatement cmd = cn.prepareCall(sql);
             cmd.execute();
@@ -79,7 +79,7 @@ public class metodosDatosBasicos {
 
     public void actualizarBasicos(String sql) {
         try {
-            //System.out.println(sql);
+            System.out.println(sql);
             PreparedStatement cmd = cn.prepareCall(sql);
             cmd.execute();
             cmd.close();
@@ -132,7 +132,7 @@ public class metodosDatosBasicos {
 
     public void cargarInformacionPruebaArray(DefaultTableModel modelo, int tamaño, String sql, ArrayList<String> array) {
         try {
-            //System.out.println(sql);
+            System.out.println(sql);
             CallableStatement cmd = cn.prepareCall(sql);
             ResultSet rs = cmd.executeQuery();
 
@@ -220,7 +220,7 @@ public class metodosDatosBasicos {
 
     public String cargarCombos(String sql) {
         try {
-            System.out.println(sql + "\n AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII");
+            System.out.println(sql);
             CallableStatement cmd = cn.prepareCall(sql);
             ResultSet rs = cmd.executeQuery();
             String a = "";
@@ -232,7 +232,7 @@ public class metodosDatosBasicos {
                 a += datos[0] + "¬";
             }
             cmd.close();
-            return "Seleccione..¬" + a;
+            return "Seleccione...¬" + a;
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Error - Cargar Combos \n" + ex);
         }

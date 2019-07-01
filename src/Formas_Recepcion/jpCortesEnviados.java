@@ -5,6 +5,7 @@
  */
 package Formas_Recepcion;
 
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.Connection;
 import java.text.ParseException;
@@ -30,43 +31,94 @@ public class jpCortesEnviados extends javax.swing.JPanel {
     DefaultTableModel modelo, modelo2;
     jdRecibos jdR;
     String recepcion, idSociedad;
-    String idRecibo = "", idLote = "";
+    String idRecibo = "", idLote = "", idRecepcion, Idioma;
+    Propiedades idioma;
 
-    public jpCortesEnviados(Connection cn, String recepcion) throws ParseException {
+    public jpCortesEnviados(Connection cn, String Idioma, String recepcion) throws ParseException {
         initComponents();
 
         this.cn = cn;
+        this.Idioma = Idioma;
         mdb = new metodosDatosBasicos(cn);
+        idioma = new Propiedades(Idioma);
         modelo = (DefaultTableModel) tablaBoletas.getModel();
 
         this.recepcion = recepcion;
+        idRecepcion = mdb.devuelveUnDato("select id from recepciones where idRecepcion='" + recepcion + "'");
         idSociedad = mdb.devuelveUnDato("select idSociedad from recepciones where idRecepcion='" + recepcion + "' ");
 
+        traductor();
         llenarTabla();
         // sumarColumnas();
+    }
+
+    public void traductor() {
+        jLabel1.setText(idioma.getProperty("IdCorte"));
+        jLabel2.setText(idioma.getProperty("TituloBoleta"));
+        jLabel11.setText(idioma.getProperty("Desde"));
+        jLabel12.setText(idioma.getProperty("Hasta"));
+        jButton6.setText(idioma.getProperty("Buscar"));
+        jLabel4.setText(idioma.getProperty("CabeceraBoleta"));
+        jLabel3.setText(idioma.getProperty("CortesDeLaBoleta"));
+        jLabel7.setText(idioma.getProperty("Situacion"));
+        jLabel8.setText(idioma.getProperty("TotalCortes"));
+        jLabel9.setText(idioma.getProperty("TotalSacos"));
+        jLabel10.setText(idioma.getProperty("TotalKilos"));
+        jButton1.setText(idioma.getProperty("Exportar"));
+        jButton4.setText(idioma.getProperty("Cerrar"));
+
+        tablaBoletas.getColumnModel().getColumn(0).setHeaderValue(idioma.getProperty("TituloBoleta"));
+        tablaBoletas.getColumnModel().getColumn(1).setHeaderValue(idioma.getProperty("Fecha"));
+        tablaBoletas.getColumnModel().getColumn(2).setHeaderValue(idioma.getProperty("Origen"));
+        tablaBoletas.getColumnModel().getColumn(3).setHeaderValue(idioma.getProperty("Destino"));
+        tablaBoletas.getColumnModel().getColumn(4).setHeaderValue(idioma.getProperty("FormaDeCafe"));
+        tablaBoletas.getColumnModel().getColumn(5).setHeaderValue(idioma.getProperty("TotalSacos"));
+        tablaBoletas.getColumnModel().getColumn(6).setHeaderValue(idioma.getProperty("TotalKilos"));
+        tablaBoletas.getColumnModel().getColumn(7).setHeaderValue(idioma.getProperty("CostoAcumulado"));
+        tablaBoletas.getColumnModel().getColumn(8).setHeaderValue(idioma.getProperty("BoletaManual"));
+        tablaBoletas.getColumnModel().getColumn(9).setHeaderValue(idioma.getProperty("FechaDeBoletaManual"));
+        tablaBoletas.getColumnModel().getColumn(10).setHeaderValue(idioma.getProperty("Dividido"));
+
+        tablaCortes.getColumnModel().getColumn(0).setHeaderValue(idioma.getProperty("IdCorte"));
+        tablaCortes.getColumnModel().getColumn(1).setHeaderValue(idioma.getProperty("Fecha"));
+        tablaCortes.getColumnModel().getColumn(2).setHeaderValue(idioma.getProperty("FormaDeCafe"));
+        tablaCortes.getColumnModel().getColumn(3).setHeaderValue(idioma.getProperty("Sacos"));
+        tablaCortes.getColumnModel().getColumn(4).setHeaderValue(idioma.getProperty("KgNetos"));
+        tablaCortes.getColumnModel().getColumn(5).setHeaderValue(idioma.getProperty("CostoAcumulado"));
+        tablaCortes.getColumnModel().getColumn(6).setHeaderValue(idioma.getProperty("SacosEnviados"));
+        tablaCortes.getColumnModel().getColumn(7).setHeaderValue(idioma.getProperty("KgEnviados"));
     }
 
     public void llenarTabla() throws ParseException {
         limpiar(tablaBoletas);
 
-        mdb.cargarInformacion2(modelo, 12,
+        mdb.cargarInformacion2(modelo, 11,
                 "SELECT\n"
-                + " b.idBoleta,\n"
+                + "    b.idBoleta,\n"
                 + "    b.fecha,\n"
-                + "    b.origen,\n"
-                + "    b.destino,\n"
+                + "    re.idRecepcion,\n"
+                + "    bh.nombre,\n"
                 + "    c.formaCafe,\n"
-                + " b.totalSacos,"
-                + " b.totalKg,"
+                + "    b.totalSacos,\n"
+                + "    b.totalKg,\n"
                 + "    c.costoAcumulado,\n"
                 + "    b.idBoletaManual,\n"
                 + "    b.fechaBoletaManual,\n"
-                + "    b.estatus,\n"
                 + "    FALSE\n"
-                + "FROM boletasalidareceptor b \n"
-                + "INNER JOIN cortesdeldia c on (c.idLote=b.idLote) "
-                + "INNER JOIN recepciones re on (b.idRecepcion=re.id) "
-                + "WHERE re.idRecepcion='" + recepcion + "' group by b.idBoleta order by b.id");
+                + "FROM\n"
+                + "    boletasalidareceptor b\n"
+                + "LEFT JOIN cortesdeldia c ON\n"
+                + "    (c.idLote = b.idLote)\n"
+                + "LEFT JOIN recepciones re ON\n"
+                + "    (b.origen = re.id)\n"
+                + "LEFT JOIN beneficioshumedos bh ON\n"
+                + "    (bh.id = b.destino)\n"
+                + "WHERE\n"
+                + "    b.idRecepcion = " + idRecepcion + "\n"
+                + "GROUP BY\n"
+                + "    b.idBoleta\n"
+                + "ORDER BY\n"
+                + "    b.id");
         cambiarMesLetra(tablaBoletas);
     }
 
@@ -201,7 +253,7 @@ public class jpCortesEnviados extends javax.swing.JPanel {
             ((DefaultTableModel) tabla.getModel()).removeRow(0);
         }
     }
-
+   
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -264,17 +316,17 @@ public class jpCortesEnviados extends javax.swing.JPanel {
 
         tablaBoletas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Boleta", "Fecha", "Origen", "Destino", "Forma de Café", "Total Sacos", "Total Kg", "Costo Acumulado", "Boleta Manual", "Fecha Boleta Manual", "Estado", "Dividido"
+                "Boleta", "Fecha", "Origen", "Destino", "Forma de Café", "Total Sacos", "Total Kg", "Costo Acumulado", "Boleta Manual", "Fecha Boleta Manual", "Dividido"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -521,21 +573,64 @@ public class jpCortesEnviados extends javax.swing.JPanel {
         // TODO add your handling code here:
         limpiar(tablaBoletas);
         mdb.cargarInformacion2(modelo, 15,
-                "SELECT b.idLote, b.fecha, b.origen, b.destino, c.formaCafe, c.sacos, c.kg, c.costoAcumulado, b.idBoleta, b.idBoletaManual, b.fechaBoletaManual, sacosEnviados, kilosEnviados, b.estatus, false\n"
-                + "FROM boletasalidareceptor b \n"
-                + "INNER JOIN cortesdeldia c on (c.idLote=b.idLote) "
-                + "WHERE idSociedad=" + idSociedad + " and b.idLote like '" + txtIdCorte.getText() + "%' order by b.id");
+                "SELECT\n"
+                + "    b.idBoleta,\n"
+                + "    b.fecha,\n"
+                + "    re.idRecepcion,\n"
+                + "    bh.nombre,\n"
+                + "    c.formaCafe,\n"
+                + "    b.totalSacos,\n"
+                + "    b.totalKg,\n"
+                + "    c.costoAcumulado,\n"
+                + "    b.idBoletaManual,\n"
+                + "    b.fechaBoletaManual,\n"
+                + "    FALSE\n"
+                + "FROM\n"
+                + "    boletasalidareceptor b\n"
+                + "LEFT JOIN cortesdeldia c ON\n"
+                + "    (c.idLote = b.idLote)\n"
+                + "LEFT JOIN recepciones re ON\n"
+                + "    (b.origen = re.id)\n"
+                + "LEFT JOIN beneficioshumedos bh ON\n"
+                + "    (bh.id = b.destino)\n"
+                + "WHERE\n"
+                + "    b.idRecepcion = " + idRecepcion + " and b.idLote like '" + txtIdCorte.getText() + "%'\n"
+                + "GROUP BY\n"
+                + "    b.idBoleta\n"
+                + "ORDER BY\n"
+                + "    b.id");
         cambiarMesLetra(tablaBoletas);
     }//GEN-LAST:event_txtIdCorteKeyReleased
 
     private void txtBoletaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBoletaKeyReleased
         // TODO add your handling code here:
         limpiar(tablaBoletas);
-        mdb.cargarInformacion2(modelo, 15,
-                "SELECT b.idLote, b.fecha, b.origen, b.destino, c.formaCafe, c.sacos, c.kg, c.costoAcumulado, b.idBoleta, b.idBoletaManual, b.fechaBoletaManual, sacosEnviados, kilosEnviados, b.estatus, false\n"
-                + "FROM boletasalidareceptor b \n"
-                + "INNER JOIN cortesdeldia c on (c.idLote=b.idLote) "
-                + "WHERE idSociedad=" + idSociedad + " and b.idBoleta like '" + txtBoleta.getText() + "%' order by b.id");
+        mdb.cargarInformacion2(modelo, 11,"SELECT\n"
+                + "    b.idBoleta,\n"
+                + "    b.fecha,\n"
+                + "    re.idRecepcion,\n"
+                + "    bh.nombre,\n"
+                + "    c.formaCafe,\n"
+                + "    b.totalSacos,\n"
+                + "    b.totalKg,\n"
+                + "    c.costoAcumulado,\n"
+                + "    b.idBoletaManual,\n"
+                + "    b.fechaBoletaManual,\n"
+                + "    FALSE\n"
+                + "FROM\n"
+                + "    boletasalidareceptor b\n"
+                + "LEFT JOIN cortesdeldia c ON\n"
+                + "    (c.idLote = b.idLote)\n"
+                + "LEFT JOIN recepciones re ON\n"
+                + "    (b.origen = re.id)\n"
+                + "LEFT JOIN beneficioshumedos bh ON\n"
+                + "    (bh.id = b.destino)\n"
+                + "WHERE\n"
+                + "    b.idRecepcion = " + idRecepcion + " and b.idBoleta like '" + txtBoleta.getText() + "%'\n"
+                + "GROUP BY\n"
+                + "    b.idBoleta\n"
+                + "ORDER BY\n"
+                + "    b.id" );
         cambiarMesLetra(tablaBoletas);
     }//GEN-LAST:event_txtBoletaKeyReleased
     String idBoleta;
@@ -554,7 +649,7 @@ public class jpCortesEnviados extends javax.swing.JPanel {
         if (evt.getClickCount() == 2) {
             jdBoletaSalidaReceptorVisor jdBSV;
             try {
-                jdBSV = new jdBoletaSalidaReceptorVisor(null, true, idBoleta, cn);
+                jdBSV = new jdBoletaSalidaReceptorVisor(null, true, idBoleta, Idioma, cn);
                 jdBSV.setVisible(true);
             } catch (ParseException ex) {
                 Logger.getLogger(jpCortesEnviados.class.getName()).log(Level.SEVERE, null, ex);
@@ -585,14 +680,14 @@ public class jpCortesEnviados extends javax.swing.JPanel {
         idCorte = tablaCortes.getValueAt(tablaCortes.getSelectedRow(), 0) + "";
 
         if (evt.getClickCount() == 2) {
-            jdRecibosDelCorte jdRDC = new jdRecibosDelCorte(null, true, idCorte, cn);
+            jdRecibosDelCorte jdRDC = new jdRecibosDelCorte(null, true, idCorte,Idioma, cn);
             jdRDC.setVisible(true);
         }
     }//GEN-LAST:event_tablaCortesMouseClicked
 
     private void reciboItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reciboItemActionPerformed
         // TODO add your handling code here:
-        jdRecibosDelCorte jdRDC = new jdRecibosDelCorte(null, true, idCorte, cn);
+        jdRecibosDelCorte jdRDC = new jdRecibosDelCorte(null, true, idCorte,Idioma, cn);
         jdRDC.setVisible(true);
     }//GEN-LAST:event_reciboItemActionPerformed
 
@@ -600,7 +695,7 @@ public class jpCortesEnviados extends javax.swing.JPanel {
         // TODO add your handling code here:
         jdBoletaSalidaReceptorVisor jdBSV;
         try {
-            jdBSV = new jdBoletaSalidaReceptorVisor(null, true, idBoleta, cn);
+            jdBSV = new jdBoletaSalidaReceptorVisor(null, true, idBoleta, Idioma, cn);
             jdBSV.setVisible(true);
         } catch (ParseException ex) {
             Logger.getLogger(jpCortesEnviados.class.getName()).log(Level.SEVERE, null, ex);

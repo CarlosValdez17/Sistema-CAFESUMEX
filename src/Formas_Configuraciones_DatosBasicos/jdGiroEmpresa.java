@@ -5,6 +5,7 @@
  */
 package Formas_Configuraciones_DatosBasicos;
 
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
@@ -21,12 +22,14 @@ public class jdGiroEmpresa extends javax.swing.JDialog {
      */
     metodosDatosBasicos mdb;
     validaConfi valConf;
+    Propiedades idioma;
 
     jpGiroEmpresa jpG;
     Connection cn;
     String tipo, giro;
+    String Idioma;
 
-    public jdGiroEmpresa(java.awt.Frame parent, boolean modal, String tipo, String giro, Connection c) {
+    public jdGiroEmpresa(java.awt.Frame parent, boolean modal, String tipo, String giro, String Idioma, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
@@ -34,13 +37,22 @@ public class jdGiroEmpresa extends javax.swing.JDialog {
         cn = c;
         this.tipo = tipo;
         this.giro = giro;
+        this.Idioma=Idioma;
         mdb = new metodosDatosBasicos(cn);
         valConf = new validaConfi();
+        idioma = new Propiedades(Idioma);
+        
+        jButton1.setText(idioma.getProperty("Aceptar"));;
+        jButton2.setText(idioma.getProperty("Cancelar"));;
+        jLabel1.setText(idioma.getProperty("GiroEmpresa"));;
+
 
         if (tipo.equals("1")) {
-            setTitle("Nuevo Giro");
+            //setTitle("Nuevo Giro");
+            setTitle(idioma.getProperty("NuevoGiro"));
         } else {
-            setTitle("Editar Giro");
+            //setTitle("Editar Giro");
+            setTitle(idioma.getProperty("EditarGiro"));
             txtGiro.setText(giro);
         }
     }

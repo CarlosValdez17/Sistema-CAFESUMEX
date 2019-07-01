@@ -5,6 +5,7 @@
  */
 package Formas_Configuraciones_DatosBasicos;
 
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.Connection;
 import javax.swing.JOptionPane;
@@ -26,14 +27,34 @@ public class jpEstado extends javax.swing.JPanel {
     metodosDatosBasicos mdb;
     DefaultTableModel modelo;
 
-    public jpEstado(Connection c) {
+    Propiedades idioma;
+    String Idioma;
+
+    public jpEstado(Connection c, String Idioma) {
         initComponents();
 
         cn = c;
+        this.Idioma = Idioma;
         mdb = new metodosDatosBasicos(cn);
         modelo = (DefaultTableModel) tablaEstado.getModel();
 
         tablaEstado.setRowSorter(new TableRowSorter(modelo));
+
+        idioma = new Propiedades(Idioma);
+        jButton1.setText(idioma.getProperty("Cerrar"));
+        jButton2.setText(idioma.getProperty("Nuevo"));
+        jButton3.setText(idioma.getProperty("Editar"));
+        jButton4.setText(idioma.getProperty("Desactivar"));
+        jLabel10.setText(idioma.getProperty("Situacion"));
+        jLabel6.setText(idioma.getProperty("Estado"));
+        jLabel7.setText(idioma.getProperty("Pais"));
+
+        tablaEstado.getColumnModel().getColumn(0).setHeaderValue(idioma.getProperty("Estado"));
+        tablaEstado.getColumnModel().getColumn(1).setHeaderValue(idioma.getProperty("Pais"));
+
+        comboSituacion.addItem(idioma.getProperty("Activos"));
+        comboSituacion.addItem(idioma.getProperty("Inactivos"));
+        comboSituacion.addItem(idioma.getProperty("Todos"));
 
         llenaTablaEstado();
     }
@@ -48,12 +69,14 @@ public class jpEstado extends javax.swing.JPanel {
         String tipoP = "";
         String tipoE = "";
         String situacion;
+        situacion = comboSituacion.getSelectedIndex() + "";
 
-        situacion = comboSituacion.getSelectedItem() + "";
-        if (situacion.equals("Inactivo")) {
+        if (situacion.equals("1")) {
             situacion = "2";
-        } else if (situacion.equals("Activo")) {
+        } else if (situacion.equals("0")) {
             situacion = "1";
+        } else {
+            situacion = "3";
         }
 
         if (txtEstado.getText().length() > 0) {
@@ -64,14 +87,13 @@ public class jpEstado extends javax.swing.JPanel {
         }
 
         String sql;
-        if (situacion.equals("Todos")) {
+        if (situacion.equals("3")) {
             sql = "select e.descripcion, p.descripcion from estado e inner join pais p on (e.ID_Pais=p.ID) where e.ID_Situacion <> 3" + tipoE + tipoP;
         } else {
             sql = "select e.descripcion, p.descripcion from estado e inner join pais p on (e.ID_Pais=p.ID) where e.ID_Situacion=" + situacion + tipoE + tipoP;
         }
         limpiar(tablaEstado);
         mdb.cargarInformacion2(modelo, 2, sql);
-
     }
 
     private void limpiar(JTable tabla) {
@@ -187,10 +209,14 @@ public class jpEstado extends javax.swing.JPanel {
 
         jLabel10.setText("Situacion");
 
-        comboSituacion.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Activo", "Inactivo", "Todos" }));
         comboSituacion.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 comboSituacionItemStateChanged(evt);
+            }
+        });
+        comboSituacion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboSituacionActionPerformed(evt);
             }
         });
 
@@ -315,7 +341,7 @@ public class jpEstado extends javax.swing.JPanel {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        jdE = new jdEstado(null, true, "1", estado, "", cn);
+        jdE = new jdEstado(null, true, "1", estado, "", Idioma, cn);
         jdE.jpE = this;
         jdE.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
@@ -329,7 +355,7 @@ public class jpEstado extends javax.swing.JPanel {
             // System.out.println("1 Clic");
         }
         if (evt.getClickCount() == 2) {
-            jdE = new jdEstado(null, true, "2", estado, pais, cn);
+            jdE = new jdEstado(null, true, "2", estado, pais, Idioma, cn);
             jdE.jpE = this;
             jdE.setVisible(true);
         }
@@ -338,9 +364,9 @@ public class jpEstado extends javax.swing.JPanel {
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
         if (estado.equals("")) {
-            JOptionPane.showMessageDialog(null, "Seleccione un estado");
+            JOptionPane.showMessageDialog(null, idioma.getProperty("SeleccionRegistro"));
         } else {
-            jdE = new jdEstado(null, true, "2", estado, pais, cn);
+            jdE = new jdEstado(null, true, "2", estado, pais, Idioma, cn);
             jdE.jpE = this;
             jdE.setVisible(true);
         }
@@ -363,10 +389,27 @@ public class jpEstado extends javax.swing.JPanel {
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        String sql = "UPDATE estado SET ID_Situacion=2 where descripcion='" + estado + "'";
-        mdb.actualizarBasicos(sql);
-        llenaTablaEstado();
+        if (comboSituacion.getSelectedIndex() == 0) {
+            mdb.actualizarBasicos("UPDATE estado SET ID_Situacion=2 where descripcion='" + estado + "'");
+        } else if (comboSituacion.getSelectedIndex() == 1) {
+            mdb.actualizarBasicos("UPDATE estado SET ID_Situacion=1 where descripcion='" + estado + "'");
+        }
+        busquedaEstado();
     }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void comboSituacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboSituacionActionPerformed
+        // TODO add your handling code here:
+        if (comboSituacion.getSelectedItem().equals(idioma.getProperty("Inactivos"))) {
+            jButton4.setText(idioma.getProperty("Activar"));
+            jButton4.setEnabled(true);
+        } else if (comboSituacion.getSelectedItem().equals(idioma.getProperty("Activos"))) {
+            jButton4.setText(idioma.getProperty("Desactivar"));
+            jButton4.setEnabled(true);
+        } else {
+            jButton4.setEnabled(false);
+        }
+        busquedaEstado();
+    }//GEN-LAST:event_comboSituacionActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

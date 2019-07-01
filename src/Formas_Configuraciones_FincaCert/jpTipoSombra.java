@@ -5,6 +5,7 @@
  */
 package Formas_Configuraciones_FincaCert;
 
+import Idioma.Propiedades;
 import FormasGenerales.pantallaPrincipal;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.Connection;
@@ -27,13 +28,33 @@ public class jpTipoSombra extends javax.swing.JPanel {
     DefaultTableModel modelo;
     jdTipoSombra jdTS;
 
-    public jpTipoSombra(Connection c) {
+    Propiedades idioma;
+    String Idioma;
+
+    public jpTipoSombra(Connection c, String Idioma) {
         initComponents();
         cn = c;
+        this.Idioma = Idioma;
         mdb = new metodosDatosBasicos(cn);
         modelo = (DefaultTableModel) tablaTS.getModel();
         tablaTS.getTableHeader().setReorderingAllowed(false);
         tablaTS.setRowSorter(new TableRowSorter(modelo));
+
+        idioma = new Propiedades(Idioma);
+        jButton5.setText(idioma.getProperty("Cerrar"));
+        jButton2.setText(idioma.getProperty("Nuevo"));
+        jButton3.setText(idioma.getProperty("Editar"));
+        jButton4.setText(idioma.getProperty("Desactivar"));
+        jLabel10.setText(idioma.getProperty("Situacion"));
+        jLabel6.setText(idioma.getProperty("TipoDeSombra"));
+
+        tablaTS.getColumnModel().getColumn(0).setHeaderValue(idioma.getProperty("TipoDeSombra"));
+        tablaTS.getColumnModel().getColumn(1).setHeaderValue(idioma.getProperty("Situacion"));
+
+        comboSituacion.addItem(idioma.getProperty("Activos"));
+        comboSituacion.addItem(idioma.getProperty("Inactivos"));
+        comboSituacion.addItem(idioma.getProperty("Todos"));
+
         llenaTablaTS();
     }
 
@@ -49,13 +70,14 @@ public class jpTipoSombra extends javax.swing.JPanel {
     public void busquedaGiro() {
         String tipoB = "";
         String situacion = "";
+        situacion = comboSituacion.getSelectedIndex() + "";
 
-        situacion = comboSituacionTipoSombra.getSelectedItem() + "";
-
-        if (situacion.equals("Inactivo")) {
+        if (situacion.equals("1")) {
             situacion = "2";
-        } else if (situacion.equals("Activo")) {
+        } else if (situacion.equals("0")) {
             situacion = "1";
+        } else {
+            situacion = "3";
         }
 
         if (txtBusquedaTS.getText().length() > 0) {
@@ -63,7 +85,7 @@ public class jpTipoSombra extends javax.swing.JPanel {
         }
 
         String sql;
-        if (situacion.equals("Todos")) {
+        if (situacion.equals("3")) {
             sql = "select t.descripcion, s.descripcion "
                     + "from tiposombra t "
                     + "inner join situacion s on (t.id_situacion=s.id) "
@@ -104,7 +126,7 @@ public class jpTipoSombra extends javax.swing.JPanel {
         tablaTS = new javax.swing.JTable();
         jPanel8 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
-        comboSituacionTipoSombra = new javax.swing.JComboBox<>();
+        comboSituacion = new javax.swing.JComboBox<>();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
@@ -171,10 +193,14 @@ public class jpTipoSombra extends javax.swing.JPanel {
 
         jLabel10.setText("Situacion");
 
-        comboSituacionTipoSombra.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Activo", "Inactivo", "Todos" }));
-        comboSituacionTipoSombra.addItemListener(new java.awt.event.ItemListener() {
+        comboSituacion.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                comboSituacionTipoSombraItemStateChanged(evt);
+                comboSituacionItemStateChanged(evt);
+            }
+        });
+        comboSituacion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboSituacionActionPerformed(evt);
             }
         });
 
@@ -214,7 +240,7 @@ public class jpTipoSombra extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jLabel10)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(comboSituacionTipoSombra, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(comboSituacion, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -233,7 +259,7 @@ public class jpTipoSombra extends javax.swing.JPanel {
                     .addComponent(jButton2)
                     .addComponent(jButton3)
                     .addComponent(jButton4)
-                    .addComponent(comboSituacionTipoSombra, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(comboSituacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel10)
                     .addComponent(jButton5))
                 .addContainerGap())
@@ -314,7 +340,7 @@ public class jpTipoSombra extends javax.swing.JPanel {
 
         if (evt.getClickCount() == 2) {
             if (situacion.equals("Activo")) {
-                jdTS = new jdTipoSombra(null, true, "2", sombra, cn);
+                jdTS = new jdTipoSombra(null, true, "2", sombra, Idioma, cn);
                 jdTS.jpTS = this;
                 jdTS.setVisible(true);
             } else {
@@ -323,43 +349,35 @@ public class jpTipoSombra extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_tablaTSMouseClicked
     String estatus = "";
-    private void comboSituacionTipoSombraItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionTipoSombraItemStateChanged
+    private void comboSituacionItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionItemStateChanged
         // TODO add your handling code here:
-        if (comboSituacionTipoSombra.getSelectedItem().equals("Inactivo")) {
-            jButton4.setText("Activar");
-            estatus = "1";
-        } else {
-            estatus = "2";
-            jButton4.setText("Desactivar");
-        }
-        busquedaGiro();
-    }//GEN-LAST:event_comboSituacionTipoSombraItemStateChanged
+    }//GEN-LAST:event_comboSituacionItemStateChanged
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        jdTS = new jdTipoSombra(null, true, "1", sombra, cn);
+        jdTS = new jdTipoSombra(null, true, "1", sombra, Idioma, cn);
         jdTS.jpTS = this;
         jdTS.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        if (estatus.equals("2")) {
-            mdb.actualizarBasicos("UPDATE tiposombra SET ID_Situacion=2 where descripcion='" + sombra + "'");
-        } else if (estatus.equals("1")) {
-            mdb.actualizarBasicos("UPDATE tiposombra SET ID_Situacion=1 where descripcion='" + sombra + "'");
+        if (comboSituacion.getSelectedIndex() == 0) {
+            mdb.actualizarBasicos("UPDATE tiposombra SET ID_Situacion=2 where descripcion='" + sombra + "'");         
+        } else if (comboSituacion.getSelectedIndex() == 1) {
+            mdb.actualizarBasicos("UPDATE tiposombra SET ID_Situacion=1 where descripcion='" + sombra + "'");          
         }
-        llenaTablaTS();
+        busquedaGiro();
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        if (situacion.equals("Activo")) {
-            jdTS = new jdTipoSombra(null, true, "2", sombra, cn);
+        if (sombra.equals("")) {
+            JOptionPane.showMessageDialog(null, idioma.getProperty("SeleccionRegistro"));
+        } else {
+            jdTS = new jdTipoSombra(null, true, "2", sombra, Idioma, cn);
             jdTS.jpTS = this;
             jdTS.setVisible(true);
-        } else {
-            JOptionPane.showMessageDialog(null, "Dato Inactivo");
         }
     }//GEN-LAST:event_jButton3ActionPerformed
 
@@ -368,9 +386,24 @@ public class jpTipoSombra extends javax.swing.JPanel {
 
     }//GEN-LAST:event_jButton5ActionPerformed
 
+    private void comboSituacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboSituacionActionPerformed
+        // TODO add your handling code here:
+        if (comboSituacion.getSelectedItem().equals(idioma.getProperty("Inactivos"))) {
+            jButton4.setText(idioma.getProperty("Activar"));
+            jButton4.setEnabled(true);
+        } else if (comboSituacion.getSelectedItem().equals(idioma.getProperty("Activos"))) {
+            jButton4.setText(idioma.getProperty("Desactivar"));
+            jButton4.setEnabled(true);
+        } else {
+            jButton4.setEnabled(false);
+        }
+        // TODO add your handling code here
+        busquedaGiro();
+    }//GEN-LAST:event_comboSituacionActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox<String> comboSituacionTipoSombra;
+    private javax.swing.JComboBox<String> comboSituacion;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;

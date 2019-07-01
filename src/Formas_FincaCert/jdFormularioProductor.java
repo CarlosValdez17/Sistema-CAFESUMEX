@@ -5,8 +5,10 @@
  */
 package Formas_FincaCert;
 
+import Idioma.Propiedades;
 import Formas_Personas.jdFormularioParcelas;
 import Metodos_Configuraciones.metodosDatosBasicos;
+import Metodos_Configuraciones.metodosParcelas;
 import java.sql.Connection;
 import javax.swing.JOptionPane;
 
@@ -23,20 +25,28 @@ public class jdFormularioProductor extends javax.swing.JDialog {
     metodosDatosBasicos mdb;
     String idPersona, nombre, tipoPersona;
     jpProductores jpP;
+    Propiedades idioma;
+    String Idioma;
 
-    public jdFormularioProductor(java.awt.Frame parent, boolean modal, String idPersona, String nombre, String tipoPersona, String existencia, Connection c) {
+
+    public jdFormularioProductor(java.awt.Frame parent, boolean modal, String idPersona, String nombre, String tipoPersona, String existencia, String Idioma, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
 
         cn = c;
+        this.Idioma=Idioma;
         mdb = new metodosDatosBasicos(cn);
         this.idPersona = idPersona;
         this.tipoPersona = tipoPersona;
         this.nombre = nombre;
+        idioma = new Propiedades(Idioma);
+        
+        /*jButton1.setText(idioma.getProperty("Aceptar"));;
+        jButton2.setText(idioma.getProperty("Cancelar"));;
+        jLabel1.setText(idioma.getProperty("Perfiles"));;*/
 
         //JOptionPane.showMessageDialog(null, "idPersona =" + idPersona + "\n" + "tipo =" + tipoPersona + "\n nombre =" + nombre);
-
         lblNombre.setText(nombre);
 
         if (existencia.equals("SI")) {
@@ -164,7 +174,7 @@ public class jdFormularioProductor extends javax.swing.JDialog {
                     null, JOptionPane.YES_NO_OPTION);
 
             if (result == JOptionPane.YES_OPTION) {
-                jdFormularioParcelas jdFP = new jdFormularioParcelas(null, true, idPersona, tipoPersona, "", cn);
+                jdFormularioParcelas jdFP = new jdFormularioParcelas(null, true, idPersona, tipoPersona, "",Idioma, cn);
                 jdFP.setVisible(true);
             } else {
                 JOptionPane.showMessageDialog(null, "Parcelas Pendientes");
@@ -180,9 +190,13 @@ public class jdFormularioProductor extends javax.swing.JDialog {
 
     private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
         // TODO add your handling code here:
-        mdb.actualizarBasicos("update productor set clave_productor='"+txtClave.getText()+"' where id_persona="+idPersona);
-        jpP.llenarTabla();
-        this.dispose();
+        try {
+            mdb.actualizarBasicos("update productor set clave_productor='" + txtClave.getText() + "' where id_persona=" + idPersona);
+            this.dispose();
+            jpP.llenarTabla();
+        } catch (Exception e) {
+
+        }
     }//GEN-LAST:event_btnModificarActionPerformed
 
     /**

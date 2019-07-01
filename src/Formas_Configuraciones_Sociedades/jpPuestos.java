@@ -5,6 +5,7 @@
  */
 package Formas_Configuraciones_Sociedades;
 
+import Idioma.Propiedades;
 import FormasGenerales.pantallaPrincipal;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.CallableStatement;
@@ -30,60 +31,68 @@ public class jpPuestos extends javax.swing.JPanel {
     DefaultTableModel modelo;
     Connection cn;
 
-    public jpPuestos(Connection c) {
+    Propiedades idioma;
+    String Idioma;
+
+    public jpPuestos(Connection c, String Idioma) {
         initComponents();
         cn = c;
+        this.Idioma = Idioma;
 
         modelo = (DefaultTableModel) tablaPuestos.getModel();
         tablaPuestos.setRowSorter(new TableRowSorter(modelo));
-mdb=new metodosDatosBasicos(cn);
-   tablaPuestos.getTableHeader().setReorderingAllowed(false);
-    busqueda();
-       
-    }
+        mdb = new metodosDatosBasicos(cn);
+        tablaPuestos.getTableHeader().setReorderingAllowed(false);
 
-   
+        idioma = new Propiedades(Idioma);
+        jButton5.setText(idioma.getProperty("Cerrar"));
+        jButton2.setText(idioma.getProperty("Nuevo"));
+        jButton3.setText(idioma.getProperty("Editar"));
+        jButton4.setText(idioma.getProperty("Desactivar"));
+        jLabel10.setText(idioma.getProperty("Situacion"));
+        jLabel6.setText(idioma.getProperty("Puesto"));
+
+        tablaPuestos.getColumnModel().getColumn(0).setHeaderValue(idioma.getProperty("Puesto"));
+        tablaPuestos.getColumnModel().getColumn(1).setHeaderValue(idioma.getProperty("Situacion"));
+
+        comboSituacion.addItem(idioma.getProperty("Activos"));
+        comboSituacion.addItem(idioma.getProperty("Inactivos"));
+        comboSituacion.addItem(idioma.getProperty("Todos"));
+
+        busqueda();
+
+    }
 
     public void busqueda() {
         String tipoP = "";
-        String tipoK="";
-        String situacion = "";
-        String where = "";
+        String situacion  = comboSituacion.getSelectedIndex() + "";
 
-        situacion = comboSituacionPuestos.getSelectedItem() + "";
-        if (situacion.equals("Inactivo")) {
+        if (situacion.equals("1")) {
             situacion = "2";
-        }else if(situacion.equals("Activo")){
-            situacion="1";
-            
+        } else if (situacion.equals("0")) {
+            situacion = "1";
+        } else {
+            situacion = "3";
         }
 
         if (txtBusquedaP.getText().length() > 0) {
             tipoP = " AND t.descripcion like '" + txtBusquedaP.getText() + "%'";
         }
-        /*  if (txtBusquedaK.getText().length() > 0) {
-            tipoK = " AND Importe like '%" + txtBusquedaK.getText() + "%'";
-        }
-      if (txtBusquedaUE.getText().length() > 0) {
-            tipoUE = "AND UE like '" + txtBusquedaUE.getText() + "%'";
-        }
-        if (txtBusquedaISO.getText().length() > 0) {
-            tipoISO = "AND ISO like '" + txtBusquedaISO.getText() + "%'";
-        }**/
+   
         String sql;
-        System.out.println("SITUACION: " + situacion);
-        if (situacion.equals("Todos")) {
+        //System.out.println("SITUACION: " + situacion);
+        if (situacion.equals("3")) {
             sql = "select t.descripcion, s.descripcion "
-                + "from Puestos t "
-                + "inner join situacion s on (t.id_situacion=s.id) WHERE t.ID_Situacion<>3 "+tipoP;
+                    + "from Puestos t "
+                    + "inner join situacion s on (t.id_situacion=s.id) WHERE t.ID_Situacion<>3 " + tipoP;
         } else {
             sql = "select t.descripcion, s.descripcion "
-                + "from Puestos t "
-                + "inner join situacion s on (t.id_situacion=s.id) WHERE t.ID_Situacion=" + situacion+tipoP;
+                    + "from Puestos t "
+                    + "inner join situacion s on (t.id_situacion=s.id) WHERE t.ID_Situacion=" + situacion + tipoP;
         }
         //System.out.println(sql);
         limpiar(tablaPuestos);
-        mdb.cargarInformacion2(modelo,2, sql);
+        mdb.cargarInformacion2(modelo, 2, sql);
 
     }
 
@@ -111,7 +120,7 @@ mdb=new metodosDatosBasicos(cn);
         tablaPuestos = new javax.swing.JTable();
         jPanel8 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
-        comboSituacionPuestos = new javax.swing.JComboBox<>();
+        comboSituacion = new javax.swing.JComboBox<>();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
@@ -179,15 +188,9 @@ mdb=new metodosDatosBasicos(cn);
 
         jLabel10.setText("Situacion");
 
-        comboSituacionPuestos.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Activo", "Inactivo", "Todos" }));
-        comboSituacionPuestos.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                comboSituacionPuestosItemStateChanged(evt);
-            }
-        });
-        comboSituacionPuestos.addActionListener(new java.awt.event.ActionListener() {
+        comboSituacion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                comboSituacionPuestosActionPerformed(evt);
+                comboSituacionActionPerformed(evt);
             }
         });
 
@@ -227,7 +230,7 @@ mdb=new metodosDatosBasicos(cn);
                 .addContainerGap()
                 .addComponent(jLabel10)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(comboSituacionPuestos, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(comboSituacion, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 293, Short.MAX_VALUE)
                 .addComponent(jButton2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -246,7 +249,7 @@ mdb=new metodosDatosBasicos(cn);
                     .addComponent(jButton2)
                     .addComponent(jButton3)
                     .addComponent(jButton4)
-                    .addComponent(comboSituacionPuestos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(comboSituacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel10)
                     .addComponent(jButton5))
                 .addContainerGap())
@@ -317,43 +320,34 @@ mdb=new metodosDatosBasicos(cn);
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        jdP = new jdPuestos(null, true, "1", Puestos, cn);
+        jdP = new jdPuestos(null, true, "1", Puestos, Idioma, cn);
         jdP.jp = this;
         jdP.setVisible(true);
-
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
         if (Puestos.equals("")) {
-            JOptionPane.showMessageDialog(null,"selecciona un registro");
-        }else{
-            if (situacion.equals("Activo")) {
-             jdP = new jdPuestos(null, true, "2", Puestos ,cn);
-        jdP.jp = this;
-        jdP.setVisible(true);
-        }else if(situacion.equals("Inactivo")){
-         JOptionPane.showMessageDialog(null,"Dato inactivo");   
+            JOptionPane.showMessageDialog(null, idioma.getProperty("SeleccionRegistro"));
+            //JOptionPane.showMessageDialog(null,"selecciona un registro");
+        } else {
+            jdP = new jdPuestos(null, true, "2", Puestos, Idioma, cn);
+            jdP.jp = this;
+            jdP.setVisible(true);
         }
-        }
-
     }//GEN-LAST:event_jButton3ActionPerformed
-   String situacion="";
+
     String Puestos = "";
-   
+
     private void tablaPuestosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaPuestosMouseClicked
         // TODO add your handling code here: Puestos
         Puestos = tablaPuestos.getValueAt(tablaPuestos.getSelectedRow(), 0) + "";  //
-        situacion=tablaPuestos.getValueAt(tablaPuestos.getSelectedRow(), 1) + "";
-        
+        //situacion = tablaPuestos.getValueAt(tablaPuestos.getSelectedRow(), 1) + "";
         if (evt.getClickCount() == 2) {
-             if (situacion.equals("Activo")) {
-            jdP = new jdPuestos(null, true, "2", Puestos, cn);
+            jdP = new jdPuestos(null, true, "2", Puestos, Idioma, cn);
             jdP.jp = this;
             jdP.setVisible(true);
-             }else if(situacion.equals("Inactivo")){
-            JOptionPane.showMessageDialog(null,"Dato inactivo");
-        }
+
         }
     }//GEN-LAST:event_tablaPuestosMouseClicked
 
@@ -361,18 +355,7 @@ mdb=new metodosDatosBasicos(cn);
         // TODO add your handling code here:
         busqueda();
     }//GEN-LAST:event_txtBusquedaPKeyReleased
-String estatus="2";
-    private void comboSituacionPuestosItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionPuestosItemStateChanged
-       if (comboSituacionPuestos.getSelectedItem().equals("Inactivo")) {
-         estatus="1";
-            jButton4.setText("Activar");
-        }else{jButton4.setText("Desactivar");
-        estatus="2";
-        }
-        // TODO add your handling code here:
-        busqueda();
-    }//GEN-LAST:event_comboSituacionPuestosItemStateChanged
-
+    String estatus = "2";
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
         this.removeAll();
@@ -385,29 +368,37 @@ String estatus="2";
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        String sql="";
-
-        if (estatus.equals("2")) {
-             sql = "UPDATE Puestos SET ID_Situacion=2 where descripcion='" + Puestos + "'";
-       
-        }else if(estatus.equals("1")){
+        String sql = "";
+        if (comboSituacion.getSelectedIndex() == 0) {
+            sql = "UPDATE Puestos SET ID_Situacion=2 where descripcion='" + Puestos + "'";
+        } else if (comboSituacion.getSelectedIndex() == 1) {
             sql = "UPDATE Puestos SET ID_Situacion=1 where descripcion='" + Puestos + "'";
         }
-     mdb.actualizarBasicos(sql);
-         busqueda();
+        mdb.actualizarBasicos(sql);
+        busqueda();
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void txtBusquedaPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBusquedaPActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtBusquedaPActionPerformed
 
-    private void comboSituacionPuestosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboSituacionPuestosActionPerformed
+    private void comboSituacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboSituacionActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_comboSituacionPuestosActionPerformed
+        if (comboSituacion.getSelectedItem().equals(idioma.getProperty("Inactivos"))) {
+            jButton4.setText(idioma.getProperty("Activar"));
+            jButton4.setEnabled(true);
+        } else if (comboSituacion.getSelectedItem().equals(idioma.getProperty("Activos"))) {
+            jButton4.setText(idioma.getProperty("Desactivar"));
+            jButton4.setEnabled(true);
+        } else {
+            jButton4.setEnabled(false);
+        }
+        busqueda();
+    }//GEN-LAST:event_comboSituacionActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    public javax.swing.JComboBox<String> comboSituacionPuestos;
+    public javax.swing.JComboBox<String> comboSituacion;
     public javax.swing.JButton jButton2;
     public javax.swing.JButton jButton3;
     public javax.swing.JButton jButton4;

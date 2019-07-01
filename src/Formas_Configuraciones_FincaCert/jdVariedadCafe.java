@@ -5,6 +5,7 @@
  */
 package Formas_Configuraciones_FincaCert;
 
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
@@ -24,8 +25,9 @@ public class jdVariedadCafe extends javax.swing.JDialog {
     metodosDatosBasicos mdb;
     String tipo, variedad;
     validaConfi valiConf;
+    Propiedades idioma;
 
-    public jdVariedadCafe(java.awt.Frame parent, boolean modal, String tipo, String variedad, Connection c) {
+    public jdVariedadCafe(java.awt.Frame parent, boolean modal, String tipo, String variedad, String Idioma, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
@@ -34,12 +36,21 @@ public class jdVariedadCafe extends javax.swing.JDialog {
         this.variedad = variedad;
         this.tipo = tipo;
 
+        idioma = new Propiedades(Idioma);
+        
+        jButton1.setText(idioma.getProperty("Aceptar"));;
+        jButton2.setText(idioma.getProperty("Cancelar"));;
+        jLabel1.setText(idioma.getProperty("VariedadDeCafe"));;
+        
+
         mdb = new metodosDatosBasicos(cn);
 
         if (tipo.equals("1")) {
-            setTitle("Nueva Variedad de Cafe");
+            //setTitle("Nueva Variedad de Cafe");
+            setTitle(idioma.getProperty("NuevaVariedadDeCafe"));
         } else {
-            setTitle("Editar Variedad de Cafe");
+            //setTitle("Editar Variedad de Cafe");
+            setTitle(idioma.getProperty("EditarVariedadDeCafe"));
             txtVariedad.setText(variedad);
         }
     }

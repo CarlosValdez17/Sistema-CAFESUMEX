@@ -5,6 +5,7 @@
  */
 package Formas_Sociedades;
 
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.Connection;
 import javax.swing.JOptionPane;
@@ -24,19 +25,64 @@ public class jpBeneficiosH extends javax.swing.JPanel {
     DefaultTableModel modelo;
     metodosDatosBasicos mdb;
     jdBeneficioH jdBH;
-    String estado = "=1";
+    String estado = "=1", Idioma;
+    Propiedades idioma;
 
-    public jpBeneficiosH(Connection cn) {
+    public jpBeneficiosH(Connection cn, String Idioma) {
         initComponents();
 
         this.cn = cn;
+        this.Idioma = Idioma;
+        idioma = new Propiedades(Idioma);
         mdb = new metodosDatosBasicos(cn);
         modelo = (DefaultTableModel) jTable1.getModel();
         llenarTabla();
+        traductor();
+    }
+
+    public void traductor() {
+        jLabel1.setText(idioma.getProperty("Beneficio"));
+        jLabel2.setText(idioma.getProperty("Responsable"));
+        jLabel3.setText(idioma.getProperty("Direccion"));
+        jLabel4.setText(idioma.getProperty("Sociedad"));
+
+        jTable1.getColumnModel().getColumn(0).setHeaderValue(idioma.getProperty("BeneficioHumedo"));
+        jTable1.getColumnModel().getColumn(1).setHeaderValue(idioma.getProperty("Responsable"));
+        jTable1.getColumnModel().getColumn(2).setHeaderValue(idioma.getProperty("Capturista"));
+        jTable1.getColumnModel().getColumn(3).setHeaderValue(idioma.getProperty("Direccion"));
+        jTable1.getColumnModel().getColumn(4).setHeaderValue(idioma.getProperty("Telefono"));
+        jTable1.getColumnModel().getColumn(5).setHeaderValue(idioma.getProperty("Estado"));
+        jTable1.getColumnModel().getColumn(6).setHeaderValue(idioma.getProperty("Municipio"));
+        jTable1.getColumnModel().getColumn(7).setHeaderValue(idioma.getProperty("Localidad"));
+        jTable1.getColumnModel().getColumn(8).setHeaderValue(idioma.getProperty("Sociedad"));
+
+        jButton2.setText(idioma.getProperty("Exportar"));
+        jButton3.setText(idioma.getProperty("Nuevo"));
+        jButton4.setText(idioma.getProperty("Editar"));
+        jButton5.setText(idioma.getProperty("Desactivar"));
+
+        comboEstado.addItem(idioma.getProperty("Activos"));
+        comboEstado.addItem(idioma.getProperty("Inactivos"));
+        comboEstado.addItem(idioma.getProperty("Todos"));
     }
 
     public void llenarTabla() {
         limpiar(jTable1);
+
+        String where = "";
+        if (jTextField1.getText().length() > 0) {
+            where += " AND bh.nombre like '" + jTextField1.getText() + "%'";
+        }
+        if (jTextField2.getText().length() > 0) {
+            where += " AND pf.nombre like '" + jTextField2.getText() + "%'";
+        }
+        if (jTextField3.getText().length() > 0) {
+            where += " AND bh.domicilio like '" + jTextField3.getText() + "%'";
+        }
+        if (jTextField4.getText().length() > 0) {
+            where += " AND pm.nombrecorto like '" + jTextField4.getText() + "%'";
+        }
+
         mdb.cargarInformacion2(modelo, 9, "select bh.nombre ,CONCAT(pf.Nombre, ' ', pf.apellidoPaterno, ' ', pf.apellidoMaterno),CONCAT(pf2.Nombre, ' ', pf2.apellidoPaterno, ' ', pf2.apellidoMaterno), bh.domicilio, bh.telefono, e.Descripcion,m.Descripcion,l.Descripcion,pm.NombreCorto\n"
                 + "from beneficioshumedos bh\n"
                 + "left join personaf pf on (bh.idPersonaEncargada=pf.ID)\n "
@@ -44,7 +90,7 @@ public class jpBeneficiosH extends javax.swing.JPanel {
                 + "left join localidad l on (bh.idLocalidad=l.ID)\n"
                 + "left join municipio m on (l.ID_Municipio=m.ID)\n"
                 + "left join estado e on (m.ID_Estado=e.ID)\n"
-                + "left join personam pm on (bh.idSociedad=pm.ID) where idEstado" + estado
+                + "left join personam pm on (bh.idSociedad=pm.ID) where idEstado" + estado + where
         );
     }
 
@@ -113,9 +159,33 @@ public class jpBeneficiosH extends javax.swing.JPanel {
 
         jLabel1.setText("Beneficio");
 
+        jTextField1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextField1KeyReleased(evt);
+            }
+        });
+
+        jTextField2.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextField2KeyReleased(evt);
+            }
+        });
+
         jLabel2.setText("Responsable");
 
         jLabel3.setText("Domicilio");
+
+        jTextField3.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextField3KeyReleased(evt);
+            }
+        });
+
+        jTextField4.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextField4KeyReleased(evt);
+            }
+        });
 
         jLabel4.setText("Sociedad");
 
@@ -185,7 +255,6 @@ public class jpBeneficiosH extends javax.swing.JPanel {
             }
         });
 
-        comboEstado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Activos", "Inactivos", "Todos" }));
         comboEstado.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboEstadoActionPerformed(evt);
@@ -250,14 +319,14 @@ public class jpBeneficiosH extends javax.swing.JPanel {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        jdBH = new jdBeneficioH(null, true, "", "Nuevo", cn);
+        jdBH = new jdBeneficioH(null, true, "", "Nuevo", Idioma, cn);
         jdBH.jpBH = this;
         jdBH.setVisible(true);
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        jdBH = new jdBeneficioH(null, true, beneficio, "Modificar", cn);
+        jdBH = new jdBeneficioH(null, true, beneficio, "Editar", Idioma, cn);
         jdBH.setVisible(true);
     }//GEN-LAST:event_jButton4ActionPerformed
     String beneficio = "";
@@ -266,9 +335,9 @@ public class jpBeneficiosH extends javax.swing.JPanel {
         beneficio = jTable1.getValueAt(jTable1.getSelectedRow(), 0) + "";
 
         if (evt.getClickCount() == 2) {
-
+            jdBH = new jdBeneficioH(null, true, beneficio, "Editar", Idioma, cn);
+            jdBH.setVisible(true);
         }
-
     }//GEN-LAST:event_jTable1MouseClicked
 
     private void comboEstadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboEstadoActionPerformed
@@ -297,11 +366,31 @@ public class jpBeneficiosH extends javax.swing.JPanel {
             mdb.actualizarBasicos("update beneficioshumedos set idEstado=2 where nombre='" + jTable1.getValueAt(jTable1.getSelectedRow(), 0) + "'");
         } else if (estado.equals("=2")) {
             mdb.actualizarBasicos("update beneficioshumedos set idEstado=1 where nombre='" + jTable1.getValueAt(jTable1.getSelectedRow(), 0) + "'");
-        }else{
-            JOptionPane.showMessageDialog(null,"Opcion No Permitida");
+        } else {
+            JOptionPane.showMessageDialog(null, "Opcion No Permitida");
         }
         llenarTabla();
     }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jTextField1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField1KeyReleased
+        // TODO add your handling code here:
+        llenarTabla();
+    }//GEN-LAST:event_jTextField1KeyReleased
+
+    private void jTextField2KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField2KeyReleased
+        // TODO add your handling code here:
+        llenarTabla();
+    }//GEN-LAST:event_jTextField2KeyReleased
+
+    private void jTextField3KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField3KeyReleased
+        // TODO add your handling code here:
+        llenarTabla();
+    }//GEN-LAST:event_jTextField3KeyReleased
+
+    private void jTextField4KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField4KeyReleased
+        // TODO add your handling code here:
+        llenarTabla();
+    }//GEN-LAST:event_jTextField4KeyReleased
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -7,6 +7,7 @@ package Metodos_Configuraciones;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -23,6 +24,18 @@ public class metodosBeneficioHumedo {
         this.cn = cn;
     }
 
+     public void insertarBasicos(String sql) {
+        try {
+            System.out.println(sql);
+            PreparedStatement cmd = cn.prepareCall(sql);
+            cmd.execute();
+            cmd.close();
+            JOptionPane.showMessageDialog(null, "Inserción Exitosa");
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Error al Insertar\n" + ex);
+        }
+    }
+     
     public void cargarInformacionColumna1B(DefaultTableModel modelo, int tamaño, String sql) {
         try {
             System.out.println(sql);

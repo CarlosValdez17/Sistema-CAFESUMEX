@@ -5,6 +5,7 @@
  */
 package Formas_Configuraciones_DatosBasicos;
 
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
@@ -24,9 +25,10 @@ public class jdLocalidad extends javax.swing.JDialog {
     validaConfi valiConf;
     Connection cn;
     jpLocalidad jpL;
+    Propiedades idioma;
     String l, m, e, p, tipo;
 
-    public jdLocalidad(java.awt.Frame parent, boolean modal, String tipo, String l, String m, String e, String p, Connection c) {
+    public jdLocalidad(java.awt.Frame parent, boolean modal, String tipo, String l, String m, String e, String p, String Idioma, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
@@ -40,19 +42,30 @@ public class jdLocalidad extends javax.swing.JDialog {
 
         mdb = new metodosDatosBasicos(cn);
         valiConf = new validaConfi();
+        idioma = new Propiedades(Idioma);
 
         txtLocalidad.setText(l);
 
+        jButton2.setText(idioma.getProperty("Aceptar"));
+        jButton3.setText(idioma.getProperty("Cancelar"));
+        jLabel1.setText(idioma.getProperty("Pais"));
+        jLabel3.setText(idioma.getProperty("Estado"));        
+        jLabel4.setText(idioma.getProperty("Municipio"));        
+        jLabel2.setText(idioma.getProperty("Localidad"));        
+        
+        
         rellenarCombos();
         comparaciones();
     }
 
     public void comparaciones() {
         if (tipo.equals("1")) {
-            setTitle("Nuevo");
+            //setTitle("Nuevo");
+            setTitle(idioma.getProperty("NuevaLocalidad"));
 
         } else {
-            setTitle("Editar Localidad");
+            //setTitle("Editar Localidad");
+            setTitle(idioma.getProperty("EditarLocalidad"));
 
             comboPais.setEnabled(false);
             comboEstado.setEnabled(false);

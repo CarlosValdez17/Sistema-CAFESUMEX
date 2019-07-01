@@ -6,7 +6,9 @@
 package Formas_Personas;
 
 import Formas_FincaCert.jdParcelas;
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosDatosBasicos;
+import Metodos_Configuraciones.metodosParcelas;
 import Metodos_Configuraciones.validaConfi;
 import java.awt.Color;
 import java.awt.Desktop;
@@ -42,25 +44,29 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
      * Creates new form jdFormularioParcelas
      */
     Connection cn;
-    metodosDatosBasicos mdb;
+    metodosParcelas mp;
     jdParcelas jdP;
     DefaultTableModel modelo, modeloC, modeloCultivos, modeloV, modeloD;
-    String idPersona, tipoPersona, claveParcela;
+    String idPersona, tipoPersona, claveParcela, Idioma;
     validaConfi valiConf;
 
     String fila = null;
 
+    Propiedades idioma;
+
     private JPanel contentPane;
 
-    public jdFormularioParcelas(java.awt.Frame parent, boolean modal, String idPersona, String tipoPersona, String claveParcela, Connection c) {
+    public jdFormularioParcelas(java.awt.Frame parent, boolean modal, String idPersona, String tipoPersona, String claveParcela, String Idioma, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
 
         cn = c;
-        mdb = new metodosDatosBasicos(cn);
+        mp = new metodosParcelas(cn);
+        this.Idioma = Idioma;
         this.tipoPersona = tipoPersona;
         this.claveParcela = claveParcela;
+        idioma = new Propiedades(Idioma);
         valiConf = new validaConfi();
 
         modelo = (DefaultTableModel) tablaParcelas.getModel();
@@ -79,6 +85,140 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
         llenarTabla();
         rellenarCombos();
         datosParcela(claveParcela);
+        traductor();
+    }
+
+    public void traductor() {
+        //Paneles
+        //Datos Productor
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(idioma.getProperty("DatosProductor")));
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(idioma.getProperty("Parcela")));
+        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(idioma.getProperty("UbicacionGeografica")));
+        jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder(idioma.getProperty("Certificados")));
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(idioma.getProperty("DatosComplementarios")));
+        jPanel8.setBorder(javax.swing.BorderFactory.createTitledBorder(idioma.getProperty("Porcentajes")));
+
+        //Clave
+        jLabel14.setText(idioma.getProperty("ClaveProductor"));
+        //Nombre
+        jLabel8.setText(idioma.getProperty("Nombre"));
+        //RFC
+        jLabel15.setText(idioma.getProperty("IdentificacionFiscal"));
+        //Curp
+        jLabel16.setText(idioma.getProperty("RegistroDePoblacion"));
+        //Direccion
+        jLabel17.setText(idioma.getProperty("Direccion"));
+        //Telefono Fijo
+        jLabel18.setText(idioma.getProperty("TelefonoFijo"));
+        //Telefono movil
+        jLabel19.setText(idioma.getProperty("TelefonoMovil"));
+
+        //Tabs 
+        jTabbedPane1.setTitleAt(0, idioma.getProperty("DatosBasicos"));
+        jTabbedPane1.setTitleAt(1, idioma.getProperty("DatosComplementarios"));
+        jTabbedPane1.setTitleAt(2, idioma.getProperty("Documentos"));
+
+        //Datos Parcela
+        //Clave Parcela
+        jLabel1.setText(idioma.getProperty("ClaveParcela"));
+        //Nombre Parcela
+        jLabel2.setText(idioma.getProperty("NombreParcela"));
+        //Altura
+        jLabel3.setText(idioma.getProperty("Altura"));
+        //Area
+        jLabel4.setText(idioma.getProperty("AreaHA"));
+        //Num Cafetos
+        jLabel5.setText(idioma.getProperty("NumeroCafetos"));
+        //Sociedad
+        jLabel7.setText(idioma.getProperty("Sociedad"));
+
+        //Ubicacion
+        jLabel12.setText(idioma.getProperty("Localidad"));
+        jLabel11.setText(idioma.getProperty("Municipio"));
+        jLabel10.setText(idioma.getProperty("Estado"));
+        jLabel26.setText(idioma.getProperty("Pais"));
+        //Latitud
+        jLabel27.setText(idioma.getProperty("Latitud"));
+        //Longitud
+        jLabel28.setText(idioma.getProperty("Longitud"));
+
+        //Certificado
+        jLabel6.setText(idioma.getProperty("Certificado"));
+        //Tabla Certificaciones
+        tablaCertificado.getColumnModel().getColumn(0).setHeaderValue(idioma.getProperty("Certificado"));
+        tablaCertificado.getColumnModel().getColumn(1).setHeaderValue(idioma.getProperty("Certificador"));
+        tablaCertificado.getColumnModel().getColumn(2).setHeaderValue(idioma.getProperty("Alcances"));
+
+        //Tabla General parcelas
+        tablaParcelas.getColumnModel().getColumn(0).setHeaderValue(idioma.getProperty("Sociedad"));
+        tablaParcelas.getColumnModel().getColumn(1).setHeaderValue(idioma.getProperty("Nombre"));
+        tablaParcelas.getColumnModel().getColumn(2).setHeaderValue(idioma.getProperty("ClaveParcela"));
+        tablaParcelas.getColumnModel().getColumn(3).setHeaderValue(idioma.getProperty("Certificado"));
+        tablaParcelas.getColumnModel().getColumn(4).setHeaderValue(idioma.getProperty("Localidad"));
+        tablaParcelas.getColumnModel().getColumn(5).setHeaderValue(idioma.getProperty("Altura"));
+        tablaParcelas.getColumnModel().getColumn(6).setHeaderValue(idioma.getProperty("AreaHA"));
+        tablaParcelas.getColumnModel().getColumn(7).setHeaderValue(idioma.getProperty("NumeroCafetos"));
+
+        //Tipo de Suelo
+        jLabel9.setText(idioma.getProperty("TipoDeSuelo"));
+        //Tipo de Sombra
+        jLabel13.setText(idioma.getProperty("TipoDeSombra"));
+        //Sector
+        jLabel20.setText(idioma.getProperty("Sector"));
+        //Sistema de Prod
+        jLabel21.setText(idioma.getProperty("SistemaDeProduccion"));
+        //Edad en años
+        jLabel24.setText(idioma.getProperty("EdadEnanios"));
+        //Observaciones
+        jLabel25.setText(idioma.getProperty("Observaciones"));
+
+        //Cultivos
+        jLabel22.setText(idioma.getProperty("Cultivos"));
+        //Porcentaje
+        jLabel23.setText(idioma.getProperty("Porcentaje"));
+        jLabel30.setText(idioma.getProperty("Porcentaje"));
+        //Variedad de Cafe
+        jLabel29.setText(idioma.getProperty("VariedadDeCafe"));
+
+        tablaCultivos.getColumnModel().getColumn(0).setHeaderValue(idioma.getProperty("Cultivos"));
+        tablaCultivos.getColumnModel().getColumn(1).setHeaderValue(idioma.getProperty("Porcentaje"));
+
+        tablaVariedades.getColumnModel().getColumn(0).setHeaderValue(idioma.getProperty("VariedadDeCafe"));
+        tablaVariedades.getColumnModel().getColumn(1).setHeaderValue(idioma.getProperty("Porcentaje"));
+
+        //Añadir Eliminar
+        jButton3.setText(idioma.getProperty("Anadir"));
+        jButton4.setText(idioma.getProperty("Eliminar"));
+
+        jButton6.setText(idioma.getProperty("Anadir"));
+        jButton7.setText(idioma.getProperty("Eliminar"));
+
+        //Tipo de Archivo
+        jLabel31.setText(idioma.getProperty("TipoDeArchivo"));
+        //Nombre del archivo
+        jLabel33.setText(idioma.getProperty("NombreArchivo"));
+        //Ruta
+        jLabel32.setText(idioma.getProperty("Ruta"));
+        //boton buscar
+        jButton8.setText(idioma.getProperty("Buscar"));
+        //Añadir
+        jButton10.setText(idioma.getProperty("Anadir"));
+        //Eliminar
+        jButton9.setText(idioma.getProperty("Eliminar"));
+        //pdf
+        jButton12.setText(idioma.getProperty("AbrirPDF"));
+
+        tablaDocumentos.getColumnModel().getColumn(0).setHeaderValue(idioma.getProperty("NombreArchivo"));
+        tablaDocumentos.getColumnModel().getColumn(1).setHeaderValue(idioma.getProperty("TipoDeArchivo"));
+        tablaDocumentos.getColumnModel().getColumn(2).setHeaderValue(idioma.getProperty("Ruta"));
+
+        //Boton limpiar
+        jButton11.setText(idioma.getProperty("Limpiar"));
+        //Boton agregar
+        botonAgregar.setText(idioma.getProperty("Agregar"));
+        //Boton modificar
+        botonModificar.setText(idioma.getProperty("Modificar"));
+
     }
 
     public void validarCampos() {
@@ -110,7 +250,7 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
         /*
             CONSULTA CON CONCATENACION DE REGISTROS
         
-        mdb.cargarInformacion2(modelo, 8, "SELECT s.razonsocial, p.nombre, \n"
+        mp.cargarInformacion2(modelo, 8, "SELECT s.razonsocial, p.nombre, \n"
                 + "    p.clave_parcela,\n"
                 + "    GROUP_CONCAT(\n"
                 + "        DISTINCT c.Descripcion\n"
@@ -135,7 +275,7 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
                 + "    id_persona =" + idPersona + "  \n"
                 + "GROUP BY clave_parcela ASC"); */
         if (tipoPersona.equals("1")) {
-            mdb.cargarInformacion2(modelo, 8, "SELECT s.razonsocial, p.nombre, \n"
+            mp.cargarInformacion2(modelo, 8, "SELECT s.razonsocial, p.nombre, \n"
                     + "    p.clave_parcela,\n"
                     + " 	clave_certificacion, \n"
                     + "    l.descripcion,    altura,\n"
@@ -150,7 +290,7 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
                     + "    id_persona =" + idPersona + " and tipoPersona=1  \n"
                     + "GROUP BY clave_parcela ASC");
         } else if (tipoPersona.equals("2")) {
-            mdb.cargarInformacion2(modelo, 8, "SELECT s.razonsocial, p.nombre, \n"
+            mp.cargarInformacion2(modelo, 8, "SELECT s.razonsocial, p.nombre, \n"
                     + "    p.clave_parcela,\n"
                     + " 	clave_certificacion, \n"
                     + "    l.descripcion,    altura,\n"
@@ -186,7 +326,7 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
     }
 
     public void llenarDatosProductorFisica() {
-        String[] datos = mdb.cargarDatosFormularioPersonas("SELECT concat(nombre,' ',apellidopaterno,' ', apellidomaterno) as nombre,"
+        String[] datos = mp.cargarDatosFormularioPersonas("SELECT concat(nombre,' ',apellidopaterno,' ', apellidomaterno) as nombre,"
                 + "identificacionfiscal, registrodepoblacion, direccion, telefono, telefonomovil from personaf where id=" + idPersona, 6).split("¬");
         lblNombre.setText(datos[0]);
         lblRFC.setText(datos[1]);
@@ -195,12 +335,12 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
         lblTelFijo.setText(datos[4]);
         lblTelMov.setText(datos[5]);
 
-        lblClave.setText(mdb.devuelveUnDato("select clave_productor from productor where id_persona=" + idPersona + " and tipoPersona=1"));
-        //System.out.println("CLAVE DE PRODUCTOR=" + mdb.devuelveUnDato("select clave_productor from productor where id_persona=" + idPersona));
+        lblClave.setText(mp.devuelveUnDato("select clave_productor from productor where id_persona=" + idPersona + " and tipoPersona=1"));
+        //System.out.println("CLAVE DE PRODUCTOR=" + mp.devuelveUnDato("select clave_productor from productor where id_persona=" + idPersona));
     }
 
     public void llenarDatosProductorMoral() {
-        String[] datos = mdb.cargarDatosFormularioPersonas("SELECT razonsocial, "
+        String[] datos = mp.cargarDatosFormularioPersonas("SELECT razonsocial, "
                 + "identificacionfiscal, nombrecorto, direccion, telefono, email from personam where id=" + idPersona, 6).split("¬");
 
         jLabel16.setText("Nombre Corto");
@@ -213,13 +353,13 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
         lblTelFijo.setText(datos[4]);
         lblTelMov.setText(datos[5]);
 
-        lblClave.setText(mdb.devuelveUnDato("select clave_productor from productor where id_persona=" + idPersona + " and tipoPersona=2"));
-        //System.out.println(mdb.devuelveUnDato("select clave_productor from productor where id_persona="+idPersona));
+        lblClave.setText(mp.devuelveUnDato("select clave_productor from productor where id_persona=" + idPersona + " and tipoPersona=2"));
+        //System.out.println(mp.devuelveUnDato("select clave_productor from productor where id_persona="+idPersona));
     }
 
     public void datosParcela(String idParcela) {
         /*    ----- CONSULTA COMPLETA -----  
-        String[] datos = mdb.cargarDatosFormularioPersonas("SELECT clave_parcela, nombre, altura, area, numCafetos, pm.NombreCorto, pa.descripcion,\n"
+        String[] datos = mp.cargarDatosFormularioPersonas("SELECT clave_parcela, nombre, altura, area, numCafetos, pm.NombreCorto, pa.descripcion,\n"
                 + "	e.descripcion, m.descripcion, l.descripcion, ts.descripcion, tsom.descripcion, sp.descripcion, sector, edad, observaciones\n"
                 + "from parcelas p\n"
                 + "inner join personam pm on (p.id_sociedad=pm.ID)\n"
@@ -234,15 +374,15 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
          */
 
         if (!idParcela.equals("")) {
-            String[] datos = mdb.cargarDatosFormularioPersonas("SELECT clave_parcela, nombre, altura, area, numCafetos, pm.NombreCorto, pa.descripcion,\n"
-                    + "	e.descripcion, m.descripcion, l.descripcion, sector, edad, observaciones, longitud,latitud\n"
+            String[] datos = mp.cargarDatosFormularioPersonas("SELECT clave_parcela, nombre, altura, area, numCafetos, pm.NombreCorto, pa.descripcion,\n"
+                    + "	e.descripcion, m.descripcion, l.descripcion, sector, edad, observaciones, longitud,latitud,clave_certificacion\n"
                     + "from parcelas p\n"
                     + "inner join personam pm on (p.id_sociedad=pm.ID)\n"
                     + "inner join pais pa on (p.id_pais=pa.ID)\n"
                     + "inner join estado e on (p.id_estado=e.ID)\n"
                     + "inner join municipio m on (p.id_municipio=m.ID)\n"
                     + "inner join localidad l on (p.id_localidad=l.ID)\n"
-                    + "where p.id=" + idParcela, 15).split("¬");
+                    + "where p.id=" + idParcela, 16).split("¬");
 
             //Clave de parcela
             txtClave.setText(datos[0]);
@@ -275,19 +415,29 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
             //Latitud
             txtLatitud.setText(datos[14]);
 
+            String certificado = "";
+            for (int i = 0; i < comboCertificado.getItemCount(); i++) {
+                if (comboCertificado.getItemAt(i).contains(datos[15])) {
+                    certificado = comboCertificado.getItemAt(i);
+                } else {
+                }
+            }
+            //Clave Certificacion
+            comboCertificado.setSelectedItem(certificado);
+
             //Combos - Consulta Individual
             //Tipo de Suelo
-            comboSuelo.setSelectedItem(mdb.devuelveUnDato("select ts.descripcion from parcelas p "
+            comboSuelo.setSelectedItem(mp.devuelveUnDato("select ts.descripcion from parcelas p "
                     + "inner join tiposuelo ts on (p.Id_tipoSuelo=ts.ID) "
                     + "where p.id=" + idParcela));
 
             //Tipo de Sombra
-            comboSombra.setSelectedItem(mdb.devuelveUnDato("select ts.descripcion from parcelas p "
+            comboSombra.setSelectedItem(mp.devuelveUnDato("select ts.descripcion from parcelas p "
                     + "inner join tiposombra ts on (p.id_tiposombra=ts.id) "
                     + "where p.id=" + idParcela));
 
             //Combo Sistema Produccion
-            comboSistemaP.setSelectedItem(mdb.devuelveUnDato("select sp.descripcion from parcelas p "
+            comboSistemaP.setSelectedItem(mp.devuelveUnDato("select sp.descripcion from parcelas p "
                     + "inner join tipoproduccion sp on (p.Id_sistemaProduccion=sp.ID) "
                     + "where p.id=" + idParcela));
 
@@ -296,22 +446,22 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
             limpiar(tablaCertificado);
             limpiar(tablaDocumentos);
 
-            mdb.cargarInformacion2(modeloCultivos, 2, "select c.descripcion, porcentaje "
+            mp.cargarInformacion2(modeloCultivos, 2, "select c.descripcion, porcentaje "
                     + "from porcentaje_cultivos p "
                     + "inner join cultivos c on (p.id_cultivo=c.id) "
                     + "where id_parcela=" + idParcela);
 
-            mdb.cargarInformacion2(modeloV, 2, "select c.descripcion, porcentaje "
+            mp.cargarInformacion2(modeloV, 2, "select c.descripcion, porcentaje "
                     + "from porcentaje_variedades p "
                     + "inner join variedadcafe c on (p.id_variedad=c.id) "
                     + "where id_parcela=" + idParcela);
 
-            mdb.cargarInformacion2(modeloC, 3, "select certificado, certificadora,alcance "
+            mp.cargarInformacion2(modeloC, 3, "select certificado, certificadora,alcance "
                     + "from parcelas p "
                     + "inner join codigo_relacion c on (p.clave_certificacion=c.codigo) "
                     + "where p.id=" + idParcela);
 
-            mdb.cargarInformacion2(modeloD, 3, "select nombre, t.descripcion, ruta "
+            mp.cargarInformacion2(modeloD, 3, "select nombre, t.descripcion, ruta "
                     + "from documentosparcelas d "
                     + "inner join categoriadearchivos t on (d.tipoArchivo=t.id) "
                     + "where id_parcela=" + idParcela);
@@ -358,41 +508,41 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
         String pais, estado, municipio;
         String[] datos;
 
-        datos = mdb.cargarCombos("SELECT descripcion from pais").split("¬");
+        datos = mp.cargarCombos("SELECT descripcion from pais").split("¬");
         comboPais.setModel(new DefaultComboBoxModel((Object[]) datos));
         pais = comboPais.getSelectedItem() + "";
 
-        datos = mdb.cargarCombos("SELECT e.descripcion from estado e "
+        datos = mp.cargarCombos("SELECT e.descripcion from estado e "
                 + "inner join pais p on(e.id_pais=p.id) "
                 + "where p.descripcion='" + pais + "'").split("¬");
         comboEstado.setModel(new DefaultComboBoxModel((Object[]) datos));
         estado = comboEstado.getSelectedItem() + "";
 
-        datos = mdb.cargarCombos("SELECT m.descripcion \n"
+        datos = mp.cargarCombos("SELECT m.descripcion \n"
                 + "from municipio m \n"
                 + "inner join estado e on (m.id_estado=e.id) \n"
                 + "where e.Descripcion='" + estado + "'").split("¬");
         comboMunicipio.setModel(new DefaultComboBoxModel((Object[]) datos));
         municipio = comboMunicipio.getSelectedItem() + "";
 
-        datos = mdb.cargarCombos("SELECT m.descripcion \n"
+        datos = mp.cargarCombos("SELECT m.descripcion \n"
                 + "from localidad m \n"
                 + "inner join municipio e on (m.id_municipio=e.id) \n"
                 + "where e.Descripcion='" + municipio + "'").split("¬");
         comboLocalidad.setModel(new DefaultComboBoxModel((Object[]) datos));
 //        localidad = comboLocalidad.getSelectedItem() + "";
 
-        /*      datos = mdb.cargarCombos("SELECT m.descripcion \n"
+        /*      datos = mp.cargarCombos("SELECT m.descripcion \n"
                 + "from ejidocolonia m \n"
                 + "inner join localidad e on (m.id_localidad=e.id) \n"
                 + "where e.Descripcion='" + localidad + "'").split("¬");
         comboColonia.setModel(new DefaultComboBoxModel((Object[]) datos));
          */
- /*        String[] datosC = mdb.cargarCombos("select clave from certificado").split("¬");
+ /*        String[] datosC = mp.cargarCombos("select clave from certificado").split("¬");
         comboCertificado.setModel(new DefaultComboBoxModel((Object[]) datosC));
          */
  /*       int c1, c2;
-        String[] codigos = mdb.cargarCombos("select codigo from codigo_relacion").split("¬");
+        String[] codigos = mp.cargarCombos("select codigo from codigo_relacion").split("¬");
         for (int i = 1; i < codigos.length; i++) {
             String[] cod = codigos[i].split(",");
 
@@ -410,31 +560,31 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
 
         JOptionPane.showMessageDialog(null, "El ascii 66 es igual a -> " + Character.toString((char) 66));
          */
-        String[] datosCodC = mdb.cargarCombos("select concat (codigo,' - ',nombre) from codigos_certificacion").split("¬");
+        String[] datosCodC = mp.cargarCombos("select concat (codigo,' - ',nombre) from codigos_certificacion").split("¬");
         comboCertificado.setModel(new DefaultComboBoxModel((Object[]) datosCodC));
 
-        String[] datosS = mdb.cargarCombos("select p.nombrecorto from personam p \n"
+        String[] datosS = mp.cargarCombos("select p.nombrecorto from personam p \n"
                 + "inner join sociedadespersona s on (p.id=s.id_asociado)\n"
                 + "inner join personaf f on (f.ID=s.id_persona)\n"
                 + "where f.ID=" + idPersona).split("¬");
         comboSociedades.setModel(new DefaultComboBoxModel((Object[]) datosS));
 
-        String[] datosTSuelo = mdb.cargarCombos("select descripcion from tiposuelo").split("¬");
+        String[] datosTSuelo = mp.cargarCombos("select descripcion from tiposuelo").split("¬");
         comboSuelo.setModel(new DefaultComboBoxModel((Object[]) datosTSuelo));
 
-        String[] datosTSombra = mdb.cargarCombos("select descripcion from tiposombra").split("¬");
+        String[] datosTSombra = mp.cargarCombos("select descripcion from tiposombra").split("¬");
         comboSombra.setModel(new DefaultComboBoxModel((Object[]) datosTSombra));
 
-        String[] datosTProd = mdb.cargarCombos("select descripcion from tipoproduccion").split("¬");
+        String[] datosTProd = mp.cargarCombos("select descripcion from tipoproduccion").split("¬");
         comboSistemaP.setModel(new DefaultComboBoxModel((Object[]) datosTProd));
 
-        String[] datosCultivos = mdb.cargarCombos("select descripcion from cultivos").split("¬");
+        String[] datosCultivos = mp.cargarCombos("select descripcion from cultivos").split("¬");
         comboCultivos.setModel(new DefaultComboBoxModel((Object[]) datosCultivos));
 
-        String[] datosVariedad = mdb.cargarCombos("select descripcion from variedadcafe").split("¬");
+        String[] datosVariedad = mp.cargarCombos("select descripcion from variedadcafe").split("¬");
         comboVariedad.setModel(new DefaultComboBoxModel((Object[]) datosVariedad));
 
-        String[] datosArchivos = mdb.cargarCombos("select descripcion from categoriadearchivos where parcelas=1").split("¬");
+        String[] datosArchivos = mp.cargarCombos("select descripcion from categoriadearchivos where parcelas=1").split("¬");
         comboArchivos.setModel(new DefaultComboBoxModel((Object[]) datosArchivos));
     }
 
@@ -475,9 +625,9 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
 
         String tipoSuelo = "", tipoSombra = "", tipoProduccion = "";
 
-        tipoSuelo = mdb.devuelveId("select id from tiposuelo where descripcion='" + comboSuelo.getSelectedItem() + "'");
-        tipoSombra = mdb.devuelveId("select id from tiposombra where descripcion='" + comboSombra.getSelectedItem() + "'");
-        tipoProduccion = mdb.devuelveId("select id from tipoproduccion where descripcion='" + comboSistemaP.getSelectedItem() + "'");
+        tipoSuelo = mp.devuelveId("select id from tiposuelo where descripcion='" + comboSuelo.getSelectedItem() + "'");
+        tipoSombra = mp.devuelveId("select id from tiposombra where descripcion='" + comboSombra.getSelectedItem() + "'");
+        tipoProduccion = mp.devuelveId("select id from tipoproduccion where descripcion='" + comboSistemaP.getSelectedItem() + "'");
 
         if (tipoSuelo == null || tipoSuelo.equals("")) {
             tipoSuelo = "0";
@@ -498,23 +648,23 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(null, "Existen Campos Vacios");
         }//Fin del if
         else {
-            if (mdb.devuelveUnDato("select clave_parcela from parcelas where clave_parcela='" + txtClave.getText() + "'").equals(txtClave.getText())) {
+            if (mp.devuelveUnDato("select clave_parcela from parcelas where clave_parcela='" + txtClave.getText() + "'").equals(txtClave.getText())) {
                 JOptionPane.showMessageDialog(null, "Error: Clave Duplicada");
             } else {
-                mdb.insertarBasicos("insert into parcelas values (null, " + idPersona + ", '" + tipoPersona + "', '" + txtClave.getText() + "', '" + codigoCertificado + "', '" + txtNombre.getText() + "', "
+                mp.insertarBasicos("insert into parcelas values (null, " + idPersona + ", '" + tipoPersona + "', '" + txtClave.getText() + "', '" + codigoCertificado + "', '" + txtNombre.getText() + "', "
                         + "'" + txtAltura.getText() + "', '" + txtArea.getText() + "', " + txtCafetos.getText() + ", "
-                        + "" + mdb.devuelveId("select id from pais where descripcion='" + comboPais.getSelectedItem() + "'") + ", "
-                        + "" + mdb.devuelveId("select id from estado where descripcion='" + comboEstado.getSelectedItem() + "'") + ", "
-                        + "" + mdb.devuelveId("select id from municipio where descripcion='" + comboMunicipio.getSelectedItem() + "' ") + ","
-                        + "" + mdb.devuelveId("select id from localidad where descripcion='" + comboLocalidad.getSelectedItem() + "' ") + ", "
-                        + "" + mdb.devuelveId("select id from personam where nombrecorto='" + comboSociedades.getSelectedItem() + "'  ") + ", "
+                        + "" + mp.devuelveId("select id from pais where descripcion='" + comboPais.getSelectedItem() + "'") + ", "
+                        + "" + mp.devuelveId("select id from estado where descripcion='" + comboEstado.getSelectedItem() + "'") + ", "
+                        + "" + mp.devuelveId("select id from municipio where descripcion='" + comboMunicipio.getSelectedItem() + "' ") + ","
+                        + "" + mp.devuelveId("select id from localidad where descripcion='" + comboLocalidad.getSelectedItem() + "' ") + ", "
+                        + "" + mp.devuelveId("select id from personam where nombrecorto='" + comboSociedades.getSelectedItem() + "'  ") + ", "
                         + "" + tipoSuelo + ", "
                         + "" + tipoSombra + ", "
                         + " '" + comboSector.getSelectedItem() + "', "
                         + "" + tipoProduccion + ","
                         + " '" + txtEdad.getText() + "', '" + txtLongitud.getText() + "', '" + txtLatitud.getText() + "', '" + txtObservaciones.getText() + "',1,1,current_date(),current_time(),1,1,1,1) ");
 
-                if (mdb.devuelveId("select id from parcelas where clave_parcela='" + txtClave.getText() + "'").equals("")) {
+                if (mp.devuelveId("select id from parcelas where clave_parcela='" + txtClave.getText() + "'").equals("")) {
                     JOptionPane.showMessageDialog(null, "No existe la parcela");
                 } else {
 
@@ -522,10 +672,10 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
                         String cultivo = modeloCultivos.getValueAt(i, 0).toString();
                         String porcentaje = modeloCultivos.getValueAt(i, 1).toString();
 
-                        cultivo = mdb.devuelveId("select id from cultivos where descripcion='" + cultivo + "'");
+                        cultivo = mp.devuelveId("select id from cultivos where descripcion='" + cultivo + "'");
 
-                        mdb.insertarEnCiclo("insert into porcentaje_cultivos values (null, "
-                                + " " + mdb.devuelveId("select id from parcelas where clave_parcela='" + txtClave.getText() + "' ") + ", "
+                        mp.insertarEnCiclo("insert into porcentaje_cultivos values (null, "
+                                + " " + mp.devuelveId("select id from parcelas where clave_parcela='" + txtClave.getText() + "' ") + ", "
                                 + " " + cultivo + ", " + porcentaje + ", "
                                 + " 1,1,current_date(),current_time(),1,1,1,1) ");
                     }
@@ -534,10 +684,10 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
                         String variedad = modeloV.getValueAt(i, 0).toString();
                         String porcentaje = modeloV.getValueAt(i, 1).toString();
 
-                        variedad = mdb.devuelveId("select id from variedadcafe where descripcion='" + variedad + "'");
+                        variedad = mp.devuelveId("select id from variedadcafe where descripcion='" + variedad + "'");
 
-                        mdb.insertarEnCiclo("insert into porcentaje_variedades values (null, "
-                                + " " + mdb.devuelveId("select id from parcelas where clave_parcela='" + txtClave.getText() + "' ") + ", "
+                        mp.insertarEnCiclo("insert into porcentaje_variedades values (null, "
+                                + " " + mp.devuelveId("select id from parcelas where clave_parcela='" + txtClave.getText() + "' ") + ", "
                                 + " " + variedad + ", " + porcentaje + ", "
                                 + " 1,1,current_date(),current_time(),1,1,1,1) ");
                     }
@@ -545,10 +695,10 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
                     for (int i = 0; i < modeloD.getRowCount(); i++) {
                         String nombre = modeloD.getValueAt(i, 0).toString();
                         String tipoDoc
-                                = mdb.devuelveUnDato("select id from categoriadearchivos where descripcion= '" + modeloD.getValueAt(i, 1).toString() + "'");
+                                = mp.devuelveUnDato("select id from categoriadearchivos where descripcion= '" + modeloD.getValueAt(i, 1).toString() + "'");
                         String ruta = modeloD.getValueAt(i, 2).toString();
                         try {
-                            mdb.insertarEnCiclo("insert into documentosparcelas values (null," + mdb.devuelveId("select id from parcelas where clave_parcela='" + txtClave.getText() + "' ") + " , "
+                            mp.insertarEnCiclo("insert into documentosparcelas values (null," + mp.devuelveId("select id from parcelas where clave_parcela='" + txtClave.getText() + "' ") + " , "
                                     + "" + tipoDoc + ", '" + nombre + "','" + ruta + "', '" + code(ruta) + "' )");
                         } catch (IOException ex) {
                             Logger.getLogger(jdFormularioParcelas.class.getName()).log(Level.SEVERE, null, ex);
@@ -558,6 +708,7 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
                     }
                     limpiarCampos();
                 }
+
             }
             llenarTabla();
         }
@@ -565,33 +716,77 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
     }
 
     public void modificarParcela() {
+        try {
+            String letras = comboCertificado.getSelectedItem() + "";
 
-        String letras = comboCertificado.getSelectedItem() + "";
+            char letra1 = letras.charAt(0);
+            char letra2 = letras.charAt(1);
+            String codigoCertificado = letra1 + "" + letra2;
 
-        char letra1 = letras.charAt(0);
-        char letra2 = letras.charAt(1);
-        String codigoCertificado = letra1 + "" + letra2;
+            String tipoSuelo = "", tipoSombra = "", tipoProduccion = "";
 
-        String tipoSuelo = "", tipoSombra = "", tipoProduccion = "";
+            tipoSuelo = mp.devuelveId("select id from tiposuelo where descripcion='" + comboSuelo.getSelectedItem() + "'");
+            tipoSombra = mp.devuelveId("select id from tiposombra where descripcion='" + comboSombra.getSelectedItem() + "'");
+            tipoProduccion = mp.devuelveId("select id from tipoproduccion where descripcion='" + comboSistemaP.getSelectedItem() + "'");
 
-        tipoSuelo = mdb.devuelveId("select id from tiposuelo where descripcion='" + comboSuelo.getSelectedItem() + "'");
-        tipoSombra = mdb.devuelveId("select id from tiposombra where descripcion='" + comboSombra.getSelectedItem() + "'");
-        tipoProduccion = mdb.devuelveId("select id from tipoproduccion where descripcion='" + comboSistemaP.getSelectedItem() + "'");
+            if (tipoSuelo == null || tipoSuelo.equals("")) {
+                tipoSuelo = "0";
+            }
 
-        mdb.actualizarBasicos(""
-                + "update parcelas set clave_parcela= '" + txtClave.getText() + "', clave_certificacion='" + codigoCertificado + "', nombre='" + txtNombre.getText() + "', "
-                + " altura='" + txtAltura.getText() + "', area='" + txtArea.getText() + "', numCafetos=" + txtCafetos.getText() + ", "
-                + " id_pais=" + mdb.devuelveId("select id from pais where descripcion='" + comboPais.getSelectedItem() + "'") + ", "
-                + " id_estado=" + mdb.devuelveId("select id from estado where descripcion='" + comboEstado.getSelectedItem() + "'") + ", "
-                + " id_municipio=" + mdb.devuelveId("select id from municipio where descripcion='" + comboMunicipio.getSelectedItem() + "' ") + ","
-                + " id_localidad=" + mdb.devuelveId("select id from localidad where descripcion='" + comboLocalidad.getSelectedItem() + "' ") + ", "
-                + " id_sociedad" + mdb.devuelveId("select id from personam where nombrecorto='" + comboSociedades.getSelectedItem() + "'  ") + ", "
-                + " id_tiposuelo=" + tipoSuelo + ", "
-                + " id_tiposombra" + tipoSombra + ", "
-                + " sector='" + comboSector.getSelectedItem() + "', "
-                + " id_sistemaproduccion=" + tipoProduccion + ","
-                + " edad='" + txtEdad.getText() + "', longitud='" + txtLongitud.getText() + "', latitud='" + txtLatitud.getText() + "', observaciones='" + txtObservaciones.getText() + "' ");
+            if (tipoSombra == null || tipoSombra.equals("")) {
+                tipoSombra = "0";
+            }
 
+            if (tipoProduccion == null || tipoProduccion.equals("")) {
+                tipoProduccion = "0";
+            }
+            
+            mp.actualizarBasicos(""
+                    + "update parcelas set clave_parcela= '" + txtClave.getText() + "', clave_certificacion='" + codigoCertificado + "', nombre='" + txtNombre.getText() + "', "
+                    + " altura='" + txtAltura.getText() + "', area='" + txtArea.getText() + "', numCafetos=" + txtCafetos.getText() + ", "
+                    + " id_pais=" + mp.devuelveId("select id from pais where descripcion='" + comboPais.getSelectedItem() + "'") + ", "
+                    + " id_estado=" + mp.devuelveId("select id from estado where descripcion='" + comboEstado.getSelectedItem() + "'") + ", "
+                    + " id_municipio=" + mp.devuelveId("select id from municipio where descripcion='" + comboMunicipio.getSelectedItem() + "' ") + ","
+                    + " id_localidad=" + mp.devuelveId("select id from localidad where descripcion='" + comboLocalidad.getSelectedItem() + "' ") + ", "
+                    + " id_sociedad=" + mp.devuelveId("select id from personam where nombrecorto='" + comboSociedades.getSelectedItem() + "'  ") + ", "
+                    + " id_tiposuelo=" + tipoSuelo + ", "
+                    + " id_tiposombra=" + tipoSombra + ", "
+                    + " sector='" + comboSector.getSelectedItem() + "', "
+                    + " id_sistemaproduccion=" + tipoProduccion + ","
+                    + " edad='" + txtEdad.getText() + "', longitud='" + txtLongitud.getText() + "', latitud='" + txtLatitud.getText() + "', observaciones='" + txtObservaciones.getText() + "' "
+                    + "WHERE id=" + idParcela);
+
+            mp.actualizarBasicos("delete from porcentaje_cultivos where id_parcela=" + idParcela);
+            mp.actualizarBasicos("delete from porcentaje_variedades where id_parcela=" + idParcela);
+
+            for (int i = 0; i < modeloCultivos.getRowCount(); i++) {
+                String cultivo = modeloCultivos.getValueAt(i, 0).toString();
+                String porcentaje = modeloCultivos.getValueAt(i, 1).toString();
+
+                cultivo = mp.devuelveId("select id from cultivos where descripcion='" + cultivo + "'");
+
+                mp.insertarEnCiclo("insert into porcentaje_cultivos values (null, "
+                        + " " + mp.devuelveId("select id from parcelas where clave_parcela='" + txtClave.getText() + "' ") + ", "
+                        + " " + cultivo + ", " + porcentaje + ", "
+                        + " 1,1,current_date(),current_time(),1,1,1,1) ");
+            }
+
+            for (int i = 0; i < modeloV.getRowCount(); i++) {
+                String variedad = modeloV.getValueAt(i, 0).toString();
+                String porcentaje = modeloV.getValueAt(i, 1).toString();
+
+                variedad = mp.devuelveId("select id from variedadcafe where descripcion='" + variedad + "'");
+
+                mp.insertarEnCiclo("insert into porcentaje_variedades values (null, "
+                        + " " + mp.devuelveId("select id from parcelas where clave_parcela='" + txtClave.getText() + "' ") + ", "
+                        + " " + variedad + ", " + porcentaje + ", "
+                        + " 1,1,current_date(),current_time(),1,1,1,1) ");
+            }
+
+            JOptionPane.showMessageDialog(null, "Parcela Actualizada");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error de Actualizacion");
+        }
     }
 
     private void limpiar(JTable tabla) {
@@ -862,6 +1057,7 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
         });
 
         jTabbedPane1.setTabPlacement(javax.swing.JTabbedPane.LEFT);
+        jTabbedPane1.setName(""); // NOI18N
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Parcela"));
 
@@ -1368,38 +1564,37 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane2)
+                    .addComponent(jScrollPane5)
                     .addGroup(jPanel8Layout.createSequentialGroup()
                         .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane5)
+                            .addComponent(jLabel29)
+                            .addComponent(comboVariedad, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel8Layout.createSequentialGroup()
-                                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel29)
-                                    .addComponent(comboVariedad, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(jLabel30)
+                                .addGap(0, 186, Short.MAX_VALUE))
+                            .addGroup(jPanel8Layout.createSequentialGroup()
+                                .addComponent(txtPorcentajeVariedad, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jButton6)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel30)
-                                    .addGroup(jPanel8Layout.createSequentialGroup()
-                                        .addComponent(txtPorcentajeVariedad, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(jButton6)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(jButton7)))
-                                .addGap(0, 3, Short.MAX_VALUE)))
-                        .addGap(0, 4, Short.MAX_VALUE))
+                                .addComponent(jButton7))))
                     .addGroup(jPanel8Layout.createSequentialGroup()
                         .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel22)
                             .addComponent(comboCultivos, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel23)
+                            .addGroup(jPanel8Layout.createSequentialGroup()
+                                .addComponent(jLabel23)
+                                .addGap(0, 186, Short.MAX_VALUE))
                             .addGroup(jPanel8Layout.createSequentialGroup()
                                 .addComponent(txtPorcentajeCultivos, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jButton3)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jButton4)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                                .addComponent(jButton4)))))
                 .addContainerGap())
             .addComponent(jSeparator1)
         );
@@ -1659,14 +1854,14 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
 
         estado = comboEstado.getSelectedItem() + "";
 
-        datos = mdb.cargarCombos("SELECT m.descripcion \n"
+        datos = mp.cargarCombos("SELECT m.descripcion \n"
                 + "from municipio m \n"
                 + "inner join estado e on (m.id_estado=e.id) \n"
                 + "where e.Descripcion='" + estado + "'").split("¬");
         comboMunicipio.setModel(new DefaultComboBoxModel((Object[]) datos));
         municipio = comboMunicipio.getSelectedItem() + "";
 
-        datos = mdb.cargarCombos("SELECT m.descripcion \n"
+        datos = mp.cargarCombos("SELECT m.descripcion \n"
                 + "from localidad m \n"
                 + "inner join municipio e on (m.id_municipio=e.id) \n"
                 + "where e.Descripcion='" + municipio + "'").split("¬");
@@ -1680,7 +1875,7 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
 
         municipio = comboMunicipio.getSelectedItem() + "";
 
-        datos = mdb.cargarCombos("SELECT m.descripcion \n"
+        datos = mp.cargarCombos("SELECT m.descripcion \n"
                 + "from localidad m \n"
                 + "inner join municipio e on (m.id_municipio=e.id) \n"
                 + "where e.Descripcion='" + municipio + "'").split("¬");
@@ -1704,7 +1899,7 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
 
         String codFinal = cod1 + "" + cod2;
 
-        mdb.cargarInformacion2(modeloC, 3, "select certificado,certificadora,alcance from codigo_relacion where "
+        mp.cargarInformacion2(modeloC, 3, "select certificado,certificadora,alcance from codigo_relacion where "
                 + "codigo= '" + codFinal + "'");
 
     }//GEN-LAST:event_comboCertificadoItemStateChanged
@@ -1721,7 +1916,7 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
         // TODO add your handling code here:
 
         comboSociedades.setToolTipText(
-                mdb.devuelveUnDato("select razonsocial from personam "
+                mp.devuelveUnDato("select razonsocial from personam "
                         + "where nombrecorto='" + comboSociedades.getSelectedItem() + "' "));
     }//GEN-LAST:event_comboSociedadesItemStateChanged
 
@@ -1773,20 +1968,20 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
 
         pais = comboPais.getSelectedItem() + "";
 
-        datos = mdb.cargarCombos("SELECT e.descripcion from estado e "
+        datos = mp.cargarCombos("SELECT e.descripcion from estado e "
                 + "inner join pais p on(e.id_pais=p.id) "
                 + "where p.descripcion='" + pais + "'").split("¬");
         comboEstado.setModel(new DefaultComboBoxModel((Object[]) datos));
         estado = comboEstado.getSelectedItem() + "";
 
-        datos = mdb.cargarCombos("SELECT m.descripcion \n"
+        datos = mp.cargarCombos("SELECT m.descripcion \n"
                 + "from municipio m \n"
                 + "inner join estado e on (m.id_estado=e.id) \n"
                 + "where e.Descripcion='" + estado + "'").split("¬");
         comboMunicipio.setModel(new DefaultComboBoxModel((Object[]) datos));
         municipio = comboMunicipio.getSelectedItem() + "";
 
-        datos = mdb.cargarCombos("SELECT m.descripcion \n"
+        datos = mp.cargarCombos("SELECT m.descripcion \n"
                 + "from localidad m \n"
                 + "inner join municipio e on (m.id_municipio=e.id) \n"
                 + "where e.Descripcion='" + municipio + "'").split("¬");
@@ -1798,25 +1993,29 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         //Suma y Comparación de porcentajes para obtener y/o no sobrepasar el 100% entre 
         //los porcentajes de cultivos.
-        if (tablaCultivos.getRowCount() > 0) {
-            for (int i = 0; i < tablaCultivos.getRowCount(); i++) {
-                sumaPorcentajes = sumaPorcentajes + Integer.parseInt(tablaCultivos.getValueAt(i, 1) + "");
+        if (txtPorcentajeCultivos.getText().length() == 0) {
+            JOptionPane.showMessageDialog(null, "Asignar Porcentaje");
+        } else {
+            if (tablaCultivos.getRowCount() > 0) {
+                for (int i = 0; i < tablaCultivos.getRowCount(); i++) {
+                    sumaPorcentajes = sumaPorcentajes + Integer.parseInt(tablaCultivos.getValueAt(i, 1) + "");
+                }
+                sumaPorcentajes = sumaPorcentajes + Integer.parseInt(txtPorcentajeCultivos.getText());
+                //JOptionPane.showMessageDialog(null, "Porcentaje= " + sumaPorcentajes);
             }
-            sumaPorcentajes = sumaPorcentajes + Integer.parseInt(txtPorcentajeCultivos.getText());
-            //JOptionPane.showMessageDialog(null, "Porcentaje= " + sumaPorcentajes);
-        }
 
-        if (sumaPorcentajes <= 100) {
-            if (txtPorcentajeCultivos.getText().equals("") || comboCultivos.getSelectedItem().equals("Seleccione..")) {
-                JOptionPane.showMessageDialog(null, "Introduce Porcentaje de Cultivo y/o Selecciona Cultivo");
-            } else {
-                modeloCultivos.addRow(new Object[]{comboCultivos.getSelectedItem() + "", txtPorcentajeCultivos.getText()});
-                txtPorcentajeCultivos.setText("");
+            if (sumaPorcentajes <= 100) {
+                if (txtPorcentajeCultivos.getText().equals("") || comboCultivos.getSelectedItem().equals("Seleccione..")) {
+                    JOptionPane.showMessageDialog(null, "Introduce Porcentaje de Cultivo y/o Selecciona Cultivo");
+                } else {
+                    modeloCultivos.addRow(new Object[]{comboCultivos.getSelectedItem() + "", txtPorcentajeCultivos.getText()});
+                    txtPorcentajeCultivos.setText("");
+                }
+            } else if (sumaPorcentajes > 100) {
+                JOptionPane.showMessageDialog(null, "Excede El Porcentaje Maximo (100%)");
             }
-        } else if (sumaPorcentajes > 100) {
-            JOptionPane.showMessageDialog(null, "Excede El Porcentaje Maximo (100%)");
+            sumaPorcentajes = 0;
         }
-        sumaPorcentajes = 0;
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
@@ -1902,17 +2101,17 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
         // TODO add your handling code here:
         limpiarCampos();
     }//GEN-LAST:event_jButton11ActionPerformed
-
+    String idParcela = "";
     private void tablaParcelasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaParcelasMouseClicked
         // TODO add your handling code here:
-        datosParcela(mdb.devuelveId(
-                "select id from parcelas where clave_parcela = '" + tablaParcelas.getValueAt(tablaParcelas.getSelectedRow(), 2) + "'"));
+        idParcela = mp.devuelveId("select id from parcelas where clave_parcela = '" + tablaParcelas.getValueAt(tablaParcelas.getSelectedRow(), 2) + "'");
+        datosParcela(idParcela);
     }//GEN-LAST:event_tablaParcelasMouseClicked
 
     private void jButton12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton12ActionPerformed
         try {
             // TODO add your handling code here:
-            decode(mdb.devuelveUnDato("select archivo from documentosparcelas where ruta='" + rutaPDF + "'"));
+            decode(mp.devuelveUnDato("select archivo from documentosparcelas where ruta='" + rutaPDF + "'"));
         } catch (IOException ex) {
             Logger.getLogger(jdFormularioParcelas.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -1927,9 +2126,9 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
         // TODO add your handling code here:
         String tipoSuelo = "0", tipoSombra = "0", tipoProduccion = "0", dato;
 
-        tipoSuelo = mdb.devuelveId("select id from tiposuelo where descripcion='" + comboSuelo.getSelectedItem() + "'");
-        tipoSombra = mdb.devuelveId("select id from tiposombra where descripcion='" + comboSombra.getSelectedItem() + "'");
-        tipoProduccion = mdb.devuelveId("select id from tipoproduccion where descripcion='" + comboSistemaP.getSelectedItem() + "'");
+        tipoSuelo = mp.devuelveId("select id from tiposuelo where descripcion='" + comboSuelo.getSelectedItem() + "'");
+        tipoSombra = mp.devuelveId("select id from tiposombra where descripcion='" + comboSombra.getSelectedItem() + "'");
+        tipoProduccion = mp.devuelveId("select id from tipoproduccion where descripcion='" + comboSistemaP.getSelectedItem() + "'");
 
         if (tipoSuelo == null || tipoSuelo.equals("")) {
             tipoSuelo = "0";
@@ -1943,7 +2142,7 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
             tipoProduccion = "0";
         }
 
-        dato = mdb.devuelveUnDato("select t.descripcion from parcelas p "
+        dato = mp.devuelveUnDato("select t.descripcion from parcelas p "
                 + "inner join tiposuelo t on (p.id_tiposuelo = t.id) "
                 + "where p.id=21");
 
@@ -1952,8 +2151,7 @@ public class jdFormularioParcelas extends javax.swing.JDialog {
 
     private void botonModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonModificarActionPerformed
         // TODO add your handling code here:
-
-
+        modificarParcela();
     }//GEN-LAST:event_botonModificarActionPerformed
 
     /**

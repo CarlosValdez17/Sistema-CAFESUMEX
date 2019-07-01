@@ -6,6 +6,7 @@
 package Formas_Configuraciones_BeneficioHumedo;
 
 import FormasGenerales.pantallaPrincipal;
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -29,38 +30,63 @@ public class jpVehiculo extends javax.swing.JPanel {
     metodosDatosBasicos mdb;
     DefaultTableModel modelo;
     Connection cn;
+    Propiedades idioma;
+    String Idioma;
 
-    public jpVehiculo(Connection c) {
+    public jpVehiculo(Connection c, String Idioma) {
         initComponents();
         cn = c;
-
+        this.Idioma = Idioma;
+        mdb = new metodosDatosBasicos(cn);
+        idioma = new Propiedades(Idioma);
         modelo = (DefaultTableModel) tabla.getModel();
         tabla.setRowSorter(new TableRowSorter(modelo));
 
-   
+        traductor();
         llenaTabla();
+    }
+
+    public void traductor() {
+        jLabel7.setText(idioma.getProperty("NombreDelVehiculo"));
+        jLabel6.setText(idioma.getProperty("Capacidad"));
+        jLabel8.setText(idioma.getProperty("Placas"));
+        jLabel9.setText(idioma.getProperty("NombreDelResponsable"));
+
+        tabla.getColumnModel().getColumn(0).setHeaderValue(idioma.getProperty("NombreDelVehiculo"));
+        tabla.getColumnModel().getColumn(1).setHeaderValue(idioma.getProperty("Capacidad"));
+        tabla.getColumnModel().getColumn(2).setHeaderValue(idioma.getProperty("Placas"));
+        tabla.getColumnModel().getColumn(3).setHeaderValue(idioma.getProperty("NombreDelResponsable"));
+
+        jButton2.setText(idioma.getProperty("Nuevo"));
+        jButton3.setText(idioma.getProperty("Editar"));
+        jButton4.setText(idioma.getProperty("Desactivar"));
+        jButton5.setText(idioma.getProperty("Cerrar"));
+
+        comboSituacion.addItem(idioma.getProperty("Activos"));
+        comboSituacion.addItem(idioma.getProperty("Inactivos"));
+        comboSituacion.addItem(idioma.getProperty("Todos"));
     }
 
     public void llenaTabla() {
         limpiar(tabla);
-        mdb = new metodosDatosBasicos(cn);
-        mdb.cargarInformacion2(modelo,4,"select Nombre,Capacidad,Placas,Responsable from Vehiculo where ID_Situacion=1");
+        mdb.cargarInformacion2(modelo, 4, "select Nombre,Capacidad,Placas,Responsable from Vehiculo where ID_Situacion=1");
     }
 
     public void busqueda() {
         String tipoP = "";
-        String tipoK="";
-        String tipoL=""; 
-        String tipoÑ="";
+        String tipoK = "";
+        String tipoL = "";
+        String tipoÑ = "";
         String situacion = "";
         String where = "";
 
-        situacion = comboSituacion.getSelectedItem() + "";
-        if (situacion.equals("Inactivo")) {
+        situacion = comboSituacion.getSelectedIndex() + "";
+        if (situacion.equals("0")) {
+            situacion = "1";
+        } else if (situacion.equals("1")) {
             situacion = "2";
-        }else if(situacion.equals("Activo")){
-            situacion="1";
-            
+        } else {
+            situacion = "3";
         }
 
         if (txtBusquedaP.getText().length() > 0) {
@@ -69,22 +95,22 @@ public class jpVehiculo extends javax.swing.JPanel {
         if (txtBusquedaK.getText().length() > 0) {
             tipoK = " AND Capacidad like '%" + txtBusquedaK.getText() + "%'";
         }
-       if (txtBusquedaL.getText().length() > 0) {
+        if (txtBusquedaL.getText().length() > 0) {
             tipoL = "AND Placas like '%" + txtBusquedaL.getText() + "%'";
         }
-     if (txtBusquedaÑ.getText().length() > 0) {
+        if (txtBusquedaÑ.getText().length() > 0) {
             tipoÑ = "AND Responsable like '%" + txtBusquedaÑ.getText() + "%'";
         }
         String sql;
         System.out.println("SITUACION: " + situacion);
-        if (situacion.equals("Todos")) {
-            sql = "SELECT Nombre,Capacidad,Placas,Responsable from Vehiculo WHERE ID_Situacion<>3 "+tipoP+tipoK+tipoL+tipoÑ;
+        if (situacion.equals("3")) {
+            sql = "SELECT Nombre,Capacidad,Placas,Responsable from Vehiculo WHERE ID_Situacion<>3 " + tipoP + tipoK + tipoL + tipoÑ;
         } else {
-            sql = "SELECT Nombre,Capacidad,Placas,Responsable  from Vehiculo WHERE ID_Situacion=" + situacion+tipoP+tipoK+tipoL+tipoÑ;
+            sql = "SELECT Nombre,Capacidad,Placas,Responsable  from Vehiculo WHERE ID_Situacion=" + situacion + tipoP + tipoK + tipoL + tipoÑ;
         }
         //System.out.println(sql);
         limpiar(tabla);
-        mdb.cargarInformacion2(modelo,4, sql);
+        mdb.cargarInformacion2(modelo, 4, sql);
 
     }
 
@@ -250,12 +276,6 @@ public class jpVehiculo extends javax.swing.JPanel {
 
         jLabel10.setText("Situacion");
 
-        comboSituacion.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Activo", "Inactivo", "Todos" }));
-        comboSituacion.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                comboSituacionItemStateChanged(evt);
-            }
-        });
         comboSituacion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboSituacionActionPerformed(evt);
@@ -388,7 +408,7 @@ public class jpVehiculo extends javax.swing.JPanel {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        jdR = new jdVehiculo(null, true, "1",Nombre, Capacidad, TxTvar,Responable, cn);
+        jdR = new jdVehiculo(null, true, "1", Nombre, Capacidad, TxTvar, Responable, Idioma, cn);
         jdR.jp = this;
         jdR.setVisible(true);
 
@@ -397,30 +417,30 @@ public class jpVehiculo extends javax.swing.JPanel {
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
         if (Capacidad.equals("")) {
-            JOptionPane.showMessageDialog(null,"selecciona un registro");
-        }else{
-             jdR = new jdVehiculo(null, true, "2",Nombre,Capacidad, TxTvar ,Responable,cn);
-        jdR.jp = this;
-        jdR.setVisible(true);
+            JOptionPane.showMessageDialog(null, "selecciona un registro");
+        } else {
+            jdR = new jdVehiculo(null, true, "2", Nombre, Capacidad, TxTvar, Responable, Idioma, cn);
+            jdR.jp = this;
+            jdR.setVisible(true);
         }
 
     }//GEN-LAST:event_jButton3ActionPerformed
     String Capacidad = "";
-    String Nombre="";
-    String TxTvar="";
-    String Responable="";
+    String Nombre = "";
+    String TxTvar = "";
+    String Responable = "";
     private void tablaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaMouseClicked
         // TODO add your handling code here: Retenciones
         Nombre = modelo.getValueAt(tabla.getSelectedRow(), 0) + "";
         Capacidad = modelo.getValueAt(tabla.getSelectedRow(), 1) + "";  //
-        TxTvar=modelo.getValueAt(tabla.getSelectedRow(), 2) + "";
-           Responable=modelo.getValueAt(tabla.getSelectedRow(), 3) + "";
+        TxTvar = modelo.getValueAt(tabla.getSelectedRow(), 2) + "";
+        Responable = modelo.getValueAt(tabla.getSelectedRow(), 3) + "";
         if (evt.getClickCount() == 1) {
             System.out.println("1 Clic");
         }
         if (evt.getClickCount() == 2) {
-            
-            jdR = new jdVehiculo(null, true, "2",Nombre, Capacidad, TxTvar,Responable, cn);
+
+            jdR = new jdVehiculo(null, true, "2", Nombre, Capacidad, TxTvar, Responable, Idioma, cn);
             jdR.jp = this;
             jdR.setVisible(true);
         }
@@ -430,11 +450,6 @@ public class jpVehiculo extends javax.swing.JPanel {
         // TODO add your handling code here:
         busqueda();
     }//GEN-LAST:event_txtBusquedaPKeyReleased
-
-    private void comboSituacionItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionItemStateChanged
-        // TODO add your handling code here:
-        busqueda();
-    }//GEN-LAST:event_comboSituacionItemStateChanged
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
@@ -448,8 +463,11 @@ public class jpVehiculo extends javax.swing.JPanel {
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        String sql = "UPDATE Vehiculo SET ID_Situacion=2 where Nombre='" + Nombre+ "'";
-        mdb.actualizarBasicos(sql);
+        if (comboSituacion.getSelectedIndex() == 0) {
+            mdb.actualizarBasicos("UPDATE Vehiculo SET ID_Situacion=2 where Nombre='" + Nombre + "'");
+        } else if (comboSituacion.getSelectedIndex() == 1) {
+            mdb.actualizarBasicos("UPDATE Vehiculo SET ID_Situacion=1 where Nombre='" + Nombre + "'");
+        }
         llenaTabla();
     }//GEN-LAST:event_jButton4ActionPerformed
 
@@ -459,6 +477,16 @@ public class jpVehiculo extends javax.swing.JPanel {
 
     private void comboSituacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboSituacionActionPerformed
         // TODO add your handling code here:
+        if (comboSituacion.getSelectedItem().equals(idioma.getProperty("Inactivos"))) {
+            jButton4.setText(idioma.getProperty("Activar"));
+            jButton4.setEnabled(true);
+        } else if (comboSituacion.getSelectedItem().equals(idioma.getProperty("Activos"))) {
+            jButton4.setText(idioma.getProperty("Desactivar"));
+            jButton4.setEnabled(true);
+        } else {
+            jButton4.setEnabled(false);
+        }
+        busqueda();
     }//GEN-LAST:event_comboSituacionActionPerformed
 
     private void txtBusquedaKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBusquedaKActionPerformed
@@ -466,7 +494,7 @@ public class jpVehiculo extends javax.swing.JPanel {
     }//GEN-LAST:event_txtBusquedaKActionPerformed
 
     private void txtBusquedaKKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBusquedaKKeyReleased
-         busqueda(); // TODO add your handling code here:
+        busqueda(); // TODO add your handling code here:
     }//GEN-LAST:event_txtBusquedaKKeyReleased
 
     private void txtBusquedaLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBusquedaLActionPerformed
@@ -474,7 +502,7 @@ public class jpVehiculo extends javax.swing.JPanel {
     }//GEN-LAST:event_txtBusquedaLActionPerformed
 
     private void txtBusquedaLKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBusquedaLKeyReleased
-      busqueda();     // TODO add your handling code here:
+        busqueda();     // TODO add your handling code here:
     }//GEN-LAST:event_txtBusquedaLKeyReleased
 
     private void txtBusquedaÑActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBusquedaÑActionPerformed
@@ -482,7 +510,7 @@ public class jpVehiculo extends javax.swing.JPanel {
     }//GEN-LAST:event_txtBusquedaÑActionPerformed
 
     private void txtBusquedaÑKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBusquedaÑKeyReleased
-busqueda();
+        busqueda();
     }//GEN-LAST:event_txtBusquedaÑKeyReleased
 
 

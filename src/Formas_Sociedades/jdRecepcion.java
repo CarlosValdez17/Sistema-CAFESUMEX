@@ -5,6 +5,7 @@
  */
 package Formas_Sociedades;
 
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.Connection;
 import javax.swing.DefaultComboBoxModel;
@@ -21,17 +22,91 @@ public class jdRecepcion extends javax.swing.JDialog {
      */
     Connection cn;
     metodosDatosBasicos mdb;
-    String idRecepcion = "";
+    String idRecepcionN = "", idRecepcion, Idioma, tipoOperacion;
     jpRecepcion jpR;
+    Propiedades idioma;
 
-    public jdRecepcion(java.awt.Frame parent, boolean modal, Connection cn) {
+    public jdRecepcion(java.awt.Frame parent, boolean modal, String tipoOperacion, String idRecepcion, String Idioma, Connection cn) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
 
+        this.Idioma = Idioma;
+        this.tipoOperacion = tipoOperacion;
+        this.idRecepcion = idRecepcion;
+        idioma = new Propiedades(Idioma);
         mdb = new metodosDatosBasicos(cn);
-        rellenarCombos();
 
+        traductor();
+
+        if (tipoOperacion.equals("Editar")) {
+            llenarDatos();
+        } else if (tipoOperacion.equals("Nuevo")) {
+            rellenarCombos();
+        }
+    }
+
+    public void traductor() {
+        jLabel1.setText(idioma.getProperty("Sociedad"));
+        jLabel2.setText(idioma.getProperty("IdRecepcion"));
+        jLabel3.setText(idioma.getProperty("Responsable"));
+        jLabel4.setText(idioma.getProperty("Capturista"));
+        jLabel5.setText(idioma.getProperty("Direccion"));
+        jLabel6.setText(idioma.getProperty("Telefono"));
+        jLabel7.setText(idioma.getProperty("Pais"));
+        jLabel8.setText(idioma.getProperty("Estado"));
+        jLabel10.setText(idioma.getProperty("Municipio"));
+        jLabel9.setText(idioma.getProperty("Localidad"));
+        jLabel11.setText(idioma.getProperty("Descripcion"));
+        jButton1.setText(idioma.getProperty("Aceptar"));
+        jButton2.setText(idioma.getProperty("Cancelar"));
+    }
+
+    public void llenarDatos() {
+        String[] datos = mdb.devolverLineaDatos("select r.idRecepcion, CONCAT(pf.Nombre, ' ', pf.apellidoPaterno, ' ', pf.apellidoMaterno),\n"
+                + "CONCAT(pf2.Nombre, ' ', pf2.apellidoPaterno, ' ', pf2.apellidoMaterno), r.domicilio, r.descripcion,r.telefono,p.descripcion, e.Descripcion,m.descripcion,l.Descripcion, pm.nombrecorto\n"
+                + "from recepciones r \n"
+                + "left join personaf pf on (pf.ID=r.idResponsable)\n"
+                + "left join personaf pf2 on (pf2.ID=r.idCapturista)\n"
+                + "left join localidad l on (r.idLocalidad=l.ID)\n"
+                + "left join municipio m on (l.ID_Municipio=m.ID)\n"
+                + "left join estado e on (m.ID_Estado=e.ID)\n"
+                + "left join pais p on (e.ID_Pais=p.ID)\n"
+                + "left join personam pm on (r.idSociedad=pm.ID) where r.idRecepcion='" + idRecepcion + "'", 11).split("¬");
+
+        String[] sociedades = mdb.cargarCombos("select nombrecorto from personam").split("¬");
+        comboSociedades.setModel(new DefaultComboBoxModel((Object[]) sociedades));
+        comboSociedades.setSelectedItem(datos[10]);
+
+        txtRecepcion.setText(datos[0]);
+        jTextField1.setText(datos[1]);
+        jTextField2.setText(datos[2]);
+        txtDomicilio.setText(datos[3]);
+        txtTelefono.setText(datos[5]);
+        txtDescripcion.setText(datos[4]);
+
+        String datosG[];
+
+        datosG = mdb.cargarCombos("SELECT descripcion from pais").split("¬");
+        comboPais.setModel(new DefaultComboBoxModel((Object[]) datosG));
+
+        comboPais.setSelectedItem(datos[6]);
+
+        datosG = mdb.cargarCombos("SELECT e.descripcion \n"
+                + "from estado e \n"
+                + "inner join pais p on (e.id_pais=p.id) \n"
+                + "where p.Descripcion='" + datos[6] + "'").split("¬");
+        comboEstado.setModel(new DefaultComboBoxModel((Object[]) datosG));
+        comboEstado.setSelectedItem(datos[7]);
+
+        datosG = mdb.cargarCombos("SELECT m.descripcion \n"
+                + "from municipio m \n"
+                + "inner join estado e on (m.id_estado=e.id) \n"
+                + "where e.Descripcion='" + datos[7] + "'").split("¬");
+        comboMunicipio.setModel(new DefaultComboBoxModel((Object[]) datosG));
+        comboMunicipio.setSelectedItem(datos[8]);
+
+        comboLocalidad.setSelectedItem(datos[9]);
     }
 
     String[] datos;
@@ -69,6 +144,26 @@ public class jdRecepcion extends javax.swing.JDialog {
                 + "where m.Descripcion='" + municipio + "' ").split("¬");
         comboLocalidad.setModel(new DefaultComboBoxModel((Object[]) datos));
 
+    }
+
+    public void realizarOperacion() {
+        String idSociedad = mdb.devuelveId("select id from personam where nombrecorto='" + comboSociedades.getSelectedItem() + "'");
+
+        if (tipoOperacion.equals("Nuevo")) {
+            mdb.insertarBasicos("insert into recepciones "
+                    + "values(null, " + idSociedad + ", '" + txtRecepcion.getText() + "', '0', "
+                    + "'0', '" + txtDomicilio.getText() + "', '" + txtTelefono.getText() + "', "
+                    + "" + mdb.devuelveId("select id from localidad where descripcion='" + comboLocalidad.getSelectedItem() + "'") + ", '" + txtDescripcion.getText() + "',1 ) ");
+            this.dispose();
+            jpR.llenarTabla();
+        } else if (tipoOperacion.equals("Editar")) {
+            mdb.actualizarBasicos("update recepciones set domicilio='" + txtDomicilio.getText() + "', "
+                    + "telefono='" + txtTelefono.getText() + "', "
+                    + "idLocalidad=" + mdb.devuelveId("select id from localidad where descripcion='" + comboLocalidad.getSelectedItem() + "'") + ","
+                    + "descripcion='" + txtDescripcion.getText() + "' where idRecepcion='" + idRecepcion + "' ");
+            this.dispose();
+            jpR.llenarTabla();
+        }
     }
 
     /**
@@ -193,44 +288,40 @@ public class jdRecepcion extends javax.swing.JDialog {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
+                    .addComponent(txtRecepcion)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 408, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jButton1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton2))
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel11)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(comboSociedades, javax.swing.GroupLayout.Alignment.LEADING, 0, 401, Short.MAX_VALUE)
-                            .addComponent(txtRecepcion, javax.swing.GroupLayout.Alignment.LEADING))
-                        .addComponent(jLabel11)
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(jTextField1, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel10, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(txtDomicilio, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(comboMunicipio, javax.swing.GroupLayout.Alignment.LEADING, 0, 190, Short.MAX_VALUE)
-                                .addComponent(comboPais, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGap(18, 18, 18)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                            .addComponent(jTextField1, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel10, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtDomicilio, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(comboMunicipio, javax.swing.GroupLayout.Alignment.LEADING, 0, 190, Short.MAX_VALUE)
+                            .addComponent(comboPais, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(comboLocalidad, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(comboEstado, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txtTelefono)
+                            .addComponent(jTextField2)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel6)
+                                    .addComponent(jLabel4)
                                     .addComponent(jLabel8)
-                                    .addGap(157, 157, 157))
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                    .addComponent(jLabel9)
-                                    .addGap(146, 146, 146))
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(comboLocalidad, javax.swing.GroupLayout.Alignment.LEADING, 0, 190, Short.MAX_VALUE)
-                                    .addComponent(comboEstado, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(txtTelefono, javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING))
-                                .addComponent(jTextField2, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)))))
+                                    .addComponent(jLabel9))
+                                .addGap(0, 0, Short.MAX_VALUE))))
+                    .addComponent(comboSociedades, javax.swing.GroupLayout.PREFERRED_SIZE, 401, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -243,17 +334,21 @@ public class jdRecepcion extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtRecepcion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(txtRecepcion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel3)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel4))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(11, 11, 11)
-                        .addComponent(jLabel5)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel6))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtDomicilio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -265,10 +360,6 @@ public class jdRecepcion extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(comboMunicipio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addGap(37, 37, 37)
-                        .addComponent(jLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jLabel8)
@@ -295,8 +386,8 @@ public class jdRecepcion extends javax.swing.JDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(17, Short.MAX_VALUE))
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -311,14 +402,7 @@ public class jdRecepcion extends javax.swing.JDialog {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        String idSociedad = mdb.devuelveId("select id from personam where nombrecorto='" + comboSociedades.getSelectedItem() + "'");
-
-        mdb.insertarBasicos("insert into recepciones "
-                + "values(null, " + idSociedad + ", '" + txtRecepcion.getText() + "', '0', "
-                + "'0', '" + txtDomicilio.getText() + "', '" + txtTelefono.getText() + "', "
-                + "" + mdb.devuelveId("select id from localidad where descripcion='" + comboLocalidad.getSelectedItem() + "'") + ", '" + txtDescripcion.getText() + "',1 ) ");
-        this.dispose();
-        jpR.llenarTabla();
+        realizarOperacion();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
@@ -330,7 +414,7 @@ public class jdRecepcion extends javax.swing.JDialog {
         // TODO add your handling code here:
         String idSociedad = mdb.devuelveId("select id from personam where nombrecorto='" + comboSociedades.getSelectedItem() + "'");
 
-        idRecepcion = "RE-" + mdb.devuelveUnDato("select clavecorte from personam where id=" + idSociedad) + "-" + mdb.devuelveUnDato("select id+1 from recepciones order by id desc limit 1");
+        idRecepcionN = "RE-" + mdb.devuelveUnDato("select clavecorte from personam where id=" + idSociedad) + "-" + mdb.devuelveUnDato("select id+1 from recepciones order by id desc limit 1");
         txtRecepcion.setText(idRecepcion);
     }//GEN-LAST:event_comboSociedadesActionPerformed
 

@@ -5,6 +5,7 @@
  */
 package Formas_Configuraciones_FincaCert.Certificados;
 
+import Idioma.Propiedades;
 import FormasGenerales.pantallaPrincipal;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.CallableStatement;
@@ -29,13 +30,32 @@ public class jpCertificador extends javax.swing.JPanel {
     metodosDatosBasicos mdb;
     DefaultTableModel modelo;
     Connection cn;
+    
+    Propiedades idioma;
+    String Idioma;  
+    
 
-    public jpCertificador(Connection c) {
+    public jpCertificador(Connection c, String Idioma) {
         initComponents();
         cn = c;
-
+        this.Idioma=Idioma;
         modelo = (DefaultTableModel) tabla.getModel();
         tabla.setRowSorter(new TableRowSorter(modelo));
+        idioma = new Propiedades(Idioma);
+        jButton5.setText(idioma.getProperty("Cerrar"));
+        jButton2.setText(idioma.getProperty("Nuevo"));
+        jButton3.setText(idioma.getProperty("Editar"));
+        jButton4.setText(idioma.getProperty("Desactivar"));
+        jLabel10.setText(idioma.getProperty("Situacion"));
+        jLabel6.setText(idioma.getProperty("Clave"));
+        jLabel7.setText(idioma.getProperty("Certificador"));
+      
+        tabla.getColumnModel().getColumn(0).setHeaderValue(idioma.getProperty("Clave"));
+        tabla.getColumnModel().getColumn(1).setHeaderValue(idioma.getProperty("Certificador"));
+        
+        comboSituacion.addItem(idioma.getProperty("Activos"));
+        comboSituacion.addItem(idioma.getProperty("Inactivos"));
+        comboSituacion.addItem(idioma.getProperty("Todos"));
 
         llenaTabla();
     }
@@ -51,13 +71,22 @@ public class jpCertificador extends javax.swing.JPanel {
         String tipoK = "";
         String situacion = "";
         String where = "";
+        situacion = comboSituacion.getSelectedIndex() + "";
 
+        if (situacion.equals("1")) {
+            situacion = "2";
+        } else if (situacion.equals("0")) {
+            situacion = "1";
+        } else {
+            situacion = "3";
+        }
+/*
         situacion = comboSituacion.getSelectedItem() + "";
         if (situacion.equals("Inactivo")) {
             situacion = "2";
         } else if (situacion.equals("Activo")) {
             situacion = "1";
-        }
+        }*/
         if (txtBusquedaP.getText().length() > 0) {
             tipoP = " AND Clave like '%" + txtBusquedaP.getText() + "%'";
         }
@@ -72,7 +101,7 @@ public class jpCertificador extends javax.swing.JPanel {
         }**/
         String sql;
         System.out.println("SITUACION: " + situacion);
-        if (situacion.equals("Todos")) {
+        if (situacion.equals("3")) {
             sql = "SELECT Clave,Descripcion from Certificadora WHERE ID_Situacion<>3 " + tipoP + tipoK;
         } else {
             sql = "SELECT Clave,Descripcion  from Certificadora WHERE ID_Situacion=" + situacion + tipoP + tipoK;
@@ -199,7 +228,6 @@ public class jpCertificador extends javax.swing.JPanel {
 
         jLabel10.setText("Situacion");
 
-        comboSituacion.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Activo", "Inactivo", "Todos" }));
         comboSituacion.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 comboSituacionItemStateChanged(evt);
@@ -337,7 +365,7 @@ public class jpCertificador extends javax.swing.JPanel {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        jdR = new jdCertificador(null, true, "1", Clave, TxTvar, cn);
+        jdR = new jdCertificador(null, true, "1", Clave, TxTvar, Idioma, cn);
         jdR.jp = this;
         jdR.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
@@ -345,9 +373,9 @@ public class jpCertificador extends javax.swing.JPanel {
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
         if (Clave.equals("")) {
-            JOptionPane.showMessageDialog(null, "selecciona un registro");
+           JOptionPane.showMessageDialog(null,idioma.getProperty("SeleccionRegistro"));
         } else {
-            jdR = new jdCertificador(null, true, "2", Clave, TxTvar, cn);
+            jdR = new jdCertificador(null, true, "2", Clave, TxTvar, Idioma, cn);
             jdR.jp = this;
             jdR.setVisible(true);
         }
@@ -362,7 +390,7 @@ public class jpCertificador extends javax.swing.JPanel {
             System.out.println("1 Clic");
         }
         if (evt.getClickCount() == 2) {
-            jdR = new jdCertificador(null, true, "2", Clave, TxTvar, cn);
+            jdR = new jdCertificador(null, true, "2", Clave, TxTvar, Idioma, cn);
             jdR.jp = this;
             jdR.setVisible(true);
         }
@@ -375,7 +403,7 @@ public class jpCertificador extends javax.swing.JPanel {
 
     private void comboSituacionItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionItemStateChanged
         // TODO add your handling code here:
-        busqueda();
+        //busqueda();
     }//GEN-LAST:event_comboSituacionItemStateChanged
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed

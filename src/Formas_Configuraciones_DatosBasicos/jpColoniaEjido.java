@@ -5,6 +5,7 @@
  */
 package Formas_Configuraciones_DatosBasicos;
 
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.Connection;
 import javax.swing.JOptionPane;
@@ -25,15 +26,41 @@ public class jpColoniaEjido extends javax.swing.JPanel {
     metodosDatosBasicos mdb;
     jdColoniaEjido jdC;
     Connection cn;
+    Propiedades idioma;
+    String Idioma;
 
-    public jpColoniaEjido(Connection c) {
+    public jpColoniaEjido(Connection c, String Idioma) {
         initComponents();
 
         cn = c;
+        this.Idioma = Idioma;
         mdb = new metodosDatosBasicos(cn);
         modelo = (DefaultTableModel) tablaColonia.getModel();
 
         tablaColonia.setRowSorter(new TableRowSorter(modelo));
+
+        idioma = new Propiedades(Idioma);
+
+        jButton2.setText(idioma.getProperty("Nuevo"));
+        jButton3.setText(idioma.getProperty("Editar"));
+        jButton4.setText(idioma.getProperty("Desactivar"));
+        jButton5.setText(idioma.getProperty("Cerrar"));
+        jLabel6.setText(idioma.getProperty("ColoniaEjido"));
+        jLabel7.setText(idioma.getProperty("Localidad"));
+        jLabel8.setText(idioma.getProperty("Municipio"));
+        jLabel9.setText(idioma.getProperty("Estado"));
+        jLabel10.setText(idioma.getProperty("Situacion"));
+        jLabel1.setText(idioma.getProperty("Pais"));
+
+        tablaColonia.getColumnModel().getColumn(0).setHeaderValue(idioma.getProperty("ColoniaEjido"));
+        tablaColonia.getColumnModel().getColumn(1).setHeaderValue(idioma.getProperty("Localidad"));
+        tablaColonia.getColumnModel().getColumn(2).setHeaderValue(idioma.getProperty("Municipio"));
+        tablaColonia.getColumnModel().getColumn(3).setHeaderValue(idioma.getProperty("Estado"));
+        tablaColonia.getColumnModel().getColumn(4).setHeaderValue(idioma.getProperty("Pais"));
+
+        comboSituacion.addItem(idioma.getProperty("Activos"));
+        comboSituacion.addItem(idioma.getProperty("Inactivos"));
+        comboSituacion.addItem(idioma.getProperty("Todos"));
 
         llenaTablaColonia();
     }
@@ -58,12 +85,14 @@ public class jpColoniaEjido extends javax.swing.JPanel {
         String tipoP = "";
         String situacion = "";
 
-        situacion = comboSituacionColonia.getSelectedItem() + "";
+        situacion = comboSituacion.getSelectedIndex() + "";
 
-        if (situacion.equals("Inactivo")) {
+        if (situacion.equals("1")) {
             situacion = "2";
-        } else if (situacion.equals("Activo")) {
+        } else if (situacion.equals("0")) {
             situacion = "1";
+        } else {
+            situacion = "3";
         }
 
         if (txtBusquedaC.getText().length() > 0) {
@@ -83,7 +112,7 @@ public class jpColoniaEjido extends javax.swing.JPanel {
         }
 
         String sql;
-        if (situacion.equals("Todos")) {
+        if (situacion.equals("3")) {
             sql = "SELECT  c.Descripcion,l.descripcion, m.descripcion, e.descripcion, p.descripcion \n"
                     + "from ejidocolonia c \n"
                     + "inner join localidad l on (c.ID_Localidad=l.ID) \n"
@@ -137,7 +166,7 @@ public class jpColoniaEjido extends javax.swing.JPanel {
         tablaColonia = new javax.swing.JTable();
         jPanel8 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
-        comboSituacionColonia = new javax.swing.JComboBox<>();
+        comboSituacion = new javax.swing.JComboBox<>();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
@@ -273,10 +302,14 @@ public class jpColoniaEjido extends javax.swing.JPanel {
 
         jLabel10.setText("Situacion");
 
-        comboSituacionColonia.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Activo", "Inactivo", "Todos" }));
-        comboSituacionColonia.addItemListener(new java.awt.event.ItemListener() {
+        comboSituacion.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                comboSituacionColoniaItemStateChanged(evt);
+                comboSituacionItemStateChanged(evt);
+            }
+        });
+        comboSituacion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboSituacionActionPerformed(evt);
             }
         });
 
@@ -311,7 +344,7 @@ public class jpColoniaEjido extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jLabel10)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(comboSituacionColonia, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(comboSituacion, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -330,7 +363,7 @@ public class jpColoniaEjido extends javax.swing.JPanel {
                     .addComponent(jButton2)
                     .addComponent(jButton3)
                     .addComponent(jButton4)
-                    .addComponent(comboSituacionColonia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(comboSituacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel10)
                     .addComponent(jButton5))
                 .addContainerGap())
@@ -401,7 +434,7 @@ public class jpColoniaEjido extends javax.swing.JPanel {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        jdC = new jdColoniaEjido(null, true, "1", colonia, localidad, municipio, estado, pais, cn);
+        jdC = new jdColoniaEjido(null, true, "1", "", localidad, municipio, estado, pais, Idioma, cn);
         jdC.jpC = this;
         jdC.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
@@ -418,7 +451,7 @@ public class jpColoniaEjido extends javax.swing.JPanel {
             System.out.println("1 Clic");
         }
         if (evt.getClickCount() == 2) {
-            jdC = new jdColoniaEjido(null, true, "2", colonia, localidad, municipio, estado, pais, cn);
+            jdC = new jdColoniaEjido(null, true, "2", colonia, localidad, municipio, estado, pais, Idioma, cn);
             jdC.jpC = this;
             jdC.setVisible(true);
         }
@@ -449,17 +482,17 @@ public class jpColoniaEjido extends javax.swing.JPanel {
         busquedaColonia();
     }//GEN-LAST:event_txtBusquedaPKeyReleased
 
-    private void comboSituacionColoniaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionColoniaItemStateChanged
+    private void comboSituacionItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionItemStateChanged
         // TODO add your handling code here:
-        busquedaColonia();
-    }//GEN-LAST:event_comboSituacionColoniaItemStateChanged
+
+    }//GEN-LAST:event_comboSituacionItemStateChanged
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
         if (colonia.equals("")) {
-            JOptionPane.showMessageDialog(null, "Seleccione una colonia/ejido");
+            JOptionPane.showMessageDialog(null, idioma.getProperty("SeleccionRegistro"));
         } else {
-            jdC = new jdColoniaEjido(null, true, "2", colonia, localidad, municipio, estado, pais, cn);
+            jdC = new jdColoniaEjido(null, true, "2", colonia, localidad, municipio, estado, pais, Idioma, cn);
             jdC.jpC = this;
             jdC.setVisible(true);
         }
@@ -467,13 +500,31 @@ public class jpColoniaEjido extends javax.swing.JPanel {
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        mdb.actualizarBasicos("UPDATE ejidocolonia SET ID_Situacion=2 where descripcion='" + colonia + "'");
-        llenaTablaColonia();
+        if (comboSituacion.getSelectedIndex() == 0) {
+            mdb.actualizarBasicos("UPDATE ejidocolonia SET ID_Situacion=2 where descripcion='" + colonia + "'");
+        } else if (comboSituacion.getSelectedIndex() == 1) {
+            mdb.actualizarBasicos("UPDATE ejidocolonia SET ID_Situacion=1 where descripcion='" + colonia + "'");
+        }
+        busquedaColonia();
     }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void comboSituacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboSituacionActionPerformed
+        // TODO add your handling code here:
+        if (comboSituacion.getSelectedItem().equals(idioma.getProperty("Inactivos"))) {
+            jButton4.setText(idioma.getProperty("Activar"));
+            jButton4.setEnabled(true);
+        } else if (comboSituacion.getSelectedItem().equals(idioma.getProperty("Activos"))) {
+            jButton4.setText(idioma.getProperty("Desactivar"));
+            jButton4.setEnabled(true);
+        } else {
+            jButton4.setEnabled(false);
+        }
+        busquedaColonia();
+    }//GEN-LAST:event_comboSituacionActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox<String> comboSituacionColonia;
+    private javax.swing.JComboBox<String> comboSituacion;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;

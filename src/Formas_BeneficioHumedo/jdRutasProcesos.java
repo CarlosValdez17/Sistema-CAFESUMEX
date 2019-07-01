@@ -10,13 +10,14 @@ import MetodosGenerales.Resaltador;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.Connection;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author USUARIO
  */
-public class jdProcesosCortes extends javax.swing.JDialog {
+public class jdRutasProcesos extends javax.swing.JDialog {
 
     /**
      * Creates new form jdProcesosCortes
@@ -24,28 +25,68 @@ public class jdProcesosCortes extends javax.swing.JDialog {
     Connection cn;
     metodosDatosBasicos mdb;
     DefaultTableModel modelo;
-    
-    public jdProcesosCortes(java.awt.Frame parent, boolean modal, Connection cn) {
+
+    public jdRutasProcesos(java.awt.Frame parent, boolean modal, Connection cn) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
-        
         this.cn = cn;
-        
+
         mdb = new metodosDatosBasicos(cn);
         modelo = (DefaultTableModel) tablaProceso.getModel();
         cargarCombos();
-        
-        Resaltador color = new Resaltador(2, 6);
-        tablaProceso.getColumnModel().getColumn(2).setCellRenderer(color);
-        tablaProceso.getColumnModel().getColumn(6).setCellRenderer(color);
 
+        /*  Resaltador color = new Resaltador(2, 6);
+        tablaProceso.getColumnModel().getColumn(2).setCellRenderer(color);
+        tablaProceso.getColumnModel().getColumn(6).setCellRenderer(color);*/
         //tablaProceso.setDefaultRenderer(Object.class, new MiRender());
     }
-    
+
     public void cargarCombos() {
         String[] datos = mdb.cargarCombos("select actividad from actividadesbh").split("¬");
         comboActividad.setModel(new DefaultComboBoxModel((Object[]) datos));
+    }
+
+    public void cargarCombos2() {
+        String[] datos = mdb.cargarCombos("select nombre from maquinariabh").split("¬");
+        comboMaquinaria.setModel(new DefaultComboBoxModel((Object[]) datos));
+    }
+
+    public void cargarRuta(String clave, String actividad) {
+
+        mdb.cargarInformacion2(modelo, 3, "SELECT\n"
+                + "    a.Actividad,\n"
+                + "    m.nombre,\n"
+                + "    s.formacafe\n"
+                + "FROM\n"
+                + "    maquinariabh m\n"
+                + "LEFT JOIN actividadesbh a ON\n"
+                + "    (a.ID = m.idActividad)\n"
+                + "LEFT JOIN entradasmaquinaria e ON\n"
+                + "    (e.idMaquinaria = m.id)\n"
+                + "LEFT JOIN salidasmaquinaria s ON\n"
+                + "    (s.idMaquinaria = m.id)\n"
+                + "WHERE\n"
+                + "    m.nombre = '" + comboMaquinaria.getSelectedItem() + "' and s.clave='" + clave + "'");
+
+        String[] datos = mdb.cargarCombos("SELECT a.actividad\n"
+                + "from relacionsalidamaquinarias r \n"
+                + "inner join actividadesbh a on(r.idActividad=a.id)\n"
+                + "where r.idMaquinaria=" + mdb.devuelveUnDato("select id from maquinariabh where nombre='" + comboMaquinaria.getSelectedItem() + "'") + " and clavesalida='" + clave + "' "
+                + "and idActividad=" + mdb.devuelveUnDato("select id from actividadesbh where actividad='" + actividad + "'") + " ").split("¬");
+
+        validarMaquinaria();
+        comboActividad.removeAllItems();
+        comboActividad.setModel(new DefaultComboBoxModel((Object[]) datos));
+    }
+
+    public void validarMaquinaria() {
+        if (mdb.devuelveUnDato("select generarLote from maquinariabh where nombre='" + comboMaquinaria.getSelectedItem() + "'").equals("1")) {
+            JOptionPane.showMessageDialog(null, "Se genera nuevo lote");
+            String kilos = JOptionPane.showInputDialog("Flote Kg");
+        } else {
+            JOptionPane.showMessageDialog(null, "No se genera un nuevo Lote");
+        }
     }
 
     /**
@@ -77,7 +118,7 @@ public class jdProcesosCortes extends javax.swing.JDialog {
 
             },
             new String [] {
-                "Actividad", "Maquinaria", "Entrada", "Forma", "Estado", "Proceso", "Salida", "Forma", "Estado", "Proceso"
+                "Actividad", "Maquinaria", "Forma Salida"
             }
         ));
         jScrollPane1.setViewportView(tablaProceso);
@@ -111,12 +152,12 @@ public class jdProcesosCortes extends javax.swing.JDialog {
                             .addComponent(comboActividad, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(comboMaquinaria, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton1)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                                .addComponent(jButton1))
+                            .addComponent(jLabel1))
+                        .addGap(93, 416, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -169,35 +210,48 @@ public class jdProcesosCortes extends javax.swing.JDialog {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
 
-        mdb.cargarInformacion2(modelo, 10, "SELECT\n"
-                + "    a.Actividad,\n"
-                + "    m.nombre,\n"
-                + "    e.clave,\n"
-                + "    e.formacafe,\n"
-                + "    e.estadocafe,\n"
-                + "    e.procesocafe,\n"
-                + "    s.clave,\n"
-                + "    s.formacafe,\n"
-                + "    s.estadocafe,\n"
-                + "    s.procesocafe\n"
+        String[] salidas = mdb.cargarCombos("SELECT\n"
+                + "    CONCAT(r.clavesalida, ' - ', a.actividad)\n"
                 + "FROM\n"
-                + "    maquinariabh m\n"
+                + "    relacionsalidamaquinarias r\n"
                 + "INNER JOIN actividadesbh a ON\n"
-                + "    (a.ID = m.idActividad)\n"
-                + "INNER JOIN entradasmaquinaria e ON\n"
-                + "    (e.idMaquinaria = m.id)\n"
-                + "INNER JOIN salidasmaquinaria s ON\n"
-                + "    (s.idMaquinaria = m.id)\n"
+                + "    (r.idActividad = a.id)\n"
                 + "WHERE\n"
-                + "    m.nombre = '" + comboMaquinaria.getSelectedItem() + "'");
-        
-        String[] datos = mdb.cargarCombos("SELECT a.actividad\n"
-                + "from relacionsalidamaquinarias r \n"
-                + "inner join actividadesbh a on(r.idActividad=a.id)\n"
-                + "where r.idMaquinaria=" + mdb.devuelveUnDato("select id from maquinariabh where nombre='" + comboMaquinaria.getSelectedItem() + "'") + " group by a.actividad").split("¬");
-        
-        comboActividad.removeAllItems();
-        comboActividad.setModel(new DefaultComboBoxModel((Object[]) datos));
+                + "    r.idMaquinaria = " + mdb.devuelveUnDato("select id from maquinariabh where nombre='" + comboMaquinaria.getSelectedItem() + "'") + "   \n"
+                + "GROUP BY\n"
+                + "    a.actividad").split("¬");
+
+        if (salidas.length > 1) {
+            jdSeleccionDeRuta jdr = new jdSeleccionDeRuta(null, true, salidas, cn);
+            jdr.jdp = this;
+            jdr.setVisible(true);
+
+        } else if (salidas.length == 1) {
+
+            mdb.cargarInformacion2(modelo, 3, "SELECT\n"
+                    + "    a.Actividad,\n"
+                    + "    m.nombre,\n"
+                    + "    s.formacafe\n"
+                    + "FROM\n"
+                    + "    maquinariabh m\n"
+                    + "LEFT JOIN actividadesbh a ON\n"
+                    + "    (a.ID = m.idActividad)\n"
+                    + "LEFT JOIN entradasmaquinaria e ON\n"
+                    + "    (e.idMaquinaria = m.id)\n"
+                    + "LEFT JOIN salidasmaquinaria s ON\n"
+                    + "    (s.idMaquinaria = m.id)\n"
+                    + "WHERE\n"
+                    + "    m.nombre = '" + comboMaquinaria.getSelectedItem() + "'");
+
+            String[] datos = mdb.cargarCombos("SELECT a.actividad\n"
+                    + "from relacionsalidamaquinarias r \n"
+                    + "inner join actividadesbh a on(r.idActividad=a.id)\n"
+                    + "where r.idMaquinaria=" + mdb.devuelveUnDato("select id from maquinariabh where nombre='" + comboMaquinaria.getSelectedItem() + "'") + " group by a.actividad").split("¬");
+
+            comboActividad.removeAllItems();
+            comboActividad.setModel(new DefaultComboBoxModel((Object[]) datos));
+        }
+        /**/
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
@@ -217,29 +271,17 @@ public class jdProcesosCortes extends javax.swing.JDialog {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(jdProcesosCortes.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(jdRutasProcesos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(jdProcesosCortes.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(jdRutasProcesos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(jdProcesosCortes.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(jdRutasProcesos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(jdProcesosCortes.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(jdRutasProcesos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
-        /* Create and display the dialog */
- /*java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                jdProcesosCortes dialog = new jdProcesosCortes(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });*/
+ 
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

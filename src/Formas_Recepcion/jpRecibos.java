@@ -5,6 +5,7 @@
  */
 package Formas_Recepcion;
 
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.Connection;
 import javax.swing.JOptionPane;
@@ -24,20 +25,70 @@ public class jpRecibos extends javax.swing.JPanel {
     metodosDatosBasicos mdb;
     DefaultTableModel modelo;
     jdRecibos jdR;
-    String idSociedadRecepcion = "", recepcion;
+    String idSociedadRecepcion = "", recepcion, Idioma;
+    Propiedades idioma;
 
-    public jpRecibos(Connection cn, String recepcion) {
+    public jpRecibos(Connection cn, String Idioma, String recepcion) {
         initComponents();
 
         this.cn = cn;
+        this.Idioma = Idioma;
         mdb = new metodosDatosBasicos(cn);
+        idioma = new Propiedades(Idioma);
         modelo = (DefaultTableModel) tablaRecibos.getModel();
 
         idSociedadRecepcion = mdb.devuelveUnDato("select idSociedad from recepciones where idRecepcion='" + recepcion + "'");
-        this.recepcion=recepcion;
-        
+        this.recepcion = recepcion;
+        traductor();
         llenarTabla();
         sumarColumnas();
+    }
+
+    public void traductor() {
+        jLabel1.setText(idioma.getProperty("Folio"));
+        jLabel2.setText(idioma.getProperty("FolioManual"));
+        jLabel3.setText(idioma.getProperty("Nombre"));
+        jLabel4.setText(idioma.getProperty("ApellidoPaterno"));
+        jLabel5.setText(idioma.getProperty("ApellidoMaterno"));
+        jLabel6.setText(idioma.getProperty("IdCorte"));
+
+        tablaRecibos.getColumnModel().getColumn(0).setHeaderValue(idioma.getProperty("Folio"));
+        tablaRecibos.getColumnModel().getColumn(1).setHeaderValue(idioma.getProperty("FolioManual"));
+        tablaRecibos.getColumnModel().getColumn(2).setHeaderValue(idioma.getProperty("IdCorte"));
+        tablaRecibos.getColumnModel().getColumn(3).setHeaderValue(idioma.getProperty("FechaDeRecepcion"));
+        tablaRecibos.getColumnModel().getColumn(4).setHeaderValue(idioma.getProperty("Nombre"));
+        tablaRecibos.getColumnModel().getColumn(5).setHeaderValue(idioma.getProperty("ApellidoPaterno"));
+        tablaRecibos.getColumnModel().getColumn(6).setHeaderValue(idioma.getProperty("ApellidoMaterno"));
+        tablaRecibos.getColumnModel().getColumn(7).setHeaderValue(idioma.getProperty("Sociedad"));
+        tablaRecibos.getColumnModel().getColumn(8).setHeaderValue(idioma.getProperty("Parcela"));
+        tablaRecibos.getColumnModel().getColumn(9).setHeaderValue(idioma.getProperty("FormaDeCafe"));
+        tablaRecibos.getColumnModel().getColumn(10).setHeaderValue(idioma.getProperty("Sacos"));
+        tablaRecibos.getColumnModel().getColumn(11).setHeaderValue(idioma.getProperty("KilosRecibidos"));
+        tablaRecibos.getColumnModel().getColumn(12).setHeaderValue(idioma.getProperty("TotalBruto"));
+        tablaRecibos.getColumnModel().getColumn(13).setHeaderValue(idioma.getProperty("Retencion"));
+        tablaRecibos.getColumnModel().getColumn(14).setHeaderValue(idioma.getProperty("Total"));
+        tablaRecibos.getColumnModel().getColumn(15).setHeaderValue(idioma.getProperty("Verdes"));
+        tablaRecibos.getColumnModel().getColumn(16).setHeaderValue(idioma.getProperty("Inmaduros"));
+        tablaRecibos.getColumnModel().getColumn(17).setHeaderValue(idioma.getProperty("Brocados"));
+        tablaRecibos.getColumnModel().getColumn(18).setHeaderValue(idioma.getProperty("Calificacion"));
+        tablaRecibos.getColumnModel().getColumn(19).setHeaderValue(idioma.getProperty("Entrego"));
+        tablaRecibos.getColumnModel().getColumn(20).setHeaderValue(idioma.getProperty("Observaciones"));
+
+        jLabel7.setText(idioma.getProperty("Situacion"));
+        jLabel8.setText(idioma.getProperty("TotalRecibos"));
+        jLabel9.setText(idioma.getProperty("TotalSacos"));
+        jLabel10.setText(idioma.getProperty("TotalKilos"));
+
+        jButton1.setText(idioma.getProperty("Exportar"));
+        jButton2.setText(idioma.getProperty("Nuevo"));
+        jButton5.setText(idioma.getProperty("Ver"));
+        jButton3.setText(idioma.getProperty("Cancelar"));
+        jButton4.setText(idioma.getProperty("Cerrar"));
+
+        jComboBox1.addItem(idioma.getProperty("Activos"));
+        jComboBox1.addItem(idioma.getProperty("Inactivos"));
+        jComboBox1.addItem(idioma.getProperty("Todos"));
+
     }
 
     public void llenarTabla() {
@@ -47,19 +98,32 @@ public class jpRecibos extends javax.swing.JPanel {
                 + "from recibos r\n"
                 + "inner join personam pm on ( pm.ID=r.idSociedad)\n"
                 + "inner join personaf pf on ( pf.ID=r.idPersona)\n"
-                + "inner join parcelas p on ( p.id=r.idParcela)\n"              
+                + "inner join parcelas p on ( p.id=r.idParcela)\n"
                 + "inner join recepciones re on(r.idRecepcion=re.id)\n"
                 + "where re.idRecepcion='" + recepcion + "' order by r.id");
         cambiarMesLetra(tablaRecibos);
     }
-    
-    
+
     /*
                 + "inner join recepciones re on(r.idSociedad=re.idSociedad)"*/
-
     public void buscar(String tipo) {
         limpiar(tablaRecibos);
-        String where = "";
+        String where = "", situacion = "";
+
+        switch (jComboBox1.getSelectedIndex()) {
+            //Activos
+            case 0:
+                situacion = " =1 ";
+                break;
+            //Inactivos
+            case 1:
+                situacion = " =2 ";
+                break;
+            //Todos
+            case 2:
+                situacion = " <> 3 ";
+                break;
+        }
 
         switch (tipo) {
 
@@ -91,7 +155,7 @@ public class jpRecibos extends javax.swing.JPanel {
                 + "inner join personam pm on ( pm.ID=r.idSociedad)\n"
                 + "inner join personaf pf on ( pf.ID=r.idPersona)\n"
                 + "inner join parcelas p on ( p.id=r.idParcela) "
-                + "where r.idSociedad=" + idSociedadRecepcion + "  " + where);
+                + "where r.id_situacion " + situacion + " and r.idSociedad=" + idSociedadRecepcion + "  " + where);
         cambiarMesLetra(tablaRecibos);
     }
 
@@ -344,7 +408,11 @@ public class jpRecibos extends javax.swing.JPanel {
 
         jLabel7.setText("Situacion");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Activos", "Inactivos", "Todos" }));
+        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox1ActionPerformed(evt);
+            }
+        });
 
         jButton1.setText("Exportar");
 
@@ -356,6 +424,11 @@ public class jpRecibos extends javax.swing.JPanel {
         });
 
         jButton3.setText("Cancelar");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jButton4.setText("Cerrar");
 
@@ -467,7 +540,7 @@ public class jpRecibos extends javax.swing.JPanel {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        jdRecibos jdr = new jdRecibos(null, true, "", "1", recepcion,idSociedadRecepcion, cn);
+        jdRecibos jdr = new jdRecibos(null, true, "", "1", recepcion, idSociedadRecepcion, Idioma, cn);
         jdr.jpR = this;
         jdr.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
@@ -515,7 +588,7 @@ public class jpRecibos extends javax.swing.JPanel {
         idRecibo = tablaRecibos.getValueAt(tablaRecibos.getSelectedRow(), 0) + "";
 
         if (evt.getClickCount() == 2) {
-            jdR = new jdRecibos(null, true, idRecibo, "2", recepcion, idSociedadRecepcion, cn);
+            jdR = new jdRecibos(null, true, idRecibo, "2", recepcion, idSociedadRecepcion, Idioma, cn);
             jdR.setVisible(true);
         }
 
@@ -523,9 +596,35 @@ public class jpRecibos extends javax.swing.JPanel {
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
-        jdR = new jdRecibos(null, true, idRecibo, "2", recepcion,idSociedadRecepcion, cn);
+        jdR = new jdRecibos(null, true, idRecibo, "2", recepcion, idSociedadRecepcion, Idioma, cn);
         jdR.setVisible(true);
     }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+        // TODO add your handling code here:
+        buscar("");
+    }//GEN-LAST:event_jComboBox1ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+
+        switch (jComboBox1.getSelectedIndex()) {
+            //Activos - Boton Cancelar?
+            case 0:
+
+                break;
+
+            //Inactivos - Boton Activar?
+            case 1:
+
+                break;
+
+            //Todos - Sin accion, boton enabled    
+            default:
+                break;
+        }
+
+    }//GEN-LAST:event_jButton3ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

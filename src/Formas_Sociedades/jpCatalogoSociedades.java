@@ -5,6 +5,7 @@
  */
 package Formas_Sociedades;
 
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.Connection;
 import javax.swing.JOptionPane;
@@ -23,14 +24,40 @@ public class jpCatalogoSociedades extends javax.swing.JPanel {
     Connection cn;
     DefaultTableModel modelo;
     metodosDatosBasicos mdb;
+    Propiedades idioma;
+    String Idioma;
 
-    public jpCatalogoSociedades(Connection cn) {
+    public jpCatalogoSociedades(Connection cn, String Idioma) {
         initComponents();
 
         this.cn = cn;
+        this.Idioma = Idioma;
         mdb = new metodosDatosBasicos(cn);
+        idioma = new Propiedades(Idioma);
         modelo = (DefaultTableModel) jTable1.getModel();
         llenarTabla();
+
+        traductor();
+    }
+
+    public void traductor() {
+        jLabel1.setText(idioma.getProperty("Clave"));
+        jLabel2.setText(idioma.getProperty("Sociedad"));
+        jLabel3.setText(idioma.getProperty("NombreCorto"));
+        jLabel4.setText(idioma.getProperty("IdentificacionFiscal"));
+        jLabel5.setText(idioma.getProperty("Localidad"));
+        
+        jButton1.setText(idioma.getProperty("PrecioCafe"));
+        
+        jTable1.getColumnModel().getColumn(0).setHeaderValue(idioma.getProperty("Clave"));
+        jTable1.getColumnModel().getColumn(1).setHeaderValue(idioma.getProperty("Sociedad"));
+        jTable1.getColumnModel().getColumn(2).setHeaderValue(idioma.getProperty("NombreCorto"));
+        jTable1.getColumnModel().getColumn(3).setHeaderValue(idioma.getProperty("IdentificacionFiscal"));
+        jTable1.getColumnModel().getColumn(4).setHeaderValue(idioma.getProperty("Direccion"));
+        jTable1.getColumnModel().getColumn(5).setHeaderValue(idioma.getProperty("Pais"));
+        jTable1.getColumnModel().getColumn(6).setHeaderValue(idioma.getProperty("Estado"));
+        jTable1.getColumnModel().getColumn(7).setHeaderValue(idioma.getProperty("Municipio"));
+        jTable1.getColumnModel().getColumn(8).setHeaderValue(idioma.getProperty("Localidad"));
     }
 
     public void llenarTabla() {
@@ -88,7 +115,7 @@ public class jpCatalogoSociedades extends javax.swing.JPanel {
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, true, false, false, true, false, true
+                false, false, false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -221,7 +248,7 @@ public class jpCatalogoSociedades extends javax.swing.JPanel {
         if (claveSociedad.equals("")) {
             JOptionPane.showMessageDialog(null, "Seleccione una Sociedad");
         } else {
-            jdPrecioCafeSociedad jdPC = new jdPrecioCafeSociedad(null, true, claveSociedad, cn);
+            jdPrecioCafeSociedad jdPC = new jdPrecioCafeSociedad(null, true, claveSociedad, Idioma,cn);
             jdPC.setVisible(true);
         }
     }//GEN-LAST:event_jButton1ActionPerformed

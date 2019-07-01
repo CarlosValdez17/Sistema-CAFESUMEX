@@ -5,6 +5,7 @@
  */
 package Formas_Configuraciones_FincaCert.Certificados;
 
+import Idioma.Propiedades;
 import FormasGenerales.pantallaPrincipal;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.sql.CallableStatement;
@@ -30,12 +31,34 @@ public class jpCodigosCertificados extends javax.swing.JPanel {
     DefaultTableModel modelo;
     Connection cn;
 
-    public jpCodigosCertificados(Connection c) {
+    Propiedades idioma;
+    String Idioma;      
+
+    public jpCodigosCertificados(Connection c, String Idioma) {
         initComponents();
         cn = c;
+        this.Idioma=Idioma;        
 
         modelo = (DefaultTableModel) tablaCodigos.getModel();
         tablaCodigos.setRowSorter(new TableRowSorter(modelo));
+        
+        idioma = new Propiedades(Idioma);
+        jButton5.setText(idioma.getProperty("Cerrar"));
+        jButton2.setText(idioma.getProperty("Nuevo"));
+        jButton3.setText(idioma.getProperty("Editar"));
+        jButton4.setText(idioma.getProperty("Desactivar"));
+        jLabel10.setText(idioma.getProperty("Situacion"));
+        jLabel6.setText(idioma.getProperty("Clave"));
+        jLabel7.setText(idioma.getProperty("Certificado"));
+      
+        tablaCodigos.getColumnModel().getColumn(0).setHeaderValue(idioma.getProperty("Clave"));
+        tablaCodigos.getColumnModel().getColumn(1).setHeaderValue(idioma.getProperty("Certificado"));
+        tablaCodigos.getColumnModel().getColumn(2).setHeaderValue(idioma.getProperty("Contenido"));        
+        
+        comboSituacion.addItem(idioma.getProperty("Activos"));
+        comboSituacion.addItem(idioma.getProperty("Inactivos"));
+        comboSituacion.addItem(idioma.getProperty("Todos"));
+        
 
         llenaTabla();
     }
@@ -70,7 +93,16 @@ public class jpCodigosCertificados extends javax.swing.JPanel {
         String tipoK = "";
         String situacion = "";
         String where = "";
+        situacion = comboSituacion.getSelectedIndex() + "";
 
+        if (situacion.equals("1")) {
+            situacion = "2";
+        } else if (situacion.equals("0")) {
+            situacion = "1";
+        } else {
+            situacion = "3";
+        }
+/*
         situacion = comboSituacion.getSelectedItem() + "";
         if (situacion.equals("Inactivo")) {
             situacion = "2";
@@ -78,7 +110,7 @@ public class jpCodigosCertificados extends javax.swing.JPanel {
             situacion = "1";
 
         }
-
+*/
         if (txtBusquedaP.getText().length() > 0) {
             tipoP = " AND Clave like '%" + txtBusquedaP.getText() + "%'";
         }
@@ -93,7 +125,7 @@ public class jpCodigosCertificados extends javax.swing.JPanel {
         }**/
         String sql;
         System.out.println("SITUACION: " + situacion);
-        if (situacion.equals("Todos")) {
+        if (situacion.equals("3")) {
             sql = "SELECT Clave,Descripcion from Certificado WHERE ID_Situacion<>3 " + tipoP + tipoK;
         } else {
             sql = "SELECT Clave,Descripcion  from Certificado WHERE ID_Situacion=" + situacion + tipoP + tipoK;
@@ -221,7 +253,6 @@ public class jpCodigosCertificados extends javax.swing.JPanel {
 
         jLabel10.setText("Situacion");
 
-        comboSituacion.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Activo", "Inactivo", "Todos" }));
         comboSituacion.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 comboSituacionItemStateChanged(evt);
@@ -359,7 +390,7 @@ public class jpCodigosCertificados extends javax.swing.JPanel {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        jdCodC = new jdCodigosCertificados(cn);
+        jdCodC = new jdCodigosCertificados(cn, Idioma);
         jdCodC.jp = this;
         jdCodC.setVisible(true);
 
@@ -373,8 +404,8 @@ public class jpCodigosCertificados extends javax.swing.JPanel {
              jdCodC = new jdCodigosCertificados(null, true, "2",Clave, TxTvar ,cn);
         jdCodC.jp = this;
         jdCodC.setVisible(true);
-        }
-         */
+        }*/
+        
     }//GEN-LAST:event_jButton3ActionPerformed
     String Clave = "";
     String TxTvar = "";
@@ -400,7 +431,7 @@ public class jpCodigosCertificados extends javax.swing.JPanel {
 
     private void comboSituacionItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionItemStateChanged
         // TODO add your handling code here:
-        busqueda();
+        //busqueda();
     }//GEN-LAST:event_comboSituacionItemStateChanged
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed

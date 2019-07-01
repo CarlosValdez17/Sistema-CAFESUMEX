@@ -7,6 +7,7 @@ package Formas_FincaCert;
 
 import Formas_Personas.jdFormularioPersonas;
 import Formas_Personas.jdFormularioParcelas;
+import Idioma.Propiedades;
 //import Metodos_Configuraciones.JComboCheckBox;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import java.awt.Checkbox;
@@ -32,147 +33,173 @@ public class jpProductores extends javax.swing.JPanel {
     DefaultTableModel modelo, modelo2;
     jdFormularioProductor jdFP;
     jdFormularioPersonas jdDP;
+    String Idioma;
     ArrayList<String> array = new ArrayList<String>();
+    Propiedades idioma;
 
-    public jpProductores(Connection c) {
+    public jpProductores(Connection c, String Idioma) {
         initComponents();
         //tablaPersonas.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         //new JScrollPane(tablaPersonas, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         cn = c;
+        this.Idioma = Idioma;
         mdb = new metodosDatosBasicos(cn);
+        idioma = new Propiedades(Idioma);
         modelo = (DefaultTableModel) tablaProductores.getModel();
+        traductor();
         //  AutoCompleteDecorator.decorate(comboPersona);
-         llenarTabla();
-        tablaProductores.setRowSorter(new TableRowSorter(modelo));
 
-        comboGenero.setEnabled(true);
+        // llenarTabla();
+        tablaProductores.setRowSorter(new TableRowSorter(modelo));
+        comboGenero.setEnabled(false);
+        comboBusqueda.setEnabled(false);
+        txtBusqueda.setEnabled(false);
 
         //JOptionPane.showMessageDialog(null, "Prueba para push maquina nueva");
     }
 
-    //✘ ✓
+    public void traductor() {
+        jLabel1.setText(idioma.getProperty("Persona"));
+        jLabel2.setText(idioma.getProperty("Genero"));
+        jLabel4.setText(idioma.getProperty("BuscarPor"));
+        jLabel3.setText(idioma.getProperty("Busqueda"));
+
+        comboSituacion.addItem(idioma.getProperty("Activos"));
+        comboSituacion.addItem(idioma.getProperty("Inactivos"));
+        comboSituacion.addItem(idioma.getProperty("Todos"));
+
+        comboGenero.addItem(idioma.getProperty("Todos"));
+        comboGenero.addItem(idioma.getProperty("Masculino"));
+        comboGenero.addItem(idioma.getProperty("Femenino"));
+
+        comboPersona.addItem(idioma.getProperty("Todos"));
+        comboPersona.addItem(idioma.getProperty("PersonaFisica"));
+        comboPersona.addItem(idioma.getProperty("PersonaMoral"));
+
+        tablaProductores.getColumnModel().getColumn(0).setHeaderValue(idioma.getProperty("RazonSocial"));
+        tablaProductores.getColumnModel().getColumn(1).setHeaderValue(idioma.getProperty("Nombre"));
+        tablaProductores.getColumnModel().getColumn(2).setHeaderValue(idioma.getProperty("ApellidoPaterno"));
+        tablaProductores.getColumnModel().getColumn(3).setHeaderValue(idioma.getProperty("ApellidoMaterno"));
+        tablaProductores.getColumnModel().getColumn(4).setHeaderValue(idioma.getProperty("ClaveProductor"));
+
+        jButton1.setText(idioma.getProperty("Cerrar"));
+        jButton2.setText(idioma.getProperty("Nuevo"));
+        jButton3.setText(idioma.getProperty("Editar"));
+        jButton4.setText(idioma.getProperty("Desactivar"));
+    }
+
     public void llenarTabla() {
+
         limpiar(tablaProductores);
-        String situacion = "";
-        String tipoPer = comboPersona.getSelectedItem() + "";
-        String tipoGen = comboGenero.getSelectedItem() + "";
-        String tipoBusqueda = "";
-        String Busqueda = "";
-        String where = "";
-        situacion = comboSituacion.getSelectedItem() + "";
+        String where = "", situacion = "";
 
-        
-        if (situacion.equals("Inactivo")) {
-            situacion = "2";
-        } else if (situacion.equals("Activo")) {
-            situacion = "1";
-        } else if (situacion.equals("Todos")) {
-            situacion = "3";
-        }
-        if (tipoGen.equals("Todos")) {
-            tipoGen = "";
-        }
-        if (tipoGen.equals("Masculino")) {
-            tipoGen = " And pf.id_genero=1";
-        } else if (tipoGen.equals("Femenino")) {
-            tipoGen = " And pf.id_genero=2";
-        }
-        if (tipoPer.equals("Todos")) {
-            tipoPer = "";
-        }
-        if (tipoPer.equals("Fisica")) {
-            tipoPer = " and tipopersona=1";
-        } else if (tipoPer.equals("Moral")) {
-            tipoPer = " and tipopersona=2";
-        }
-        if (txtBusqueda.getText().equals("")) {
+        switch (comboSituacion.getSelectedIndex()) {
+            case 0:
+                situacion = "=1";
+                break;
 
-        } else if (comboBusqueda.getSelectedItem().equals("Seleccione..")) {
-            tipoBusqueda = "";
-        } else {
-            String p = comboBusqueda.getSelectedItem() + "";
-            switch (p) {
-                case "Nombre":
-                    tipoBusqueda = " and pf.nombre like ";
-                    break;
-                case "Apellido Paterno":
-                    tipoBusqueda = " and pf.apellidopaterno like ";
-                    break;
-                case "Apellido Materno":
-                    tipoBusqueda = " and pf.apellidomaterno like ";
-                    break;
-                case "Clave Productor":
-                    tipoBusqueda = " and clave_productor like ";
-                    break;
-                case "Numero De Parcelas":
-                    tipoBusqueda = " and numparcelas like ";
-                    break;
-                case "Razon Social":
-                    tipoBusqueda = " and pm.razonsocial like";
-                    break;
-            }
-            if (txtBusqueda.getText().length() > 0) {
-                Busqueda = "'" + txtBusqueda.getText() + "%'";
-            }
+            case 1:
+                situacion = "=2";
+                break;
+
+            case 2:
+                situacion = "<>3";
+                break;
         }
-
-        String sql;
-        if (comboPersona.getSelectedItem().equals("Todos")) {
-            //JOptionPane.showMessageDialog(null, "Esoty en todos");
-
-            if (situacion.equals("3")) {
-
-                sql = "select '' as rz, pf.Nombre, pf.ApellidoPaterno, pf.ApellidoMaterno, pr.clave_productor\n"
+        switch (comboPersona.getSelectedIndex()) {
+            //Todos 
+            case 0:
+                mdb.cargarInformacion2(modelo, 5,
+                        "select '' as rz, pf.Nombre, pf.ApellidoPaterno, pf.ApellidoMaterno, pr.clave_productor\n"
                         + "from productor pr\n"
-                        + "inner join personaf pf on(pr.id_persona=pf.ID) where pr.id_situacion <> 3 and tipoPersona=1" + tipoPer + tipoGen + tipoBusqueda + Busqueda;
-                mdb.cargarInformacion2(modelo, 5, sql);
-
-                sql = "select pm.razonsocial, '' as nombre, '' as appat, '' as apmat, pr.clave_productor\n"
+                        + "inner join personaf pf on(pr.id_persona=pf.ID) where pr.id_situacion" + situacion + " and tipoPersona=1");
+                mdb.cargarInformacion2(modelo, 5, "select pm.razonsocial, '' as nombre, '' as appat, '' as apmat, pr.clave_productor\n"
                         + "from productor pr\n"
-                        + "inner join personam pm on(pr.id_persona=pm.ID) where pr.id_situacion <> 3 and tipoPersona=2" + tipoPer + tipoBusqueda + Busqueda;
-                mdb.cargarInformacion2(modelo, 5, sql);
-            }
-            sql = "select '' as rz, pf.Nombre, pf.ApellidoPaterno, pf.ApellidoMaterno, pr.clave_productor\n"
-                    + "from productor pr\n"
-                    + "inner join personaf pf on(pr.id_persona=pf.ID) where pr.id_situacion=" + situacion + " and tipoPersona=1" + tipoPer + tipoGen + tipoBusqueda + Busqueda;
-            mdb.cargarInformacion2(modelo, 5, sql);
+                        + "inner join personam pm on(pr.id_persona=pm.ID) where pr.id_situacion" + situacion + " and tipoPersona=2");
+                break;
 
-            sql = "select pm.razonsocial, '' as nombre, '' as appat, '' as apmat, pr.clave_productor\n"
-                    + "from productor pr\n"
-                    + "inner join personam pm on(pr.id_persona=pm.ID) where pr.id_situacion=" + situacion + " and tipoPersona=2" + tipoPer + tipoBusqueda + Busqueda;
-            mdb.cargarInformacion2(modelo, 5, sql);
-        } else if (comboPersona.getSelectedItem().equals("Fisica")) {
+            //Fisica
+            case 1:
 
-            if (situacion.equals("3")) {
-                sql = "select '' as rz, pf.Nombre, pf.ApellidoPaterno, pf.ApellidoMaterno, pr.clave_productor\n"
+                switch (comboGenero.getSelectedIndex()) {
+                    //Todos masculino y femenino
+                    case 0:
+                        where += " and pf.id_genero<>3";
+                        break;
+
+                    //Masculino
+                    case 1:
+                        where += " and pf.id_genero=1";
+                        break;
+
+                    //Femenino
+                    case 2:
+                        where += " and pf.id_genero=2";
+                        break;
+
+                }
+
+                switch (comboBusqueda.getSelectedIndex()) {
+                    //Select
+                    case 0:
+
+                        break;
+
+                    //Nombre
+                    case 1:
+                        where += " and pf.nombre like '" + txtBusqueda.getText() + "%' ";
+                        break;
+
+                    //Ap Pat
+                    case 2:
+                        where += " and pf.apellidopaterno like '" + txtBusqueda.getText() + "%' ";
+                        break;
+
+                    //Ap Mat
+                    case 3:
+                        where += " and pf.apellidomaterno like '" + txtBusqueda.getText() + "%' ";
+                        break;
+
+                    //Clave Prod
+                    case 4:
+                        where += " and pr.clave_productor like '" + txtBusqueda.getText() + "%' ";
+                        break;
+                }
+
+                mdb.cargarInformacion2(modelo, 5,
+                        "select '' as rz, pf.Nombre, pf.ApellidoPaterno, pf.ApellidoMaterno, pr.clave_productor\n"
                         + "from productor pr\n"
-                        + "inner join personaf pf on(pr.id_persona=pf.ID)where pr.id_situacion <> 3 and tipoPersona=1" + tipoPer + tipoGen + tipoBusqueda + Busqueda;
-                mdb.cargarInformacion2(modelo, 5, sql);
-            }
+                        + "inner join personaf pf on(pr.id_persona=pf.ID) where pr.id_situacion" + situacion + " and tipoPersona=1" + where);
 
-            sql = "select '' as rz, pf.Nombre, pf.ApellidoPaterno, pf.ApellidoMaterno, pr.clave_productor\n"
-                    + "from productor pr\n"
-                    + "inner join personaf pf on(pr.id_persona=pf.ID)where pr.id_situacion=" + situacion + " and tipoPersona=1" + tipoPer + tipoGen + tipoBusqueda + Busqueda;
-            mdb.cargarInformacion2(modelo, 5, sql);
+                break;
 
-        } else if (comboPersona.getSelectedItem().equals("Moral")) {
+            //Moral
+            case 2:
 
-            if (situacion.equals("3")) {
-                sql = "select pm.razonsocial, '' as nombre, '' as apellido, '' as apmat, pr.clave_productor\n"
+                switch (comboBusqueda.getSelectedIndex()) {
+                    //Select
+                    case 0:
+
+                        break;
+
+                    //Razon Social
+                    case 1:
+                        where += " and pm.razonsocial like '" + txtBusqueda.getText() + "%' ";
+                        break;
+
+                    //Clave Prod
+                    case 2:
+                        where += " and pr.clave_productor like '" + txtBusqueda.getText() + "%' ";
+                        break;
+                }
+
+                mdb.cargarInformacion2(modelo, 5, "select pm.razonsocial, '' as nombre, '' as appat, '' as apmat, pr.clave_productor\n"
                         + "from productor pr\n"
-                        + "inner join personam pm on(pr.id_persona=pm.ID) where pr.id_situacion <> 3 and tipoPersona=2" + tipoPer + tipoBusqueda + Busqueda;
-                mdb.cargarInformacion2(modelo, 5, sql);
-            }
+                        + "inner join personam pm on(pr.id_persona=pm.ID) where pr.id_situacion" + situacion + " and tipoPersona=2" + where);
+                break;
 
-            sql = "select pm.razonsocial, '' as nombre, '' as apellido, '' as apmat, pr.clave_productor\n"
-                    + "from productor pr\n"
-                    + "inner join personam pm on(pr.id_persona=pm.ID) where pr.id_situacion=" + situacion + " and tipoPersona=2" + tipoPer + tipoBusqueda + Busqueda;
-            mdb.cargarInformacion2(modelo, 5, sql);
         }
 
-        //System.out.println(sql);
-        //limpiar(tablaProductores);
-        // mdb.cargarInformacion2(modelo, 4, sql);
     }
 
     private void limpiar(JTable tabla) {
@@ -216,21 +243,14 @@ public class jpProductores extends javax.swing.JPanel {
 
         jLabel1.setText("Persona");
 
-        comboPersona.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Todos", "Fisica", "Moral" }));
-        comboPersona.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                comboPersonaItemStateChanged(evt);
+        comboPersona.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboPersonaActionPerformed(evt);
             }
         });
 
         jLabel2.setText("Genero");
 
-        comboGenero.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Todos", "Masculino", "Femenino" }));
-        comboGenero.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                comboGeneroItemStateChanged(evt);
-            }
-        });
         comboGenero.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboGeneroActionPerformed(evt);
@@ -246,11 +266,6 @@ public class jpProductores extends javax.swing.JPanel {
         jLabel3.setText("Busqueda");
 
         comboBusqueda.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione..", "Nombre", "Apellido Paterno", "Apellido Materno", "Clave Productor", "Numero De Parcelas" }));
-        comboBusqueda.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                comboBusquedaItemStateChanged(evt);
-            }
-        });
         comboBusqueda.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboBusquedaActionPerformed(evt);
@@ -304,10 +319,9 @@ public class jpProductores extends javax.swing.JPanel {
 
         jLabel10.setText("Situacion");
 
-        comboSituacion.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Activo", "Inactivo", "Todos" }));
-        comboSituacion.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                comboSituacionItemStateChanged(evt);
+        comboSituacion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboSituacionActionPerformed(evt);
             }
         });
 
@@ -456,112 +470,50 @@ public class jpProductores extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 String estatus = "2";
-    private void comboSituacionItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboSituacionItemStateChanged
-        if (comboSituacion.getSelectedItem().equals("Inactivo")) {
-            estatus = "1";
-            jButton4.setText("Activar");
-        } else {
-            jButton4.setText("Desactivar");
-            estatus = "2";
-        }
-        llenarTabla();
-    }//GEN-LAST:event_comboSituacionItemStateChanged
-
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         //TODO add your handling code here:
-        jdFormularioPersonas jpP = new jdFormularioPersonas(null, true, "1", "", "", cn);
+        jdFormularioPersonas jpP = new jdFormularioPersonas(null, true, "1", "", "", Idioma, cn);
         jpP.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         if (!nom.equals("")) {
-            jdFP = new jdFormularioProductor(null, true, id, nom + " " + app + " " + apm, "1", "SI", cn);
+            jdFP = new jdFormularioProductor(null, true, id, nom + " " + app + " " + apm, "1", "SI", Idioma, cn);
             jdFP.jpP = this;
             jdFP.setVisible(true);
         } else if (nom.equals("") && !rsocial.equals("")) {
-            jdFP = new jdFormularioProductor(null, true, id, rsocial, "2", "SI", cn);
+            jdFP = new jdFormularioProductor(null, true, id, rsocial, "2", "SI",Idioma, cn);
             jdFP.setVisible(true);
         }
-
 
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
 
-        if (tipoPersona.equals("Fisica")) {
-            tipoPersona = "1";
-        } else if (tipoPersona.equals("Moral")) {
-            tipoPersona = "2";
-        }
-
-        if (comboSituacion.getSelectedItem().equals("Activo")) {
+        if (comboSituacion.getSelectedIndex() == 0) {
             mdb.actualizarBasicos("update productor set id_situacion=2 where id_persona=" + id + " and tipoPersona=" + tipoPersona + " ");
 
-        } else if (comboSituacion.getSelectedItem().equals("Inactivo")) {
+        } else if (comboSituacion.getSelectedIndex() == 1) {
             mdb.actualizarBasicos("update productor set id_situacion=1 where id_persona=" + id + " and tipoPersona=" + tipoPersona + " ");
         }
         llenarTabla();
     }//GEN-LAST:event_jButton4ActionPerformed
-
-    private void comboPersonaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboPersonaItemStateChanged
-
-        switch (comboPersona.getSelectedItem() + "") {
-            case "Fisica":
-                comboGenero.setEnabled(true);
-                comboBusqueda.removeAllItems();
-                comboBusqueda.addItem("Seleccione..");
-                comboBusqueda.addItem("Nombre");
-                comboBusqueda.addItem("Apellido Paterno");
-                comboBusqueda.addItem("Apellido Materno");
-                comboBusqueda.addItem("Clave Productor");
-                break;
-            case "Moral":
-                comboGenero.setEnabled(false);
-                comboBusqueda.removeAllItems();
-                comboBusqueda.addItem("Seleccione..");
-                comboBusqueda.addItem("Razon Social");
-                comboBusqueda.addItem("Clave Productor");
-                break;
-            case "Todos":
-                comboGenero.setEnabled(false);
-                comboBusqueda.removeAllItems();
-                comboBusqueda.addItem("Seleccione..");
-                comboBusqueda.addItem("Nombre");
-                comboBusqueda.addItem("Razon Social");
-                comboBusqueda.addItem("Clave Productor");
-                comboBusqueda.addItem("Apellido Paterno");
-                comboBusqueda.addItem("Apellido Materno");
-                comboBusqueda.addItem("Direccion");
-                break;
-            default:
-                break;
-        }
-
-        llenarTabla();
-
-    }//GEN-LAST:event_comboPersonaItemStateChanged
-
-    private void comboGeneroItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboGeneroItemStateChanged
-        llenarTabla();
-    }//GEN-LAST:event_comboGeneroItemStateChanged
     String nom = "", app = "", apm = "", id = "", rsocial = "";
-    String tipoGenero = "", tipoBusqueda = "", tipoAsignacion = "", tipoCPersona = "";
+
     private void txtBusquedaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBusquedaKeyReleased
         llenarTabla();
     }//GEN-LAST:event_txtBusquedaKeyReleased
 
-    private void comboBusquedaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboBusquedaItemStateChanged
-
-    }//GEN-LAST:event_comboBusquedaItemStateChanged
-
     private void comboGeneroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboGeneroActionPerformed
         // TODO add your handling code here:
+        llenarTabla();
     }//GEN-LAST:event_comboGeneroActionPerformed
 
     private void comboBusquedaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBusquedaActionPerformed
         // TODO add your handling code here:
+        llenarTabla();
     }//GEN-LAST:event_comboBusquedaActionPerformed
-    String tipoPersona;
+    String tipoPersona = "";
     private void tablaProductoresMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaProductoresMouseClicked
         // TODO add your handling code here:
         nom = tablaProductores.getValueAt(tablaProductores.getSelectedRow(), 1) + "";
@@ -569,34 +521,79 @@ String estatus = "2";
         apm = tablaProductores.getValueAt(tablaProductores.getSelectedRow(), 3) + "";
         rsocial = tablaProductores.getValueAt(tablaProductores.getSelectedRow(), 0) + "";
 
+        if (!nom.equals("")) {
+            //Abrir detalle para persona fisica = 1
+            id = mdb.comprobarExistencia("select id from personaf "
+                    + "where (nombre='" + nom + "' and apellidoPaterno='" + app + "' and apellidoMaterno='" + apm + "' ) ");
+            tipoPersona = "1";
+
+        } else if (nom.equals("") && !rsocial.equals("")) {
+            //Abrir detalle para persona moral = 2
+            id = mdb.comprobarExistencia("select id from personam "
+                    + "where razonsocial='" + rsocial + "'");
+            tipoPersona = "2";
+
+        }
+
         if (evt.getClickCount() == 2) {
             if (id.equals("")) {
                 JOptionPane.showMessageDialog(null, "Seleccione Productor");
             } else {
-
-                if (tipoPersona.equals("Fisica")) {
-                    tipoPersona = "1";
-                } else if (tipoPersona.equals("Moral")) {
-                    tipoPersona = "2";
-                }
-
-                jdFormularioParcelas jdF = new jdFormularioParcelas(null, true, id, tipoPersona, "", cn);
+                jdFormularioParcelas jdF = new jdFormularioParcelas(null, true, id, tipoPersona, "", Idioma, cn);
                 jdF.setVisible(true);
             }
-        } else {
-            if (!nom.equals("")) {
-                //Abrir detalle para persona fisica = 1
-                id = mdb.comprobarExistencia("select id from personaf "
-                        + "where (nombre='" + nom + "' and apellidoPaterno='" + app + "' and apellidoMaterno='" + apm + "' ) ");
-                tipoPersona = "Fisica";
-            } else if (nom.equals("") && !rsocial.equals("")) {
-                //Abrir detalle para persona moral = 2
-                id = mdb.comprobarExistencia("select id from personam "
-                        + "where razonsocial='" + rsocial + "'");
-                tipoPersona = "Moral";
-            }
         }
+
     }//GEN-LAST:event_tablaProductoresMouseClicked
+
+    private void comboPersonaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboPersonaActionPerformed
+        // TODO add your handling code here:
+        switch (comboPersona.getSelectedIndex()) {
+            case 1:
+                comboGenero.setEnabled(true);
+                comboBusqueda.setEnabled(true);
+                txtBusqueda.setEnabled(true);
+                comboBusqueda.removeAllItems();
+                comboBusqueda.addItem(idioma.getProperty("Seleccione"));
+                comboBusqueda.addItem(idioma.getProperty("Nombre"));
+                comboBusqueda.addItem(idioma.getProperty("ApellidoPaterno"));
+                comboBusqueda.addItem(idioma.getProperty("ApellidoMaterno"));
+                comboBusqueda.addItem(idioma.getProperty("ClaveProductor"));
+                break;
+            case 2:
+                comboGenero.setEnabled(false);
+                comboBusqueda.removeAllItems();
+                comboBusqueda.addItem("Seleccione..");
+                comboBusqueda.addItem("Razon Social");
+                comboBusqueda.addItem("Clave Productor");
+                break;
+            default:
+                comboGenero.setEnabled(false);
+                comboBusqueda.setEnabled(false);
+                txtBusqueda.setEnabled(false);
+                break;
+        }
+        llenarTabla();
+    }//GEN-LAST:event_comboPersonaActionPerformed
+
+    private void comboSituacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboSituacionActionPerformed
+        // TODO add your handling code here:
+        switch (comboSituacion.getSelectedIndex()) {
+            case 0:
+                jButton4.setText(idioma.getProperty("Desactivar"));
+                jButton4.setEnabled(true);
+                break;
+            case 1:
+                jButton4.setText(idioma.getProperty("Activar"));
+                jButton4.setEnabled(true);
+                break;
+            default:
+                jButton4.setEnabled(false);
+                break;
+        }
+
+        llenarTabla();
+    }//GEN-LAST:event_comboSituacionActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> comboBusqueda;

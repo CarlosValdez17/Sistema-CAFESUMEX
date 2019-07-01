@@ -5,6 +5,8 @@
  */
 package Formas_Configuraciones_DatosBasicos;
 
+//import Idioma.Propiedades;
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
@@ -28,11 +30,13 @@ public class jdPais extends javax.swing.JDialog {
     jdEstado jdE;
     metodosDatosBasicos mdb;
     validaConfi valiConf;
+    Propiedades idioma;
 
-    public jdPais(java.awt.Frame parent, boolean modal, String tipo, String paisC, Connection c) {
+    public jdPais(java.awt.Frame parent, boolean modal, String tipo, String paisC, String Idioma, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
+        
 
         ocultar();
 
@@ -40,10 +44,39 @@ public class jdPais extends javax.swing.JDialog {
         this.paisC = paisC;
         cn = c;
         mdb = new metodosDatosBasicos(cn);
+        
         valiConf = new validaConfi();
-
+        
+        idioma = new Propiedades(Idioma);
+        
+        
+        jButton1.setText(idioma.getProperty("Aceptar"));;
+        jButton2.setText(idioma.getProperty("Cerrar"));;
+        jLabel1.setText(idioma.getProperty("Pais"));;
+        jLabel2.setText(idioma.getProperty("OIC"));;
+        jLabel3.setText(idioma.getProperty("Ue"));;
+        jLabel4.setText(idioma.getProperty("ISO"));;
+        
         rellenarCampos();
+        comparaciones();
+             
     }
+    
+    public void comparaciones() {
+        if (tipo.equals("1")) {
+            //setTitle("Nuevo País");
+            setTitle(idioma.getProperty("NuevoPais"));
+            txtPais.setFocusable(true);
+        } else {
+            //setTitle("Editar Estado");
+            setTitle(idioma.getProperty("EditarPais"));
+            //txtEstado.setText(estado);
+            //comboPais.setEnabled(false);
+            //comboPais.addItem(paisC);
+            //comboPais.setSelectedItem(paisC);
+        }
+    }
+ 
 
     public void ocultar() {
         txtUE.setVisible(false);

@@ -5,6 +5,7 @@
  */
 package Formas_Configuraciones_FincaCert.Certificados;
 
+import Idioma.Propiedades;
 import Metodos_Configuraciones.metodosDatosBasicos;
 import Metodos_Configuraciones.validaConfi;
 import java.sql.Connection;
@@ -26,22 +27,31 @@ public class jdCertificador extends javax.swing.JDialog {
     Connection cn;
     jpCertificador jp;
    validaConfi valiConf;
+   Propiedades idioma;
 
 
     metodosDatosBasicos mdb;
 
-    public jdCertificador(java.awt.Frame parent, boolean modal, String tipo, String ClaveC,String TxTvarC, Connection c) {
+    public jdCertificador(java.awt.Frame parent, boolean modal, String tipo, String ClaveC,String TxTvarC, String Idioma, Connection c) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
-valiConf = new validaConfi();
+        valiConf = new validaConfi();
         this.tipo = tipo;
         this.ClaveC = ClaveC;
         cn = c;
+        idioma = new Propiedades(Idioma);
+        
+        jButton1.setText(idioma.getProperty("Aceptar"));
+        jButton2.setText(idioma.getProperty("Cancelar"));
+        jLabel1.setText(idioma.getProperty("Clave"));
+        jLabel2.setText(idioma.getProperty("Certificador"));
+        
+        
         if (tipo.equals("1")) {
-            setTitle("nuevo Certificador");
+            setTitle(idioma.getProperty("NuevoCerfificador"));
         }else{
-              setTitle("editar");
+              setTitle(idioma.getProperty("EditarCertificador"));
               Certificador.setText(TxTvarC);
               txtClave.setText(ClaveC);
         }  
